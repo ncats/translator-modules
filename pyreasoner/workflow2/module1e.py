@@ -1,3 +1,4 @@
+# Workflow 2, Module 1E: Gene interactions
 from BioLink.biolink_client import BioLinkWrapper
 from pprint import pprint
 from mygene import MyGeneInfo

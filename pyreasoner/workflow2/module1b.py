@@ -1,3 +1,4 @@
+# Workflow 2, Module 1B: Phenotype similarity
 from mygene import MyGeneInfo
 from ontobio.assocmodel import AssociationSet
 from .generic_similarity import GenericSimilarity

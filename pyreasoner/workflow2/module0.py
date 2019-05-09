@@ -1,3 +1,4 @@
+# Workflow 2, Module 0: Lookups
 from BioLink.biolink_client import BioLinkWrapper
 from mygene import MyGeneInfo
 import pandas as pd
