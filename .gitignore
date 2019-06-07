@@ -107,3 +107,6 @@ venv.bak/
 
 # module/workflow outputs
 Tidbit
+
+# PyCharms IDE metadata
+.idea/
