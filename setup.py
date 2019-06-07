@@ -22,10 +22,10 @@ with open('requirements.txt') as requirements_file:
 
 setup(
     name='pyreasoner',
-    description='NCATS Translator Reasoner workflows and modules',
-    packages=['pyreasoner'],
-    url='https://github.com/jaeddy/pyreasoner',
-    download_url='https://github.com/jaeddy/pyreasoner',
+    description='NCATS Translator Reasoner modules',
+    packages=['translator_modules'],
+    url='https://github.com/ncats/translator-modules',
+    download_url='https://github.com/ncats/translator-modules',
     long_description=long_description,
     install_requires=install_requires,
     setup_requires=['pytest-runner'],

@@ -1,10 +1,11 @@
 # Workflow 2, Module 1A: Functional similarity
 from mygene import MyGeneInfo
 from ontobio.assocmodel import AssociationSet
-from .generic_similarity import GenericSimilarity
 from typing import List, Union, TextIO
 from pprint import pprint
 from datetime import datetime
+
+from translator_modules.core.generic_similarity import GenericSimilarity
 
 
 class FunctionalSimilarity(GenericSimilarity):

@@ -7,10 +7,10 @@ import pandas as pd
 from os import makedirs
 from html3.html3 import XHTML
 
-from pyreasoner.workflow2.module0 import LookUp
-from pyreasoner.workflow2.module1a import FunctionalSimilarity
-from pyreasoner.workflow2.module1b import PhenotypeSimilarity
-from pyreasoner.workflow2.standard_output import StandardOutput
+from translator_modules.module0.module0 import LookUp
+from translator_modules.module1.module1a import FunctionalSimilarity
+from translator_modules.module1.module1b import PhenotypeSimilarity
+from translator_modules.util.standard_output import StandardOutput
 
 
 def output_file(tag, title, ext):
@@ -89,7 +89,7 @@ def load_genes(model, data, threshold):
     model.load_gene_set()
 
 
-def similarity(model, data, threshold, input_disease_symbol, module, title):
+def similarity(model, data, threshold, disease_associated_genes, input_disease_symbol, module, title):
     # Initialize
     load_genes(model, data, threshold)
     model.load_associations()
@@ -112,7 +112,7 @@ def similarity(model, data, threshold, input_disease_symbol, module, title):
     return results_table
 
 
-def aggregrate_results(resultsA,resultsB):
+def aggregrate_results(input_object, resultsA, resultsB):
     all_results = pd.concat([resultsA,resultsB])
     so = StandardOutput(results=all_results.to_dict(orient='records'), input_object=input_object)
     return so.output_object
@@ -125,7 +125,7 @@ def file_index(output, input_disease_symbol, input_disease_mondo, rtx_ui_url):
 
     doc.head.title(title)
     doc.body.h1(title)
-    ul = body.ul
+    ul = doc.body.ul
     ul.li.a("Input Disease Details", href="Definition.json")
     ul.li.a("Disease Associated Genes", href="Disease_Associated_Genes.html")
     ul.li.a("Functionally Similar Genes", href="Functionally_Similar_Genes.html")
@@ -135,10 +135,10 @@ def file_index(output, input_disease_symbol, input_disease_mondo, rtx_ui_url):
     doc.body.p.a("Reasoner API formatted JSON results",
                  href="https://rtx.ncats.io/api/rtx/v1/response/%s" % rtx_ui_url.json()['response_id'])
 
-    output.write(doc)
+    output.write(str(doc))
 
 
-def publish_to_rtx(output, std_api_response_json, input_disease_symbol, title):
+def publish_to_rtx(std_api_response_json, input_disease_symbol, input_disease_mondo, title):
     # get the URL for these results displayed in the RTX UI
     RTX_UI_REQUEST_URL = "https://rtx.ncats.io/api/rtx/v1/response/process"
     to_post = {"options": ["Store", "ReturnResponseId"], "responses": [std_api_response_json]}
@@ -146,7 +146,7 @@ def publish_to_rtx(output, std_api_response_json, input_disease_symbol, title):
 
     # Write out a master index web page
     output = output_file(input_disease_symbol, "index", "html")
-    write_file_index(output, rtx_ui_url)
+    file_index(output, input_disease_symbol, input_disease_mondo, rtx_ui_url)
     output.close()
 
     return rtx_ui_url
@@ -163,49 +163,52 @@ def main():
 
     # Functinoal Simularity using Jaccard index threshold
     func_sim_human = FunctionalSimilarity()
-    Mod1A_results = similarity( func_sim_human, input_curie_set, 0.75, input_disease_symbol, 'Mod1A', "Functionally Similar Genes" )
+    Mod1A_results = similarity( func_sim_human, input_curie_set, 0.75, disease_associated_genes, input_disease_symbol, 'Mod1A', "Functionally Similar Genes" )
 
     Mod1A_results
 
     # Phenotypic simulatiry using OwlSim calculation threshold
     pheno_sim_human = PhenotypeSimilarity()
-    Mod1B_results = similarity( pheno_sim_human, input_curie_set, 0.50, input_disease_symbol, 'Mod1B', "Phenotypically Similar Genes" )
+    Mod1B_results = similarity( pheno_sim_human, input_curie_set, 0.50, disease_associated_genes, input_disease_symbol, 'Mod1B', "Phenotypically Similar Genes" )
 
-    std_api_response_json = aggregrate_results(Mod1A_results_human, Mod1B_results)
+    std_api_response_json = aggregrate_results(input_object, Mod1A_results, Mod1B_results)
 
     # Echo to console
     std_api_response_json
 
-    rtx_ui_url = publish_to_rtx(std_api_response_json)
+    rtx_ui_url = publish_to_rtx(std_api_response_json, input_disease_symbol, input_disease_mondo, 'WF2')
 
     print("Please visit the following website: https://rtx.ncats.io/?r=%s" % rtx_ui_url.json()['response_id'])
     print("Please visit the following link to retrieve JSON results: https://rtx.ncats.io/api/rtx/v1/response/%s" %
         rtx_ui_url.json()['response_id'])
 
-    
+
     # Read a table of diseases and process
-    with open("diseases.tsv","r") as diseases:
-        for entry in diseases.readlines():
-            field = entry.split("\t")
-            continue if field[1] == "Disease"
-            
-            input_disease_symbol = field[1]
-            input_disease_mondo  = field[3]
-            
-            # process
-            input_object, disease_associated_genes, input_curie_set = diseaseLookUp(input_disease_symbol, input_disease_mondo)
-            
-            # Functinoal Simularity using Jaccard index threshold
-            func_sim_human = FunctionalSimilarity()
-            Mod1A_results = similarity( func_sim_human, input_curie_set, 0.75, input_disease_symbol, 'Mod1A', "Functionally Similar Genes" )
+    # with open("diseases.tsv","r") as diseases:
+    #     for entry in diseases.readlines():
+    #         field = entry.split("\t")
+    #         continue if field[1] == "Disease"
 
-            # Phenotypic simulatiry using OwlSim calculation threshold
-            pheno_sim_human = PhenotypeSimilarity()
-            Mod1B_results = similarity( pheno_sim_human, input_curie_set, 0.50, input_disease_symbol, 'Mod1B', "Phenotypically Similar Genes" )
+    #         input_disease_symbol = field[1]
+    #         input_disease_mondo  = field[3]
 
-            # Find Interacting Genes
-            interactions_human = GeneInteractions()
-            Mod1E_results = gene_interactions( interactions_human, input_curie_set, input_disease_symbol, 'Mod1E', "Gene Interactions" )
-            
-            std_api_response_json = aggregrate_results(Mod1A_results, Mod1B_results)
-            publish_to_rtx( output, input_disease_symbol, input_disease_mondo, std_api_response_json )
+    #         # process
+    #         input_object, disease_associated_genes, input_curie_set = diseaseLookUp(input_disease_symbol, input_disease_mondo)
+
+    #         # Functinoal Simularity using Jaccard index threshold
+    #         func_sim_human = FunctionalSimilarity()
+    #         Mod1A_results = similarity( func_sim_human, input_curie_set, 0.75, input_disease_symbol, 'Mod1A', "Functionally Similar Genes" )
+
+    #         # Phenotypic simulatiry using OwlSim calculation threshold
+    #         pheno_sim_human = PhenotypeSimilarity()
+    #         Mod1B_results = similarity( pheno_sim_human, input_curie_set, 0.50, input_disease_symbol, 'Mod1B', "Phenotypically Similar Genes" )
+
+    #         # Find Interacting Genes
+    #         interactions_human = GeneInteractions()
+    #         Mod1E_results = gene_interactions( interactions_human, input_curie_set, input_disease_symbol, 'Mod1E', "Gene Interactions" )
+
+    #         std_api_response_json = aggregrate_results(Mod1A_results, Mod1B_results)
+    #         publish_to_rtx( output, input_disease_symbol, input_disease_mondo, std_api_response_json )
+
+if __name__ == '__main__':
+    main()
