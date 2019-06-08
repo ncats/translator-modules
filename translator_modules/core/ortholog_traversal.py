@@ -6,7 +6,7 @@ import pandas as pd
 class OrthologTraversal(object):
 
     def __init__(self):
-        self.blw =BioLinkWrapper()
+        self.blw = BioLinkWrapper()
 
     def ortholog_set_by_taxid(self, gene_set, taxon_name):
         orthos = self.blw.get_orthoglog_gene_set(gene_set=gene_set, orth_taxon_name=taxon_name)
