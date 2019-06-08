@@ -40,7 +40,6 @@ class FunctionalSimilarity(GenericSimilarity):
     def load_gene_set(self, input_gene_set):
         annotated_gene_set = []
         for gene in input_gene_set.get_input_curie_set():
-            mg = MyGeneInfo()
             gene_curie = ''
             sim_input_curie = ''
             symbol = ''
@@ -51,7 +50,7 @@ class FunctionalSimilarity(GenericSimilarity):
             if 'HGNC' in gene['hit_id']:
                 gene_curie = gene['hit_id'].replace('HGNC', 'hgnc')
                 scope = 'HGNC'
-                mg_hit = mg.query(gene_curie,
+                mg_hit = self.mg.query(gene_curie,
                                   scopes=scope,
                                   species=self.taxon,
                                   fields='uniprot, symbol, HGNC',
