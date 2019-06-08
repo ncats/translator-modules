@@ -21,7 +21,7 @@ with open('requirements.txt') as requirements_file:
         install_requires.append(pinned_version)
 
 setup(
-    name='pyreasoner',
+    name='translator-modules',
     description='NCATS Translator Reasoner modules',
     packages=['translator_modules'],
     url='https://github.com/ncats/translator-modules',
