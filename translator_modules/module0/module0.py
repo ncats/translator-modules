@@ -1,7 +1,7 @@
 # Workflow 2, Module 0: Lookups
 
 from BioLink.biolink_client import BioLinkWrapper
-from mygene import MyGeneInfo
+from biothings_client import get_client
 import pandas as pd
 from pprint import pprint
 from sys import stdout
@@ -12,7 +12,7 @@ class LookUp(object):
 
     def __init__(self):
         self.blw = BioLinkWrapper()
-        self.mg = MyGeneInfo()
+        self.mg = get_client('gene')
         self.input_object = ''
         self.meta = {
             'data_type': 'disease',

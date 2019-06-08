@@ -1,6 +1,6 @@
 # Workflow 2, Module 1B: Phenotype similarity
 from pprint import pprint
-from mygene import MyGeneInfo
+from biothings_client import get_client
 from translator_modules.core.generic_similarity import GenericSimilarity
 
 
@@ -42,7 +42,7 @@ class PhenotypeSimilarity(GenericSimilarity):
     def load_gene_set(self, input_gene_set):
         annotated_gene_set = []
         for gene in input_gene_set.get_input_curie_set():
-            mg = MyGeneInfo()
+            mg = get_client('gene')
             gene_curie = ''
             sim_input_curie = ''
             symbol = ''

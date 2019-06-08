@@ -110,3 +110,5 @@ Tidbit
 
 # PyCharms IDE metadata
 .idea/
+# Ignore local PyCharms virtualenv
+py*/

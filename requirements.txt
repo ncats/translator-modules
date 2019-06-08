@@ -6,6 +6,7 @@ requests>=2.21.0
 scipy>=1.2.1
 numpy==1.16.1
 pandas==0.23.4
+pyyaml==5.1
 #
 typing>=0.0
 graphviz
@@ -16,5 +17,4 @@ html3
 #
 mvp-module-library
 ontobio
-mygene==3.1.0
-
+biothings_client

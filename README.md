@@ -43,10 +43,10 @@ This patch version may be installed after the above pip requirements is run, as 
 
 ``` 
 # Uninstall the default version installed by the requirements file
-python -m pip uninstall ontobio
+pip uninstall ontobio
 
 # install a fresh version of the forked code
-python -m pip install git+https://github.com/STARInformatics/ontobio@master#egg=ontobio
+pip install git+https://github.com/STARInformatics/ontobio@master#egg=ontobio
 ```
 
 Once the main Biolink Ontobio project has validated the pull request for this code, this patch will not be required and these README instructions will therefore be revised.
@@ -57,7 +57,7 @@ A command line script is currently provided that will execute the relevant modul
 Translator "Workflow 2".  To display the full parameters of the script, type:
 
 ``` 
-python WF2_automation.py --help
+python scripts/WF2_automation.py --help
 ```
 
 A folder named  *Tidbit* will contain the results as HTML and JSON files. The latter (JSON) files include
