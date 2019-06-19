@@ -112,3 +112,5 @@ Tidbit
 .idea/
 # Ignore local PyCharms virtualenv
 py*/
+
+translator-modules/
