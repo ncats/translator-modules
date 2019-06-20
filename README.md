@@ -27,6 +27,12 @@ To install the package in "developer" mode (such that code changes are automatic
 pip install -r requirements.txt -e .
 ```
 
+Afterwards, we will need to setup the Python environment to use the local project directory as its path for modules. Do this by running the following command in the root directory of the project with the virtual environment enabled:
+
+```
+python setup.py develop
+```
+
 ### Ontobio Patch (temporary)
 
 The workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library in Ontobio causes some runtime problems.
