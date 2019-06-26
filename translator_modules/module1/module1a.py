@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+import fire
+
 # Workflow 2, Module 1A: Functional similarity
 from pprint import pprint
 from biothings_client import get_client
@@ -87,3 +90,7 @@ class FunctionalSimilarity(GenericSimilarity):
                           entrezonly=True)
         if mg_hit['total'] == 1:
             return 'HGNC:{}'.format(mg_hit['hits'][0]['HGNC'])
+
+
+if __name__ == '__main__':
+    fire.Fire(FunctionalSimilarity)

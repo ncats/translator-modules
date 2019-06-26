@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+import fire
+
 # Workflow 2, Module 1E: Gene interactions
 from BioLink.biolink_client import BioLinkWrapper
 from pprint import pprint
@@ -57,3 +60,7 @@ class GeneInteractions(object):
                     'score': 0,
                 })
         return results
+
+
+if __name__ == '__main__':
+    fire.Fire(GeneInteractions)

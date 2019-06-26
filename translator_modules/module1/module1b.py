@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+import fire
+
 # Workflow 2, Module 1B: Phenotype similarity
 from pprint import pprint
 from biothings_client import get_client
@@ -84,3 +87,7 @@ class PhenotypeSimilarity(GenericSimilarity):
                 if gene['sim_input_curie'] == result['input_id']:
                     result['input_symbol'] = gene['input_symbol']
         return results
+
+
+if __name__ == '__main__':
+    fire.Fire(PhenotypeSimilarity)

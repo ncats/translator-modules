@@ -1,5 +1,7 @@
-# Workflow 2, Module 0: Lookups
+#!/usr/bin/python3
+import fire
 
+# Workflow 2, Module 0: Lookups
 from BioLink.biolink_client import BioLinkWrapper
 from biothings_client import get_client
 import pandas as pd
@@ -107,3 +109,7 @@ class DiseaseAssociatedGeneSet(object):
 
     def get_input_curie_set(self):
         return self.input_curie_set
+
+
+if __name__ == '__main__':
+    fire.Fire(DiseaseAssociatedGeneSet)

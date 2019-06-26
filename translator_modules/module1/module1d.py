@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+import fire
+
 # Workflow 2, Module 1D: Chemical-gene interactions
 from CTD.CTD_wrapper import CTDWrapper
 import pandas as pd
@@ -35,3 +38,5 @@ class ChemicalGeneInteractions(object):
                     self.gene_hits = self.gene_hits + cid_hit
 
 
+if __name__ == '__main__':
+    fire.Fire(ChemicalGeneInteractions)

@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+import fire
+
 from datetime import datetime
 
 
@@ -84,3 +87,7 @@ class StandardOutput(object):
             for node in nodes:
                 result_meta['result_graph']['node_list'].append(node)
             self.output_object['result_list'].append(result_meta)
+
+
+if __name__ == '__main__':
+    fire.Fire(StandardOutput)
