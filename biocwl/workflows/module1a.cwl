@@ -4,17 +4,18 @@ cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ module1a.py, get-data-frame, to-json ]
 inputs:
-  disease_name:
+  gene_set:
     type: string
     inputBinding:
       position: 0
-      prefix: --input-disease-name
-  disease_id:
+      prefix: --input-gene-set
+  threshold:
     type: string
     inputBinding:
       position: 1
-      prefix: --input-disease-mondo
+      prefix: --threshold
+
 outputs:
-  disease_list:
+  functionally_similar_genes:
     type: stdout
-stdout: module0.json
+stdout: module1a.json
