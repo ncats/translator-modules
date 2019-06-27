@@ -16,6 +16,7 @@ html3
 #
 # NCATS Dependencies
 #
+jsonschema>=3.0.1
 mvp-module-library
 BiolinkMG
 ontobio

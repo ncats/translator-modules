@@ -2,32 +2,51 @@
 
 This package provides a Python-based implementation of the NCATS Translator workflow modules.
 
-## Installation
-
-**Note:** code has been tested with Python 3.7 only.
-
-The **translator-modules** package is not yet available through PyPI. To install, clone this repo and run the following command within the `translator_modules` directory:
-
-```
-pip install -r requirements.txt .
-```
 
 ## Development
 
-We recommend using a **virtualenv** or **conda env** to manage packages and the development environment:
+**Note:** code is now validated to work only with Python 3.7 only.  We recommend using a **virtualenv** 
+
+``` 
+virtualenv -p python3.7 py37
+source py37/bin/activate
+```
+
+or **conda env** to manage packages and the development environment:
 
 ```
 conda create -n translator-modules python=3.7
 conda activate translator-modules
 ```
 
-Afterwards, we need to setup the Python environment to load the local project directory with module dependencies. 
-Do this by running the following command in the root directory of the project, with the virtual environment enabled:
+## Installation of Dependencies
+
+Making sure that your pip version is 3.7 compliant.  The **translator-modules** package is not yet available 
+through PyPI. To install, clone this repo and run the following command within the `translator_modules` directory:
 
 ```
-python setup.py develop
+pip install -r requirements.txt .
 ```
 
+or
+
+``` 
+# sometimes better, to ensure that the proper Python3.7 version of pip is used...
+python -m pip install -r requirements.txt .
+```
+
+To install the package in "developer" mode (such that code changes are automatically reflected in the local library), 
+include the `-e` flag with `pip`:
+
+```
+pip install -r requirements.txt -e .
+```
+
+or
+
+``` 
+python -m pip install -r requirements.txt -e .
+```
 ### Ontobio Cache Configuration
 
 Note that the workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and 
