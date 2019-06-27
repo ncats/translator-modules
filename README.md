@@ -47,17 +47,6 @@ or
 ``` 
 python -m pip install -r requirements.txt -e .
 ```
-### Ontobio Cache Configuration
-
-Note that the workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and 
-phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library 
-in Ontobio causes some runtime problems.
-
-We therefore disable it in our code using the following ontobio configuration flag override (the flag defaults to 
-'False' as it is defined in the library's _ontobio/config.yaml_ file):
-
-    from ontobio.config import session
-    session.config.ignore_cache = True
     
 ## Usage
 
@@ -106,3 +95,15 @@ III.  Finally, call the model-associated method - similarity() (for the Function
 or gene_interactions() (for GeneInteractions()) - with the gene list from III with any other applicable parameters.
 
 Repeat steps II and III above for each disease you wish to analyze.
+
+### Ontobio Cache Configuration
+
+Note that the workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and 
+phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library 
+in Ontobio causes some runtime problems.
+
+We therefore disable it in our code using the following ontobio configuration flag override (the flag defaults to 
+'False' as it is defined in the library's _ontobio/config.yaml_ file):
+
+    from ontobio.config import session
+    session.config.ignore_cache = True
