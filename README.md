@@ -27,6 +27,8 @@ To install the package in "developer" mode (such that code changes are automatic
 pip install -r requirements.txt -e .
 ```
 
+Now you should have all package requirements for the project, and can import one part of the project into another.
+
 ### Ontobio Patch (temporary)
 
 The workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library in Ontobio causes some runtime problems.

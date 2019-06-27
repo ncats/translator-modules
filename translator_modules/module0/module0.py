@@ -59,10 +59,6 @@ class LookUp(object):
         input_gene_set = self.blw.disease2genes(input_disease_id)
         input_gene_set = [self.blw.parse_association(input_disease_id, input_disease_label, x) for x in
                           input_gene_set['associations']]
-        # for input_gene in input_gene_set:
-        #     igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
-        #                         fields='entrez,HGNC,symbol')
-        #     input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
         input_genes_df = pd.DataFrame(data=input_gene_set)
         # # group duplicate ids and gather sources
         input_genes_df['sources'] = input_genes_df['sources'].str.join(', ')

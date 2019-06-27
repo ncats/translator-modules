@@ -1,17 +1,20 @@
 #!/usr/bin/python3
 import fire
 
+
 # Workflow 2, Module 1A: Functional similarity
-from pprint import pprint
-from biothings_client import get_client
+
 from translator_modules.core.generic_similarity import GenericSimilarity
+from pprint import pprint
+from mygene import MyGeneInfo
+import pandas as pd
 
 
 class FunctionalSimilarity(GenericSimilarity):
 
     def __init__(self, taxon):
         GenericSimilarity.__init__(self)
-        self.mg = get_client('gene')
+        self.mg = MyGeneInfo()
         self.input_object = ''
         self.taxon = taxon
         self.ont = 'go'
@@ -43,6 +46,7 @@ class FunctionalSimilarity(GenericSimilarity):
     def load_gene_set(self, input_gene_set):
         annotated_gene_set = []
         for gene in input_gene_set.get_input_curie_set():
+            mg = self.mg
             gene_curie = ''
             sim_input_curie = ''
             symbol = ''
@@ -53,7 +57,7 @@ class FunctionalSimilarity(GenericSimilarity):
             if 'HGNC' in gene['hit_id']:
                 gene_curie = gene['hit_id'].replace('HGNC', 'hgnc')
                 scope = 'HGNC'
-                mg_hit = self.mg.query(gene_curie,
+                mg_hit = mg.query(gene_curie,
                                   scopes=scope,
                                   species=self.taxon,
                                   fields='uniprot, symbol, HGNC',
@@ -62,7 +66,7 @@ class FunctionalSimilarity(GenericSimilarity):
                     gene_curie = gene['hit_id']
                     sim_input_curie = 'UniProtKB:{}'.format(mg_hit['hits'][0]['uniprot']['Swiss-Prot'])
                 except Exception as e:
-                    print(__name__+".load_gene_set() Exception: ", gene, e)
+                    print(gene, e)
 
             annotated_gene_set.append({
                 'input_id': gene_curie,
@@ -92,5 +96,69 @@ class FunctionalSimilarity(GenericSimilarity):
             return 'HGNC:{}'.format(mg_hit['hits'][0]['HGNC'])
 
 
+import json
+
+class FunctionallySimilarGenes(object):
+
+    def __init__(self, input_gene_set, threshold, taxon='human', format="json"):
+        self.threshold = threshold
+        self.taxon = taxon
+        self.input_gene_set = self._convert(input_gene_set, format)
+
+        self.fs = FunctionalSimilarity(taxon)
+        self.functionally_similar_genes = self._similarity(input_gene_set, threshold)
+
+    def _convert(self, input_gene_set, format):
+        if type(input_gene_set) is str:
+            if format is "json":
+                return json.loads(input_gene_set)
+            # TOOD: Other cases?
+                # CSV?
+                # DICT?
+        elif type(input_gene_set) is dict:
+            return input_gene_set
+        else:
+            return None
+
+    def _similarity(self, input_gene_set, threshold):
+        if not threshold:
+            assert(self.threshold is not None and self.threshold >= 0.0)
+            threshold = self.threshold
+        else:
+            threshold = 0.0
+
+        # Subtle model-specific difference in gene set loading
+        annotated_input_gene_set = self.fs.load_gene_set(input_gene_set)
+
+        # Perform the comparison on specified gene set
+        results = self.fs.compute_similarity(annotated_input_gene_set, threshold)
+
+        # Process the results
+        results_table = pd.DataFrame(results)
+        results_table = \
+            results_table[~results_table['hit_id'].
+                isin(input_gene_set.get_data_frame()['hit_id'].
+                     tolist())].sort_values('score', ascending=False)
+
+        return results_table
+
+    def echo_input_object(self, output=None):
+        return self.fs.echo_input_object(output)
+
+    def get_input_object_id(self):
+        return self.fs.get_input_object_id()
+
+    def get_taxon(self):
+        return self.taxon
+
+    def get_data_frame(self):
+        return self.functionally_similar_genes
+
+    def get_input_curie_set(self):
+        return self.input_gene_set
+
+
 if __name__ == '__main__':
-    fire.Fire(FunctionalSimilarity)
+    from os import sys, path
+    sys.path.extend(path.dirname(path.dirname(path.abspath(__file__))))
+    fire.Fire(FunctionallySimilarGenes)
