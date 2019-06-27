@@ -66,14 +66,22 @@ When the '--verbose' flag is used, the script also echos tabular results to the 
 
 ## Calling the Code Directly in your own Python Clients
 
-Examination of the standalone script reveals how to use the code directly in other software. Assuming that the pip dependencies
-have been installed, you'll reset the *ignore_cache* flag to **True** at the top of your main Python application file _before_ importing 
-any of the main modules, as we mentioned above:
+Assuming that the pip dependencies, examination of the standalone script reveals how to use the code directly 
+in other software. 
 
-    from ontobio.config import session
-    session.config.ignore_cache = True
+First, note that the workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and 
+phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library 
+in Ontobio causes some runtime problems.
+
+We therefore disable it in our code using the following ontobio configuration flag override (the flag defaults to 
+'False' as it is defined in the library's _ontobio/config.yaml_ file):
+
+``` 
+from ontobio.config import session
+session.config.ignore_cache = True
+```
     
-Within your application, there is a three step process for similarity searching:
+Within the application, there is a three step process for similarity searching:
 
 I. An _in memory_ copy of the relevant ontology and annotation catalogs plus other setup processes are 
 triggered by instantiating the following three class objects (again, at the top of your file, run once outside of any data loops):
@@ -98,12 +106,4 @@ Repeat steps II and III above for each disease you wish to analyze.
 
 ### Ontobio Cache Configuration
 
-Note that the workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and 
-phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library 
-in Ontobio causes some runtime problems.
 
-We therefore disable it in our code using the following ontobio configuration flag override (the flag defaults to 
-'False' as it is defined in the library's _ontobio/config.yaml_ file):
-
-    from ontobio.config import session
-    session.config.ignore_cache = True
