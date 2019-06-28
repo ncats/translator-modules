@@ -356,9 +356,8 @@ and associated MONDO identifiers - in the second column"""
 
     print("\nWF2 Processing complete!")
 
-    # success!
+    # Success!
     exit(0)
-
 
 if __name__ == '__main__':
     main()
