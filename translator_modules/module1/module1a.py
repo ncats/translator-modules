@@ -104,9 +104,6 @@ class FunctionallySimilarGenes(Payload):
 
     def __init__(self, threshold, input_payload_file=None):
 
-        # assert(input_payload_file is not None or input_genes is not None)
-        # assert(type(input_payload_file) is not bool and type(*input_genes) is not bool)
-
         input_gene_set_df = None
         if input_payload_file:
             with open(input_payload_file) as stream:
@@ -121,6 +118,9 @@ class FunctionallySimilarGenes(Payload):
             },
         }
 
+        # TODO: similarity should be refactored out of the payload and into the FunctionalSimilarity class
+        # it should be made a behavior for functional similarity that can give us a result we can use
+        # if we're just doing file conversions it's our responsibility in this class to do that properly
         self.fs = FunctionalSimilarity('human')
         self.functionally_similar_gene_results = self._similarity(input_gene_set_df, threshold)
 

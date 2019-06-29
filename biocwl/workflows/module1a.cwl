@@ -8,7 +8,7 @@ inputs:
     type: File
     inputBinding:
       position: 0
-      prefix: --input-payload
+      prefix: --input_payload_file
   threshold:
     type: float
     inputBinding:
