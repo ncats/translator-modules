@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 import fire
 
-
 # Workflow 2, Module 1A: Functional similarity
 
 from translator_modules.core.generic_similarity import GenericSimilarity
 from pprint import pprint
-from mygene import MyGeneInfo
+from biothings_client import get_client
 import pandas as pd
 
 
@@ -14,7 +13,7 @@ class FunctionalSimilarity(GenericSimilarity):
 
     def __init__(self, taxon):
         GenericSimilarity.__init__(self)
-        self.mg = MyGeneInfo()
+        self.mg = get_client('gene')
         self.input_object = ''
         self.taxon = taxon
         self.ont = 'go'

@@ -1,7 +1,4 @@
 from BioLink.biolink_client import BioLinkWrapper
-from pprint import pprint
-import pandas as pd
-
 
 class OrthologTraversal(object):
 
