@@ -134,7 +134,6 @@ class FunctionallySimilarGenes(Payload):
 
         # Process the results
         results_table = pd.DataFrame(results)
-        print(results_table)
         results_table = \
             results_table[~results_table['hit_id'].
                 isin(input_gene_set['hit_id'].
