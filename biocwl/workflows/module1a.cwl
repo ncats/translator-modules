@@ -9,6 +9,11 @@ inputs:
     inputBinding:
       position: 0
       prefix: --input_payload_file
+  threshold:
+    type: float
+    inputBinding:
+      position: 1
+      prefix: --threshold
 outputs:
   functionally_similar_genes:
     type: stdout

@@ -5,6 +5,9 @@ class: Workflow
 inputs:
     disease_name: string
     disease_id: string
+    threshold:
+      type: float
+      default: 0.75
 outputs:
   functionally_similar_genes:
     type: File
@@ -21,4 +24,5 @@ steps:
     run: module1a.cwl
     in:
       gene_set: diseases/disease_list
+      threshold: threshold
     out: [ functionally_similar_genes ]

@@ -2,14 +2,13 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module1a.py, get-data-frame, to-json ]
+baseCommand: [ module1b.py, get-data-frame, to-json, --orient, records ]
 inputs:
   gene_set:
     type: File
-    format: iana:application/json
     inputBinding:
       position: 0
-      prefix: --input-gene-set
+      prefix: --input-payload-file
   threshold:
     type: float
     inputBinding:
@@ -18,7 +17,4 @@ inputs:
 outputs:
   functionally_similar_genes:
     type: stdout
-stdout: module1a.json
-
-$namespaces:
-  iana: https://www.iana.org/assignments/media-types/
+stdout: module1b.records.json
