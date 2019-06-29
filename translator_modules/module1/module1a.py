@@ -102,7 +102,7 @@ from translator_modules.core import Payload
 
 class FunctionallySimilarGenes(Payload):
 
-    def __init__(self, threshold, input_payload_file=None):
+    def __init__(self, threshold=0.75, input_payload_file=None):
 
         input_gene_set_df = None
         if input_payload_file:

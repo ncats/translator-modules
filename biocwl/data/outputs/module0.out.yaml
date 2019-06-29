@@ -1,4 +1,4 @@
 gene_set:
   class: File
-  path: ./module0.records.json
+  location: module0.records.json
 threshold: 0.75
