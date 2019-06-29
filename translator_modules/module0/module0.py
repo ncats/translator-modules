@@ -91,9 +91,8 @@ class DiseaseAssociatedGeneSet(object):
         self.lu.load_input_object(input_object=input_object)
 
         # get genes associated with disease from Biolink
-        self.disease_associated_genes = self.lu.disease_geneset_lookup()
-
-        self.input_curie_set = self.disease_associated_genes[['hit_id', 'hit_symbol']].to_dict(orient='records')
+        self.disease_gene_lookup = self.lu.disease_geneset_lookup()
+        self.disease_associated_genes = self.disease_gene_lookup[['hit_id', 'hit_symbol']].to_dict(orient='records')
 
     def echo_input_object(self, output=None):
         return self.lu.echo_input_object(output)
@@ -105,10 +104,16 @@ class DiseaseAssociatedGeneSet(object):
         return self.input_disease_name
 
     def get_data_frame(self):
-        return self.disease_associated_genes
+        return self.disease_gene_lookup
 
-    def get_input_curie_set(self):
-        return self.input_curie_set
+    def get_hits(self):
+        hits = self.get_data_frame()[['hit_id', 'hit_symbol']]
+        return hits
+
+    def get_hits_dict(self):
+        hits_dict = self.get_hits().to_dict(orient='records')
+        return hits_dict
+
 
 
 if __name__ == '__main__':

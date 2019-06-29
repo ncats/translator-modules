@@ -17,7 +17,6 @@ html3
 # NCATS Dependencies
 #
 mvp-module-library
-BiolinkMG
 ontobio
 biothings_client
 biolinkml

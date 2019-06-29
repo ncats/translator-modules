@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module0.py, get-data-frame, to-json ]
+baseCommand: [ module0.py, get-data-frame, to-json, --orient, records ]
 inputs:
   disease_name:
     type: string
@@ -17,4 +17,4 @@ inputs:
 outputs:
   disease_list:
     type: stdout
-stdout: module0.json
+stdout: module0.records.json

@@ -43,9 +43,10 @@ class FunctionalSimilarity(GenericSimilarity):
         print("""Mod1A Functional Similarity metadata:""")
         pprint(self.meta)
 
-    def load_gene_set(self, input_gene_set):
+    def load_gene_set(self, input_genes):
         annotated_gene_set = []
-        for gene in input_gene_set.get_input_curie_set():
+        gene_records = input_genes.to_dict(orient='records')
+        for gene in gene_records:
             mg = self.mg
             gene_curie = ''
             sim_input_curie = ''
@@ -97,37 +98,36 @@ class FunctionalSimilarity(GenericSimilarity):
 
 
 import json
+from translator_modules.core import Payload
 
-class FunctionallySimilarGenes(object):
 
-    def __init__(self, input_gene_set, threshold, taxon='human', format="json"):
-        self.threshold = threshold
-        self.taxon = taxon
-        self.input_gene_set = self._convert(input_gene_set, format)
+class FunctionallySimilarGenes(Payload):
 
-        self.fs = FunctionalSimilarity(taxon)
-        self.functionally_similar_genes = self._similarity(input_gene_set, threshold)
+    def __init__(self, threshold, input_payload_file=None):
 
-    def _convert(self, input_gene_set, format):
-        if type(input_gene_set) is str:
-            if format is "json":
-                return json.loads(input_gene_set)
-            # TOOD: Other cases?
-                # CSV?
-                # DICT?
-        elif type(input_gene_set) is dict:
-            return input_gene_set
-        else:
-            return None
+        # assert(input_payload_file is not None or input_genes is not None)
+        # assert(type(input_payload_file) is not bool and type(*input_genes) is not bool)
+
+        input_gene_set_df = None
+        if input_payload_file:
+            with open(input_payload_file) as stream:
+                # TODO assuming it's JSON and it's a record list
+                input_gene_set_df = pd.read_json(stream, orient='records')
+
+        self.input_object = {
+            'input': input_gene_set_df,
+            'parameters': {
+                'taxon': 'human',
+                'threshold': threshold,
+            },
+        }
+
+        self.fs = FunctionalSimilarity('human')
+        self.functionally_similar_gene_results = self._similarity(input_gene_set_df, threshold)
 
     def _similarity(self, input_gene_set, threshold):
-        if not threshold:
-            assert(self.threshold is not None and self.threshold >= 0.0)
-            threshold = self.threshold
-        else:
-            threshold = 0.0
 
-        # Subtle model-specific difference in gene set loading
+        # TODO: Break this out into an EXPANDER workflow step?
         annotated_input_gene_set = self.fs.load_gene_set(input_gene_set)
 
         # Perform the comparison on specified gene set
@@ -135,27 +135,30 @@ class FunctionallySimilarGenes(object):
 
         # Process the results
         results_table = pd.DataFrame(results)
+        print(results_table)
         results_table = \
             results_table[~results_table['hit_id'].
-                isin(input_gene_set.get_data_frame()['hit_id'].
+                isin(input_gene_set['hit_id'].
                      tolist())].sort_values('score', ascending=False)
 
         return results_table
 
     def echo_input_object(self, output=None):
         return self.fs.echo_input_object(output)
-
-    def get_input_object_id(self):
-        return self.fs.get_input_object_id()
-
-    def get_taxon(self):
-        return self.taxon
+    #
+    # def get_input_object_id(self):
+    #     return self.fs.get_input_object_id()
 
     def get_data_frame(self):
-        return self.functionally_similar_genes
+        return self.functionally_similar_gene_results
 
-    def get_input_curie_set(self):
-        return self.input_gene_set
+    def get_hits(self):
+        hits = self.get_data_frame()[['hit_id', 'hit_symbol']]
+        return hits
+
+    def get_hits_dict(self):
+        hits_dict = self.get_hits().to_dict(orient='records')
+        return hits_dict
 
 
 if __name__ == '__main__':
