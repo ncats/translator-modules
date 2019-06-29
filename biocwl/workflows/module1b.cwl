@@ -15,6 +15,6 @@ inputs:
       position: 1
       prefix: --threshold
 outputs:
-  functionally_similar_genes:
+  phenotypically_similar_genes:
     type: stdout
 stdout: module1b.records.json
