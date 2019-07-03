@@ -67,14 +67,14 @@ where the Ontobio version we are using is a patched version which has an  _ignor
 _ontobio/config.yaml_ file) to disable the cachier cache. As of June 4th, 2019, this code is only available on a Git 
 repository forked from the main Biolink Ontobio project. 
 
-This patch version may be installed after the above pip requirements is run, as follows:
+This patch version may be installed after the above pip requirements is run, as follows (we use the pip module method):
 
 ``` 
 # Uninstall the default version installed by the requirements file
-pip uninstall ontobio
+python -m pip uninstall ontobio
 
 # install a fresh version of the forked code
-pip install git+https://github.com/STARInformatics/ontobio@master#egg=ontobio
+python -m pip install git+https://github.com/STARInformatics/ontobio@master#egg=ontobio
 ```
 
 Once the main Biolink Ontobio project has validated the pull request for the insertion of the *ignore_cache* flag, 
