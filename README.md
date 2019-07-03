@@ -22,16 +22,11 @@ conda activate translator-modules
 ## Installation of Dependencies
 
 Making sure that your pip version is 3.7 compliant.  The **translator-modules** package is not yet available 
-through PyPI. To install, clone this repo and run the following command within the `translator_modules` directory:
-
-```
-pip install -r requirements.txt .
-```
-
-or
+through PyPI, thus, to install, clone this repo and run the following command within the `translator_modules` directory:
 
 ``` 
-# sometimes better, to ensure that the proper Python3.7 version of pip is used...
+# sometimes better to use the 'python -m pip' version of pip rather than just 'pip'
+# to ensure that the proper Python3.7 version of pip is used...
 python -m pip install -r requirements.txt .
 ```
 
@@ -39,19 +34,10 @@ To install the package in "developer" mode (such that code changes are automatic
 include the `-e` flag with `pip`:
 
 ```
-pip install -r requirements.txt -e .
+python -m pip install -r requirements.txt -e .
 ```
 
-Afterwards, we will need to setup the Python environment to use the local project directory as its path for modules. 
-Do this by running the following command in the root directory of the project with the virtual environment enabled:
-
-```
-python setup.py develop
-```
-
-### Ontobio Patch (temporary)
-
-### Ontobio Cache Configuration (workaround)
+### Ontobio Cache Configuration (temporary workaround)
 
 Note that the workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and 
 phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library 
@@ -70,11 +56,11 @@ repository forked from the main Biolink Ontobio project.
 This patch version may be installed after the above pip requirements is run, as follows:
 
 ``` 
-# Uninstall the default version installed by the requirements file
-pip uninstall ontobio
+# Uninstall the default version of Ontobio installed by the requirements file
+python -m pip uninstall ontobio
 
-# install a fresh version of the forked code
-pip install git+https://github.com/STARInformatics/ontobio@master#egg=ontobio
+# install a fresh version of the STAR forked code
+python -m pip install git+https://github.com/STARInformatics/ontobio@master#egg=ontobio
 ```
 
 Once the main Biolink Ontobio project has validated the pull request for the insertion of the *ignore_cache* flag, 
