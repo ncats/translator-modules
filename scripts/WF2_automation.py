@@ -22,8 +22,8 @@ from html3.html3 import XHTML
 # caching is unnecessary since we read the pertinent ontology
 # catalogs in just once into memory, for readonly reuse.
 ##############################################################
-from ontobio.config import session
-session.config.ignore_cache = True
+from ontobio.config import get_config
+get_config().ignore_cache = True
 
 # Now we can import the remainder of the modules (some which call Ontobio)
 from translator_modules.module0.module0 import DiseaseAssociatedGeneSet
