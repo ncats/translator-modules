@@ -18,7 +18,7 @@ html3
 #
 jsonschema>=3.0.1
 mvp-module-library
-ontobio>=1.10.4
+ontobio
 biothings_client
 biolinkml
 fire
