@@ -132,21 +132,35 @@ Our answer to this requirement is to ask modules to use a class called `Payload`
 This involves the following:
 
 * Extend the `Payload` class with a constructor that takes workflow parameters (e.g. `disease_id`, `gene_set`, `threshold_score`...) as its arguments;
-* Finding a way to expose these arguments to the command line (such as with [Python Fire]());
-* Transform the module's results into a [Pandas DataFrame]();
+* Finding a way to expose these arguments to the command line (such as with [Python Fire](https://github.com/google/python-fire));
+* Transform the module's results into a [Pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html);
 * Use `Payload`'s accessor methods to return output in TranslatorCWL tools.
 
-#### TODO: Finish Payload Refactoring
-#### TODO: Use a representative class like Module1a?
+Here is `Module1a.py` with an example of these modifications. This class, `FunctionallySimilarGenes`, is defined at the bottom of the file, underneath `FunctionalSimilarity`.
 
-Here is an example of a class with these modifications made: `Module1a.py`
 
 ```python
+from translator_modules.core import Payload
+import fire
 
+class FunctionallySimilarGenes(Payload):
 
+    def __init__(self, threshold=0.75, input_payload_file=None):
+        super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
+
+        input_gene_set_df = None
+        if input_payload_file:
+            with open(input_payload_file) as stream:
+                # assuming it's JSON and it's a record list
+                input_gene_set_df = pd.read_json(stream, orient='records')
+
+        self.results = self.mod.compute_similarity(input_gene_set_df, threshold)
+
+if __name__ == '__main__':
+    fire.Fire(FunctionallySimilarGenes)
 ```
 
-Likewise, if exposing your own module to the command line, you need to guarantee that it's on the path and executable ([see here](#placing-modules-on-the-path)).
+Let's say you want to do this for your own module. If exposing your own module to the command line, you need to guarantee that it's on the path and executable ([see here](#placing-modules-on-the-path)).
 
 After you've ensured that your module is executable, add the following to the bottom of its script:
 
@@ -160,7 +174,7 @@ class <ModuleOutputName>(Payload):
         super(<ModuleOutputName>, self).__init__(<ModuleClassName>())
         self.result = _<result_procedure>(workflow, args, go, here)
         
-    def _<result_procedure>(self, workflow, args, go, here) -> pd.DataFrame:
+    def _<result_procedure>(self, workflow, args, go, here):
         delegated_results = self.mod.<results_giving_function>()
         pandas_dataframe_results = pd.DataFrame(delegated_results)
         return pandas_dataframe_results
@@ -449,3 +463,10 @@ from bifurcating further.
 * Enforce types with formats in CWL spec
 * Move away from Python Fire to leverage other CWL tools that can autogenerate workflows
 * Is the approach of using intermediary files the correct one?
+
+## Wishlist
+* What further relations might make sense between `.cwl` and `.py`?
+  * Is there a translator workflow spec lurking between both of them? (i.e. the role of the input object as payload, or spec)
+  * Should one enforce the types of the other?
+  * Could a CWL workflow be solved from a Biolink Model specification that chains together against e.g. the SmartAPI registry?
+  * Would this buy us anything?
