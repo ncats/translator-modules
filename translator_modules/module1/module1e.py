@@ -5,11 +5,12 @@ import fire
 from BioLink.biolink_client import BioLinkWrapper
 from pprint import pprint
 
+from ..core import Config
 
 class GeneInteractions(object):
 
     def __init__(self):
-        self.blw = BioLinkWrapper()
+        self.blw = BioLinkWrapper(Config().getBiolinkApiEndpoint())
         self.meta = {
             'input_type': {
                 'complexity': 'set',

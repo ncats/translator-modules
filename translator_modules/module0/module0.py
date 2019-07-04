@@ -9,11 +9,12 @@ from pprint import pprint
 from sys import stdout
 from json import dump
 
+from ..core import Config
 
 class LookUp(object):
 
     def __init__(self):
-        self.blw = BioLinkWrapper()
+        self.blw = BioLinkWrapper(Config().getBiolinkApiEndpoint())
         self.mg = get_client('gene')
         self.input_object = ''
         self.meta = {
