@@ -4,10 +4,10 @@ from abc import ABC
 class Config():
     def __init__(self):
         # Production endpoint
-        #self.biolink_api_endpoint = "http://api.monarchinitiative.org/api/"
+        self.biolink_api_endpoint = "http://api.monarchinitiative.org/api/"
 
         # Development endpoint - sometimes temporarily used
-        self.biolink_api_endpoint = "http://api-dev.monarchinitiative.org/api/"
+        #self.biolink_api_endpoint = "http://api-dev.monarchinitiative.org/api/"
 
     def getBiolinkApiEndpoint(self):
         return self.biolink_api_endpoint
