@@ -24,11 +24,7 @@ If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 * You have replicated the [Fanconi Anaemia Tidbit]().
 
 #### TODO Docker instructions
-Otherwise, if you've set up [Docker](), then we can do
-
-```bash
-
-```
+Otherwise, if you've set up [Docker](), then we can do...
 
 ## Placing modules on the path
 
@@ -52,7 +48,7 @@ You can do this using a tool like `dos2unix`, or by running the Vim command `set
 
 Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run them, like so.
 
-```cwl
+```yaml
 #!/usr/bin/env cwl-runner
 
 cwlVersion: v1.0
@@ -65,7 +61,7 @@ baseCommand: [ module0.py, get-data-frame, to-json ]
 CWL tools are not scripts, but blueprints for running scripts. They let users clarify beforehand the kinds of data they 
 should expected for a script: names for the data, their types and formats, and what arguments they satisfy. Let's take a simple example:
 
-```
+```yaml
 cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ module0.py, get-data-frame, to-json, --orient, records ]
@@ -93,7 +89,7 @@ The tokens `get-data-frame to-json --orient records` make `module0.py` return a 
 If CWL is a blueprint, what makes it real? Inputs to CWL tools are YAML files that share the same keywords as the tool's
 inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `diease_id`, like in `biocwl/data/inputs/fanconi.yaml`:
 
-```bash
+```yaml
 disease_name: "FA"
 disease_id: "MONDO:0019391"
 ```
@@ -132,21 +128,35 @@ Our answer to this requirement is to ask modules to use a class called `Payload`
 This involves the following:
 
 * Extend the `Payload` class with a constructor that takes workflow parameters (e.g. `disease_id`, `gene_set`, `threshold_score`...) as its arguments;
-* Finding a way to expose these arguments to the command line (such as with [Python Fire]());
-* Transform the module's results into a [Pandas DataFrame]();
+* Finding a way to expose these arguments to the command line (such as with [Python Fire](https://github.com/google/python-fire));
+* Transform the module's results into a [Pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html);
 * Use `Payload`'s accessor methods to return output in TranslatorCWL tools.
 
-#### TODO: Finish Payload Refactoring
-#### TODO: Use a representative class like Module1a?
+Here is `Module1a.py` with an example of these modifications. This class, `FunctionallySimilarGenes`, is defined at the bottom of the file, underneath `FunctionalSimilarity`.
 
-Here is an example of a class with these modifications made: `Module1a.py`
 
 ```python
+from translator_modules.core import Payload
+import fire
 
+class FunctionallySimilarGenes(Payload):
 
+    def __init__(self, threshold=0.75, input_payload_file=None):
+        super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
+
+        input_gene_set_df = None
+        if input_payload_file:
+            with open(input_payload_file) as stream:
+                # assuming it's JSON and it's a record list
+                input_gene_set_df = pd.read_json(stream, orient='records')
+
+        self.results = self.mod.compute_similarity(input_gene_set_df, threshold)
+
+if __name__ == '__main__':
+    fire.Fire(FunctionallySimilarGenes)
 ```
 
-Likewise, if exposing your own module to the command line, you need to guarantee that it's on the path and executable ([see here](#placing-modules-on-the-path)).
+Let's say you want to do this for your own module. If exposing your own module to the command line, you need to guarantee that it's on the path and executable ([see here](#placing-modules-on-the-path)).
 
 After you've ensured that your module is executable, add the following to the bottom of its script:
 
@@ -160,7 +170,7 @@ class <ModuleOutputName>(Payload):
         super(<ModuleOutputName>, self).__init__(<ModuleClassName>())
         self.result = _<result_procedure>(workflow, args, go, here)
         
-    def _<result_procedure>(self, workflow, args, go, here) -> pd.DataFrame:
+    def _<result_procedure>(self, workflow, args, go, here):
         delegated_results = self.mod.<results_giving_function>()
         pandas_dataframe_results = pd.DataFrame(delegated_results)
         return pandas_dataframe_results
@@ -205,9 +215,9 @@ An argument can be made for moving to `argsparse` instead, or even eliminating t
 
 ### Creating the CWL tool file
 
-Going through the [Common Workflow Language tutorial](), we often end up with files that look like this:
+Going through the [Common Workflow Language User Guide](https://www.commonwl.org/user_guide/), we often end up with files that look like this:
 
-```cwl
+```yaml
 cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ myModule.py, get-data-frame, to-json, --orient, records ]
@@ -244,7 +254,7 @@ the names of your `Payload` object's arguments in its constructor. Likewise, the
 
 Just run it:
 
-```cwl
+```bash
 cwltool <your cwl file> <your data file>
 ```
 
@@ -252,7 +262,7 @@ cwltool <your cwl file> <your data file>
 
 `m0_m1.cwl` in `biocwl/workflows` is a simple canonical example of combining multiple CWL tools (taking a subset of `wf2.cwl`):
 
-```cwl
+```yaml
 cwlVersion: v1.0
 class: Workflow
 inputs:
@@ -295,14 +305,14 @@ Sometimes, your inputs cross-cut among many tools: it might be useful to set a `
 with `threshold_functional`, so we don't have to put so many arguments into our input file, or re-use the input file of 
 an existing script. So this:
 
-```cwl
+```yaml
 disease_name: "FA"
 disease_id: "MONDO:0019391"
 ```
 
 Or this:
 
-```cwl
+```yaml
 disease_name: "FA"
 disease_id: "MONDO:0019391"
 threshold_functional: 0.35
@@ -449,3 +459,10 @@ from bifurcating further.
 * Enforce types with formats in CWL spec
 * Move away from Python Fire to leverage other CWL tools that can autogenerate workflows
 * Is the approach of using intermediary files the correct one?
+
+## Wishlist
+* What further relations might make sense between `.cwl` and `.py`?
+  * Is there a translator workflow spec lurking between both of them? (i.e. the role of the input object as payload, or spec)
+  * Should one enforce the types of the other?
+  * Could a CWL workflow be solved from a Biolink Model specification that chains together against e.g. the SmartAPI registry?
+  * Would this buy us anything?

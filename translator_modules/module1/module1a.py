@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import fire
 
 # Workflow 2, Module 1A: Functional similarity
 
@@ -78,15 +77,24 @@ class FunctionalSimilarity(GenericSimilarity):
         return annotated_gene_set
 
     def compute_similarity(self, annotated_gene_set, threshold):
+        annotated_input_gene_set = self.mod.load_gene_set(annotated_gene_set)
         lower_bound = float(threshold)
-        results = self.compute_jaccard(annotated_gene_set, lower_bound)
+        results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
         for result in results:
             if self.taxon == 'human':
                 result['hit_id'] = self.symbol2hgnc(result['hit_symbol'])
-            for gene in annotated_gene_set:
+            for gene in annotated_input_gene_set:
                 if gene['sim_input_curie'] != result['input_id']:
                     result['input_id'] = self.symbol2hgnc(result['input_symbol'])
-        return results
+
+        # Process the results
+        results_table = pd.DataFrame(results)
+        results_table = \
+            results_table[~results_table['hit_id'].
+                isin(annotated_gene_set['hit_id'].
+                     tolist())].sort_values('score', ascending=False)
+
+        return results_table
 
     def symbol2hgnc(self, symbol):
         mg_hit = self.mg.query('symbol:{}'.format(symbol),
@@ -98,51 +106,20 @@ class FunctionalSimilarity(GenericSimilarity):
 
 
 from translator_modules.core import Payload
-
+import fire
 
 class FunctionallySimilarGenes(Payload):
 
     def __init__(self, threshold=0.75, input_payload_file=None):
-        super().__init__(FunctionalSimilarity('human'))
+        super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
 
         input_gene_set_df = None
         if input_payload_file:
             with open(input_payload_file) as stream:
-                # TODO assuming it's JSON and it's a record list
+                # assuming it's JSON and it's a record list
                 input_gene_set_df = pd.read_json(stream, orient='records')
 
-        self.input_object = {
-            'input': input_gene_set_df,
-            'parameters': {
-                'taxon': 'human',
-                'threshold': threshold,
-            },
-        }
-
-        # TODO: similarity should be refactored out of the payload and into the FunctionalSimilarity class
-        # it should be made a behavior for functional similarity that can give us a result we can use
-        # if we're just doing file conversions it's our responsibility in this class to do that properly
-        self.results = self._similarity(input_gene_set_df, threshold)
-
-    def _similarity(self, input_gene_set, threshold):
-
-        # TODO: Break this out into an EXPANDER workflow step?
-        annotated_input_gene_set = self.mod.load_gene_set(input_gene_set)
-
-        # Perform the comparison on specified gene set
-        results = self.mod.compute_similarity(annotated_input_gene_set, threshold)
-
-        # Process the results
-        results_table = pd.DataFrame(results)
-        results_table = \
-            results_table[~results_table['hit_id'].
-                isin(input_gene_set['hit_id'].
-                     tolist())].sort_values('score', ascending=False)
-
-        return results_table
-
+        self.results = self.mod.compute_similarity(input_gene_set_df, threshold)
 
 if __name__ == '__main__':
-    from os import sys, path
-    sys.path.extend(path.dirname(path.dirname(path.abspath(__file__))))
     fire.Fire(FunctionallySimilarGenes)
