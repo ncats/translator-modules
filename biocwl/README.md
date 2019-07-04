@@ -132,8 +132,9 @@ This involves the following:
 * Transform the module's results into a [Pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html);
 * Use `Payload`'s accessor methods to return output in TranslatorCWL tools.
 
-Here is `Module1a.py` with an example of these modifications. This class, `FunctionallySimilarGenes`, is defined at the bottom of the file, underneath `FunctionalSimilarity`.
+The most important accessor is just `get_data_frame`, returning the `Payload`'s results. Otherwise, what matters is how we shape the `Payload`'s constructor.
 
+Here is an example of these modifications in `translator_modules/module1/module1a.py`. This class, `FunctionallySimilarGenes`, is defined at the bottom of the file, underneath `FunctionalSimilarity`.
 
 ```python
 from translator_modules.core import Payload
@@ -141,7 +142,7 @@ import fire
 
 class FunctionallySimilarGenes(Payload):
 
-    def __init__(self, threshold=0.75, input_payload_file=None):
+    def __init__(self, threshold, input_payload_file):
         super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
 
         input_gene_set_df = None
@@ -155,6 +156,15 @@ class FunctionallySimilarGenes(Payload):
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)
 ```
+
+The constructor takes two arguments, `threshold` and `input_payload_file`, which will correspond to flags and prefixes in
+the CWL tool. These are the only two parameters required to run `compute_similarity`, which is Module1A's primary function.
+
+Both `self.results` and `self.mod` are fields of `Payload`: the value of `self.mod` is equal to the initialized module
+`FunctoinalSimilarity('human')` that was passed in to the super-constructor. By returning `self.mod.compute_similarity()`
+into `self.results`, the accessor methods do not have to guess where their results are going to be.
+
+#### DIY
 
 Let's say you want to do this for your own module. If exposing your own module to the command line, you need to guarantee that it's on the path and executable ([see here](#placing-modules-on-the-path)).
 
@@ -179,10 +189,7 @@ if __name__ == '__main__':
     fire.Fire(<ModuleOutputName>)
 ```
 
-The code above will obviously not interpret correctly. Instead, it illustrates the general strategy for exposing modules. The
-module itself is passed as a fully instantiated Python object to `Payload`'s constructor via `super().__init__(module)`, 
-which lets you use its methods as a delegated way of getting the module's results (in a function like `compute_similarity` or `results_giving_function` here). The point of doing it this way is that you are meant to convert whatever 
-the module outputs into a DataFrame, and put it in a place usable by `Payload`'s accessors.
+The code above will obviously not interpret correctly: it is meant to illustrate the general strategy for exposing modules.
 
 The names within the triangular brackets `< >` don't matter except by the content they describe. Just remember that ModuleClassName
 means the class of the module this code is pasted in, and ModuleOutputName means actual biological content being returned by the module.
