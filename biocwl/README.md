@@ -24,11 +24,7 @@ If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 * You have replicated the [Fanconi Anaemia Tidbit]().
 
 #### TODO Docker instructions
-Otherwise, if you've set up [Docker](), then we can do
-
-```bash
-
-```
+Otherwise, if you've set up [Docker](), then we can do...
 
 ## Placing modules on the path
 
@@ -52,7 +48,7 @@ You can do this using a tool like `dos2unix`, or by running the Vim command `set
 
 Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run them, like so.
 
-```cwl
+```yaml
 #!/usr/bin/env cwl-runner
 
 cwlVersion: v1.0
@@ -65,7 +61,7 @@ baseCommand: [ module0.py, get-data-frame, to-json ]
 CWL tools are not scripts, but blueprints for running scripts. They let users clarify beforehand the kinds of data they 
 should expected for a script: names for the data, their types and formats, and what arguments they satisfy. Let's take a simple example:
 
-```
+```yaml
 cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ module0.py, get-data-frame, to-json, --orient, records ]
@@ -93,7 +89,7 @@ The tokens `get-data-frame to-json --orient records` make `module0.py` return a 
 If CWL is a blueprint, what makes it real? Inputs to CWL tools are YAML files that share the same keywords as the tool's
 inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `diease_id`, like in `biocwl/data/inputs/fanconi.yaml`:
 
-```bash
+```yaml
 disease_name: "FA"
 disease_id: "MONDO:0019391"
 ```
@@ -219,9 +215,9 @@ An argument can be made for moving to `argsparse` instead, or even eliminating t
 
 ### Creating the CWL tool file
 
-Going through the [Common Workflow Language tutorial](), we often end up with files that look like this:
+Going through the [Common Workflow Language User Guide](https://www.commonwl.org/user_guide/), we often end up with files that look like this:
 
-```cwl
+```yaml
 cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ myModule.py, get-data-frame, to-json, --orient, records ]
@@ -258,7 +254,7 @@ the names of your `Payload` object's arguments in its constructor. Likewise, the
 
 Just run it:
 
-```cwl
+```bash
 cwltool <your cwl file> <your data file>
 ```
 
@@ -266,7 +262,7 @@ cwltool <your cwl file> <your data file>
 
 `m0_m1.cwl` in `biocwl/workflows` is a simple canonical example of combining multiple CWL tools (taking a subset of `wf2.cwl`):
 
-```cwl
+```yaml
 cwlVersion: v1.0
 class: Workflow
 inputs:
@@ -309,14 +305,14 @@ Sometimes, your inputs cross-cut among many tools: it might be useful to set a `
 with `threshold_functional`, so we don't have to put so many arguments into our input file, or re-use the input file of 
 an existing script. So this:
 
-```cwl
+```yaml
 disease_name: "FA"
 disease_id: "MONDO:0019391"
 ```
 
 Or this:
 
-```cwl
+```yaml
 disease_name: "FA"
 disease_id: "MONDO:0019391"
 threshold_functional: 0.35
