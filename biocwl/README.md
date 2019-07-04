@@ -7,9 +7,9 @@ For the justification of this project, find out **[how TranslatorCWL works](#how
 An introduction to Common Workflow Language can be found on the **[CWL website](commonwl.org).**
 
 
-## Using TranslatorCWL
+# Using TranslatorCWL
 
-### Quickstart
+## Quickstart
 
 Follow the instructions for [putting Translator Modules on the system path](#placing-modules-on-the-path). Then in 
 the project directory, run
@@ -23,14 +23,14 @@ If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 * You have just used multiple modules chained together at once.
 * You have replicated the [Fanconi Anaemia Tidbit]().
 
-##### TODO Docker instructions
+#### TODO Docker instructions
 Otherwise, if you've set up [Docker](), then we can do
 
 ```bash
 
 ```
 
-### Placing modules on the path
+## Placing modules on the path
 
 In order to use the CWL tools in `biocwl/workflows/`, one must put the modules from `translator_modules/modules<*>/` on the system path.
 
@@ -60,7 +60,7 @@ class: CommandLineTool
 baseCommand: [ module0.py, get-data-frame, to-json ]
 ```
 
-### Running a CWL tool
+## Running a CWL tool
 
 CWL tools are not scripts, but blueprints for running scripts. They let users clarify beforehand the kinds of data they 
 should expected for a script: names for the data, their types and formats, and what arguments they satisfy. Let's take a simple example:
@@ -115,12 +115,12 @@ Is *equivalent to* **this CWL tool running Translator Module 0:**
 cwltool biocwl/workflows/module0.cwl biocwl/data/inputs/fanconi.yaml
 ```
 
-### Writing a CWL tool for an existing module
+## Writing a CWL tool for an existing module
 
 To make the magic happen, there are a few standard practices needed to obeyed by developers seeking to turn a Translator
 Module, into a TranslatorCWL tool. **Note:** This section is undergoing changes while an optimal approach is sought for developing workflow modules.
 
-#### Exposing your module to the command line
+### Exposing your module to the command line
 
 The NCATS ecosystem contains a diverse array of APIs and resources, which means that sometimes information which is
 conceptually similar, might only be accessible in irregular ways, or come in heterogenuous formats.
@@ -136,8 +136,8 @@ This involves the following:
 * Transform the module's results into a [Pandas DataFrame]();
 * Use `Payload`'s accessor methods to return output in TranslatorCWL tools.
 
-##### TODO: Finish Payload Refactoring
-##### TODO: Use a representative class like Module1a?
+#### TODO: Finish Payload Refactoring
+#### TODO: Use a representative class like Module1a?
 
 Here is an example of a class with these modifications made: `Module1a.py`
 
@@ -180,19 +180,19 @@ means the class of the module this code is pasted in, and ModuleOutputName means
 `_<result_procedure>` is private because it only should ever be run as many times as the entire object is called during the workflow,
 else the object is not behaving like a function or command. So there's no need to expose it to the user.
 
-##### Why output JSON?
+#### Why output JSON?
 
 JSON is a lingua franca format on the web, you can represent objects with it (including Biolink objects), it's the format 
 that many schema standards like OWL and JSON-LD expect to be handling other than YAML or XML. CSV is preferable for researchers though. Some thinking on how to go from JSON to tables in a nice way will need to be done.
 
-##### Why use Pandas DataFrames inside scripts?
+#### Why use Pandas DataFrames inside scripts?
 
 DataFrames are powerful objects that can be built from several formats, and output several formats. As such it is 
 adequate to represent information in DataFrames when you have many serialization formats within the ecosystem that need 
 to be handled regularly. They will also be flexible enough to handle our changing understanding of what formats are needed for 
 SMEs and application developers.
 
-##### Why Python Fire?
+#### Why Python Fire?
 
 Fire makes it simple to expose any Python class to the command-line, in only **three lines of code**. This means it is easy for
 maintainers to add command-line functionality to modules, and it's easy to delete Fire if we change our minds about the approach.
@@ -203,7 +203,7 @@ And you can't pipe commands with it, although you can compose the functions of a
 An argument can be made for moving to `argsparse` instead, or even eliminating the need to expose modules in this way, as
  the CWL ecosystem does support tool generation from Python files under various conditions.
 
-#### Creating the CWL tool file
+### Creating the CWL tool file
 
 Going through the [Common Workflow Language tutorial](), we often end up with files that look like this:
 
@@ -240,7 +240,7 @@ the names of your `Payload` object's arguments in its constructor. Likewise, the
 
 **Note:** this might change in future iterations.
 
-#### Testing the tool
+### Testing the tool
 
 Just run it:
 
@@ -248,7 +248,7 @@ Just run it:
 cwltool <your cwl file> <your data file>
 ```
 
-### Combining multiple CWL tools
+## Combining multiple CWL tools
 
 `m0_m1.cwl` in `biocwl/workflows` is a simple canonical example of combining multiple CWL tools (taking a subset of `wf2.cwl`):
 
@@ -316,9 +316,9 @@ for another. Thus `module1a.cwl` runs after `module0.cwl` because of `diseases/d
 Also note that there can be multiple outputs: you don't need to generally receive the results of one script, but can list
 out the results of each script if necessary.
 
-## How TranslatorCWL Works
+# How TranslatorCWL Works
 
-### What's the point?
+## What's the point?
 
 Each Translator Module acts as your data source for biomedical concepts from NCATS. Getting lists of genes is as simple 
 as downloading the module from PyPI, and importing it into a Python script or Jupyter notebook for immediate use.
@@ -329,14 +329,14 @@ for finding and explaining results - do not compose into larger systems, which m
 
 This is the problem that TranslatorCWL hopes to improve.
 
-#### Chaining
+### Chaining
 
 *Tested*
 
 Sometimes you don't need to use just one module: you need several. However, to string modules together requires a guarantee
 that each module's outputs can be transformed to the formats required for the next module's inputs.
 
-#### Recombination
+### Recombination
 
 *Tested*
 
@@ -346,7 +346,7 @@ all the modules, you would need to either comment them all out then comment them
 This is cumbersome. With the approach in TranslatorCWL, files are much smaller and chaining modules is simpler, so it is at least
 less cumbersome to construct workflows of different orders and sizes.
 
-#### Parralelism
+### Parralelism
 
 *Untested*
 
@@ -355,7 +355,7 @@ This same properties that let modules be combined in any order, also let you run
 Since certain modules tend to feature long-running queries, one ought to be able to let modules that can provide data independently, run separately, to save time.
 Where it would be a headache to do implement this in a Python script, you can tell the CWL tool to do it just by adding a couple of lines of text to its spec.
 
-#### Portability
+### Portability
 
 *Untested*
 
@@ -363,18 +363,18 @@ CWL's capacity to run in Docker environments eliminates the need to worry about 
 workflows, and should be able to streamline the ability to run Translator Modules across platforms, if you're a user instead 
 of a developer.
 
-#### Validation
+### Validation
 
 *Untested*
 
 The final benefit is that CWL can integrate with the BiolinkML standard remotely. By ensuring the Biolink Model is used throughout, you can have 
 confidence that the data you're getting will be usable by other tools in NCATS, and refer to concepts in your domain of expertise.
 
-### How do I use it? How do I write a new CWL tool?
+## How do I use it? How do I write a new CWL tool?
 
 See [Using TranslatorCWL](#using-translatorcwl).
 
-### Is this *the* Common Workflow Language?
+## Is this *the* Common Workflow Language?
 
 TranslatorCWL acts as the next logical step towards a "common language" for NCATS Translator. With a couple exceptions 
 (given below), it encodes the same properties as the [configuration shown in this presentation](https://docs.google.com/presentation/d/19ieHAN-6DLvfRUR0WqCokiJTTfuA6TPL9GHbf5UENUs/edit#slide=id.g4201216ac9_0_38). 
@@ -384,7 +384,7 @@ either as a script or as its own data-source.
 
 Nonetheless, it has certain drawbacks. 
 
-#### Could the interface be simpler?
+### Could the interface be simpler?
 
 CWL buys us [the advantages mentioned above](#whats-the-point). But it still requires [some boilerplate](#exposing-your-module-to-the-command-line) to set up, in the form of module wrappers, input files, and specs for the tools themselves. 
 This boilerplate still features concepts and terminology which are more relevant to a developer or bioinformatician, than a "subject matter expert" (SME).
@@ -408,7 +408,7 @@ Could we have something as simple as:
 On the other hand, the CWL ecosystem has tools like [Rabix](https://github.com/rabix/composer) that eliminate
 text via their GUI, which would be a win for SMEs as long as developers take care of the tooling.
 
-#### Are these tools expanders and sharpeners?
+### Are these tools expanders and sharpeners?
 
 It's currently implicit whether or not a module counts as a sharpener, expander, or set-theoretic operation. Therefore we 
 would still rely on developers to obey a convention somewhere to make sure that expanders are actually expanders, sharpeners
@@ -416,9 +416,9 @@ are sharpeners, and everyone knows this, including perhaps the workflow and its 
 
 Options to treat these operations as concepts that can be validated, need to be explored.
 
-#### Do workflows correspond to the Biolink Model?
+### Do workflows correspond to the Biolink Model?
 
-##### TODO check this against orange team biolink experts
+#### TODO check this against orange team biolink experts
 In theory: any mapping from one concept to another, if not mediated by any other mapping, ought to be a `slot` within the 
 Biolink model. Thus each module, if not each workflow, ought to correspond to a slot or a set of slots.
 
@@ -436,7 +436,7 @@ we shouldn't necessarily hinder in the case where the Biolink Model can't close 
 should attempt to bolster with the validator *whenever possible* to prevent inevitable mistakes and stop the Tower of Babel 
 from bifurcating further.
 
-### TODO
+## TODO
 * Refactor `Payload` in `Module1a`, `Module1b` properly
 * Rename `Payload` to something better
 * Find better nomenclature for modules than "module< number >"
