@@ -17,7 +17,7 @@ html3
 # NCATS Dependencies
 #
 jsonschema>=3.0.1
-mvp-module-library
+mvp-module-library>=0.0.3
 ontobio
 biolinkml
 biothings_client
