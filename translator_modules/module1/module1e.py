@@ -5,7 +5,8 @@ import fire
 from BioLink.biolink_client import BioLinkWrapper
 from pprint import pprint
 
-from ..core import Config
+from translator_modules.core import Config
+
 
 class GeneInteractions(object):
 
