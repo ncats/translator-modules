@@ -7,12 +7,10 @@ inputs:
   disease_name:
     type: string
     inputBinding:
-      position: 0
       prefix: --input-disease-name
   disease_id:
     type: string
     inputBinding:
-      position: 1
       prefix: --input-disease-mondo
 outputs:
   disease_list:
