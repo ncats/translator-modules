@@ -37,16 +37,17 @@ class LookUp(object):
         print("""Mod O DiseaseGeneLookup metadata:""")
         pprint(self.meta)
 
-    def load_input_object(self, input_object):
-        input_object = self.blw.get_obj(obj_id=input_object['input'])
-        self.input_object = {
-            'id': input_object['id'],
-            'label': input_object['label'],
-            'description': input_object['description'],
-        }
-
-    def get_input_object_id(self):
-        return self.input_object['id']
+    #
+    # def load_input_object(self, input_object):
+    #     input_object = self.blw.get_obj(obj_id=input_object['input'])
+    #     self.input_object = {
+    #         'id': input_object['id'],
+    #         'label': input_object['label'],
+    #         'description': input_object['description'],
+    #     }
+    #
+    # def get_input_object_id(self):
+    #     return self.input_object['id']
 
     def echo_input_object(self, output=None):
         if output:
@@ -54,9 +55,9 @@ class LookUp(object):
         else:
             dump(self.input_object, stdout, indent=4, separators=(',', ': '))
 
-    def disease_geneset_lookup(self):
-        input_disease_id = self.input_object['id']
-        input_disease_label = self.input_object['label']
+    def disease_geneset_lookup(self, name, id):
+        input_disease_label = name
+        input_disease_id = id
         input_gene_set = self.blw.disease2genes(input_disease_id)
         input_gene_set = [self.blw.parse_association(input_disease_id, input_disease_label, x) for x in
                           input_gene_set['associations']]
@@ -71,50 +72,22 @@ class LookUp(object):
             ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'relation'])['sources'].apply(', '.join).reset_index()
         return input_genes_df
 
+from translator_modules.core import Payload
 
-class DiseaseAssociatedGeneSet(object):
+class DiseaseAssociatedGeneSet(Payload):
 
     def __init__(self, input_disease_name, input_disease_mondo):
+        super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
+
         self.input_disease_name = input_disease_name
         self.input_disease_mondo = input_disease_mondo
 
-        # workflow input is a disease identifier
-        self.lu = LookUp()
-
-        input_object = {
-            'input': self.input_disease_mondo,
-            'parameters': {
-                'taxon': 'human',
-                'threshold': None,
-            },
-        }
-
-        self.lu.load_input_object(input_object=input_object)
-
         # get genes associated with disease from Biolink
-        self.disease_gene_lookup = self.lu.disease_geneset_lookup()
-        self.disease_associated_genes = self.disease_gene_lookup[['hit_id', 'hit_symbol']].to_dict(orient='records')
-
-    def echo_input_object(self, output=None):
-        return self.lu.echo_input_object(output)
-
-    def get_input_object_id(self):
-        return self.lu.get_input_object_id()
+        self.results = self.mod.disease_geneset_lookup(self.input_disease_name, self.input_disease_mondo)
+        self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
 
     def get_input_disease_name(self):
         return self.input_disease_name
-
-    def get_data_frame(self):
-        return self.disease_gene_lookup
-
-    def get_hits(self):
-        hits = self.get_data_frame()[['hit_id', 'hit_symbol']]
-        return hits
-
-    def get_hits_dict(self):
-        hits_dict = self.get_hits().to_dict(orient='records')
-        return hits_dict
-
 
 
 if __name__ == '__main__':

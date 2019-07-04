@@ -69,7 +69,7 @@ class Payload(ABC):
     author: kbruskiewicz
     """
 
-    def __init__(self):
+    def __init__(self, mod):
         """
         Conventions for Payloads:
         - They expect CSV/TSV files or JSON files in 'record' form (a list of dictionaries that name-index tuples of data)
@@ -81,9 +81,23 @@ class Payload(ABC):
             we shouldn't know what the method is going to require and do the conversion, **as that leaks out information
             about the method into a higher layer of the code.**
 
-        Accept
         """
-        pass
+        self.mod = mod
+        self.results = None
+
+    def echo_input_object(self, output=None):
+        return self.mod.echo_input_object(output)
+
+    def get_input_object_id(self):
+        return self.mod.get_input_object_id()
+
+    def get_data_frame(self):
+        return self.results
 
     def get_hits(self):
-        pass
+        hits = self.get_data_frame()[['hit_id', 'hit_symbol']]
+        return hits
+
+    def get_hits_dict(self):
+        hits_dict = self.get_hits().to_dict(orient='records')
+        return hits_dict

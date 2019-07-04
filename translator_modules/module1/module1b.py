@@ -98,7 +98,6 @@ from translator_modules.core import Payload
 class PhenotypicallySimilarGenes(Payload):
 
     def __init__(self, threshold, input_payload_file):
-
         input_gene_set_df = None
         if input_payload_file:
             with open(input_payload_file) as stream:
@@ -116,16 +115,16 @@ class PhenotypicallySimilarGenes(Payload):
         # TODO: similarity should be refactored out of the payload and into the FunctionalSimilarity class
         # it should be made a behavior for functional similarity that can give us a result we can use
         # if we're just doing file conversions it's our responsibility in this class to do that properly
-        self.ps = PhenotypeSimilarity('human')
-        self.functionally_similar_gene_results = self._similarity(input_gene_set_df, threshold)
+        self.mod = PhenotypeSimilarity('human')
+        self.results = self._similarity(input_gene_set_df, threshold)
 
     def _similarity(self, input_gene_set, threshold):
 
         # TODO: Break this out into an EXPANDER workflow step?
-        annotated_input_gene_set = self.ps.load_gene_set(input_gene_set)
+        annotated_input_gene_set = self.mod.load_gene_set(input_gene_set)
 
         # Perform the comparison on specified gene set
-        results = self.ps.compute_similarity(annotated_input_gene_set, threshold)
+        results = self.mod.compute_similarity(annotated_input_gene_set, threshold)
 
         # Process the results
         results_table = pd.DataFrame(results)
@@ -136,25 +135,6 @@ class PhenotypicallySimilarGenes(Payload):
 
         return results_table
 
-    def echo_input_object(self, output=None):
-        return self.ps.echo_input_object(output)
-    #
-    # def get_input_object_id(self):
-    #     return self.fs.get_input_object_id()
-
-    def get_data_frame(self):
-        return self.functionally_similar_gene_results
-
-    def get_hits(self):
-        hits = self.get_data_frame()[['hit_id', 'hit_symbol']]
-        return hits
-
-    def get_hits_dict(self):
-        hits_dict = self.get_hits().to_dict(orient='records')
-        return hits_dict
-
 
 if __name__ == '__main__':
-    from os import sys, path
-    sys.path.extend(path.dirname(path.dirname(path.abspath(__file__))))
     fire.Fire(PhenotypicallySimilarGenes)

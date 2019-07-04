@@ -3,40 +3,39 @@
 cwlVersion: v1.0
 class: Workflow
 inputs:
-  disease: # TODO -- biolink style file
-
+    disease_name: string
+    disease_id: string
+    threshold_functional:
+      type: float
+      default: 0.75
+    threshold_phenotype:
+      type: float
+      default: 0.75
 outputs:
-  summary:
+  functionally_similar_genes:
     type: File
-    outputSource: # TODO
-
+    outputSource: functional_similarity/functionally_similar_genes
+  phenotypically_similar_genes:
+    type: File
+    outputSource: phenotype_similarity/phenotypically_similar_genes
 steps:
   diseases:
     run: module0.cwl
     in:
-        # TODO
-    out: # TODO
+      disease_name: disease_name
+      disease_id: disease_id
+    out: [ disease_list ]
 
   functional_similarity:
     run: module1a.cwl
     in:
-      src: # TODO
-    out: # TODO
+      gene_set: diseases/disease_list
+      threshold: threshold_functional
+    out: [ functionally_similar_genes ]
 
-  phenotypic_similarity:
+  phenotype_similarity:
     run: module1b.cwl
     in:
-      src: # TODO
-    out: # TODO
-
-  gene_interaction:
-    run: module1e.cwl
-    in:
-      src: # TODO
-    out: # TODO
-
-  summarize:
-    run: module1e.cwl
-    in:
-      src: # TODO
-    out: # TODO
+      gene_set: diseases/disease_list
+      threshold: threshold_phenotype
+    out: [ phenotypically_similar_genes ]
