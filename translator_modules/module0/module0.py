@@ -9,11 +9,14 @@ from pprint import pprint
 from sys import stdout
 from json import dump
 
+from translator_modules.core import Config
+from translator_modules.core import Payload
+
 
 class LookUp(object):
 
     def __init__(self):
-        self.blw = BioLinkWrapper()
+        self.blw = BioLinkWrapper(Config().getBiolinkApiEndpoint())
         self.mg = get_client('gene')
         self.input_object = ''
         self.meta = {
@@ -61,9 +64,9 @@ class LookUp(object):
         input_gene_set = [self.blw.parse_association(input_disease_id, input_disease_label, x) for x in
                           input_gene_set['associations']]
         for input_gene in input_gene_set:
-             igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
-                                 fields='entrez,HGNC,symbol')
-             input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
+            igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
+                                     fields='entrez,HGNC,symbol')
+            input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
         input_genes_df = pd.DataFrame(data=input_gene_set)
         # # group duplicate ids and gather sources
         input_genes_df['sources'] = input_genes_df['sources'].str.join(', ')
@@ -71,7 +74,6 @@ class LookUp(object):
             ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'relation'])['sources'].apply(', '.join).reset_index()
         return input_genes_df
 
-from translator_modules.core import Payload
 
 class DiseaseAssociatedGeneSet(Payload):
 

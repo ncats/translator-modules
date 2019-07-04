@@ -44,7 +44,7 @@ class FunctionalSimilarity(GenericSimilarity):
 
     def load_gene_set(self, input_genes):
         annotated_gene_set = []
-        gene_records = input_genes.to_dict(orient='records')
+        gene_records = input_genes.get_hits_dict()
         for gene in gene_records:
             mg = self.mg
             gene_curie = ''
