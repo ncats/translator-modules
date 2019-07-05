@@ -346,7 +346,7 @@ and associated MONDO identifiers - in the second column"""
             aggregate_results(
                 mod1a_results,
                 mod1b_results,
-                disease_associated_gene_set.get_input_object_id()
+                disease_associated_gene_set.get_input_disease_id()
             )
 
         # Echo to console

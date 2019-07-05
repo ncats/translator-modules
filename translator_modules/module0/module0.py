@@ -90,6 +90,8 @@ class DiseaseAssociatedGeneSet(Payload):
     def get_input_disease_name(self):
         return self.input_disease_name
 
+    def get_input_disease_id(self):
+        return self.input_disease_mondo
 
 if __name__ == '__main__':
     fire.Fire(DiseaseAssociatedGeneSet)
