@@ -35,7 +35,7 @@ class GeneInteractions(object):
     @staticmethod
     def load_gene_set(input_gene_set):
         annotated_gene_set = []
-        for gene in input_gene_set.get_input_curie_set():
+        for gene in input_gene_set.get_hits_dict():
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
                 'sim_input_curie': gene['hit_id'],
