@@ -34,5 +34,5 @@ setup(
     zip_safe=False,
     author='James Eddy',
     author_email='james.a.eddy@gmail.com',
-    version='0.1.0'
+    version='0.2.0'
 )
