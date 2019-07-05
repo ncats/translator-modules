@@ -13,14 +13,32 @@ An introduction to Common Workflow Language can be found on the **[CWL website](
 
 ### Prerequisites
 
-* A current release 3.7 or better of Python should be installed and the binary executable as *python3*
-* (Optionally) set up a Python virtual environment within which to run things
-* Install CWL engine:
+* Since CWL runs its code inside Docker modules, [install Docker](#installation-of-docker).  It is recommended that 
+you commit to running this CWL workflow on a *nix system (Linux, Mac OSX or VM equivalent)since Docker for Windows 
+tends to be a bit more problematic to operate than its counterparts on Linux and OSX.
+
+* The system is currently validated to work only with Python 3.7 or better.  We therefore recommend the installation 
+of a **virtualenv** to enforce this:
+
+``` 
+virtualenv -p python3.7 py37
+source py37/bin/activate
+```
+
+or, alternately, use **conda env** to manage packages and the development environment:
+
+```
+conda create -n translator-modules python=3.7
+conda activate translator-modules
+```
+
+* Next you install CWL engine:
+
 ```bash
 python -m pip install cwltool
 ```
-* Since CWL runs its code inside Docker modules, [install Docker]()
-* Follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). 
+
+* Finally, follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). 
 
 ### Running the CWL Workflow
 
@@ -37,9 +55,8 @@ If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 
 #### Installation of Docker
 
-If you choose to run the dockerized versions of the applications, you'll obviously need to [install Docker first](https://docs.docker.com/engine/installation/) in your target Linux operating environment (bare metal server or virtual machine running Linux).
-
-For our installations, we typically use Ubuntu Linux, for which there is an [Ubuntu-specific docker installation using the repository](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-using-the-repository).
+Follow the [Docker installation instructions](https://docs.docker.com/engine/installation/) in your target operating 
+system environment. For example, if you use Ubuntu Linux, there is an [Ubuntu-specific docker installation using the repository](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-using-the-repository).
 
 Note that you should have 'curl' installed first before installing Docker:
 
@@ -47,7 +64,7 @@ Note that you should have 'curl' installed first before installing Docker:
 $ sudo apt-get install curl
 ```
 
-For other installations, please find instructions specific to your choice of Linux variant, on the Docker site.
+For other installations, please find instructions specific to your choice of operating system, on the Docker site.
 
 #### Testing Docker
 
