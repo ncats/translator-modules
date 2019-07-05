@@ -11,7 +11,7 @@ An introduction to Common Workflow Language can be found on the **[CWL website](
 
 ## Quickstart
 
-Follow the instructions for [putting Translator Modules on the system path](#placing-modules-on-the-path). Then in 
+Follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). Then in 
 the project directory, run
 
 ```bash
@@ -27,7 +27,7 @@ If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 
 Otherwise, if you've set up [Docker](), then we can do...
 
-## Placing modules on the path
+## Preparing the Workflow Modules for Use
 
 In order to use the CWL tools in `biocwl/workflows/`, one must put the modules from `translator_modules/modules<*>/` 
 on the system path.
