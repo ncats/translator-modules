@@ -15,7 +15,7 @@ Follow the instructions for [putting Translator Modules on the system path](#pla
 the project directory, run
 
 ```bash
-pip install cwltool
+python -m pip install cwltool
 cwltool biocwl/workflows/wf2.cwl biocwl/data/inputs/fanconi.yaml
 ```
 If you can run `wf2.cwl` with `fanconi.yaml` successfully,
@@ -24,14 +24,16 @@ If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 * You have replicated the [Fanconi Anaemia Tidbit]().
 
 #### TODO Docker instructions
+
 Otherwise, if you've set up [Docker](), then we can do...
 
 ## Placing modules on the path
 
-In order to use the CWL tools in `biocwl/workflows/`, one must put the modules from `translator_modules/modules<*>/` on the system path.
+In order to use the CWL tools in `biocwl/workflows/`, one must put the modules from `translator_modules/modules<*>/` 
+on the system path.
 
-This lets your CWL Runner use these modules by identifying them on the absolute path, and lets the codebase be portable across systems
-if you are not using a virtual machine.
+This lets your CWL Runner use these modules by identifying them on the absolute path, and lets the codebase be portable 
+across systems if you are not using a virtual machine.
 
 One way to do this (not recommended) is by adding `translator_modules` onto the system path directly:
 
@@ -39,7 +41,9 @@ One way to do this (not recommended) is by adding `translator_modules` onto the 
 export PATH=$PATH$( find $LOCATION/$OF/$PROJECT/translator-modules/translator_modules/ -type d -printf ":%p" )
 ```
 
-By default, each translator module should have `#!/usr/bin/python3` as their specified interpreter, written at the top of the file.
+By default, each translator module should have `#!/usr/bin/python3` as their specified interpreter, written at the 
+top of the file (Note: double check if your system has tagged Python 3 as the executable *python3*. If not, you should
+probably add a *python3* symbolic link to resolve to the actual interpreter).
 
 Additionally, ensure that each module is kept executable by performing `chomd a+x *` within `translator_modules`.
 
