@@ -78,8 +78,9 @@ class FunctionalSimilarity(GenericSimilarity):
 
         return annotated_gene_set
 
+    # RMB: July 5, 2019 - annotated_gene_set is a Pandas DataFrame
     def compute_similarity(self, annotated_gene_set, threshold):
-        annotated_input_gene_set = self.mod.load_gene_set(annotated_gene_set)
+        annotated_input_gene_set = self.load_gene_set(annotated_gene_set)
         lower_bound = float(threshold)
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
         for result in results:

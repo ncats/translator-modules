@@ -84,11 +84,13 @@ class PhenotypeSimilarity(GenericSimilarity):
 
         return annotated_gene_set
 
+    # RMB: July 5, 2019 - annotated_gene_set is a Pandas DataFrame
     def compute_similarity(self, annotated_gene_set, threshold):
+        annotated_input_gene_set = self.load_gene_set(annotated_gene_set)
         lower_bound = float(threshold)
-        results = self.compute_jaccard(annotated_gene_set, lower_bound)
+        results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
         for result in results:
-            for gene in annotated_gene_set:
+            for gene in annotated_input_gene_set:
                 if gene['sim_input_curie'] == result['input_id']:
                     result['input_symbol'] = gene['input_symbol']
         return results
@@ -117,19 +119,16 @@ class PhenotypicallySimilarGenes(Payload):
         self.mod = PhenotypeSimilarity('human')
         self.results = self._similarity(input_gene_set_df, threshold)
 
-    def _similarity(self, input_gene_set, threshold):
-
-        # TODO: Break this out into an EXPANDER workflow step?
-        annotated_input_gene_set = self.mod.load_gene_set(input_gene_set)
+    def _similarity(self, input_gene_set_df, threshold):
 
         # Perform the comparison on specified gene set
-        results = self.mod.compute_similarity(annotated_input_gene_set, threshold)
+        results = self.mod.compute_similarity(input_gene_set_df, threshold)
 
         # Process the results
         results_table = pd.DataFrame(results)
         results_table = \
             results_table[~results_table['hit_id'].
-                isin(input_gene_set['hit_id'].
+                isin(input_gene_set_df['hit_id'].
                      tolist())].sort_values('score', ascending=False)
 
         return results_table
