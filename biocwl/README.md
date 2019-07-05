@@ -4,7 +4,7 @@ Get started immediately by **[using TranslatorCWL](#using-translatorcwl).**
 
 For the justification of this project, find out **[how TranslatorCWL works](#how-translatorcwl-works).**
 
-An introduction to Common Workflow Language can be found on the **[CWL website](commonwl.org).**
+An introduction to Common Workflow Language can be found on the **[CWL website](https://www.commonwl.org).**
 
 
 # Using TranslatorCWL
