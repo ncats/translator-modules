@@ -1,6 +1,7 @@
 from BioLink.biolink_client import BioLinkWrapper
 from ..core import Config
 
+
 class OrthologTraversal(object):
 
     def __init__(self):

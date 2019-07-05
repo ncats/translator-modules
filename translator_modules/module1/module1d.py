@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
 import fire
 
 # Workflow 2, Module 1D: Chemical-gene interactions
