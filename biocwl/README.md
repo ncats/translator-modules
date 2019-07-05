@@ -35,7 +35,7 @@ on the system path.
 This lets your CWL Runner use these modules by identifying them on the absolute path, and lets the codebase be portable 
 across systems if you are not using a virtual machine.
 
-One way to do this (not recommended) is by adding `translator_modules` onto the system path directly:
+One way to do this is by adding `translator_modules` onto the system path directly:
 
 ```bash
 export PATH=$PATH$( find $LOCATION/$OF/$PROJECT/translator-modules/translator_modules/ -type d ! -name "__pycache__"  -printf ":%p" )
