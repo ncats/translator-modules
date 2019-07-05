@@ -44,7 +44,7 @@ class PhenotypeSimilarity(GenericSimilarity):
 
     def load_gene_set(self, input_genes):
         annotated_gene_set = []
-        gene_records = input_genes.to_dict(orient='records')
+        gene_records = input_genes.get_hits_dict()
         for gene in gene_records:
             gene_curie = ''
             sim_input_curie = ''

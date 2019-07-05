@@ -75,6 +75,7 @@ def dump_html(output, body, columns=None):
 
 
 def disease_gene_lookup(disease_name, mondo_id):
+
     gene_set = DiseaseAssociatedGeneSet(disease_name, mondo_id)
 
     # save the seed gene definition and gene list to a
@@ -297,7 +298,7 @@ and associated MONDO identifiers - in the second column"""
                 disease_name + "(" + mondo_id + "):\n")
             print(disease_associated_gene_set.get_data_frame().to_string())
 
-        Mod1A_results = \
+        mod1a_results = \
             similarity(
                 func_sim_human,
                 disease_associated_gene_set,
@@ -309,9 +310,9 @@ and associated MONDO identifiers - in the second column"""
         if _echo_to_console:
             print("\nMod1A Results for '" +
                   disease_name + "(" + mondo_id + "):\n")
-            print(Mod1A_results.to_string(columns=STD_RESULT_COLUMNS))
+            print(mod1a_results.to_string(columns=STD_RESULT_COLUMNS))
 
-        Mod1B_results = \
+        mod1b_results = \
             similarity(
                 pheno_sim_human,
                 disease_associated_gene_set,
@@ -323,7 +324,7 @@ and associated MONDO identifiers - in the second column"""
         if _echo_to_console:
             print("\nMod1B Results for '" +
                   disease_name + "(" + mondo_id + "):\n")
-            print(Mod1B_results.to_string(columns=STD_RESULT_COLUMNS))
+            print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
 
         # Find Interacting Genes from Monarch data
         Mod1E_results = \
@@ -343,8 +344,8 @@ and associated MONDO identifiers - in the second column"""
         # (carried over from the Jupyter notebook)
         std_api_response_json = \
             aggregate_results(
-                Mod1A_results,
-                Mod1B_results,
+                mod1a_results,
+                mod1b_results,
                 disease_associated_gene_set.get_input_object_id()
             )
 
