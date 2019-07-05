@@ -14,7 +14,7 @@ An introduction to Common Workflow Language can be found on the **[CWL website](
 ### Prerequisites
 
 * Since CWL runs its code inside Docker modules, [install Docker](#installation-of-docker).  It is recommended that 
-you commit to running this CWL workflow on a *nix system (Linux, Mac OSX or VM equivalent)since Docker for Windows 
+you commit to running this CWL workflow on a *nix system (Linux, Mac OSX or VM equivalent) since Docker for Windows 
 tends to be a bit more problematic to operate than its counterparts on Linux and OSX.
 
 * The system is currently validated to work only with Python 3.7 or better.  We therefore recommend the installation 
@@ -53,7 +53,7 @@ If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 * You have just used multiple modules chained together at once.
 * You have replicated the [Fanconi Anaemia Tidbit]().
 
-#### Installation of Docker
+## Installation of Docker
 
 Follow the [Docker installation instructions](https://docs.docker.com/engine/installation/) in your target operating 
 system environment. For example, if you use Ubuntu Linux, there is an [Ubuntu-specific docker installation using the repository](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-using-the-repository).
@@ -65,8 +65,6 @@ $ sudo apt-get install curl
 ```
 
 For other installations, please find instructions specific to your choice of operating system, on the Docker site.
-
-#### Testing Docker
 
 In order to ensure that docker is working correctly, run the following command:
 
