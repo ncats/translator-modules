@@ -11,21 +11,85 @@ An introduction to Common Workflow Language can be found on the **[CWL website](
 
 ## Quickstart
 
-Follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). Then in 
-the project directory, run
+### Prerequisites
 
+* A current release 3.7 or better of Python should be installed and the binary executable as *python3*
+* (Optionally) set up a Python virtual environment within which to run things
+* Install CWL engine:
 ```bash
 python -m pip install cwltool
+```
+* Since CWL runs its code inside Docker modules, [install Docker]()
+* Follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). 
+
+### Running the CWL Workflow
+
+In the project directory, run
+
+```bash
 cwltool biocwl/workflows/wf2.cwl biocwl/data/inputs/fanconi.yaml
 ```
+
 If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 * You have just run a CWL tool.
 * You have just used multiple modules chained together at once.
 * You have replicated the [Fanconi Anaemia Tidbit]().
 
-#### TODO Docker instructions
+#### Installation of Docker
 
-Otherwise, if you've set up [Docker](), then we can do...
+If you choose to run the dockerized versions of the applications, you'll obviously need to [install Docker first](https://docs.docker.com/engine/installation/) in your target Linux operating environment (bare metal server or virtual machine running Linux).
+
+For our installations, we typically use Ubuntu Linux, for which there is an [Ubuntu-specific docker installation using the repository](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-using-the-repository).
+
+Note that you should have 'curl' installed first before installing Docker:
+
+```
+$ sudo apt-get install curl
+```
+
+For other installations, please find instructions specific to your choice of Linux variant, on the Docker site.
+
+#### Testing Docker
+
+In order to ensure that docker is working correctly, run the following command:
+
+```
+$ sudo docker run hello-world
+```
+
+This should result in the following output:
+```
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+ca4f61b1923c: Pull complete
+Digest: sha256:be0cd392e45be79ffeffa6b05338b98ebb16c87b255f48e297ec7f98e123905c
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://cloud.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/engine/userguide/
+```
+
+If you are running the system under Linux, there are some 
+[post-installation configuration](https://docs.docker.com/install/linux/linux-postinstall/) 
+which you can apply so that Docker can be run directly without sudo.
 
 ## Preparing the Workflow Modules for Use
 
