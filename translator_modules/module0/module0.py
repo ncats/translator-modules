@@ -16,7 +16,7 @@ from translator_modules.core import Payload
 class LookUp(object):
 
     def __init__(self):
-        self.blw = BioLinkWrapper(Config().getBiolinkApiEndpoint())
+        self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.mg = get_client('gene')
         self.input_object = ''
         self.meta = {
@@ -92,6 +92,7 @@ class DiseaseAssociatedGeneSet(Payload):
 
     def get_input_disease_id(self):
         return self.input_disease_mondo
+
 
 if __name__ == '__main__':
     fire.Fire(DiseaseAssociatedGeneSet)

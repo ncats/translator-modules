@@ -11,7 +11,7 @@ from translator_modules.core import Config
 class GeneInteractions(object):
 
     def __init__(self):
-        self.blw = BioLinkWrapper(Config().getBiolinkApiEndpoint())
+        self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.meta = {
             'input_type': {
                 'complexity': 'set',
@@ -33,9 +33,10 @@ class GeneInteractions(object):
         pprint(self.meta)
 
     @staticmethod
-    def load_gene_set(input_gene_set):
+    # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
+    def load_gene_set(gene_records):
         annotated_gene_set = []
-        for gene in input_gene_set.get_hits_dict():
+        for gene in gene_records:
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
                 'sim_input_curie': gene['hit_id'],

@@ -7,6 +7,8 @@ from biothings_client import get_client
 from translator_modules.core.generic_similarity import GenericSimilarity
 import pandas as pd
 
+from translator_modules.core import Payload
+
 
 class PhenotypeSimilarity(GenericSimilarity):
 
@@ -42,9 +44,9 @@ class PhenotypeSimilarity(GenericSimilarity):
         print("""Mod1B1 Phenotype Similarity metadata:""")
         pprint(self.meta)
 
-    def load_gene_set(self, input_genes):
+    # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
+    def load_gene_set(self, gene_records):
         annotated_gene_set = []
-        gene_records = input_genes.get_hits_dict()
         for gene in gene_records:
             gene_curie = ''
             sim_input_curie = ''
@@ -89,10 +91,6 @@ class PhenotypeSimilarity(GenericSimilarity):
                 if gene['sim_input_curie'] == result['input_id']:
                     result['input_symbol'] = gene['input_symbol']
         return results
-
-
-import json
-from translator_modules.core import Payload
 
 
 class PhenotypicallySimilarGenes(Payload):

@@ -301,7 +301,7 @@ and associated MONDO identifiers - in the second column"""
         mod1a_results = \
             similarity(
                 func_sim_human,
-                disease_associated_gene_set,
+                disease_associated_gene_set.get_hits_dict(),
                 functional_threshold,
                 'Mod1A',
                 'Functionally Similar Genes'
@@ -315,7 +315,7 @@ and associated MONDO identifiers - in the second column"""
         mod1b_results = \
             similarity(
                 pheno_sim_human,
-                disease_associated_gene_set,
+                disease_associated_gene_set.get_hits_dict(),
                 phenotype_threshold,
                 'Mod1B',
                 'Phenotypic Similar Genes'
@@ -327,10 +327,10 @@ and associated MONDO identifiers - in the second column"""
             print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
 
         # Find Interacting Genes from Monarch data
-        Mod1E_results = \
+        mod1e_results = \
             gene_interactions(
                 interactions_human,
-                disease_associated_gene_set,
+                disease_associated_gene_set.get_hits_dict(),
                 'Mod1E',
                 "Gene Interactions"
             )
@@ -338,7 +338,7 @@ and associated MONDO identifiers - in the second column"""
         if _echo_to_console:
             print("\nMod1E Results for '" +
                   disease_name + "(" + mondo_id + "):\n")
-            print(Mod1E_results.head().to_string(columns=STD_RESULT_COLUMNS))
+            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
 
         # Not sure how useful this step is: to be further reviewed
         # (carried over from the Jupyter notebook)

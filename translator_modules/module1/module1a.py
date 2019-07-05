@@ -6,6 +6,8 @@ from translator_modules.core.generic_similarity import GenericSimilarity
 from pprint import pprint
 from biothings_client import get_client
 import pandas as pd
+import fire
+from translator_modules.core import Payload
 
 
 class FunctionalSimilarity(GenericSimilarity):
@@ -42,9 +44,9 @@ class FunctionalSimilarity(GenericSimilarity):
         print("""Mod1A Functional Similarity metadata:""")
         pprint(self.meta)
 
-    def load_gene_set(self, input_genes):
+    # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
+    def load_gene_set(self,  gene_records):
         annotated_gene_set = []
-        gene_records = input_genes.get_hits_dict()
         for gene in gene_records:
             mg = self.mg
             gene_curie = ''
@@ -105,9 +107,6 @@ class FunctionalSimilarity(GenericSimilarity):
             return 'HGNC:{}'.format(mg_hit['hits'][0]['HGNC'])
 
 
-from translator_modules.core import Payload
-import fire
-
 class FunctionallySimilarGenes(Payload):
 
     def __init__(self, threshold=0.75, input_payload_file=None):
@@ -120,6 +119,7 @@ class FunctionallySimilarGenes(Payload):
                 input_gene_set_df = pd.read_json(stream, orient='records')
 
         self.results = self.mod.compute_similarity(input_gene_set_df, threshold)
+
 
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)
