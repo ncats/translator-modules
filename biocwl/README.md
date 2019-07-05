@@ -115,11 +115,21 @@ This lets your CWL Runner use these modules by identifying them on the absolute 
 across systems if you are not using a virtual machine.
 
 Assuming that you are in the project directory (as the 'present working directory'), then one way to do this is by 
-adding `translator_modules` onto the system path directly:
+adding `translator_modules` onto the system path directly.  On Linux, type the following
 
 ```bash
 export PATH=$PATH$( find `pwd`/translator_modules/ -type d ! -name "__pycache__"  -printf ":%p" )
 ```
+
+On the Mac, the standard (BSD) 'find' doesn't have the -printf flag. A workaround is to install the Gnu findutils using
+[Homebrew](https://brew.sh) as follows:
+
+```bash
+brew install findutils
+
+```
+
+then substitute the *gfind* command for the *find* command in the PATH command above.
 
 By default, each translator module should have `#!/usr/bin/python3` as their specified interpreter, written at the 
 top of the file (Note: double check if your system has tagged Python 3 as the executable *python3*. If not, you should
