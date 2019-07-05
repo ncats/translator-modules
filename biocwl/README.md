@@ -38,7 +38,7 @@ across systems if you are not using a virtual machine.
 One way to do this (not recommended) is by adding `translator_modules` onto the system path directly:
 
 ```bash
-export PATH=$PATH$( find $LOCATION/$OF/$PROJECT/translator-modules/translator_modules/ -type d -printf ":%p" )
+export PATH=$PATH$( find $LOCATION/$OF/$PROJECT/translator-modules/translator_modules/ -type d ! -name "__pycache__"  -printf ":%p" )
 ```
 
 By default, each translator module should have `#!/usr/bin/python3` as their specified interpreter, written at the 
