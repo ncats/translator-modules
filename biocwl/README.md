@@ -6,7 +6,6 @@ For the justification of this project, find out **[how TranslatorCWL works](#how
 
 An introduction to Common Workflow Language can be found on the **[CWL website](https://www.commonwl.org).**
 
-
 # Using TranslatorCWL
 
 ## Quickstart
@@ -108,29 +107,41 @@ which you can apply so that Docker can be run directly without sudo.
 
 ## Preparing the Workflow Modules for Use
 
-In order to use the CWL tools in `biocwl/workflows/`, one must put the modules from `translator_modules/modules<*>/` 
-on the system path.
+For the system to run, you will first need to 
+[install the Python dependencies for the translator-modules project](../README.md#installation-of-dependencies).
 
-This lets your CWL Runner use these modules by identifying them on the absolute path, and lets the codebase be portable 
-across systems if you are not using a virtual machine.
+In order to use the CWL tools in `biocwl/workflows/`, one must then put the `translator_modules/modules<*>/` modules 
+on the system path.  This lets your CWL Runner use these modules by identifying them on the absolute path, and lets 
+the codebase be portable across systems if you are not using a virtual machine.
 
-Assuming that you are in the project directory (as the 'present working directory'), then one way to do this is by 
-adding `translator_modules` onto the system path directly:
+Assuming that you are in the project directory (as the 'present working directory'), then a way to do this is by 
+adding `translator_modules` onto the system path directly.  On Linux, type the following
 
 ```bash
 export PATH=$PATH$( find `pwd`/translator_modules/ -type d ! -name "__pycache__"  -printf ":%p" )
 ```
 
-By default, each translator module should have `#!/usr/bin/python3` as their specified interpreter, written at the 
-top of the file (Note: double check if your system has tagged Python 3 as the executable *python3*. If not, you should
-probably add a *python3* symbolic link to resolve to the actual interpreter).
+On the Mac, the standard (BSD) 'find' doesn't have the -printf flag. A workaround is to install the Gnu findutils using
+[Homebrew](https://brew.sh) as follows:
+
+```bash
+brew install findutils
+
+```
+
+then substitute the *gfind* command for the *find* command in the PATH command above.
+
+By default, each translator module should have `#!/usr/bin/env python3` specified at the top of the module, as their 
+specified interpreter, written at the top of the file (Note: double check if your system has tagged Python 3 as the
+executable *python3*. If not, you should probably add a *python3* symbolic link to resolve to the actual interpreter).
 
 Additionally, ensure that each module is kept executable by performing `chomd a+x *` within `translator_modules`.
 
 Finally, if you are developing on Windows, ensure that you are enforcing Unix-style newlines in these files.
 You can do this using a tool like `dos2unix`, or by running the Vim command `set: fileformat=unix` on the file.
 
-Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run them, like so.
+Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run 
+them, like so.
 
 ```yaml
 #!/usr/bin/env cwl-runner
