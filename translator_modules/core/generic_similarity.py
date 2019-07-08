@@ -70,7 +70,10 @@ class GenericSimilarity(object):
         similarities = []
         for index, igene in enumerate(input_genes):
             for subject_curie in self.associations.subject_label_map.keys():
-                input_gene = GenericSimilarity.trim_mgi_prefix(input_gene=igene['sim_input_curie'], subject_curie=subject_curie)
+                input_gene = GenericSimilarity.trim_mgi_prefix(
+                    input_gene=igene['sim_input_curie'],
+                    subject_curie=subject_curie
+                )
                 if input_gene is not subject_curie:
                     score, shared_terms = jaccard_similarity(self.associations, input_gene, subject_curie)
                     if float(score) > float(lower_bound):
