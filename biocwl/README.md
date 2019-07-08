@@ -2,6 +2,9 @@
 
 Get started immediately by **[using TranslatorCWL](#using-translatorcwl).**
 
+If you want to take Translator Modules and bring them into Translator CWL, see **[Writing a CWL tool for an existing module](#writing-a-cwl-tool-for-an-existing-module).** 
+*Note: requires an intermediate understanding of Python 3, including how the class system works.*
+
 For the justification of this project, find out **[how TranslatorCWL works](#how-translatorcwl-works).**
 
 An introduction to Common Workflow Language can be found on the **[CWL website](https://www.commonwl.org).**
