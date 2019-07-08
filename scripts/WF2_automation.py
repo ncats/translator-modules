@@ -106,11 +106,9 @@ STD_RESULT_COLUMNS = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score
 
 
 def similarity(model, input_gene_set, threshold, module, title):
-    # Subtle model-specific difference in gene set loading
-    annotated_input_gene_set = model.load_gene_set(input_gene_set)
 
     # Perform the comparison on specified gene set
-    results = model.compute_similarity(annotated_input_gene_set, threshold)
+    results = model.compute_similarity(input_gene_set, threshold)
 
     # Process the results
     results_table = pd.DataFrame(results)
