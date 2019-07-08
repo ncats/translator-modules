@@ -2,7 +2,7 @@
 
 Get started immediately by **[using TranslatorCWL](#using-translatorcwl).**
 
-If you want to take Translator Modules and bring them into Translator CWL, see **[Writing a CWL tool for an existing module](#writing-a-cwl-tool-for-an-existing-module).** 
+If you want to take Translator Modules and bring them into CWL, see **[Writing a CWL tool for an existing module](#writing-a-cwl-tool-for-an-existing-module).** 
 
 *Note: requires an intermediate understanding of Python 3, including how the class system works.*
 
