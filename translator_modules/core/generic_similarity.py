@@ -4,6 +4,21 @@ from ontobio.io.gafparser import GafParser
 from ontobio.assoc_factory import AssociationSetFactory
 from typing import List
 
+###################################################################
+# First, before loading all our ontobio dependent analysis modules,
+# we need to tweak OntoBio to disable its @cachier cache. Our
+# patched Ontobio has an 'ignore_cache' flag which may be
+# overridden here before the rest of the system is loaded.
+# We do this because cachier seems to introduce an odd system
+# instability resulting in deep recursion on one method,
+# creating new threads and consuming stack memory to the point
+# of system resource exhaustion!  We conjecture that cachier
+# caching is unnecessary since we read the pertinent ontology
+# catalogs in just once into memory, for readonly reuse.
+###################################################################
+from ontobio.config import get_config
+get_config().ignore_cache = True
+
 # Overridden jaccard_similarity function
 #from ontobio.analysis.semsim import jaccard_similarity
 from ontobio.assocmodel import AssociationSet
