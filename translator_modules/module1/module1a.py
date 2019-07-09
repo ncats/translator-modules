@@ -45,7 +45,7 @@ class FunctionalSimilarity(GenericSimilarity):
         pprint(self.meta)
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
-    def load_gene_set(self,  gene_records):
+    def load_gene_set(self, gene_records):
         annotated_gene_set = []
         for gene in gene_records.to_dict(orient='records'):
             mg = self.mg
@@ -92,18 +92,18 @@ class FunctionalSimilarity(GenericSimilarity):
 
         # Process the results
         results_table = pd.DataFrame(results)
+        annotated_gene_set = annotated_gene_set['hit_id'].tolist()
         results_table = \
-            results_table[~results_table['hit_id'].
-                isin(annotated_gene_set['hit_id'].
-                     tolist())].sort_values('score', ascending=False)
+            results_table[~results_table['hit_id'].isin(annotated_gene_set)]. \
+            sort_values('score', ascending=False)
 
         return results_table
 
     def symbol2hgnc(self, symbol):
         mg_hit = self.mg.query('symbol:{}'.format(symbol),
-                          fields='HGNC,symbol,taxon',
-                          species='human',
-                          entrezonly=True)
+                               fields='HGNC,symbol,taxon',
+                               species='human',
+                               entrezonly=True)
         if mg_hit['total'] == 1:
             return 'HGNC:{}'.format(mg_hit['hits'][0]['HGNC'])
 
