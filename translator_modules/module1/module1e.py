@@ -6,7 +6,10 @@ import fire
 from BioLink.biolink_client import BioLinkWrapper
 from pprint import pprint
 
+import pandas as pd
+
 from translator_modules.core import Config
+from translator_modules.core import Payload
 
 
 class GeneInteractions(object):
@@ -66,5 +69,21 @@ class GeneInteractions(object):
         return results
 
 
+class GeneInteractionSet(Payload):
+
+    # TODO
+    def __init__(self, input_gene_set_file=None):
+        super(GeneInteractionSet, self).__init__(GeneInteractions())
+
+        input_gene_set_df = None
+        if input_gene_set_file:
+            with open(input_gene_set_file) as stream:
+                # assuming it's JSON and it's a record list
+                input_gene_set_df = pd.read_json(stream, orient='records')
+
+        # in this case "load gene set" is more like a reformatting function
+        self.results = pd.DataFrame().from_records(self.mod.get_interactions(self.mod.load_gene_set(input_gene_set_df.to_dict(orient='records'))))
+
+
 if __name__ == '__main__':
-    fire.Fire(GeneInteractions)
+    fire.Fire(GeneInteractionSet)

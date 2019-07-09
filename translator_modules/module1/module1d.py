@@ -5,8 +5,9 @@ import fire
 # Workflow 2, Module 1D: Chemical-gene interactions
 from CTD.CTD_wrapper import CTDWrapper
 import pandas as pd
+from translator_modules.core import Payload
 
-
+# TODO: Refactor towards methods being functional
 class ChemicalGeneInteractions(object):
     def __init__(self):
         self.ctd = CTDWrapper()
@@ -38,6 +39,24 @@ class ChemicalGeneInteractions(object):
                     cid_hit = self.get_genes(chemical_id=cid, action=action)
                     self.gene_hits = self.gene_hits + cid_hit
 
+# TODO: Test the module separately to observe baseline behavior
+class ChemicalGeneInteractionSet(Payload):
+
+    # TODO
+    def __init__(self, action, rows=50, input_gene_set_file=None):
+        super(ChemicalGeneInteractionSet, self).__init__(ChemicalGeneInteractionSet())
+
+        input_gene_set_df = None
+        if input_gene_set_file:
+            with open(input_gene_set_file) as stream:
+                # assuming it's JSON and it's a record list
+                input_gene_set_df = pd.read_json(stream, orient='records')
+
+        self.mod.load_gene_set(input_gene_set_df.to_dict(orient='records'))
+        self.mod.get_chemicals(action)
+        self.mod.load_gene_hits(action, rows)
+        self.results = self.mod.gene_hits
+
 
 if __name__ == '__main__':
-    fire.Fire(ChemicalGeneInteractions)
+    fire.Fire(ChemicalGeneInteractionSet)

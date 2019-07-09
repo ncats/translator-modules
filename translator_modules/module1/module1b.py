@@ -48,7 +48,7 @@ class PhenotypeSimilarity(GenericSimilarity):
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, gene_records):
         annotated_gene_set = []
-        for gene in gene_records:
+        for gene in gene_records.to_dict(orient='records'):
             gene_curie = ''
             sim_input_curie = ''
             symbol = ''
@@ -98,10 +98,10 @@ class PhenotypeSimilarity(GenericSimilarity):
 
 class PhenotypicallySimilarGenes(Payload):
 
-    def __init__(self, threshold, input_payload_file):
+    def __init__(self, threshold, input_gene_set_file=None):
         input_gene_set_df = None
-        if input_payload_file:
-            with open(input_payload_file) as stream:
+        if input_gene_set_file:
+            with open(input_gene_set_file) as stream:
                 # TODO assuming it's JSON and it's a record list
                 input_gene_set_df = pd.read_json(stream, orient='records')
 
