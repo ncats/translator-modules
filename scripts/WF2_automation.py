@@ -106,7 +106,9 @@ def disease_gene_lookup(disease_name, mondo_id):
 STD_RESULT_COLUMNS = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score']
 
 
-def similarity(model, input_gene_set, threshold, module, title):
+def similarity(model, disease_associated_gene_set, threshold, module, title):
+
+    input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
     results = model.compute_similarity(input_gene_set, threshold)
@@ -114,27 +116,30 @@ def similarity(model, input_gene_set, threshold, module, title):
     # Process the results
     results_table = pd.DataFrame(results)
     results_table = \
-        results_table[~results_table['hit_id'].
-            isin(input_gene_set.get_data_frame()['hit_id'].
-                 tolist())].sort_values('score', ascending=False)
+        results_table[
+            ~results_table['hit_id'].isin(input_gene_set['hit_id'].tolist())
+        ].sort_values('score', ascending=False)
     results_table['module'] = module
 
     # save the gene list to a file under the "Tidbit" subdirectory
 
     # Dump HTML representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "html")
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
     dump_html(output, results_table, columns=STD_RESULT_COLUMNS)
     output.close()
 
     # Dump JSON representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "json")
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
     results_table.to_json(output)
     output.close()
 
     return results_table
 
 
-def gene_interactions(model, input_gene_set, module, title):
+def gene_interactions(model, disease_associated_gene_set, module, title):
+
+    input_gene_set = disease_associated_gene_set.get_data_frame()
+
     # Subtle model-specific difference in gene set loading
     annotated_input_gene_set = GeneInteractions.load_gene_set(input_gene_set)
 
@@ -152,12 +157,12 @@ def gene_interactions(model, input_gene_set, module, title):
     # save the gene list to a file under the "Tidbit" subdirectory
 
     # Dump HTML representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "html")
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
     dump_html(output, final_results_table.head())
     output.close()
 
     # Dump JSON representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "json")
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
     # dumping the whole table in the JSON? or should I just dump the head?
     final_results_table.to_json(output)
     output.close()
@@ -300,7 +305,7 @@ and associated MONDO identifiers - in the second column"""
         mod1a_results = \
             similarity(
                 func_sim_human,
-                disease_associated_gene_set.get_hits_dict(),
+                disease_associated_gene_set,
                 functional_threshold,
                 'Mod1A',
                 'Functionally Similar Genes'
@@ -314,7 +319,7 @@ and associated MONDO identifiers - in the second column"""
         mod1b_results = \
             similarity(
                 pheno_sim_human,
-                disease_associated_gene_set.get_hits_dict(),
+                disease_associated_gene_set,
                 phenotype_threshold,
                 'Mod1B',
                 'Phenotypic Similar Genes'
@@ -329,7 +334,7 @@ and associated MONDO identifiers - in the second column"""
         mod1e_results = \
             gene_interactions(
                 interactions_human,
-                disease_associated_gene_set.get_hits_dict(),
+                disease_associated_gene_set,
                 'Mod1E',
                 "Gene Interactions"
             )
@@ -358,6 +363,7 @@ and associated MONDO identifiers - in the second column"""
 
     # Success!
     exit(0)
+
 
 if __name__ == '__main__':
     main()

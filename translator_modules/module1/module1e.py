@@ -40,7 +40,7 @@ class GeneInteractions(object):
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(gene_records):
         annotated_gene_set = []
-        for gene in gene_records:
+        for gene in gene_records.to_dict(orient='records'):
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
                 'sim_input_curie': gene['hit_id'],
@@ -82,7 +82,9 @@ class GeneInteractionSet(Payload):
                 input_gene_set_df = pd.read_json(stream, orient='records')
 
         # in this case "load gene set" is more like a reformatting function
-        self.results = pd.DataFrame().from_records(self.mod.get_interactions(self.mod.load_gene_set(input_gene_set_df.to_dict(orient='records'))))
+        annotated_input_gene_set = GeneInteractions.load_gene_set(input_gene_set_df)
+        results = self.mod.get_interactions(annotated_input_gene_set)
+        self.results = pd.DataFrame().from_records(results)
 
 
 if __name__ == '__main__':
