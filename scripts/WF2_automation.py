@@ -115,61 +115,46 @@ def similarity(model, disease_associated_gene_set, threshold, module, title):
     # Perform the comparison on specified gene set
     results = model.compute_similarity(input_gene_set, threshold)
 
-    # Process the results
-    results_table = pd.DataFrame(results)
-    results_table = \
-        results_table[
-            ~results_table['hit_id'].isin(input_gene_set['hit_id'].tolist())
-        ].sort_values('score', ascending=False)
-    results_table['module'] = module
+    results['module'] = module
 
     # save the gene list to a file under the "Tidbit" subdirectory
 
     # Dump HTML representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
-    dump_html(output, results_table, columns=STD_RESULT_COLUMNS)
+    dump_html(output, results, columns=STD_RESULT_COLUMNS)
     output.close()
 
     # Dump JSON representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
-    results_table.to_json(output)
+    results.to_json(output)
     output.close()
 
-    return results_table
+    return results
 
 
-def gene_interactions(model, disease_associated_gene_set, module, title):
+def gene_interactions(model, disease_associated_gene_set, threshold, module, title):
 
     input_gene_set = disease_associated_gene_set.get_data_frame()
 
-    # Subtle model-specific difference in gene set loading
-    annotated_input_gene_set = GeneInteractions.load_gene_set(input_gene_set)
+    # Perform the comparison on specified gene set
+    results = model.get_interactions(input_gene_set, threshold)
 
-    results = model.get_interactions(annotated_input_gene_set)
-
-    results_table = pd.DataFrame(results)
-
-    counts = results_table['hit_symbol'].value_counts().rename_axis('unique_values').to_frame('counts').reset_index()
-    high_counts = counts[counts['counts'] > 12]['unique_values'].tolist()
-
-    final_results_table = pd.DataFrame(results_table[results_table['hit_symbol'].isin(high_counts)])
-
-    final_results_table['module'] = module
+    results['module'] = module
 
     # save the gene list to a file under the "Tidbit" subdirectory
 
     # Dump HTML representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
-    dump_html(output, final_results_table.head())
+    dump_html(output, results.head())
     output.close()
 
     # Dump JSON representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
     # dumping the whole table in the JSON? or should I just dump the head?
-    final_results_table.to_json(output)
+    results.to_json(output)
     output.close()
 
-    return final_results_table
+    return results
 
 
 def aggregate_results(results_a, results_b, input_object_id):
@@ -223,6 +208,9 @@ and associated MONDO identifiers - in the second column"""
     parser.add_argument('-p', '--phenotypeThreshold',
                         type=float, default=0.35, help='value of Phenotype Similarity threshold')
 
+    parser.add_argument('-g', '--geneInteractionThreshold',
+                        type=float, default=12, help='value of Gene Interaction threshold')
+
     args = parser.parse_args()
 
     print("\nRunning the " + _SCRIPTNAME + " script...")
@@ -267,6 +255,9 @@ and associated MONDO identifiers - in the second column"""
 
     phenotype_threshold = args.phenotypeThreshold
     print("Phenotype Similarity Threshold: \t" + str(phenotype_threshold))
+
+    gene_interaction_threshold = args.geneInteractionThreshold
+    print("Gene Interaction Threshold: \t\t" + str(gene_interaction_threshold))
 
     print("\nLoading source ontology and annotation...")
 
@@ -337,6 +328,7 @@ and associated MONDO identifiers - in the second column"""
             gene_interactions(
                 interactions_human,
                 disease_associated_gene_set,
+                gene_interaction_threshold,
                 'Mod1E',
                 "Gene Interactions"
             )

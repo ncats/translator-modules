@@ -85,53 +85,36 @@ class PhenotypeSimilarity(GenericSimilarity):
         return annotated_gene_set
 
     # RMB: July 5, 2019 - annotated_gene_set is a Pandas DataFrame
-    def compute_similarity(self, annotated_gene_set, threshold):
-        annotated_input_gene_set = self.load_gene_set(annotated_gene_set)
+    def compute_similarity(self, input_gene_set, threshold):
+
+        annotated_input_gene_set = self.load_gene_set(input_gene_set)
         lower_bound = float(threshold)
+
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
+
         for result in results:
             for gene in annotated_input_gene_set:
                 if gene['sim_input_curie'] == result['input_id']:
                     result['input_symbol'] = gene['input_symbol']
+
+        results = GenericSimilarity.sort_results(input_gene_set, results)
+
         return results
 
 
 class PhenotypicallySimilarGenes(Payload):
 
-    def __init__(self, threshold, input_gene_set_file=None):
-        input_gene_set_df = None
+    def __init__(self, threshold=0.35, input_gene_set_file=None):
+
+        super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
+
+        input_gene_set = None
         if input_gene_set_file:
             with open(input_gene_set_file) as stream:
-                # TODO assuming it's JSON and it's a record list
-                input_gene_set_df = pd.read_json(stream, orient='records')
+                # assuming it's JSON and it's a record list
+                input_gene_set = pd.read_json(stream, orient='records')
 
-        self.input_object = {
-            'input': input_gene_set_df,
-            'parameters': {
-                'taxon': 'human',
-                'threshold': threshold,
-            },
-        }
-
-        # TODO: similarity should be refactored out of the payload and into the FunctionalSimilarity class
-        # it should be made a behavior for functional similarity that can give us a result we can use
-        # if we're just doing file conversions it's our responsibility in this class to do that properly
-        self.mod = PhenotypeSimilarity('human')
-        self.results = self._similarity(input_gene_set_df, threshold)
-
-    def _similarity(self, input_gene_set_df, threshold):
-
-        # Perform the comparison on specified gene set
-        results = self.mod.compute_similarity(input_gene_set_df, threshold)
-
-        # Process the results
-        results_table = pd.DataFrame(results)
-        results_table = \
-            results_table[~results_table['hit_id'].
-                isin(input_gene_set_df['hit_id'].
-                     tolist())].sort_values('score', ascending=False)
-
-        return results_table
+        self.results = self.mod.compute_similarity(input_gene_set, threshold)
 
 
 if __name__ == '__main__':
