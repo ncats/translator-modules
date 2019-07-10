@@ -11,7 +11,7 @@ inputs:
     threshold_phenotype:
       type: float
       default: 0.10
-o   threshold_gene_interactions:
+    threshold_gene_interactions:
       type: int
       default: 12
 outputs:
