@@ -9,9 +9,7 @@ inputs:
     inputBinding:
       position: 0
       prefix: --input_gene_set_file
-    threshold:
-    # the other module thresholds are floats but
-    # in this case, we have an integer counts?
+  threshold:
     type: integer
     inputBinding:
       position: 1

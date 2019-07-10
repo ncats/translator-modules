@@ -11,6 +11,9 @@ inputs:
     threshold_phenotype:
       type: float
       default: 0.10
+o   threshold_gene_interactions:
+      type: integer
+      default: 12
 outputs:
   functionally_similar_genes:
     type: File
@@ -47,4 +50,5 @@ steps:
     run: module1e.cwl
     in:
       gene_set: diseases/disease_list
+      threshold: threshold_gene_interactions
     out: [ gene_interaction_set ]
