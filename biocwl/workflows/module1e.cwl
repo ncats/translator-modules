@@ -10,7 +10,7 @@ inputs:
       position: 0
       prefix: --input_gene_set_file
   threshold:
-    type: integer
+    type: int
     inputBinding:
       position: 1
       prefix: --threshold

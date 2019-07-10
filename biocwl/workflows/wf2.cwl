@@ -12,7 +12,7 @@ inputs:
       type: float
       default: 0.10
 o   threshold_gene_interactions:
-      type: integer
+      type: int
       default: 12
 outputs:
   functionally_similar_genes:
