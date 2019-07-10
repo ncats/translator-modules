@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Uncomment when we need to debug
 # import logging
 # logging.basicConfig(level=logging.INFO)
