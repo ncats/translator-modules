@@ -41,11 +41,12 @@ python -m pip install -r requirements.txt -e .
 
 ### Ontobio Cache Configuration (temporary workaround)
 
-Note that the workflow 2 script relies on the Biolink "Ontobio" module to import its ontology for functional and 
+Note that some modules rely on the Biolink "Ontobio" module to import ontology for functional and 
 phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library 
-in Ontobio causes runtime problems, at least, in some operating environments (e.g. PyCharm under MS Windows?).
+in Ontobio causes runtime problems in some operating environments (e.g. PyCharm under MS Windows?). Since ontology catalogs
+used are imported once in memory, caching of the ontology is not needed.
 
-We therefore disable it in our code using the following ontobio configuration flag override (the flag defaults to 
+We therefore disable "cachier" in our code using the following ontobio configuration flag override (the flag defaults to 
 'False' as it is defined in the library's _ontobio/config.yaml_ file):
 
     from ontobio.config import get_config
@@ -94,13 +95,6 @@ of the input gene list with the other genes listed in the given row.
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
 ## Calling the Code Directly in your own Python Clients
-
-Examination of the standalone script reveals how to use the code directly in other software. Assuming that the 
-pip dependencies have been installed, you'll reset the *ignore_cache* flag to **True** at the top of your main 
-Python application file _before_ importing any of the main modules, as we mentioned above:
-
-    from ontobio.config import get_config
-    get_config().ignore_cache = True
     
 Within your application, there is a three step process for similarity searching:
 
