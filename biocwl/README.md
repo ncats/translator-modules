@@ -364,7 +364,7 @@ cwltool <your cwl file> <your data file>
 
 ## Combining multiple CWL tools
 
-`m0_m1.cwl` in `biocwl/workflows` is a simple canonical example of combining multiple CWL tools (taking a subset of `wf2.cwl`):
+`wf2.cwl` in `biocwl/workflows` is an example of combining multiple CWL tools (taking a subset of `wf2.cwl`). Here is a part of it:
 
 ```yaml
 cwlVersion: v1.0
