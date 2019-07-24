@@ -79,10 +79,13 @@ class FunctionalSimilarity(GenericSimilarity):
         return annotated_gene_set
 
     # RMB: July 5, 2019 - annotated_gene_set is a Pandas DataFrame
-    def compute_similarity(self, annotated_gene_set, threshold):
-        annotated_input_gene_set = self.load_gene_set(annotated_gene_set)
+    def compute_similarity(self, input_gene_set, threshold):
+
+        annotated_input_gene_set = self.load_gene_set(input_gene_set)
         lower_bound = float(threshold)
+
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
+
         for result in results:
             if self.taxon == 'human':
                 result['hit_id'] = self.symbol2hgnc(result['hit_symbol'])
@@ -90,14 +93,9 @@ class FunctionalSimilarity(GenericSimilarity):
                 if gene['sim_input_curie'] != result['input_id']:
                     result['input_id'] = self.symbol2hgnc(result['input_symbol'])
 
-        # Process the results
-        results_table = pd.DataFrame(results)
-        annotated_gene_set = annotated_gene_set['hit_id'].tolist()
-        results_table = \
-            results_table[~results_table['hit_id'].isin(annotated_gene_set)]. \
-            sort_values('score', ascending=False)
+        results = GenericSimilarity.sort_results(input_gene_set, results)
 
-        return results_table
+        return results
 
     def symbol2hgnc(self, symbol):
         mg_hit = self.mg.query('symbol:{}'.format(symbol),
@@ -111,15 +109,16 @@ class FunctionalSimilarity(GenericSimilarity):
 class FunctionallySimilarGenes(Payload):
 
     def __init__(self, threshold=0.75, input_gene_set_file=None):
+
         super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
 
-        input_gene_set_df = None
+        input_gene_set = None
         if input_gene_set_file:
             with open(input_gene_set_file) as stream:
                 # assuming it's JSON and it's a record list
-                input_gene_set_df = pd.read_json(stream, orient='records')
+                input_gene_set = pd.read_json(stream, orient='records')
 
-        self.results = self.mod.compute_similarity(input_gene_set_df, threshold)
+        self.results = self.mod.compute_similarity(input_gene_set, threshold)
 
 
 if __name__ == '__main__':

@@ -40,7 +40,7 @@ class GeneInteractions(object):
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(gene_records):
         annotated_gene_set = []
-        for gene in gene_records:
+        for gene in gene_records.to_dict(orient='records'):
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
                 'sim_input_curie': gene['hit_id'],
@@ -48,9 +48,13 @@ class GeneInteractions(object):
             })
         return annotated_gene_set
 
-    def get_interactions(self, annotated_gene_set):
+    def get_interactions(self, input_gene_set, threshold):
+
+        annotated_input_gene_set = self.load_gene_set(input_gene_set)
+        lower_bound = int(threshold)
+
         results = []
-        for gene in annotated_gene_set:
+        for gene in annotated_input_gene_set:
             interactions = self.blw.gene_interactions(gene_curie=gene['sim_input_curie'])
             for assoc in interactions['associations']:
                 interaction = \
@@ -66,23 +70,29 @@ class GeneInteractions(object):
                     'hit_id': interaction['hit_id'],
                     'score': 0,
                 })
+
+        # Process the results
+        results = pd.DataFrame().from_records(results)
+        counts = results['hit_symbol'].value_counts().rename_axis('unique_values').to_frame('counts').reset_index()
+        high_counts = counts[counts['counts'] > lower_bound]['unique_values'].tolist()
+        results = pd.DataFrame(results[results['hit_symbol'].isin(high_counts)])
+
         return results
 
 
 class GeneInteractionSet(Payload):
 
-    # TODO
-    def __init__(self, input_gene_set_file=None):
+    def __init__(self, threshold=12, input_gene_set_file=None):
+
         super(GeneInteractionSet, self).__init__(GeneInteractions())
 
-        input_gene_set_df = None
+        input_gene_set = None
         if input_gene_set_file:
             with open(input_gene_set_file) as stream:
                 # assuming it's JSON and it's a record list
-                input_gene_set_df = pd.read_json(stream, orient='records')
+                input_gene_set = pd.read_json(stream, orient='records')
 
-        # in this case "load gene set" is more like a reformatting function
-        self.results = pd.DataFrame().from_records(self.mod.get_interactions(self.mod.load_gene_set(input_gene_set_df.to_dict(orient='records'))))
+        self.results = self.mod.get_interactions(input_gene_set, threshold)
 
 
 if __name__ == '__main__':

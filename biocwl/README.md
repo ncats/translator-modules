@@ -109,10 +109,19 @@ which you can apply so that Docker can be run directly without sudo.
 
 ## Preparing the Workflow Modules for Use
 
-For the system to run, you will first need to 
+By default, each translator module should have `#!/usr/bin/env python3` specified at the top of the module, as their 
+specified interpreter, written at the top of the file (Note: double check if your system has tagged Python 3 as the
+executable *python3*. If not, you should probably add a *python3* symbolic link to resolve to the actual interpreter).
+
+Additionally, ensure that each module is kept executable by performing `chmod a+x *` within `translator_modules`.
+
+Finally, if you are developing on Windows, ensure that you are enforcing Unix-style newlines in these files.
+You can do this using a tool like `dos2unix`, or by running the Vim command `set: fileformat=unix` on the file.
+
+For the system to run, you will now need to 
 [install the Python dependencies for the translator-modules project](../README.md#installation-of-dependencies).
 
-In order to use the CWL tools in `biocwl/workflows/`, one must then put the `translator_modules/modules<*>/` modules 
+In order to use the CWL tools in `biocwl/workflows/`, one must then put those `translator_modules/modules<*>/` modules 
 on the system path.  This lets your CWL Runner use these modules by identifying them on the absolute path, and lets 
 the codebase be portable across systems if you are not using a virtual machine.
 
@@ -132,16 +141,6 @@ brew install findutils
 ```
 
 then substitute the *gfind* command for the *find* command in the PATH command above.
-
-By default, each translator module should have `#!/usr/bin/env python3` specified at the top of the module, as their 
-specified interpreter, written at the top of the file (Note: double check if your system has tagged Python 3 as the
-executable *python3*. If not, you should probably add a *python3* symbolic link to resolve to the actual interpreter).
-
-Additionally, ensure that each module is kept executable by performing `chomd a+x *` within `translator_modules`.
-
-Finally, if you are developing on Windows, ensure that you are enforcing Unix-style newlines in these files.
-You can do this using a tool like `dos2unix`, or by running the Vim command `set: fileformat=unix` on the file.
-
 Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run 
 them, like so.
 

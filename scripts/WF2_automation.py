@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Uncomment when we need to debug
 # import logging
 # logging.basicConfig(level=logging.INFO)
@@ -22,8 +24,9 @@ from html3.html3 import XHTML
 # caching is unnecessary since we read the pertinent ontology
 # catalogs in just once into memory, for readonly reuse.
 ##############################################################
-from ontobio.config import get_config
-get_config().ignore_cache = True
+# 9 July 2019 - this snippet of configuration buried into the core.generic_similarity.py module
+#from ontobio.config import get_config
+#get_config().ignore_cache = True
 
 # Now we can import the remainder of the modules (some which call Ontobio)
 from translator_modules.module0.module0 import DiseaseAssociatedGeneSet
@@ -105,63 +108,53 @@ def disease_gene_lookup(disease_name, mondo_id):
 STD_RESULT_COLUMNS = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score']
 
 
-def similarity(model, input_gene_set, threshold, module, title):
+def similarity(model, disease_associated_gene_set, threshold, module, title):
+
+    input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
     results = model.compute_similarity(input_gene_set, threshold)
 
-    # Process the results
-    results_table = pd.DataFrame(results)
-    results_table = \
-        results_table[~results_table['hit_id'].
-            isin(input_gene_set.get_data_frame()['hit_id'].
-                 tolist())].sort_values('score', ascending=False)
-    results_table['module'] = module
+    results['module'] = module
 
     # save the gene list to a file under the "Tidbit" subdirectory
 
     # Dump HTML representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "html")
-    dump_html(output, results_table, columns=STD_RESULT_COLUMNS)
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
+    dump_html(output, results, columns=STD_RESULT_COLUMNS)
     output.close()
 
     # Dump JSON representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "json")
-    results_table.to_json(output)
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
+    results.to_json(output)
     output.close()
 
-    return results_table
+    return results
 
 
-def gene_interactions(model, input_gene_set, module, title):
-    # Subtle model-specific difference in gene set loading
-    annotated_input_gene_set = GeneInteractions.load_gene_set(input_gene_set)
+def gene_interactions(model, disease_associated_gene_set, threshold, module, title):
 
-    results = model.get_interactions(annotated_input_gene_set)
+    input_gene_set = disease_associated_gene_set.get_data_frame()
 
-    results_table = pd.DataFrame(results)
+    # Perform the comparison on specified gene set
+    results = model.get_interactions(input_gene_set, threshold)
 
-    counts = results_table['hit_symbol'].value_counts().rename_axis('unique_values').to_frame('counts').reset_index()
-    high_counts = counts[counts['counts'] > 12]['unique_values'].tolist()
-
-    final_results_table = pd.DataFrame(results_table[results_table['hit_symbol'].isin(high_counts)])
-
-    final_results_table['module'] = module
+    results['module'] = module
 
     # save the gene list to a file under the "Tidbit" subdirectory
 
     # Dump HTML representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "html")
-    dump_html(output, final_results_table.head())
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
+    dump_html(output, results.head())
     output.close()
 
     # Dump JSON representation
-    output = output_file(input_gene_set.get_input_disease_name(), title, "json")
+    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
     # dumping the whole table in the JSON? or should I just dump the head?
-    final_results_table.to_json(output)
+    results.to_json(output)
     output.close()
 
-    return final_results_table
+    return results
 
 
 def aggregate_results(results_a, results_b, input_object_id):
@@ -215,6 +208,9 @@ and associated MONDO identifiers - in the second column"""
     parser.add_argument('-p', '--phenotypeThreshold',
                         type=float, default=0.35, help='value of Phenotype Similarity threshold')
 
+    parser.add_argument('-g', '--geneInteractionThreshold',
+                        type=float, default=12, help='value of Gene Interaction threshold')
+
     args = parser.parse_args()
 
     print("\nRunning the " + _SCRIPTNAME + " script...")
@@ -260,6 +256,9 @@ and associated MONDO identifiers - in the second column"""
     phenotype_threshold = args.phenotypeThreshold
     print("Phenotype Similarity Threshold: \t" + str(phenotype_threshold))
 
+    gene_interaction_threshold = args.geneInteractionThreshold
+    print("Gene Interaction Threshold: \t\t" + str(gene_interaction_threshold))
+
     print("\nLoading source ontology and annotation...")
 
     # Ontology Catalogs only need to be initialized once!
@@ -299,7 +298,7 @@ and associated MONDO identifiers - in the second column"""
         mod1a_results = \
             similarity(
                 func_sim_human,
-                disease_associated_gene_set.get_hits_dict(),
+                disease_associated_gene_set,
                 functional_threshold,
                 'Mod1A',
                 'Functionally Similar Genes'
@@ -313,7 +312,7 @@ and associated MONDO identifiers - in the second column"""
         mod1b_results = \
             similarity(
                 pheno_sim_human,
-                disease_associated_gene_set.get_hits_dict(),
+                disease_associated_gene_set,
                 phenotype_threshold,
                 'Mod1B',
                 'Phenotypic Similar Genes'
@@ -328,7 +327,8 @@ and associated MONDO identifiers - in the second column"""
         mod1e_results = \
             gene_interactions(
                 interactions_human,
-                disease_associated_gene_set.get_hits_dict(),
+                disease_associated_gene_set,
+                gene_interaction_threshold,
                 'Mod1E',
                 "Gene Interactions"
             )
@@ -357,6 +357,7 @@ and associated MONDO identifiers - in the second column"""
 
     # Success!
     exit(0)
+
 
 if __name__ == '__main__':
     main()

@@ -9,7 +9,7 @@ BioCWL Test Coverage
         * Runner must
             * Input must be validated correctly, else return nothing
             * Process Function must successfully produce mocked output
-            * Process Function must be capabable of being overriden without affecting other tasks (ensure modularity)
+            * Process Function must be capable of being overriden without affecting other tasks (ensure modularity)
             * Output must be transformed and validated correctly, else return nothing
         # The default BiolinkWorkflow should auto-guarantee all its formal properties without semantics from extensions:
             *
