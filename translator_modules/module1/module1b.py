@@ -104,7 +104,7 @@ class PhenotypeSimilarity(GenericSimilarity):
 
 class PhenotypicallySimilarGenes(Payload):
 
-    def __init__(self, input_genes, threshold, file=True):
+    def __init__(self, input_genes, threshold, file=False):
 
         super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
 
@@ -119,6 +119,7 @@ class PhenotypicallySimilarGenes(Payload):
             input_gene_set = pd.DataFrame(data=genes)
 
         self.results = self.mod.compute_similarity(input_gene_set, threshold)
+        print(self.results)
 
 
 if __name__ == '__main__':

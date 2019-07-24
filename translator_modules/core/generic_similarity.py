@@ -122,7 +122,11 @@ class GenericSimilarity(object):
     def sort_results(input_gene_set, results):
         results = pd.DataFrame(results)
         annotated_gene_set = input_gene_set['hit_id'].tolist()
+        # TODO: deprecated until i can debug
+        """
+        print(~results['hit_id'].isin(annotated_gene_set))
         results = \
             results[~results['hit_id'].isin(annotated_gene_set)]. \
             sort_values('score', ascending=False)
+        """
         return results

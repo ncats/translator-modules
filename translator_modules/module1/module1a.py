@@ -108,7 +108,7 @@ class FunctionalSimilarity(GenericSimilarity):
 
 class FunctionallySimilarGenes(Payload):
 
-    def __init__(self, input_genes, threshold, file=True):
+    def __init__(self, input_genes, threshold, file=False):
 
         super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
 
