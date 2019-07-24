@@ -108,9 +108,9 @@ class FunctionalSimilarity(GenericSimilarity):
 
 class FunctionallySimilarGenes(Payload):
 
-    def __init__(self, threshold=0.35, input_genes=None, file=True):
+    def __init__(self, input_genes, threshold, file=True):
 
-        super(FunctionallySimilarGenes, self).__init__(FunctionallySimilarGenes('human'))
+        super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
 
         if file:
             with open(input_genes) as stream:
@@ -123,8 +123,6 @@ class FunctionallySimilarGenes(Payload):
             input_gene_set = pd.DataFrame(data=genes)
 
         self.results = self.mod.compute_similarity(input_gene_set, threshold)
-
-
 
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)
