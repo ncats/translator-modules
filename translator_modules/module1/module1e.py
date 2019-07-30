@@ -68,7 +68,7 @@ class GeneInteractions(object):
                     'input_symbol': interaction['input_symbol'],
                     'hit_symbol': interaction['hit_symbol'],
                     'hit_id': interaction['hit_id'],
-                    'score': 0,
+                    'score': 1,  # CX: changed score from 0 to 1
                 })
 
         # Process the results
