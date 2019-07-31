@@ -24,8 +24,8 @@ BioCWL Test Coverage
     * For each Systems Integration test, these custom types must be Biolink Types
 """
 
-from biocwl.Biocwl import BiolinkWorkflow
-from biocwl.GeneByDisease import GeneByDisease
+from cwl.Biocwl import BiolinkWorkflow
+from cwl.GeneByDisease import GeneByDisease
 
 MockSpec = \
     {

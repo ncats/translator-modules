@@ -39,11 +39,10 @@ class ChemicalGeneInteractions(object):
                     cid_hit = self.get_genes(chemical_id=cid, action=action)
                     self.gene_hits = self.gene_hits + cid_hit
 
-# TODO: Test the module separately to observe baseline behavior
+
 class ChemicalGeneInteractionSet(Payload):
 
-    # TODO
-    def __init__(self, action, rows=50, input_gene_set_file=None):
+    def __init__(self, input_gene_set_file, action, rows=50):
         super(ChemicalGeneInteractionSet, self).__init__(ChemicalGeneInteractionSet())
 
         input_gene_set_df = None
