@@ -16,9 +16,8 @@ inputs:
     threshold_gene_interaction:
       type: int
       default: 12
-    threshold_chemical_interaction:
-      type: int
-      default: 12
+    action:
+       type: string
 outputs:
   functionally_similar_genes:
     type: File
@@ -32,7 +31,7 @@ outputs:
   chemical_interaction_list:
     type: File
     outputSource: chemical_interactions/chemical_interaction_list
-
+    
 steps:
   diseases:
     run: module0.cwl
@@ -59,7 +58,7 @@ steps:
     run: module1d.cwl
     in:
         gene_set: diseases/disease_list
-        threshold_interaction: threshold_chemical_interaction
+        action: action
     out: [ chemical_interaction_list ]
 
   gene_interactions:
