@@ -18,6 +18,7 @@ inputs:
       default: 12
     action:
        type: string
+       default: ""
 outputs:
   functionally_similar_genes:
     type: File
@@ -31,7 +32,7 @@ outputs:
   chemical_interaction_list:
     type: File
     outputSource: chemical_interactions/chemical_interaction_list
-    
+
 steps:
   diseases:
     run: module0.cwl
