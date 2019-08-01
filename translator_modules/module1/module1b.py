@@ -114,7 +114,7 @@ class PhenotypicallySimilarGenes(Payload):
                 input_gene_set = pd.read_json(stream, orient='records')
         else:
             gene_ids = [gene.gene_id for gene in input_genes]
-            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'symbol']
+            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'gene_symbol']
             genes = {"hit_id": gene_ids, "hit_symbol": symbols}
             input_gene_set = pd.DataFrame(data=genes)
 
