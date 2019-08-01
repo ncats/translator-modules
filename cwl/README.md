@@ -46,7 +46,7 @@ python -m pip install cwltool
 In the project directory, run
 
 ```bash
-cwltool biocwl/workflows/wf2.cwl biocwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/wf2.cwl cwl/data/inputs/fanconi.yaml
 ```
 
 If you can run `wf2.cwl` with `fanconi.yaml` successfully,
@@ -121,7 +121,7 @@ You can do this using a tool like `dos2unix`, or by running the Vim command `set
 For the system to run, you will now need to 
 [install the Python dependencies for the translator-modules project](../README.md#installation-of-dependencies).
 
-In order to use the CWL tools in `biocwl/workflows/`, one must then put those `translator_modules/modules<*>/` modules 
+In order to use the CWL tools in `cwl/workflows/`, one must then put those `translator_modules/modules<*>/` modules 
 on the system path.  This lets your CWL Runner use these modules by identifying them on the absolute path, and lets 
 the codebase be portable across systems if you are not using a virtual machine.
 
@@ -176,14 +176,14 @@ outputs:
 stdout: module0.records.json
 ```
 
-This is `biocwl/workflows/module0.cwl` wrapping `translator_modules/module0.py`. All CWL tools for Translator Modules share this
+This is `cwl/workflows/module0.cwl` wrapping `translator_modules/module0.py`. All CWL tools for Translator Modules share this
 structure. We will run `module0.py` with inputs given by `disease_name` and `disease_id`, corresponding to the flags 
 `--input-disease-name`, and `--input-disease-mondo`, which are the names of variables inside the module. 
 The tokens `get-data-frame to-json --orient records` make `module0.py` return a list of JSON records; see 
 [exposing your module to the command line](#exposing-your-module-to-the-command-line) for details.
 
 If CWL is a blueprint, what makes it real? Inputs to CWL tools are YAML files that share the same keywords as the tool's
-inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `diease_id`, like in `biocwl/data/inputs/fanconi.yaml`:
+inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `diease_id`, like in `cwl/data/inputs/fanconi.yaml`:
 
 ```yaml
 disease_name: "FA"
@@ -204,7 +204,7 @@ module0.py --inputs-disease-name "FA" --input-disease-mondo "MONDO:0019391" get-
 Is *equivalent to* **this CWL tool running Translator Module 0:**
 
 ```bash
-cwltool biocwl/workflows/module0.cwl biocwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/module0.cwl cwl/data/inputs/fanconi.yaml
 ```
 
 ## Writing a CWL tool for an existing module
@@ -223,7 +223,8 @@ easy to transform data however they like.
 Our answer to this requirement is to ask modules to use a class called `Payload` to help turn the module into a command line tool.
 This involves the following:
 
-* Extend the `Payload` class with a constructor that takes workflow parameters (e.g. `disease_id`, `gene_set`, `threshold_score`...) as its arguments;
+* Extend the `Payload` class with a constructor that takes workflow parameters (e.g. `disease_id`, `input_genes`, 
+`threshold`...) as its arguments;
 * Finding a way to expose these arguments to the command line (such as with [Python Fire](https://github.com/google/python-fire));
 * Transform the module's results into a [Pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html);
 * Use `Payload`'s accessor methods to return output in TranslatorCWL tools.
@@ -238,23 +239,28 @@ import fire
 
 class FunctionallySimilarGenes(Payload):
 
-    def __init__(self, threshold, input_payload_file):
+    def __init__(self, input_genes, threshold, file=False):
         super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
 
-        input_gene_set_df = None
-        if input_payload_file:
-            with open(input_payload_file) as stream:
+        if file:
+            with open(input_genes) as stream:
                 # assuming it's JSON and it's a record list
-                input_gene_set_df = pd.read_json(stream, orient='records')
+                input_gene_set = pd.read_json(stream, orient='records')
+        else:
+            gene_ids = [gene.gene_id for gene in input_genes]
+            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'gene_symbol']
+            genes = {"hit_id": gene_ids, "hit_symbol": symbols}
+            input_gene_set = pd.DataFrame(data=genes)
 
-        self.results = self.mod.compute_similarity(input_gene_set_df, threshold)
+        self.results = self.mod.compute_similarity(input_gene_set, threshold)
 
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)
 ```
 
-The constructor takes two arguments, `threshold` and `input_payload_file`, which will correspond to flags and prefixes in
-the CWL tool. These are the only two parameters required to run `compute_similarity`, which is Module1A's primary function.
+The constructor takes two arguments, 'input_genes' and `threshold`, which will correspond to flags and prefixes in
+the CWL tool. These are the only two parameters required to run `compute_similarity`, which is 
+Module1A's primary function.
 
 Both `self.results` and `self.mod` are fields of `Payload`: the value of `self.mod` is equal to the initialized module
 `FunctoinalSimilarity('human')` that was passed in to the super-constructor. By returning `self.mod.compute_similarity()`
@@ -363,7 +369,7 @@ cwltool <your cwl file> <your data file>
 
 ## Combining multiple CWL tools
 
-`wf2.cwl` in `biocwl/workflows` is an example of combining multiple CWL tools (taking a subset of `wf2.cwl`). Here is a part of it:
+`wf2.cwl` in `cwl/workflows` is an example of combining multiple CWL tools (taking a subset of `wf2.cwl`). Here is a part of it:
 
 ```yaml
 cwlVersion: v1.0
@@ -371,7 +377,7 @@ class: Workflow
 inputs:
     disease_name: string
     disease_id: string
-    threshold_functional:
+    threshold:
       type: float
       default: 0.75
 outputs:
@@ -389,8 +395,8 @@ steps:
   functional_similarity:
     run: module1a.cwl
     in:
-      gene_set: diseases/disease_list
-      threshold: threshold_functional
+      input_genes: diseases/disease_list
+      threshold: threshold
     out: [ functionally_similar_genes ]
 ```
 
@@ -399,13 +405,13 @@ be specified. Multiple tools are used together by linking the outputs of one too
 
 For instance, the tool `diseases` runs `module0.cwl`, that outputs a `disease_list`, which we address specifically in the 
 property `out`.  We place `disease_list` into `functional_similarity`'s inputs by referencing what it is and where it came 
-from, `diseases/disease_list`, and placing it as the value of the relevant input, `gene_set`.
+from, `diseases/disease_list`, and placing it as the value of the relevant input, `input_genes`.
 
 A similar process is performed with the final results of `m0_m1.cwl`, where the output of `module1a.cwl` is connected to
 former's outputs, by writing `outputSource: functional_similarity/functionally_similar_genes`.
 
 Sometimes, your inputs cross-cut among many tools: it might be useful to set a `default` value like we did
-with `threshold_functional`, so we don't have to put so many arguments into our input file, or re-use the input file of 
+with `threshold`, so we don't have to put so many arguments into our input file, or re-use the input file of 
 an existing script. So this:
 
 ```yaml
@@ -418,7 +424,7 @@ Or this:
 ```yaml
 disease_name: "FA"
 disease_id: "MONDO:0019391"
-threshold_functional: 0.35
+threshold: 0.35
 ```
 
 ... are both valid input files.
