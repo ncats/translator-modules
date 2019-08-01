@@ -82,7 +82,7 @@ class GeneInteractions(object):
 
 class GeneInteractionSet(Payload):
 
-    def __init__(self, threshold=12, input_gene_set_file=None):
+    def __init__(self, input_gene_set_file, threshold=12):
 
         super(GeneInteractionSet, self).__init__(GeneInteractions())
 
