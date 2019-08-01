@@ -131,6 +131,7 @@ class GenericSimilarity(object):
 
         # TODO: KCB deprecated until it can be debugged
         """
+        annotated_gene_set = input_gene_set['hit_id'].tolist()
         print(~results['hit_id'].isin(annotated_gene_set))
         # annotated_gene_set = input_gene_set['hit_id'].tolist()
         # CX: Some users need to know the scores that input genes have for each other. 
