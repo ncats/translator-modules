@@ -127,17 +127,19 @@ class GenericSimilarity(object):
 
     @staticmethod
     def sort_results(input_gene_set, results):
+
         results = pd.DataFrame(results)
 
-        # TODO: KCB deprecated until it can be debugged
         """
+        # TODO: KCB deprecated until it can be debugged
         annotated_gene_set = input_gene_set['hit_id'].tolist()
         print(~results['hit_id'].isin(annotated_gene_set))
-        # annotated_gene_set = input_gene_set['hit_id'].tolist()
+        """
+
         # CX: Some users need to know the scores that input genes have for each other. 
         #     replacing code to remove GeneA input = GeneA output results
         results = \
             results[~(results.hit_id==results.input_id)]. \
             sort_values('score', ascending=False)
-        """
+        
         return results
