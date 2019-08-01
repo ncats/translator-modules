@@ -105,7 +105,6 @@ class PhenotypeSimilarity(GenericSimilarity):
 class PhenotypicallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold, file=False):
-
         super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
 
         if file:

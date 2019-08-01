@@ -145,11 +145,12 @@ def gene_interactions(model, disease_associated_gene_set, threshold, module, tit
 
     # Dump HTML representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
-    dump_html(output, results.head())
+    dump_html(output, results)  # CX: was head. I want all of the results. 
     output.close()
 
     # Dump JSON representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
+    # CX: you should dump the whole table. 
     # dumping the whole table in the JSON? or should I just dump the head?
     results.to_json(output)
     output.close()

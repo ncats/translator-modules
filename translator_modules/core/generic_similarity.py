@@ -46,6 +46,9 @@ class GenericSimilarity(object):
         p = GafParser()
         url = ''
         if self.ont == 'go':
+            # CX: GO:0008150 is biological_process, GO:0003674 is molecular_function. 
+            # CX: These are 2 out of 3 top-level terms in GO ontology. 
+            # CX: The excluded term is cellular_component (where gene carries out a molecular function)
             go_roots = set(self.ontology.descendants('GO:0008150') + self.ontology.descendants('GO:0003674'))
             sub_ont = self.ontology.subontology(go_roots)
             if taxon == 'mouse':
@@ -83,6 +86,7 @@ class GenericSimilarity(object):
             return 0.0, set()
 
         shared_terms = a1.intersection(a2)
+        
         return len(shared_terms) / num_union, shared_terms
 
     def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
@@ -98,6 +102,8 @@ class GenericSimilarity(object):
                         GenericSimilarity.jaccard_similarity(self.associations, input_gene, subject_curie)
                     if float(score) > float(lower_bound):
                         subject_label = self.associations.label(subject_curie)
+                        # CX: addition of human-readable labels aka "shared_term_names" 
+                        shared_term_names = [self.associations.label(x) for x in shared_terms]
                         similarities.append({
                             'input_id': input_gene,
                             'input_symbol': igene['input_symbol'],
@@ -105,6 +111,7 @@ class GenericSimilarity(object):
                             'hit_id': subject_curie,
                             'score': score,
                             'shared_terms': shared_terms,
+                            'shared_term_names': shared_term_names
                         })
         return similarities
 
@@ -121,12 +128,15 @@ class GenericSimilarity(object):
     @staticmethod
     def sort_results(input_gene_set, results):
         results = pd.DataFrame(results)
-        annotated_gene_set = input_gene_set['hit_id'].tolist()
-        # TODO: deprecated until i can debug
+
+        # TODO: KCB deprecated until it can be debugged
         """
         print(~results['hit_id'].isin(annotated_gene_set))
+        # annotated_gene_set = input_gene_set['hit_id'].tolist()
+        # CX: Some users need to know the scores that input genes have for each other. 
+        #     replacing code to remove GeneA input = GeneA output results
         results = \
-            results[~results['hit_id'].isin(annotated_gene_set)]. \
+            results[~(results.hit_id==results.input_id)]. \
             sort_values('score', ascending=False)
         """
         return results
