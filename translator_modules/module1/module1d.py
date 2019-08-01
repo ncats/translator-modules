@@ -7,6 +7,7 @@ from CTD.CTD_wrapper import CTDWrapper
 import pandas as pd
 from translator_modules.core import Payload
 
+
 # TODO: Refactor towards methods being functional
 class ChemicalGeneInteractions(object):
     def __init__(self):
@@ -38,6 +39,7 @@ class ChemicalGeneInteractions(object):
                     cid = cid.lstrip().rstrip()
                     cid_hit = self.get_genes(chemical_id=cid, action=action)
                     self.gene_hits = self.gene_hits + cid_hit
+
 
 # TODO: Test the module separately to observe baseline behavior
 class ChemicalGeneInteractionSet(Payload):
