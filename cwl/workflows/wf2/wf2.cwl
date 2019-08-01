@@ -32,7 +32,6 @@ outputs:
   chemical_interaction_list:
     type: File
     outputSource: chemical_interactions/chemical_interaction_list
-
 steps:
   diseases:
     run: module0.cwl
