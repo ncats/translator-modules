@@ -34,6 +34,7 @@ from translator_modules.module1.module1a import FunctionalSimilarity
 from translator_modules.module1.module1b import PhenotypeSimilarity
 from translator_modules.module1.module1e import GeneInteractions
 from translator_modules.util.standard_output import StandardOutput
+from translator_modules.util.summary_mod import SummaryMod  
 
 _SCRIPTNAME = 'WF2_automation.py'
 
@@ -277,11 +278,16 @@ and associated MONDO identifiers - in the second column"""
     # Gene interactions curated in the Biolink (Monarch) resource
     interactions_human = GeneInteractions()
 
+    # Initalizing list of summaries, for use with a file of diseases 
+    disease_summaries = []
+
     # diseases.tsv is assumed to be a tab delimited
     # file of diseases named (column 0) with their MONDO identifiers (column 1)
     # The optional header should read 'Disease' in the first column
     for disease_name, mondo_id in disease_list:
-
+        # intialize summary module object
+        summary_mod = SummaryMod(disease_name, mondo_id)
+        
         print("\nProcessing '" + disease_name + "(" + mondo_id + "):\n")
 
         disease_associated_gene_set = \
@@ -304,11 +310,18 @@ and associated MONDO identifiers - in the second column"""
                 'Mod1A',
                 'Functionally Similar Genes'
             )
-
+            
+        ## JG: Add output into summary 
+        ## This builds a brief summary for just this module as well as begins the across summary tables
+        ## Additionally stores the raw data itself
+        summary_mod.add1A(mod1a_results) 
+        
         if _echo_to_console:
-            print("\nMod1A Results for '" +
-                  disease_name + "(" + mondo_id + "):\n")
-            print(mod1a_results.to_string(columns=STD_RESULT_COLUMNS))
+            ## CX: this functionality from summary module can replace previous code?
+            summary_mod.show_single_mod_summary('mod1A')
+#            print("\nMod1A Results for '" +
+#                  disease_name + "(" + mondo_id + "):\n")
+#            print(mod1a_results.to_string(columns=STD_RESULT_COLUMNS))
 
         mod1b_results = \
             similarity(
@@ -318,11 +331,16 @@ and associated MONDO identifiers - in the second column"""
                 'Mod1B',
                 'Phenotypic Similar Genes'
             )
+            
+        ## JG: Add output into summary 
+        summary_mod.add1B(mod1b_results)
 
         if _echo_to_console:
-            print("\nMod1B Results for '" +
-                  disease_name + "(" + mondo_id + "):\n")
-            print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
+            ## CX: this functionality from summary module can replace previous code?
+            summary_mod.show_single_mod_summary('mod1B')
+#            print("\nMod1B Results for '" +
+#                  disease_name + "(" + mondo_id + "):\n")
+#            print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
 
         # Find Interacting Genes from Monarch data
         mod1e_results = \
@@ -333,26 +351,51 @@ and associated MONDO identifiers - in the second column"""
                 'Mod1E',
                 "Gene Interactions"
             )
+            
+        ## JG: Add output into summary 
+        summary_mod.add1E(mod1e_results)
 
         if _echo_to_console:
-            print("\nMod1E Results for '" +
-                  disease_name + "(" + mondo_id + "):\n")
-            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
+            ## CX: this functionality from summary module can replace previous code?
+            summary_mod.show_single_mod_summary('mod1E')            
+#            print("\nMod1E Results for '" +
+#                  disease_name + "(" + mondo_id + "):\n")
+#            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
 
-        # Not sure how useful this step is: to be further reviewed
-        # (carried over from the Jupyter notebook)
-        std_api_response_json = \
-            aggregate_results(
-                mod1a_results,
-                mod1b_results,
-                disease_associated_gene_set.get_input_disease_id()
-            )
+        # CX: Summary module code here
+        # Put it in list for disease pipeline
+        disease_summaries.append(summary_mod)
 
-        # Echo to console
+        ## END OF MODULE QUERIES 
         if _echo_to_console:
-            print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
-                  disease_name + "(" + mondo_id + "):\n")
-            print(std_api_response_json)
+            summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
+        # CX: I don't think this is necessary. Too cluttered to show all of this. 
+#            summary_mod.show_brief()
+#            summary_mod.show_descriptive()
+
+        ## Get both
+        brief_summary, full_summary = summary_mod.get_all()
+
+        ## Write all out
+        summary_csv_filenames = [disease_name+'_brief_summary.csv',disease_name+'_full_summary.csv']
+        summary_json_filenames = [disease_name+'_brief_summary.json',disease_name+'_full_summary.json']
+        
+        summary_mod.write_all_csv(summary_csv_filenames[0], summary_csv_filenames[1])
+        summary_mod.write_all_json(summary_json_filenames[0], summary_json_filenames[1])
+
+        ## CX: not sure how much we need this code below...
+#        std_api_response_json = \
+#            aggregate_results(
+#                mod1a_results,
+#                mod1b_results,
+#                disease_associated_gene_set.get_input_disease_id()
+#            )
+#
+#        # Echo to console
+#        if _echo_to_console:
+#            print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
+#                  disease_name + "(" + mondo_id + "):\n")
+#            print(std_api_response_json)
 
     print("\nWF2 Processing complete!")
 
