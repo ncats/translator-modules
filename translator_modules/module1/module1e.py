@@ -77,6 +77,9 @@ class GeneInteractions(object):
         high_counts = counts[counts['counts'] > lower_bound]['unique_values'].tolist()
         results = pd.DataFrame(results[results['hit_symbol'].isin(high_counts)])
 
+        # CX: remove results where input gene = output gene. Output gene can still be disease associated genes. 
+        results = results[~(results['hit_symbol'] == results['input_symbol'])]
+
         return results
 
 
