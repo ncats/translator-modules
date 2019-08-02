@@ -2,19 +2,19 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module1b.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ module1a.py, --file=True, get-data-frame, to-json,--orient, records ]
 inputs:
-  gene_set:
+  input_genes:
     type: File
     inputBinding:
       position: 0
-      prefix: --input_gene_set_file
+      prefix: --input_genes
   threshold:
     type: float
     inputBinding:
       position: 1
       prefix: --threshold
 outputs:
-  phenotypically_similar_genes:
+  functionally_similar_genes:
     type: stdout
-stdout: module1b.records.json
+stdout: module1a.records.json

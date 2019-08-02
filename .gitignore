@@ -114,7 +114,7 @@ Tidbit
 py*/
 
 # can't guarantee script outputs are going to matter
-./biocwl/data/outputs/*
+cwl/data/outputs/*
 module*.json
 
 translator-modules/

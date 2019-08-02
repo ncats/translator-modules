@@ -1,0 +1,6 @@
+gene_set:
+  class: File
+  location: module0.records.json
+threshold_functional_similarity: 0.75
+threshold_phenotype_similarity: 0.10
+threshold_interaction: 12
