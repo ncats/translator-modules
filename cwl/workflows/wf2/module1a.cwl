@@ -8,6 +8,7 @@ inputs:
     type: File
     inputBinding:
       position: 0
+      prefix: --input_genes
   threshold_functional_similarity:
     type: float
     inputBinding:
