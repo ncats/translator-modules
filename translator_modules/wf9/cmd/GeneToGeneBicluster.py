@@ -12,39 +12,32 @@ from translator_modules.core import Payload
 
 class GeneToGeneBiclusters(Payload):
 
-    def __init__(self, input_gene_list_file):
-        sys.settrace
+    def __init__(self, input_gene_list_file=None):
 
-        super(GeneToGeneBiclusters, self).__init__(CoocurrenceByBicluster())
-
-        curated_gene_list = \
-            self.mod.run_getinput(input_gene_list_file)
-
-        # Most of WF9's modules are asynchronous
-        # https://stackoverflow.com/a/53267521
-        # https://stackoverflow.com/a/44048615
+        GeneCoocurrenceByBiclusterObject = CoocurrenceByBicluster()
+        CAD_geneset = {'ENSG00000121410',
+                       'ENSG00000268895',
+                       'ENSG00000148584',
+                       'ENSG00000070018',
+                       'ENSG00000175899',
+                       'ENSG00000245105',
+                       'ENSG00000166535',
+                       'ENSG00000256661',
+                       'ENSG00000256904',
+                       'ENSG00000256069',
+                       'ENSG00000234906',
+                       'ENSG00000068305',
+                       'ENSG00000070018'
+                       }
 
         loop = asyncio.get_event_loop()
-        task = loop.create_task(self.mod.tissue_to_gene_biclusters_async(curated_gene_list))
-        done, pending = loop.run_until_complete(asyncio.wait([task]))
+        related_biclusters_and_genes_for_each_input_gene = loop.run_until_complete(
+            GeneCoocurrenceByBiclusterObject.gene_to_gene_biclusters_async(CAD_geneset))
+        bicluster_occurences_dict = GeneCoocurrenceByBiclusterObject.bicluster_occurences_dict(
+            related_biclusters_and_genes_for_each_input_gene)
+        unique_biclusters = GeneCoocurrenceByBiclusterObject.unique_biclusters(bicluster_occurences_dict)
 
-        # data munging the output for the module
-        from collections import defaultdict
-        def default_dict_convert(default_dict):
-            temp_default_dict = dict(default_dict)
-            for item1 in default_dict.keys():
-                for item2 in default_dict[item1].keys():
-                    if type(default_dict[item1][item2]) is type(defaultdict()):
-                        temp_default_dict[item1][item2] = dict(default_dict[item1][item2])
-                if type(default_dict[item1][item2]) is type(defaultdict()):
-                    temp_default_dict[item1] = dict(default_dict[item1])
-            return temp_default_dict
-
-        for future in done:
-            print(future.result())
-            # dataFrame = pd.DataFrame.from_dict(default_dict_convert(future.result()), orient="index")
-            # dataFrame["gene_id"] = dataFrame.index  # turn the row index, which are currently gene ids, into a named column
-            # self.results = dataFrame
+        print(len(unique_biclusters))
 
 
 if __name__ == '__main__':
