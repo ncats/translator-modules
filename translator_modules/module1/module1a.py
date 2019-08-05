@@ -98,18 +98,20 @@ class FunctionalSimilarity(GenericSimilarity):
         return results
 
     def symbol2hgnc(self, symbol):
-        mg_hit = self.mg.query('symbol:{}'.format(symbol),
-                               fields='HGNC,symbol,taxon',
-                               species='human',
-                               entrezonly=True)
-        if mg_hit['total'] == 1:
-            return 'HGNC:{}'.format(mg_hit['hits'][0]['HGNC'])
+        try:
+            mg_hit = self.mg.query('symbol:{}'.format(symbol),
+                                   fields='HGNC,symbol,taxon',
+                                   species='human',
+                                   entrezonly=True)
+            if mg_hit['total'] == 1:
+                return 'HGNC:{}'.format(mg_hit['hits'][0]['HGNC'])
+        except:
+            return 'symbol:{}'.format(symbol)
 
 
 class FunctionallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold, file=False):
-
         super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
 
         if file:
@@ -118,7 +120,7 @@ class FunctionallySimilarGenes(Payload):
                 input_gene_set = pd.read_json(stream, orient='records')
         else:
             gene_ids = [gene.gene_id for gene in input_genes]
-            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'symbol']
+            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'gene_symbol']
             genes = {"hit_id": gene_ids, "hit_symbol": symbols}
             input_gene_set = pd.DataFrame(data=genes)
 

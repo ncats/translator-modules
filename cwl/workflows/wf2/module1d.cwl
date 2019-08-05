@@ -4,7 +4,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ module1d.py, get-data-frame, to-json, --orient, records ]
 inputs:
-  gene_set:
+  input_genes:
     type: File
     inputBinding:
       position: 0

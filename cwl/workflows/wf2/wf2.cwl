@@ -14,9 +14,6 @@ inputs:
     threshold_gene_interaction:
       type: int
       default: 12
-    action:
-       type: string
-       default: ""
 outputs:
   functionally_similar_genes:
     type: File
@@ -37,15 +34,15 @@ steps:
   functional_similarity:
     run: module1a.cwl
     in:
-      gene_set: diseases/disease_list
-      threshold_functional_similarity: threshold_functional_similarity
+      input_genes: diseases/disease_list
+      threshold: threshold_functional_similarity
     out: [ functionally_similar_genes ]
 
   phenotype_similarity:
     run: module1b.cwl
     in:
-      gene_set: diseases/disease_list
-      threshold_phenotype_similarity: threshold_phenotype_similarity
+      input_genes: diseases/disease_list
+      threshold: threshold_phenotype_similarity
     out: [ phenotypically_similar_genes ]
 
   gene_interactions:

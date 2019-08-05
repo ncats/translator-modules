@@ -82,13 +82,13 @@ class GeneInteractions(object):
 
 class GeneInteractionSet(Payload):
 
-    def __init__(self, input_gene_set_file, threshold=12):
+    def __init__(self, input_genes, threshold=12):
 
         super(GeneInteractionSet, self).__init__(GeneInteractions())
 
         input_gene_set = None
-        if input_gene_set_file:
-            with open(input_gene_set_file) as stream:
+        if input_genes:
+            with open(input_genes) as stream:
                 # assuming it's JSON and it's a record list
                 input_gene_set = pd.read_json(stream, orient='records')
 
