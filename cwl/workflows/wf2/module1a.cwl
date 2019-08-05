@@ -2,13 +2,12 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module1a.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ module1a.py, --file=True, get-data-frame, to-json,--orient, records ]
 inputs:
   gene_set:
     type: File
     inputBinding:
       position: 0
-      prefix: --input_gene_set_file
   threshold_functional_similarity:
     type: float
     inputBinding:

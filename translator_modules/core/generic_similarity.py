@@ -129,9 +129,11 @@ class GenericSimilarity(object):
     def sort_results(input_gene_set, results):
         results = pd.DataFrame(results)
         # annotated_gene_set = input_gene_set['hit_id'].tolist()
-        # CX: Some users need to know the scores that input genes have for each other. 
+        # CX: Some users need to know the scores that input genes have for each other.
         #     replacing code to remove GeneA input = GeneA output results
+        annotated_gene_set = input_gene_set['hit_id'].tolist()
         results = \
             results[~(results.hit_id==results.input_id)]. \
             sort_values('score', ascending=False)
+
         return results

@@ -2,14 +2,14 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module1e.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ module1e.py, --file=True, get-data-frame, to-json, --orient, records ]
 inputs:
   gene_set:
     type: File
     inputBinding:
       position: 0
-      prefix: --input_gene_set_file
-  threshold_interaction:
+      prefix: --input_genes
+  threshold_gene_interactions:
     type: int
     inputBinding:
       position: 1
