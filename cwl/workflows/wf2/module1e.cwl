@@ -9,7 +9,7 @@ inputs:
     inputBinding:
       position: 0
       prefix: --input_genes
-  threshold:
+  threshold_gene_interaction:
     type: int
     inputBinding:
       position: 1

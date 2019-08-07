@@ -9,7 +9,7 @@ inputs:
     inputBinding:
       position: 0
       prefix: --input_genes
-  threshold:
+  threshold_phenotype_similarity:
     type: float
     default: 0.10
     inputBinding:

@@ -126,5 +126,6 @@ class FunctionallySimilarGenes(Payload):
 
         self.results = self.mod.compute_similarity(input_gene_set, threshold)
 
+
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)
