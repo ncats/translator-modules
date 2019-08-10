@@ -4,12 +4,12 @@ cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ module1a.py, --file=True, get-data-frame, to-json,--orient, records ]
 inputs:
-  gene_set:
+  input_genes:
     type: File
     inputBinding:
       position: 0
       prefix: --input_genes
-  threshold_functional_similarity:
+  threshold:
     type: float
     inputBinding:
       position: 1
