@@ -1,20 +1,17 @@
-# Written 20190603 by Megan Grout (groutm@ohsu.edu) ; Jacob Gutierrez (gutierja@ohsu.edu) 6/10/19 ; Colleen Xu (xco@ohsu.edu) 6/10/19 
-# using Python 3
+# Written by Colleen Xu
+# using Python 3.7
+# Original version written 20190603 by Megan Grout (groutm@ohsu.edu) ; Jacob Gutierrez (gutierja@ohsu.edu) 6/10/19 ; Colleen Xu (xco@ohsu.edu) 6/10/19 
 #
-# The purpose of this script is to create an class to
-# aggregate and display summary data from the automated
-# modules.
+# The purpose of this script is to create an class to aggregate and display summary data from the modules.
 
 # Import libraries
 import pandas as pd
-
+import numpy as np
 
 # Main class
 class SummaryMod(object):
-
     # Initializing function
     def __init__(self, disease_name='NA', mondo_id='MONDO:XXXXXXX'):
-
         # Store the disease names and mondo id
         self.disease_name = disease_name
         self.mondo_id = mondo_id
@@ -22,63 +19,38 @@ class SummaryMod(object):
         # Store current modules being used
         self.current_mods = list()
 
-        # stores the dataframe from all the raw module output
-        # The keys are 'mod1A', 'mod1B', etc. (the module names) 
-        # This allows for retrival of raw data later on 
-        self.raw_module_data = dict()
-
         # Stores brief summary tables for individual modules 
         self.module_summaries = dict()
 
         # Dataframes for summaries across modules 
         self.brief_summary = pd.DataFrame()
-        self.full_summary = pd.DataFrame(columns = ['output_gene','input_gene'])
-
-        # Stores the naming conventions for the summary columns
-        self.module_names = dict()
-
+        self.full_summary = pd.DataFrame(columns = ['hit_symbol','input_symbol', 'input_id', 'hit_id'])
 
     # Method formats the disease name for printing 
     def format_print(self, title=''):
-
         print("\n" + title + " for " +
                   self.disease_name + "(" + self.mondo_id + "):\n")
 
-        # END
-
-
-    # This method builds the full summary as a pandas dataframe. It returns nothing
-    # and is given a pandas dataframe of an individual module's results.
     def build_full_summary(self, mod_results):
         """
-        Method builds the full summary as a pandas dataframe.
-        Combines existing full_summary with the individual module's results each time called
-        
-        Parameters: 
-        mod_results >  Formatted module output with the following columns 
-
-        output_gene | input_gene | Scores or Hits | Terms (optional)
-
-        Output: None
+        Called within the add1A, add1B, etc. modules.
+        Combines existing full_summary with the individual module's processed results each time it's called
+        Method builds the full summary as a pandas dataframe
+        Returns nothing
 
         Updates the self.full_summary dataframe by merging the new mod_results data into self.full_summary by input-output gene. 
-        If the input-output gene relationship already exists the new columns is added to the end reflecting the new relationship.
+        If the input-output gene relationship already exists, new columns are added to the end reflecting the new relationship.
         """
-
-        # Combine exisiting full_summary with mod pre-processed data
-        # If full_summary is empty, it will only hold mod info and columns pertaining to particular mod
-        self.full_summary = pd.merge(self.full_summary, mod_results, on=['input_gene','output_gene'], how='outer')        
-
-#        ## CX: calculate sum of ranks for sorting
-#        self.full_summary['sum_ranks'] = self.full_summary.filter(regex=("_rank$")).sum(axis=1)
-#
-#        # Now do the sorting
-#        self.full_summary = self.full_summary.sort_values(['sum_ranks'], ascending = True)
-#
-#        # Now drop the column used to sort
-#        self.full_summary = self.full_summary.drop(columns="sum_ranks")
-
-        # End 
+        # Combine existing full_summary with module data 
+        self.full_summary = pd.merge(self.full_summary, mod_results, on=['hit_symbol', 'hit_id', 'input_symbol','input_id'], how='outer')        
+        ## CX if i included 'module' column, after I merge, I have two versions of module column: module x and module y. need to merge them. 
+#        print("full sum columns\n")
+#        print(self.full_summary.columns)
+#        self.full_summary.reset_index(drop=True, inplace=True) 
+        
+#        if 'module_x' in self.full_summary.columns:
+#            self.full_summary['module'] = self.full_summary[['module_x','module_y']].apply(list, axis=1)
+#            self.full_summary.drop(['module_x','module_y'],axis=1,inplace=True)
 
 
     def build_brief_summary(self):
@@ -88,78 +60,111 @@ class SummaryMod(object):
         
         Everytime it's called, the brief_summary is built from scratch from the full summary pandas df. 
 
-        If optional terms are included, the self.module_names must be populated to format the columns 
-
-        The brief table displays each unique output gene. The following columns show counts (number of lines of supporting evidence from each module). 
-
-        Brief Table Format:
-        output_gene | input_gene_cnts | lines_of_evidence | Mod1A_counts | etc...
+        The brief table displays each unique output gene in one row. 
         """
         self.brief_summary = pd.DataFrame.copy(self.full_summary)
         
-        ## remove columns with "_rank" in them, rename columns
-        droplist = [i for i in self.brief_summary.columns if i.endswith('_rank')]
-        self.brief_summary.drop(droplist,axis=1,inplace=True)
+        # turn input_symbols, scores, ranks into lists. 
+        # Note that default groupby will cause issues with the index (hit_symbol becomes index) that needs to be reset below 
+        self.brief_summary = self.brief_summary.groupby(['hit_symbol', 'hit_id']).agg(list)
         
-        # Find counts of support for each unique output gene 
-        self.brief_summary = self.brief_summary.groupby(['output_gene']).aggregate('count')
+        ## TO DO: rename columns: prefix num for "score" columns!
+        ## then don't need the awkward including of protein interactions for some later code
+        ## need to dropna for the rank columns too maybe
+        ## error where some rows are missing rank sums. 
         
-        ## This is used to rename the columns
-        for term in self.module_names.keys():
-
-            # Search for the title then replace with the dictionary created in the addmod___ method
-            if term in list(self.brief_summary.columns.values):
-                self.brief_summary = self.brief_summary.drop(columns=term)
-                self.brief_summary = self.brief_summary.rename(
-                    index=str, columns = self.module_names[term])
-
-        # sort by the total number of input genes for each output gene
-        # Make total lines_of_evidence and reorder the columns 
-        self.brief_summary['lines_of_evidence'] =  self.brief_summary.drop('input_gene', axis=1).sum(axis=1)
-
-        # Send the total lines_of_evidence to the second columns
-        cols = self.brief_summary.columns.tolist() # Find column names 
-        cols.insert(0, cols.pop(cols.index('input_gene'))) # input_gene is first
-        cols.insert(1, cols.pop(cols.index('lines_of_evidence'))) # lines_of_evidence is second then everything else is after that 
-        self.brief_summary = self.brief_summary.reindex(columns=cols)
+#        print("\nBefore reseting index after group by\n")
+#        print(self.brief_summary.columns)
+#        self.brief_summary.reset_index(inplace=True) 
+#        print("\nAfter resetting index\n")
+#        print(self.brief_summary.columns)
         
-        # Now sort
-        self.brief_summary = self.brief_summary.sort_values(['lines_of_evidence'],ascending =False)
-        self.brief_summary.reset_index(inplace=True)  # move output gene to its own column
+        # convert score/interaction/module lists to counts
+        other_counted_cols = ['num_protein_interaction']
+        counted_columns = [i for i in self.brief_summary.columns if (i.endswith('_score') or i in other_counted_cols)]
+        for col in counted_columns:
+            self.brief_summary[col] = [len(pd.Series(x).dropna()) for x in self.brief_summary[col]]
+            self.brief_summary[col] = [np.nan if x==0 else x for x in self.brief_summary[col]]
+        
+        # IF num_protein_interactions included, calculate ranks 
+        if 'num_protein_interaction' in self.brief_summary.columns: 
+            self.brief_summary['protein_interaction_rank'] = self.brief_summary['num_protein_interaction'].rank(ascending=False, method='min')        
+            # perhaps a way to turn one number into a list of one number
+#            self.brief_summary['protein_interaction_rank'] = [[i] for i in self.brief_summary['protein_interaction_rank']]              
+        
+        ## DEBUGGING: I am looking at brief summary in this view to check counts in _score columns and lists in the rank columns 
+        self.brief_summary = self.brief_summary.sort_values(by=['hit_symbol'], ascending=[True]).reset_index()
+        
+#        # Use ranks and module count to calculate a sorting_score 
+#        # excluded ranks include any made above (in this function)
+#        excluded_ranks = ['protein_interaction_rank']  
+#        rank_columns = [i for i in self.brief_summary.columns if (i.endswith('_rank') and i not in excluded_ranks)]
+#        
+#        for col in rank_columns:
+#            self.brief_summary[col] = [sum(x) for x in self.brief_summary[col]]
+#        
+#        ## CX: NOTICE this is the number of mods called so far! Not the num of mods that give that particular output gene
+#        num_mods = len(self.module_summaries.keys())
+#        self.brief_summary['sorting_score'] = self.brief_summary.filter(regex=("_rank$")).sum(axis=1) / num_mods        
+#        
+#        # sort table by sorting_score 
+#        self.brief_summary = self.brief_summary.sort_values(by=['sorting_score','hit_symbol'], ascending=[False, True]).reset_index()
+        
+#        ## remove columns with "_rank" in them
+#        droplist = [i for i in self.brief_summary.columns if i.endswith('_rank')]
+#        self.brief_summary.drop(droplist,axis=1,inplace=True)
+#        
+#        # Make total_hits and reorder the columns 
+#        other_counted_cols = ['num_protein_interaction']
+#        counted_columns = [i for i in self.brief_summary.columns if (i.endswith('_score') or i in other_counted_cols)]
+#        for col in counted_columns:
+#            self.brief_summary[col] = [len(x) for x in self.brief_summary[col]]
+#        self.brief_summary['total_hits'] =  self.brief_summary.drop(['input_symbol', 'input_id'], axis=1).sum(axis=1)
+#
+#        # Send the total lines_of_evidence to the second columns
+#        cols = self.brief_summary.columns.tolist() # Find column names 
+#        cols.insert(0, cols.pop(cols.index('input_symbol'))) # input_gene is first
+#        cols.insert(1, cols.pop(cols.index('total_hits'))) # total_hits is second then everything else is after that 
+#        self.brief_summary = self.brief_summary.reindex(columns=cols)
+#        
+#        # Now sort
+#        self.brief_summary = self.brief_summary.sort_values(['total_hits'],ascending =False)
+#        self.brief_summary.reset_index(inplace=True)  # move output gene to its own column
         
         # Reordering full summary based on brief summary
-        new_row_order = self.brief_summary['output_gene'].tolist() # get row names (output_genes)
+        new_row_order = self.brief_summary['hit_symbol'].tolist() # get row names (output_genes)
         new_rows_idx = dict(zip(new_row_order,range(len(new_row_order)))) # make ordered dict of output_genes 
-        self.full_summary['output_rank'] = self.full_summary['output_gene'].map(new_rows_idx) # map the full summary to this order
+        self.full_summary['output_rank'] = self.full_summary['hit_symbol'].map(new_rows_idx) # map the full summary to this order
         self.full_summary = self.full_summary.sort_values('output_rank') # Sort based on new mapping
         self.full_summary = self.full_summary.drop('output_rank',axis=1) # Remove the sorting column
-        # End
 
 
     # This function takes in the Module1A results and updates both summaries
     def add1A(self, mod1a_results):
-        # Immediately store raw data
-        self.raw_module_data['mod1A'] = mod1a_results
-
         ##### Format Data for Cross Module Summary #####
-        ## Rename the columns
-        self.module_names['Func_assoc_terms'] = {'Func_sim_score':'Func_sim_input_gene_ct'}
-
         # drop irrelevant columns
-        mod1a_processed = mod1a_results.drop(columns=['hit_id','input_id','shared_terms','shared_term_names','module'])
+        mod1a_processed = mod1a_results.drop(columns=['shared_terms','shared_term_names', 'module'])
         
         # drop duplicates in input
         mod1a_processed = mod1a_processed.drop_duplicates(subset=['input_symbol','hit_symbol'])
         
         # rename columns to match full_summary desired output column names
-        mod1a_processed = mod1a_processed.rename(index = str, columns = {'hit_symbol':'output_gene','input_symbol':'input_gene','score':'functional_sim_score'})
-        
-        ## CX: code isn't working so I commented it out. 
-        # Recast GO terms as a list, so we can do sorting later
-#        mod1a_processed['Func_assoc_terms'] = mod1a_processed['Func_assoc_terms'].astype(str)
+        mod1a_processed = mod1a_processed.rename(index = str, columns = {'score':'functional_sim_score'})
 
         ## CX: create ranks
         mod1a_processed['functional_sim_rank'] = mod1a_processed['functional_sim_score'].rank(ascending=False, method='min')        
+
+        ##### Format Data for individual module Summary #####
+        # rename score and keep only what will be used in mini-summary
+        Mod1A = mod1a_results.rename(index=str, columns={'score':'functional_sim_count'}).filter(items=['hit_symbol', 'input_symbol', 'functional_sim_count']) 
+        # turn input_symbol and functional sim count into lists 
+        Mod1A = Mod1A.groupby(['hit_symbol']).agg(list)
+        # adjust the columns' values: number of hits found, sort input genes
+        Mod1A['functional_sim_count'] = [len(x) for x in Mod1A['functional_sim_count']]
+        Mod1A['input_symbol'] = [sorted(x) for x in Mod1A['input_symbol']] ## Can't just do this if input_ids were included (need to stay corresponding to symbols)
+        # sort table by number of hits, output gene name. then save it as a individual module summary
+        Mod1A = Mod1A.sort_values(by=['functional_sim_count','hit_symbol'], ascending=[False, True]).reset_index()
+        self.module_summaries['mod1A'] = Mod1A
         
         # Update full table
         self.build_full_summary(mod1a_processed)
@@ -167,121 +172,67 @@ class SummaryMod(object):
         # Update brief table
         self.build_brief_summary()
 
-        ##### Format Data for individual module Summary #####
-        ## Written by Colleen Xu 
-
-        Mod1A_part1 = mod1a_results.groupby(['hit_symbol','hit_id'])['input_symbol'].apply(list).reset_index()
-        Mod1A_part2 = mod1a_results.groupby(['hit_symbol','hit_id'])['input_id'].apply(list).reset_index()
-        Mod1A_part3 = mod1a_results.groupby(['hit_symbol','hit_id']).aggregate({'score': 'count'}).rename(index=str, columns={'score':'functional_sim_count'})
-    
-        ## Merge the parts together!
-        Mod1A_final = Mod1A_part1.merge(Mod1A_part2, on=['hit_symbol', 'hit_id'])
-        ## Another merge, and sort in descending order of number of interactions, ascending alphabetical order
-        Mod1A_final = Mod1A_final.merge(Mod1A_part3, on=['hit_symbol', 'hit_id'])
-        Mod1A_final = Mod1A_final.sort_values(by=['functional_sim_count','hit_symbol'], ascending=[False, True])
-    
-        Mod1A_final['input_symbol'] = [sorted(x) for x in Mod1A_final['input_symbol']]
-        Mod1A_final = Mod1A_final.reset_index()
-        
-        self.module_summaries['mod1A'] = Mod1A_final.filter(items=['hit_symbol', 'input_symbol', 'functional_sim_count']).rename(index=str, columns={'hit_symbol': 'output_gene', 'input_symbol':'input_gene'})
-        
-        # END
-        
-
     # This function takes in the Module1B results and updates both tables
     def add1B(self, mod1b_results):    
-        ## Imediately store raw data
-        self.raw_module_data['mod1B'] = mod1b_results
-
         ##### Format Data for Cross Module Summary #####
-        ## Rename the columns
-        self.module_names['Pheno_assoc_terms'] = {'Pheno_sim_score':'Pheno_sim_input_gene_ct'}
-
         # drop irrelevant columns
-        mod1b_processed = mod1b_results.drop(columns=['hit_id','input_id','shared_terms','shared_term_names','module'])
+        mod1b_processed = mod1b_results.drop(columns=['shared_terms','shared_term_names', 'module'])
         
         # drop duplicates in input
         mod1b_processed = mod1b_processed.drop_duplicates(subset=['input_symbol','hit_symbol'])
         
         # rename columns to match desired full_summary output column names
-        mod1b_processed = mod1b_processed.rename(index = str, columns = {'hit_symbol':'output_gene','input_symbol':'input_gene','score':'phenotype_sim_score'})
+        mod1b_processed = mod1b_processed.rename(index = str, columns = {'score':'phenotype_sim_score'})
         
-        ## CX: code isn't working so I commented it out.         
-#        mod1b_processed['Pheno_assoc_terms'] = mod1b_processed['Pheno_assoc_terms'].astype(str)
-
         ## CX: create ranks
         mod1b_processed['phenotype_sim_rank'] = mod1b_processed['phenotype_sim_score'].rank(ascending=False, method='min')
-        
+
+        ##### Format Data for individual module Summary #####
+        # rename score and keep only what will be used in mini-summary
+        Mod1B = mod1b_results.rename(index=str, columns={'score':'phenotype_sim_count'}).filter(items=['hit_symbol', 'input_symbol', 'phenotype_sim_count']) 
+        # turn input_symbol and phenotype sim count into lists 
+        Mod1B = Mod1B.groupby(['hit_symbol']).agg(list)
+        # adjust the columns' values: number of hits found, sort input genes
+        Mod1B['phenotype_sim_count'] = [len(x) for x in Mod1B['phenotype_sim_count']]
+        Mod1B['input_symbol'] = [sorted(x) for x in Mod1B['input_symbol']] ## Can't just do this if input_ids were included (need to stay corresponding to symbols)
+        # sort table by number of hits, output gene name. then save it as a individual module summary
+        Mod1B = Mod1B.sort_values(by=['phenotype_sim_count','hit_symbol'], ascending=[False, True]).reset_index()
+        self.module_summaries['mod1B'] = Mod1B
+
         # Update full table
         self.build_full_summary(mod1b_processed)
     
         # Update brief table
         self.build_brief_summary()
 
-         ##### Format Data for individual module Summary #####
-        ## Written by Colleen Xu 
-
-        ## merging columns, creating lists of the inputs and sums of the scores
-        ## CX note: obviously it would be nice to do this all at once. the apply(list) only worked on one column at a time. aggregate only accepts a limited number of functions
-        Mod1B_part1 = mod1b_results.groupby(['hit_symbol','hit_id'])['input_symbol'].apply(list).reset_index()
-        Mod1B_part2 = mod1b_results.groupby(['hit_symbol','hit_id'])['input_id'].apply(list).reset_index()
-        Mod1B_part3 = mod1b_results.groupby(['hit_symbol','hit_id']).aggregate({'score': 'count'}).rename(index=str, columns={'score':'phenotype_sim_count'})
-
-        ## Merge the parts together!
-        Mod1B_final = Mod1B_part1.merge(Mod1B_part2, on=['hit_symbol', 'hit_id'])
-        ## Another merge, and sort in descending order of number of interactions, ascending alphabetical order
-        Mod1B_final = Mod1B_final.merge(Mod1B_part3, on=['hit_symbol', 'hit_id'])
-        Mod1B_final = Mod1B_final.sort_values(by=['phenotype_sim_count','hit_symbol'], ascending=[False, True])
-        Mod1B_final['input_symbol'] = [sorted(x) for x in Mod1B_final['input_symbol']]        
-        Mod1B_final = Mod1B_final.reset_index()
-        
-        self.module_summaries['mod1B'] = Mod1B_final.filter(items=['hit_symbol', 'input_symbol', 'phenotype_sim_count']).rename(index=str, columns={'hit_symbol': 'output_gene', 'input_symbol':'input_gene'})
-
-        # END
-
-
     # This function takes in the Module1E results and updates both tables
     def add1E(self, mod1e_results):
-        # Store raw data
-        self.raw_module_data['mod1E'] = mod1e_results
-
-        ##### Format Data for Cross Module Summary #####
-        # drop irrelevant columns
-        mod1e_processed = mod1e_results.drop(columns=['hit_id','input_id', 'module'])
+        mod1e_processed = mod1e_results.drop(columns=['module'])
         
+        ##### Format Data for Cross Module Summary #####        
         # drop duplicates in input
         mod1e_processed = mod1e_processed.drop_duplicates(subset=['input_symbol','hit_symbol'])
 
         # rename columns to match desired full_summary output column names
-        mod1e_processed = mod1e_processed.rename(index = str, columns = {'hit_symbol':'output_gene','input_symbol':'input_gene','score':'interactions'})
+        mod1e_processed = mod1e_processed.rename(index = str, columns = {'score':'num_protein_interaction'})
 
-        ## CX: create ranks
-        mod1e_processed['interaction_rank'] = mod1e_processed['interactions'].rank(ascending=False, method='min')
+        ##### Format Data for individual module Summary #####
+        # rename score and keep only what will be used in mini-summary
+        Mod1E = mod1e_results.rename(index=str, columns={'score':'num_protein_interaction'}).filter(items=['hit_symbol', 'input_symbol', 'num_protein_interaction']) 
+        # turn input_symbol and phenotype sim count into lists 
+        Mod1E = Mod1E.groupby(['hit_symbol']).agg(list)
+        # adjust the columns' values: number of hits found, sort input genes
+        Mod1E['num_protein_interaction'] = [len(x) for x in Mod1E['num_protein_interaction']]
+        Mod1E['input_symbol'] = [sorted(x) for x in Mod1E['input_symbol']] ## Can't just do this if input_ids were included (need to stay corresponding to symbols)
+        # sort table by number of hits, output gene name. then save it as a individual module summary
+        Mod1E = Mod1E.sort_values(by=['num_protein_interaction','hit_symbol'], ascending=[False, True]).reset_index()
+        self.module_summaries['mod1E'] = Mod1E
         
         # Update full table
         self.build_full_summary(mod1e_processed)
 
         # Update brief table
         self.build_brief_summary()
-
-        ##### Format Data for individual module Summary #####
-        ## Written by Colleen Xu 
-        ## merging columns, creating lists of the inputs and sums of the scores
-        ## CX note: obviously it would be nice to do this all at once. the apply(list) only worked on one column at a time. aggregate only accepts a limited number of functions
-        Mod1E_part1 = mod1e_results.groupby(['hit_symbol','hit_id'])['input_symbol'].apply(list).reset_index()
-        Mod1E_part2 = mod1e_results.groupby(['hit_symbol','hit_id'])['input_id'].apply(list).reset_index()    
-        Mod1E_part3 = mod1e_results.groupby(['hit_symbol','hit_id']).aggregate({'score': 'sum'}).rename(index=str, columns={'score':'interactions'})
-        ## Merge the parts together!
-        Mod1E_final = Mod1E_part1.merge(Mod1E_part2, on=['hit_symbol', 'hit_id'])
-        ## Another merge, and sort in descending order of number of interactions, ascending alphabetical order
-        Mod1E_final = Mod1E_final.merge(Mod1E_part3, on=['hit_symbol', 'hit_id'])
-        Mod1E_final = Mod1E_final.sort_values(by=['interactions','hit_symbol'], ascending=[False, True])
-        Mod1E_final['input_symbol'] = [sorted(x) for x in Mod1E_final['input_symbol']]        
-        Mod1E_final = Mod1E_final.reset_index()
-        
-        self.module_summaries['mod1E'] = Mod1E_final.filter(items=['hit_symbol', 'input_symbol', 'interactions']).rename(index=str, columns={'hit_symbol': 'output_gene', 'input_symbol':'input_gene'})
-        
-        # END
 
     # Method takes in a query or list of queries (module names) and returns their brief summary
     def show_single_mod_summary(self,query):
@@ -292,7 +243,7 @@ class SummaryMod(object):
 
         # For each query in the list display the brief data
         for mod in query:
-            if mod in self.raw_module_data.keys():
+            if mod in self.module_summaries.keys():
                 self.format_print(mod + ' results')
                 print(self.module_summaries[mod].to_string())
             else:
@@ -305,20 +256,14 @@ class SummaryMod(object):
 
     # This function shows the current modules loaded into the object by referencing the current raw data stored
     def show_mods(self):
-        self.current_mods = list(self.raw_module_data.keys())
+        self.current_mods = list(self.module_summaries.keys())
         print('Modules Currently Loaded: ' + \
             ', '.join(self.current_mods))
         
     # Method returns list of current modules used as dictionary keys
     def get_mods(self):
-        self.current_mods = list(self.raw_module_data.keys())
+        self.current_mods = list(self.module_summaries.keys())
         return self.current_mods
-
-    # This function returns a dictionary of the raw data if people want to play with it 
-    # Allows for the analysis of the raw data in other ways. 
-    # envisioned summary_module as basically a container for all module output
-    def return_raw_output(self):
-        return self.raw_module_data
 
     # This function prints the brief summary to console
     def show_brief(self):
@@ -354,7 +299,7 @@ class SummaryMod(object):
     # This function writes the brief summary table to csv
     # An optional parameter specifies the filename
     def write_brief_csv(self, filename ="brief_summary.csv"):
-        self.brief_summary.to_csv(filename, index=False)  # there is an issue with this! it's not including output genes
+        self.brief_summary.to_csv(filename, index=False)  
 
     # This function writes the full table to csv
     # An optional parameter specifies the filename

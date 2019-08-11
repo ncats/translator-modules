@@ -288,7 +288,7 @@ and associated MONDO identifiers - in the second column"""
         # intialize summary module object
         summary_mod = SummaryMod(disease_name, mondo_id)
         
-        print("\nProcessing '" + disease_name + "(" + mondo_id + "):\n")
+        print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
 
         disease_associated_gene_set = \
             disease_gene_lookup(
@@ -298,7 +298,7 @@ and associated MONDO identifiers - in the second column"""
 
         if _echo_to_console:
             print(
-                "\nDisease Associated Input Gene Set for '" +
+                "\nDisease Associated Input Gene Set for " +
                 disease_name + "(" + mondo_id + "):\n")
             print(disease_associated_gene_set.get_data_frame().to_string())
 
@@ -363,18 +363,12 @@ and associated MONDO identifiers - in the second column"""
 #            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
 
         # CX: Summary module code here
-        # Put it in list for disease pipeline
+        # Put it in list (only used really used when multiple diseases in one file are queried at once)
         disease_summaries.append(summary_mod)
 
         ## END OF MODULE QUERIES 
         if _echo_to_console:
             summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
-        # CX: I don't think this is necessary. Too cluttered to show all of this. 
-#            summary_mod.show_brief()
-#            summary_mod.show_descriptive()
-
-        ## Get both
-        brief_summary, full_summary = summary_mod.get_all()
 
         ## Write all out
         summary_csv_filenames = [disease_name+'_brief_summary.csv',disease_name+'_full_summary.csv']
