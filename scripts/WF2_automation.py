@@ -80,7 +80,7 @@ def dump_html(output, body, columns=None):
 
 def disease_gene_lookup(disease_name, mondo_id):
 
-    gene_set = DiseaseAssociatedGeneSet(disease_name, mondo_id)
+    gene_set = DiseaseAssociatedGeneSet(mondo_id)
 
     # save the seed gene definition and gene list to a
     # file under the "Tidbit/<symbol>" subdirectory

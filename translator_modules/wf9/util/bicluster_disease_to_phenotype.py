@@ -35,8 +35,9 @@ class BiclusterByDiseaseToPhenotype():
     async def disease_to_phenotype_biclusters_async(self, input_ID_list):
         bicluster_url_list = [base_disease_url + disease + '/' +'?include_similar=true' for disease in input_ID_list]
         all_biclusters_dict = defaultdict(dict)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_1:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor_1:
             all_phenotypes = []
+
             loop_1 = asyncio.get_event_loop()
             futures_1 = [ loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in bicluster_url_list ]
             for response in await asyncio.gather(*futures_1):
@@ -44,5 +45,6 @@ class BiclusterByDiseaseToPhenotype():
                 for x in response_json:
                     phenotype = x['hpo']
                     all_phenotypes.append(phenotype)
+
             phenotypes_counted = Counter(all_phenotypes)
         return phenotypes_counted.most_common()

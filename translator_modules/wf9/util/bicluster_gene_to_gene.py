@@ -60,17 +60,23 @@ class CoocurrenceByBicluster():
 
     async def gene_to_gene_biclusters_async(self, curated_ID_list):
         start_time = datetime.now()
+
         bicluster_url_list = [bicluster_gene_url + gene + '/' +'?include_similar=true' for gene in curated_ID_list]
         length_bicluster_url_list = len(bicluster_url_list)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor_1: #changing the # of workers does not change performance...
+        print(bicluster_url_list)
+
+        with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor_1: #changing the # of workers does not change performance...
             loop_1 = asyncio.get_event_loop()
             futures_1 = [ loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in bicluster_url_list ]
+            print("doing futures")
             for response in await asyncio.gather(*futures_1):
                 coocurrence_dict_each_gene = defaultdict(dict)
                 coocurrence_dict_each_gene['related_biclusters'] = defaultdict(dict)
                 response_json = response.json()
                 length_response_json = len(response_json)
                 coocurrence_dict_each_gene['number_of_related_biclusters'] = length_response_json
+                print(length_response_json)
+
                 if length_response_json > 0:
                     gene = response_json[0]['gene']
                     for x in response_json:         
@@ -78,7 +84,8 @@ class CoocurrenceByBicluster():
                         coocurrence_dict_each_gene['related_biclusters'][x['bicluster']] = []         
                     related_biclusters = [x for x in coocurrence_dict_each_gene['related_biclusters']]
                     bicluster_bicluster_url_list = [bicluster_bicluster_url+related_bicluster+'/' for related_bicluster in related_biclusters]
-                    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_2:
+                    print(bicluster_bicluster_url_list)
+                    with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor_2:
                         loop_2 = asyncio.get_event_loop()
                         futures_2 = [ loop_2.run_in_executor(executor_2, requests.get, request_2_url) for request_2_url in bicluster_bicluster_url_list]
                         for response_2 in await asyncio.gather(*futures_2):
@@ -86,7 +93,9 @@ class CoocurrenceByBicluster():
                             genes_in_each_bicluster = [bicluster['gene'] for bicluster in response_2_json]
                             biclusterindex = [x['bicluster'] for x in response_2_json]
                             coocurrence_dict_each_gene['related_biclusters'][biclusterindex[0]] = genes_in_each_bicluster
+                            print(genes_in_each_bicluster)
                         related_biclusters_and_genes_for_each_input_gene[gene] = dict(coocurrence_dict_each_gene)
+
         end_time = datetime.now()
         print(end_time-start_time)
         return related_biclusters_and_genes_for_each_input_gene
