@@ -27,7 +27,7 @@ class Payload(ABC):
         then returns the value of the input once it is extracted.
         """
 
-        payload_input: str
+        payload_input: object
         extension: str
 
         # https://stackoverflow.com/a/52455972
@@ -53,15 +53,10 @@ class Payload(ABC):
             response = requests.get(input_url)
             response.raise_for_status()  # exception handling
             payload_input = response.text
-
         else:
             extension = None
             maybe_a_good_value = input_or_input_location
-            # print(maybe_a_good_value, extension)
-
             payload_input = maybe_a_good_value
-
-
 
         return payload_input, extension
 
