@@ -46,7 +46,7 @@ python -m pip install cwltool
 In the project directory, run
 
 ```bash
-cwltool cwl/workflows/wf2.cwl cwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/wf2/wf2.cwl cwl/data/inputs/fanconi.yaml
 ```
 
 If you can run `wf2.cwl` with `fanconi.yaml` successfully,
