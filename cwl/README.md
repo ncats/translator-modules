@@ -140,7 +140,9 @@ brew install findutils
 
 ```
 
-then substitute the *gfind* command for the *find* command in the PATH command above.
+then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shells script
+_~/scripts/set_macosx_path.sh_ to help you).
+
 Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run 
 them, like so.
 
