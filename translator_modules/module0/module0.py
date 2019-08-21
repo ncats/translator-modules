@@ -11,7 +11,7 @@ from sys import stdout
 from json import dump
 
 from translator_modules.core import Config
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 
 
 class LookUp(object):

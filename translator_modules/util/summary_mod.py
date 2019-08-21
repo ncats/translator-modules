@@ -284,7 +284,7 @@ class SummaryMod(object):
         # END
 
     # Method takes in a query or list of queries (module names) and returns their brief summary
-    def show_single_mod_summary(self,query):
+    def show_single_mod_summary(self, query):
 
         # check if single query and make into list most extensible 
         if isinstance(query, str):

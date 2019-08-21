@@ -4,41 +4,41 @@ import asyncio
 import pandas as pd
 import fire
 
-import sys
-
-from translator_modules.wf9.util.biclusterco import CoocurrenceByBicluster
-from translator_modules.core import Payload
+from translator_modules.wf9.util.bicluster_gene_to_gene import CooccurrenceByBicluster
+from translator_modules.core.module_payload import Payload
 
 
 class GeneToGeneBiclusters(Payload):
 
-    def __init__(self, input_gene_list_file=None):
+    def __init__(self, input_genes):
+        self.mod = CooccurrenceByBicluster()
+        input_obj, extension = self.handle_input_or_input_location(input_genes)
 
-        GeneCoocurrenceByBiclusterObject = CoocurrenceByBicluster()
-        CAD_geneset = {'ENSG00000121410',
-                       'ENSG00000268895',
-                       'ENSG00000148584',
-                       'ENSG00000070018',
-                       'ENSG00000175899',
-                       'ENSG00000245105',
-                       'ENSG00000166535',
-                       'ENSG00000256661',
-                       'ENSG00000256904',
-                       'ENSG00000256069',
-                       'ENSG00000234906',
-                       'ENSG00000068305',
-                       'ENSG00000070018'
-                       }
+        input_gene_ids: list
+        # NB: push this out to the handle_input_or_input_location function?
+        if extension == "csv":
+            import csv
+            with open(input_genes) as genes:
+                input_reader = csv.DictReader(genes)
+                input_gene_ids = [row['input_id'] for row in input_reader]
+        elif extension == "json":
+            import json
+            with open(input_genes) as genes:
+                input_json = json.loads(genes)
+                # assume records format
+                input_gene_ids = [record["hit_id"] for record in input_json]
+        elif extension is None:
+            input_gene_ids = input_obj
 
-        loop = asyncio.get_event_loop()
-        related_biclusters_and_genes_for_each_input_gene = loop.run_until_complete(
-            GeneCoocurrenceByBiclusterObject.gene_to_gene_biclusters_async(CAD_geneset))
-        bicluster_occurences_dict = GeneCoocurrenceByBiclusterObject.bicluster_occurences_dict(
-            related_biclusters_and_genes_for_each_input_gene)
-        unique_biclusters = GeneCoocurrenceByBiclusterObject.unique_biclusters(bicluster_occurences_dict)
-
-        #print(len(unique_biclusters))
-        print(unique_biclusters)
+        related_biclusters_and_genes_for_each_input_gene = asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_ids))
+        print("related biclusters", related_biclusters_and_genes_for_each_input_gene)
+        bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict(related_biclusters_and_genes_for_each_input_gene)
+        unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
+        genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters, related_biclusters_and_genes_for_each_input_gene)
+        genes_in_unique_biclusters_not_in_input_gene_list = self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
+        sorted_list_of_output_genes = self.mod.sorted_list_of_output_genes(genes_in_unique_biclusters_not_in_input_gene_list)
+        self.results = pd.DataFrame.from_records(sorted_list_of_output_genes, columns=["score", "hit_id"])
+        print("results", self.results)
 
 
 if __name__ == '__main__':

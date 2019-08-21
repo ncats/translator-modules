@@ -48,6 +48,6 @@ steps:
   gene_interactions:
      run: module1e.cwl
      in:
-       gene_set: diseases/disease_list
-       threshold_gene_interaction: threshold_gene_interaction
+       input_genes: diseases/disease_list
+       threshold: threshold_gene_interaction
      out: [ gene_interaction_list ]

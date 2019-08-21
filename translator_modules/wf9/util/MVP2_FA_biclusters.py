@@ -11,22 +11,7 @@ import sys
 
 FA_genes_url = "https://raw.githubusercontent.com/NCATS-Tangerine/cq-notebooks/master/FA_gene_sets/FA_1_core_complex.txt"
 FA_genes_all_url = "https://raw.githubusercontent.com/NCATS-Tangerine/cq-notebooks/master/FA_gene_sets/FA_4_all_genes.txt"
-#https://bicluster.renci.org/apidocs
-#https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_gene/43/?include_similar=false
-#https://github.com/NCATS-Tangerine/cq-notebooks/tree/master/FA_gene_sets
-
 FA_geneset = []
-#for line in urllib2.urlopen(FA_genes_url):
-#    FA_geneset.append(line)
-
-
-#bicluster_test_1 = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_gene/43/?include_similar=true'
-#bicluster_response_1 = requests.get(bicluster_test_1)
-#print(bicluster_response_1.text)
-
-
-#print(datetime.datetime.now().time())
-
 
 with urllib.request.urlopen(FA_genes_all_url) as url:
      FA_geneset.append(url.read().decode().split('\n'))
@@ -39,9 +24,7 @@ print(len(FA_geneset[0]))
 tissues = []
 counts = dict()
 multidict_tissue = defaultdict(lambda: defaultdict(set))
-#tissue_to_gene_id = defaultdict()
-#tissue_to_gene_label = defaultdict()
-for i in range(1,len(FA_geneset[0])):
+for i in range(1, len(FA_geneset[0])):
     split = FA_geneset[0][i].split('\t')
     if len(split) <= 1:
         print(split)
@@ -49,9 +32,8 @@ for i in range(1,len(FA_geneset[0])):
     curid = split[0].lower()
     curlabel = split[1].lower()
 
-    print(curid)
+    print("curid", curid)
     if(len(curid) > 1):
-        #api_url = bicluster_RNAseqDB_wrapper.get_by_gene(curid)  #"https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_gene/"+quote(curid)+"/?include_similar=true"
         api_url = "https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_gene/"+quote(curid)+"/?include_similar=true"
 
         print(api_url)

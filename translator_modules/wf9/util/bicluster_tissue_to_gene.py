@@ -36,7 +36,7 @@ class tissue_to_gene():
         bicluster_url_list = [bicluster_tissue_url + tissue + '/' +'?include_similar=true' for tissue in input_ID_list]
         length_bicluster_url_list = len(bicluster_url_list)
         all_biclusters_dict = defaultdict(dict)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_1:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor_1:
             all_genes = []
             all_genes_dict = defaultdict(dict)
             loop_1 = asyncio.get_event_loop()

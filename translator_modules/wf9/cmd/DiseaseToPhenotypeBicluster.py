@@ -1,41 +1,37 @@
 #!/usr/bin/env python3
 
+import asyncio
 import pandas as pd
 import fire
 
 from translator_modules.wf9.util.bicluster_disease_to_phenotype import BiclusterByDiseaseToPhenotype
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 
 
 class DiseaseToPhenotypeBiclusters(Payload):
 
-    def __init__(self, input_gene_list_file):
-        super(DiseaseToPhenotypeBiclusters, self).__init__(BiclusterByDiseaseToPhenotype())
+    def __init__(self, input_disease):
+        self.mod = BiclusterByDiseaseToPhenotype()
+        input_str, extension = self.handle_input_or_input_location(input_disease)
 
-        curated_gene_list = \
-            self.mod.run_getinput(input_gene_list_file)
+        input_disease_ids: list
+        # NB: push this out to the handle_input_or_input_location function?
+        if extension == "csv":
+            import csv
+            with open(input_disease) as genes:
+                input_reader = csv.DictReader(genes)
+                input_disease_ids = list([row['input_id'] for row in input_reader])
+        elif extension == "json":
+            import json
+            with open(input_disease) as genes:
+                input_json = json.loads(genes)
+                # assume records format
+                input_disease_ids = [record["hit_id"] for record in input_json]
+        elif extension is None:
+            pass
 
-        most_common_phenotypes = self.mod.disease_to_phenotype_biclusters(curated_gene_list)
-
-
-
-        # data munging the output for the module
-        from collections import defaultdict
-        """
-        def default_dict_convert(default_dict):
-            temp_default_dict = dict(default_dict)
-            for item1 in default_dict.keys():
-                for item2 in default_dict[item1].keys():
-                    if type(default_dict[item1][item2]) is type(defaultdict()):
-                        temp_default_dict[item1][item2] = dict(default_dict[item1][item2])
-                if type(default_dict[item1][item2]) is type(defaultdict()):
-                    temp_default_dict[item1] = dict(default_dict[item1])
-            return temp_default_dict
-        """
-
-        # dataFrame = pd.DataFrame.from_dict(default_dict_convert(most_common_phenotypes), orient="index")
-        # dataFrame["gene_id"] = dataFrame.index  # turn the row index, which are currently gene ids, into a named column
-        # self.results = dataFrame
+        most_common_phenotype = asyncio.run(self.mod.disease_to_phenotype_biclusters_async(input_disease_ids))
+        self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
 
 
 if __name__ == '__main__':

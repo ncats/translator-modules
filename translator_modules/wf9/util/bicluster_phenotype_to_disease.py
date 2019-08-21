@@ -42,7 +42,7 @@ class phenotype_to_disease():
         bicluster_url_list = [base_phenotype_url + phenotype + '/' +'?include_similar=true' for phenotype in input_ID_list]
         length_bicluster_url_list = len(bicluster_url_list)
         all_biclusters_dict = defaultdict(dict)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_1:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor_1:
             all_diseases = []
             loop_1 = asyncio.get_event_loop()
             futures_1 = [ loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in bicluster_url_list ]
