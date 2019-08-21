@@ -105,7 +105,8 @@ class CoocurrenceByBicluster():
     async def gene_to_tissue_biclusters_async(self, curated_ID_list):
         bicluster_url_list = [bicluster_gene_url + gene + '/' +'?include_similar=true' for gene in curated_ID_list]
         length_bicluster_url_list = len(bicluster_url_list)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_1:
+        #with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_1:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor_1:
             loop_1 = asyncio.get_event_loop()
             futures_1 = [ loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in bicluster_url_list ]
             for response in await asyncio.gather(*futures_1):

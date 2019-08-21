@@ -37,7 +37,8 @@ class GeneToGeneBiclusters(Payload):
             related_biclusters_and_genes_for_each_input_gene)
         unique_biclusters = GeneCoocurrenceByBiclusterObject.unique_biclusters(bicluster_occurences_dict)
 
-        print(len(unique_biclusters))
+        #print(len(unique_biclusters))
+        print(unique_biclusters)
 
 
 if __name__ == '__main__':
