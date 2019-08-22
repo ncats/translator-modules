@@ -12,7 +12,7 @@ class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes):
         self.mod = GeneCoocurrencceWithTissueByBicluster = gene_to_tissue()
-        input_str, extension = self.handle_input_or_input_location(input_genes)
+        input_obj, extension = self.handle_input_or_input_location(input_genes)
 
         input_gene_ids: list
         # NB: push this out to the handle_input_or_input_location function?
@@ -28,11 +28,14 @@ class GeneToTissueBiclusters(Payload):
                 # assume records format
                 input_gene_ids = [record["hit_id"] for record in input_json]
         elif extension is None:
-            pass
+            input_gene_ids = input_obj
 
         most_common_tissues = asyncio.run(self.mod.gene_to_tissue_biclusters_async(input_gene_ids))
+
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
 
+        if self.results is not None:
+            print(self.results.to_json())
 
 if __name__ == '__main__':
     fire.Fire(GeneToTissueBiclusters)

@@ -65,7 +65,7 @@ Similarly, a CWL workflow can be run which executes (a portion of(*)) the NCATS 
 
 
 ```bash
-cwltool cwl/workflows/wf9/wf9.cwl cwl/data/inputs/bicluster_gene_to_gene.yaml
+cwltool cwl/workflows/wf9/wf9.cwl cwl/data/inputs/bicluster_input_genes.yaml
 ```
 
 A single file "geneToGeneBicluster.records.json" will be created with the results.

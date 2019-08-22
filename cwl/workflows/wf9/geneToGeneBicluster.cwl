@@ -10,6 +10,6 @@ inputs:
       position: 0
       prefix: --input_genes
 outputs:
-  bicluster_list:
+  gene_to_gene_bicluster_list:
     type: stdout
 stdout: geneToGeneBicluster.records.json

@@ -15,6 +15,6 @@ inputs:
       position: 1
       prefix: --threshold
 outputs:
-  gene_interaction_list:
+  interacting_genes:
     type: stdout
 stdout: module1e.records.json

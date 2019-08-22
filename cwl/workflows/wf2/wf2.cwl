@@ -21,9 +21,9 @@ outputs:
   phenotypically_similar_genes:
     type: File
     outputSource: phenotype_similarity/phenotypically_similar_genes
-  gene_interaction_list:
+  interacting_genes:
     type: File
-    outputSource: gene_interactions/gene_interaction_list
+    outputSource: gene_interactions/interacting_genes
 steps:
   diseases:
     run: module0.cwl
@@ -50,4 +50,4 @@ steps:
      in:
        input_genes: diseases/disease_list
        threshold: threshold_gene_interaction
-     out: [ gene_interaction_list ]
+     out: [ interacting_genes ]

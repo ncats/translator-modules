@@ -5,11 +5,11 @@ class: CommandLineTool
 baseCommand: [ GeneToTissueBicluster.py, get-data-frame, to-json, --orient, records ]
 inputs:
   input_genes:
-    type: string[]
+    type: string
     inputBinding:
       position: 0
       prefix: --input_genes
 outputs:
-  bicluster_list:
+  gene_to_tissue_bicluster_list:
     type: stdout
 stdout: geneToTissueBicluster.records.json
