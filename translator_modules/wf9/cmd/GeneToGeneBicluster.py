@@ -41,7 +41,6 @@ class GeneToGeneBiclusters(Payload):
         sorted_list_of_output_genes = self.mod.sorted_list_of_output_genes(genes_in_unique_biclusters_not_in_input_gene_list)
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes, columns=["score", "hit_id"])
 
-        #print("results", self.results)
         if self.results is not None:
             print(self.results.to_json())
 

@@ -33,6 +33,8 @@ class TissueToGeneBicluster(Payload):
         most_common_tissues = asyncio.run(self.mod.tissue_to_gene_biclusters_async(input_tissue_ids))
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
 
+        if self.results is not None:
+            print(self.results.to_json())
 
 if __name__ == '__main__':
     fire.Fire(TissueToGeneBicluster)

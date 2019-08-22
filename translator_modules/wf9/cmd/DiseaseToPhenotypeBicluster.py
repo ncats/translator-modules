@@ -33,6 +33,8 @@ class DiseaseToPhenotypeBiclusters(Payload):
         most_common_phenotype = asyncio.run(self.mod.disease_to_phenotype_biclusters_async(input_disease_ids))
         self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
 
+        if self.results is not None:
+            print(self.results.to_json())
 
 if __name__ == '__main__':
     fire.Fire(DiseaseToPhenotypeBiclusters)
