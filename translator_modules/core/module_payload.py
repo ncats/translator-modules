@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 import requests
 import os.path
 
+
 class Payload(ABC):
 
     def __init__(self, mod):
