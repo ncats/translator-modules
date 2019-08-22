@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ GeneToGeneBicluster.py, get-data-frame, to-json, --orient, records ]
 inputs:
   input_genes:
-    type: string[]
+    type: string
     inputBinding:
       position: 0
       prefix: --input_genes

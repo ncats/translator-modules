@@ -78,10 +78,10 @@ frameworks. A number of execution frameworks for doing this have been explored t
 2. Python scripts: see the [WF2_automation.py script](direct-command-line-workflow2-script-usage) for an exemplar
 3. Using the Common Workflow Language (CWL) standard: see the [TranslatorCWL prototype here](./biocwl)
 
-## Direct Command Line Workflow 2 Script Usage
+## NCATS Translator Workflow 2
 
-A Python 3 command line script is currently provided that will execute the relevant modules and commands for 
-Translator "Workflow 2".  To display the full parameters of the script, type:
+A Python 3 command line script is currently provided that will directly execute the relevant modules and commands for 
+the NCATS Translator "Workflow 2".  To display the full parameters of the script, type:
 
 ``` 
 python scripts/WF2_automation.py --help
@@ -94,7 +94,17 @@ of the input gene list with the other genes listed in the given row.
 
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
-## Calling the Code Directly in your own Python Clients
+## NCATS Translator Workflow 9
+
+The implementation of NCATS Translator Workflow 9 is a "work-in-progress" but a piece of the workflow may be run
+as follows (assuming that the translator_modules/wf9/cmd is on your PATH):
+
+``` 
+python GeneToGeneBicluster.py  get-data-frame to-json --orient records \
+           --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584"
+```
+
+# Calling the Code Directly in your own Python Clients
     
 Within your application, there is a three step process for similarity searching:
 

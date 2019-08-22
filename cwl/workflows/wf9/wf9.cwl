@@ -3,8 +3,8 @@
 cwlVersion: v1.0
 class: Workflow
 inputs:
-    gene_list:
-        type: File
+    input_genes:
+        type: string
 outputs:
   gene_bicluster_list:
     type: File
@@ -13,5 +13,5 @@ steps:
   geneToGeneBicluster:
     run: geneToGeneBicluster.cwl
     in:
-      gene_list: gene_list
+      input_genes: input_genes
     out: [ bicluster_list ]

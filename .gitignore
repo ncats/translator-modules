@@ -116,6 +116,7 @@ py*/
 # can't guarantee script outputs are going to matter
 cwl/data/outputs/*
 module*.json
+*Bicluster.*.json
 
 translator-modules/
 

@@ -31,14 +31,19 @@ class GeneToGeneBiclusters(Payload):
             input_gene_ids = input_obj
 
         related_biclusters_and_genes_for_each_input_gene = asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_ids))
-        print("related biclusters", related_biclusters_and_genes_for_each_input_gene)
+
+        #print("related biclusters", related_biclusters_and_genes_for_each_input_gene)
+
         bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict(related_biclusters_and_genes_for_each_input_gene)
         unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
         genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters, related_biclusters_and_genes_for_each_input_gene)
         genes_in_unique_biclusters_not_in_input_gene_list = self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
         sorted_list_of_output_genes = self.mod.sorted_list_of_output_genes(genes_in_unique_biclusters_not_in_input_gene_list)
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes, columns=["score", "hit_id"])
-        print("results", self.results)
+
+        #print("results", self.results)
+        if self.results is not None:
+            print(self.results.to_json())
 
 
 if __name__ == '__main__':
