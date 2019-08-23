@@ -65,7 +65,7 @@ Similarly, a CWL workflow can be run which executes (a portion of(*)) the NCATS 
 
 
 ```bash
-cwltool cwl/workflows/wf9/wf9_for_genes.cwl test/data/bicluster/input_genes.yaml
+cwltool cwl/workflows/wf9/wf9_for_genes.cwl test/data/bicluster/yaml/input_genes.yaml
 ```
 
 Result files *geneToGeneBicluster.records.json* and *geneToGeneBicluster.records.json* will be outputted.
@@ -208,7 +208,7 @@ The tokens `get-data-frame to-json --orient records` make `module0.py` return a 
 
 If CWL is a blueprint, what makes it real? Inputs to CWL tools are YAML files that share the same keywords as the tool's
 inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `disease_id`, 
-like in `test/data/bicluster/fanconi.yaml`:
+like in `test/data/fanconi.yaml`:
 
 ```yaml
 disease_name: "FA"
