@@ -4,12 +4,12 @@ cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ TissueToGeneBicluster.py, get-data-frame, to-json, --orient, records ]
 inputs:
-  input_tissue:
+  input_tissues:
     type: string[]
     inputBinding:
       position: 0
-      prefix: --input_tissue
+      prefix: --input_tissues
 outputs:
-  bicluster_list:
+  tissue_to_gene_bicluster_list:
     type: stdout
 stdout: tissueToGeneBicluster.records.json

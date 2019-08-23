@@ -10,20 +10,20 @@ from translator_modules.core.module_payload import Payload
 
 class DiseaseToPhenotypeBiclusters(Payload):
 
-    def __init__(self, input_disease):
+    def __init__(self, input_diseases):
         self.mod = BiclusterByDiseaseToPhenotype()
-        input_str, extension = self.handle_input_or_input_location(input_disease)
+        input_str, extension = self.handle_input_or_input_location(input_diseases)
 
         input_disease_ids: list
         # NB: push this out to the handle_input_or_input_location function?
         if extension == "csv":
             import csv
-            with open(input_disease) as genes:
+            with open(input_diseases) as genes:
                 input_reader = csv.DictReader(genes)
                 input_disease_ids = list([row['input_id'] for row in input_reader])
         elif extension == "json":
             import json
-            with open(input_disease) as genes:
+            with open(input_diseases) as genes:
                 input_json = json.loads(genes)
                 # assume records format
                 input_disease_ids = [record["hit_id"] for record in input_json]

@@ -65,13 +65,13 @@ Similarly, a CWL workflow can be run which executes (a portion of(*)) the NCATS 
 
 
 ```bash
-cwltool cwl/workflows/wf9/wf9.cwl cwl/data/inputs/bicluster_input_genes.yaml
+cwltool cwl/workflows/wf9/wf9_for_genes.cwl cwl/data/inputs/bicluster_input_genes.yaml
 ```
 
-A single file "geneToGeneBicluster.records.json" will be created with the results.
+Result files *geneToGeneBicluster.records.json* and *geneToGeneBicluster.records.json* will be outputted.
 
-(*) As of August 20, 2019, the complete workflow is not yet fully implemented but running the
-wf9.cwl CWL specification will (hopefully) run the parts that have been made operational.
+Similar additional workflow 9 CWL scripts are alongside this one, which take tissue, phenotype and disease identifiers, 
+taking analogous input (YAML) files and outputting analogous (JSON) result files.
 
 # Full CWL Installation & Configuration
 

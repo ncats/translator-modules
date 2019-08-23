@@ -4,14 +4,14 @@ import asyncio
 import pandas as pd
 import fire
 
-from translator_modules.wf9.util.bicluster_gene_to_tissue import gene_to_tissue
+from translator_modules.wf9.util.bicluster_gene_to_tissue import BiclusterByGeneToTissue
 from translator_modules.core.module_payload import Payload
 
 
 class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes):
-        self.mod = GeneCoocurrencceWithTissueByBicluster = gene_to_tissue()
+        self.mod = BiclusterByGeneToTissue()
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 
         input_gene_ids: list

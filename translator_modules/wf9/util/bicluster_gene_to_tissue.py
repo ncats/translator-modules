@@ -8,7 +8,8 @@ from collections import defaultdict, Counter
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 
-class gene_to_tissue():
+
+class BiclusterByGeneToTissue():
     def __init__(self):
         pass
     

@@ -10,7 +10,7 @@ bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tis
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
 related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
-class CooccurrenceByBicluster():
+class BiclusterByGeneToGene():
     def __init__(self):
         pass
 
