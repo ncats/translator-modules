@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: Workflow
 inputs:
-    input_genes:
+    input_phenotypes:
         type: string
 outputs:
   phenotype_to_disease_bicluster_list:

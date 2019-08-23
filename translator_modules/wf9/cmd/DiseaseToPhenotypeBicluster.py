@@ -12,6 +12,7 @@ class DiseaseToPhenotypeBiclusters(Payload):
 
     def __init__(self, input_diseases):
         self.mod = BiclusterByDiseaseToPhenotype()
+
         input_str, extension = self.handle_input_or_input_location(input_diseases)
 
         input_disease_ids: list

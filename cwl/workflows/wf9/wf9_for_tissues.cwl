@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: Workflow
 inputs:
-    input_genes:
+    input_tissues:
         type: string
 outputs:
   tissue_to_gene_bicluster_list:

@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ TissueToGeneBicluster.py, get-data-frame, to-json, --orient, records ]
 inputs:
   input_tissues:
-    type: string[]
+    type: string
     inputBinding:
       position: 0
       prefix: --input_tissues

@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ PhenotypeToDiseaseBicluster.py, get-data-frame, to-json, --orient, records ]
 inputs:
   input_phenotypes:
-    type: string[]
+    type: string
     inputBinding:
       position: 0
       prefix: --input_phenotypes
