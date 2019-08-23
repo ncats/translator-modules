@@ -12,7 +12,7 @@ class TissueToGeneBicluster(Payload):
 
     def __init__(self, input_tissues):
         self.mod = BiclusterByTissueToGene()
-        input_str, extension = self.handle_input_or_input_location(input_tissues)
+        input_obj, extension = self.handle_input_or_input_location(input_tissues)
 
         input_tissue_ids: list
         # NB: push this out to the handle_input_or_input_location function?
@@ -28,7 +28,7 @@ class TissueToGeneBicluster(Payload):
                 # assume records format
                 input_tissue_ids = [record["hit_id"] for record in input_json]
         elif extension is None:
-            pass
+            input_tissue_ids = input_obj
 
         most_common_tissues = asyncio.run(self.mod.tissue_to_gene_biclusters_async(input_tissue_ids))
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])

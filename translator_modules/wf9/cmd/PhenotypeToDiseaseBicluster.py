@@ -12,7 +12,7 @@ class PhenotypeToDiseaseBiclusters(Payload):
 
     def __init__(self, input_phenotypes):
         self.mod = BiclusterByPhenotypeToDisease()
-        input_str, extension = self.handle_input_or_input_location(input_phenotypes)
+        input_obj, extension = self.handle_input_or_input_location(input_phenotypes)
 
         input_phenotype_ids: list
         # NB: push this out to the handle_input_or_input_location function?
@@ -29,7 +29,7 @@ class PhenotypeToDiseaseBiclusters(Payload):
                 # assume records format
                 input_phenotype_ids = [record["hit_id"] for record in input_json]
         elif extension is None:
-            pass
+            input_phenotype_ids = input_obj
 
         most_common_diseases = asyncio.run(self.mod.phenotype_to_disease_biclusters_async(input_phenotype_ids))
         self.results = pd.DataFrame.from_records(most_common_diseases, columns=["hit_id", "score"])

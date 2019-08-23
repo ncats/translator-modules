@@ -10,7 +10,7 @@ outputs:
     type: File
     outputSource: diseaseToPhenotypeBicluster/disease_to_phenotype_bicluster_list
 steps:
-  diseaseToPhenotypeBiclusterBicluster:
+  diseaseToPhenotypeBicluster:
     run: diseaseToPhenotypeBicluster.cwl
     in:
       input_diseases: input_diseases
