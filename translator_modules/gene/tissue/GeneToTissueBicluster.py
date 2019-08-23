@@ -6,7 +6,7 @@ import fire
 import pandas as pd
 
 from translator_modules.core.module_payload import Payload
-from translator_modules.wf9.util.bicluster_gene_to_tissue import BiclusterByGeneToTissue
+from translator_modules.gene.tissue.bicluster_gene_to_tissue import BiclusterByGeneToTissue
 
 
 class GeneToTissueBiclusters(Payload):

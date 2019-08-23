@@ -6,7 +6,7 @@ import fire
 import pandas as pd
 
 from translator_modules.core.module_payload import Payload
-from translator_modules.wf9.util.bicluster_phenotype_to_disease import BiclusterByPhenotypeToDisease
+from translator_modules.phenotype.disease.bicluster_phenotype_to_disease import BiclusterByPhenotypeToDisease
 
 
 class PhenotypeToDiseaseBiclusters(Payload):

@@ -29,12 +29,12 @@ from html3.html3 import XHTML
 #get_config().ignore_cache = True
 
 # Now we can import the remainder of the modules (some which call Ontobio)
-from translator_modules.module0.module0 import DiseaseAssociatedGeneSet
-from translator_modules.module1.module1a import FunctionalSimilarity
-from translator_modules.module1.module1b import PhenotypeSimilarity
-from translator_modules.module1.module1e import GeneInteractions
-from translator_modules.util.standard_output import StandardOutput
-from translator_modules.util.summary_mod import SummaryMod  
+from translator_modules.disease.gene.module0 import DiseaseAssociatedGeneSet
+from translator_modules.gene.gene.module1a import FunctionalSimilarity
+from translator_modules.gene.gene.module1b import PhenotypeSimilarity
+from translator_modules.gene.gene.module1e import GeneInteractions
+from translator_modules.core.standard_output import StandardOutput
+from scripts.summary_mod import SummaryMod
 
 _SCRIPTNAME = 'WF2_automation.py'
 

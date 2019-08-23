@@ -49,7 +49,7 @@ You can run a CWL workflow constructed to implement the NCATS Translator Workflo
 In the project directory, run
 
 ```bash
-cwltool cwl/workflows/wf2/wf2.cwl cwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/wf2/wf2.cwl test/data/fanconi.yaml
 ```
 
 A series of JSON files marked "module*.records.json" will contain the output of the run.
@@ -65,7 +65,7 @@ Similarly, a CWL workflow can be run which executes (a portion of(*)) the NCATS 
 
 
 ```bash
-cwltool cwl/workflows/wf9/wf9_for_genes.cwl cwl/data/inputs/bicluster_input_genes.yaml
+cwltool cwl/workflows/wf9/wf9_for_genes.cwl test/data/bicluster/input_genes.yaml
 ```
 
 Result files *geneToGeneBicluster.records.json* and *geneToGeneBicluster.records.json* will be outputted.
@@ -207,7 +207,8 @@ The tokens `get-data-frame to-json --orient records` make `module0.py` return a 
 [exposing your module to the command line](#exposing-your-module-to-the-command-line) for details.
 
 If CWL is a blueprint, what makes it real? Inputs to CWL tools are YAML files that share the same keywords as the tool's
-inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `diease_id`, like in `cwl/data/inputs/fanconi.yaml`:
+inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `disease_id`, 
+like in `test/data/bicluster/fanconi.yaml`:
 
 ```yaml
 disease_name: "FA"
@@ -228,7 +229,7 @@ module0.py --inputs-disease-name "FA" --input-disease-mondo "MONDO:0019391" get-
 Is *equivalent to* **this CWL tool running Translator Module 0:**
 
 ```bash
-cwltool cwl/workflows/module0.cwl cwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/module0.cwl test/data/fanconi.yaml
 ```
 
 ## Writing a CWL tool for an existing module
