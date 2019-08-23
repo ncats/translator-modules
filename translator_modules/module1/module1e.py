@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
-import fire
-
-# Workflow 2, Module 1E: Gene interactions
-from BioLink.biolink_client import BioLinkWrapper
 from pprint import pprint
 
+import fire
 import pandas as pd
+# Workflow 2, Module 1E: Gene interactions
+from BioLink.biolink_client import BioLinkWrapper
 
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload

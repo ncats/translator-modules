@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 import asyncio
-import pandas as pd
-import fire
 
-from translator_modules.wf9.util.bicluster_tissue_to_gene import BiclusterByTissueToGene
+import fire
+import pandas as pd
+
 from translator_modules.core.module_payload import Payload
+from translator_modules.wf9.util.bicluster_tissue_to_gene import BiclusterByTissueToGene
 
 
 class TissueToGeneBicluster(Payload):

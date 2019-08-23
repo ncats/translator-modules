@@ -1,11 +1,10 @@
-import urllib.request
 import datetime
-import json
-import requests
-from requests.utils import quote
+import urllib.request
 from collections import defaultdict
 
-import sys
+import requests
+from requests.utils import quote
+
 #sys.path.insert(0,'/mvp-module-library/Biclusters/bicluster_RNAseqDB_wrapper')
 
 

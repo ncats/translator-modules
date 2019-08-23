@@ -1,9 +1,9 @@
-import urllib.request
-import json
-import requests
 import asyncio
 import concurrent.futures
+import urllib.request
 from collections import defaultdict, Counter
+
+import requests
 
 bicluster_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_bicluster/'
 base_phenotype_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_hpo/'

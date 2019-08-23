@@ -1,15 +1,12 @@
 ###NOTE: DEPRECATED IN FAVOR OF bicluster_YYY_to_ZZZ.py modules
 ### no longer being updated as of March 7, 2019
 
-import urllib.request
-import json
-import requests
 import asyncio
 import concurrent.futures
-import requests
+import urllib.request
 from collections import defaultdict
 
-import aiohttp
+import requests
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 

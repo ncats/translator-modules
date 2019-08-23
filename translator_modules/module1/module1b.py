@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-import fire
-
 # Workflow 2, Module 1B: Phenotype similarity
 from pprint import pprint
-from biothings_client import get_client
-from translator_modules.core.generic_similarity import GenericSimilarity
-import pandas as pd
 
+import fire
+import pandas as pd
+from biothings_client import get_client
+
+from translator_modules.core.generic_similarity import GenericSimilarity
 from translator_modules.core.module_payload import Payload
 
 

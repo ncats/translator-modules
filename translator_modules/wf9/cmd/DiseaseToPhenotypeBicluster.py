@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 import asyncio
-import pandas as pd
-import fire
 
-from translator_modules.wf9.util.bicluster_disease_to_phenotype import BiclusterByDiseaseToPhenotype
+import fire
+import pandas as pd
+
 from translator_modules.core.module_payload import Payload
+from translator_modules.wf9.util.bicluster_disease_to_phenotype import BiclusterByDiseaseToPhenotype
 
 
 class DiseaseToPhenotypeBiclusters(Payload):

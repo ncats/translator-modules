@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import fire
-
+import pandas as pd
 # Workflow 2, Module 1D: Chemical-gene interactions
 from CTD.CTD_wrapper import CTDWrapper
-import pandas as pd
+
 from translator_modules.core.module_payload import Payload
 
 

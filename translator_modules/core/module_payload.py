@@ -1,7 +1,8 @@
+import os.path
 from abc import ABC
 from urllib.parse import urlparse
+
 import requests
-import os.path
 
 
 class Payload(ABC):

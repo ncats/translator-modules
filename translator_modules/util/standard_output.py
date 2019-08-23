@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-import fire
-
 from datetime import datetime
+
+import fire
 
 
 class StandardOutput(object):

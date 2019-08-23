@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
-import fire
+from pprint import pprint
 
+import fire
+import pandas as pd
 # Workflow 2, Module 0: Lookups
 from BioLink.biolink_client import BioLinkWrapper
 from biothings_client import get_client
-import pandas as pd
-from pprint import pprint
-from sys import stdout
-from json import dump
 
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload

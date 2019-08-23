@@ -1,10 +1,9 @@
-import urllib.request
-import json
-import requests
 import asyncio
 import concurrent.futures
-import requests
+import urllib.request
 from collections import defaultdict, Counter
+
+import requests
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 

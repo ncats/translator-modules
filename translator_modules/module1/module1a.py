@@ -2,11 +2,13 @@
 
 # Workflow 2, Module 1A: Functional similarity
 
-from translator_modules.core.generic_similarity import GenericSimilarity
 from pprint import pprint
-from biothings_client import get_client
-import pandas as pd
+
 import fire
+import pandas as pd
+from biothings_client import get_client
+
+from translator_modules.core.generic_similarity import GenericSimilarity
 from translator_modules.core.module_payload import Payload
 
 
