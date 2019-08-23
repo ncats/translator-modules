@@ -20,6 +20,7 @@ aiohttp
 jsonschema>=3.0.1
 mvp-module-library>=0.0.2
 ontobio
-biolinkml
+biolink-model>=1.2.4
+biolinkml>=1.3.8
 biothings_client
 fire
