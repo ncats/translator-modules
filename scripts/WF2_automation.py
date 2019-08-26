@@ -311,17 +311,11 @@ and associated MONDO identifiers - in the second column"""
                 'Functionally Similar Genes'
             )
             
-        ## JG: Add output into summary 
-        ## This builds a brief summary for just this module as well as begins the across summary tables
-        ## Additionally stores the raw data itself
-        summary_mod.add1A(mod1a_results) 
-        
-        if _echo_to_console:
-            ## CX: this functionality from summary module can replace previous code?
-            summary_mod.show_single_mod_summary('mod1A')
-#            print("\nMod1A Results for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(mod1a_results.to_string(columns=STD_RESULT_COLUMNS))
+        ## This builds a brief summary for just this module and creates the across summary tables
+        if not mod1a_results.empty:  # will only work if Mod1A returned results
+            summary_mod.add_scorebased_module(mod1a_results) 
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1A')
 
         mod1b_results = \
             similarity(
@@ -331,16 +325,12 @@ and associated MONDO identifiers - in the second column"""
                 'Mod1B',
                 'Phenotypic Similar Genes'
             )
-            
-        ## JG: Add output into summary 
-        summary_mod.add1B(mod1b_results)
-
-        if _echo_to_console:
-            ## CX: this functionality from summary module can replace previous code?
-            summary_mod.show_single_mod_summary('mod1B')
-#            print("\nMod1B Results for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
+        
+        ## Add output to brief summary
+        if not mod1b_results.empty:
+            summary_mod.add_scorebased_module(mod1b_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1B')
 
         # Find Interacting Genes from Monarch data
         mod1e_results = \
@@ -353,14 +343,10 @@ and associated MONDO identifiers - in the second column"""
             )
             
         ## JG: Add output into summary 
-        summary_mod.add1E(mod1e_results)
-
-        if _echo_to_console:
-            ## CX: this functionality from summary module can replace previous code?
-            summary_mod.show_single_mod_summary('mod1E')            
-#            print("\nMod1E Results for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
+        if not mod1e_results.empty:
+            summary_mod.add1E(mod1e_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1E')            
 
         # CX: Summary module code here
         # Put it in list (only used really used when multiple diseases in one file are queried at once)
