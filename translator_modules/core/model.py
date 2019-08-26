@@ -22,10 +22,10 @@ definitions:
         type: string
         description: >-
           Biolink Model concept category globally applicable to the module output data type  (e.g. 'gene')
-      input_output_relationship:
+      relationship:
         type: string
         description: >-
-          Biolink Model predicate tagging of the relationship
+          Biolink Model predicate tagging of the relationship (relating to the "edge label" of a knowledge graph)
       attributes:
         type: array
         items:
@@ -98,26 +98,69 @@ definitions:
 
 class ResultList():
 
-    def __init__(self, list_id, source=''):
+    def __init__(self, list_id, source='', input_category='', output_category='', relationship=''):
         self.list_id = list_id
         self.source = source
+        self.input_category = input_category
+        self.output_category = output_category
+        self.relationship = relationship
+        self.attributes = []
+        self.results = []
+
+    def getListId(self):
+        return self.list_id
+
+    def getSource(self):
+        return self.source
+
+    def setInputCategory(self, input_category):
+        self.input_category = input_category
+
+    def getInputCategory(self):
+        return self.input_category
+
+    def setOutputCategory(self, output_category):
+        self.output_category = output_category
+
+    def getOutputCategory(self):
+        return self.output_category
+
+    def setRelationship(self,relationship):
+        self.relationship=relationship
+
+    def setAttributes(self, attributes):
+        if self.attributes is None:
+            self.attributes = []
+        self.attributes.append(attributes)
+
+    def getAttributes(self):
+        return self.attributes
+
+    def setResults(self, results):
+        self.results.append(results)
+
+    def getAttributes(self):
+        return self.attributes
+
 
 class Result():
 
     def __init__(self, primary_id):
         self.primary_id = primary_id
+        self.identifiers = []
+        self.attributes = []
 
     def getPrimaryId(self):
         return self.primary_id
 
     def setIdentifiers(self, identifiers):
-        self.identifiers = identifiers
+        self.identifiers.append(identifiers)
 
     def getIdentifiers(self):
         return self.identifiers
 
     def setAttributes(self, attributes):
-        self.attributes = attributes
+        self.attributes.append(attributes)
 
     def getAttributes(self):
         return self.attributes
