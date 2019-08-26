@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ GeneToGeneBicluster.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ gene_to_gene_bicluster.py, get-data-frame, to-json, --orient, records ]
 inputs:
   input_genes:
     type: string

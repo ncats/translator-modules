@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module1d.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ chemical_gene_interaction.py, get-data-frame, to-json, --orient, records ]
 inputs:
   input_genes:
     type: File

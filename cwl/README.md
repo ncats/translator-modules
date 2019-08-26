@@ -173,7 +173,7 @@ them, like so.
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module0.py, get-data-frame, to-json ]
+baseCommand: [ disease_associated_genes.py, get-data-frame, to-json ]
 ```
 
 ## Running a CWL tool
@@ -184,7 +184,7 @@ should expected for a script: names for the data, their types and formats, and w
 ```yaml
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module0.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ disease_associated_genes.py, get-data-frame, to-json, --orient, records ]
 inputs:
   disease_name:
     type: string
@@ -411,14 +411,14 @@ outputs:
     outputSource: functional_similarity/functionally_similar_genes
 steps:
   diseases:
-    run: module0.cwl
+    run: disease_associated_genes.cwl
     in:
       disease_name: disease_name
       disease_id: disease_id
     out: [ disease_list ]
 
   functional_similarity:
-    run: module1a.cwl
+    run: functional_similarity.cwl
     in:
       input_genes: diseases/disease_list
       threshold: threshold

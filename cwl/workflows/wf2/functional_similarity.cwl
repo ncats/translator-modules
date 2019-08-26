@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module1b.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ functional_similarity.py, get-data-frame, to-json,--orient, records ]
 inputs:
   input_genes:
     type: File
@@ -11,11 +11,10 @@ inputs:
       prefix: --input_genes
   threshold:
     type: float
-    default: 0.10
     inputBinding:
       position: 1
       prefix: --threshold
 outputs:
-  phenotypically_similar_genes:
+  functionally_similar_genes:
     type: stdout
-stdout: module1b.records.json
+stdout: module1a.records.json
