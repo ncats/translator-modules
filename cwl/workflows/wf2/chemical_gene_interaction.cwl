@@ -17,4 +17,4 @@ inputs:
 outputs:
   chemical_interaction_list:
     type: stdout
-stdout: module1d.records.json
+stdout: chemical_gene_interaction.records.json

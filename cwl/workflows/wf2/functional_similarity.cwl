@@ -17,4 +17,4 @@ inputs:
 outputs:
   functionally_similar_genes:
     type: stdout
-stdout: module1a.records.json
+stdout: functional_similarity.records.json

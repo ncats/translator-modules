@@ -17,4 +17,4 @@ inputs:
 outputs:
   interacting_genes:
     type: stdout
-stdout: module1e.records.json
+stdout: gene_interaction.records.json

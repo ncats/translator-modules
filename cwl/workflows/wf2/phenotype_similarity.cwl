@@ -18,4 +18,4 @@ inputs:
 outputs:
   phenotypically_similar_genes:
     type: stdout
-stdout: module1b.records.json
+stdout: phenotype_similarity.records.json

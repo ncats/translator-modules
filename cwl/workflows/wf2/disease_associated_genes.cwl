@@ -11,4 +11,4 @@ inputs:
 outputs:
   disease_list:
     type: stdout
-stdout: module0.records.json
+stdout: disease_associated_genes.records.json

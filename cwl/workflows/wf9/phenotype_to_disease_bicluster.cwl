@@ -12,4 +12,4 @@ inputs:
 outputs:
   phenotype_to_disease_bicluster_list:
     type: stdout
-stdout: phenotypeToDiseaseBicluster.records.json
+stdout: phenotype_to_disease_bicluster.records.json

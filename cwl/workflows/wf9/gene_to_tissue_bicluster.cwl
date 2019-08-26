@@ -12,4 +12,4 @@ inputs:
 outputs:
   gene_to_tissue_bicluster_list:
     type: stdout
-stdout: geneToTissueBicluster.records.json
+stdout: gene_to_tissue_bicluster.records.json
