@@ -1,6 +1,6 @@
 ## ID Translation Module
 
-From the command-line:
+### From the command-line:
 ```bash
 IDs.py --ids `readlink -f ../../wf9/data/csv/gene_list.csv` --translation `readlink -f ../../wf9/data/csv/HUGO_geneids_download_v2.csv` --in_id "Ensembl" --out_id "HGNC"
 ```
@@ -17,7 +17,9 @@ Inputting a list of IDs instead of a CSV file path should also work.
 
 Note: it's important for there to be quotes around the list (`'["like this"]'`, or `"['like that']"`) if your list contains strings. Else the list gets handled as if it was a bunch of string literals instead, because that's what Bash wants instead of Python.
 
-Speaking of which. In Python 3:
+Speaking of which. 
+
+### In Python 3:
 ```python
 from translator_modules.util.ids.IDs import TranslateIDs
 
