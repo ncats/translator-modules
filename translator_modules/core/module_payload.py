@@ -28,9 +28,6 @@ class Payload(ABC):
         then returns the value of the input once it is extracted.
         """
 
-        payload_input: object
-        extension: str
-
         # https://stackoverflow.com/a/52455972
         def _is_url(url):
             try:
@@ -38,28 +35,36 @@ class Payload(ABC):
                 return all([result.scheme, result.netloc])
             except ValueError:
                 return False
+            except AttributeError:
+                return False
+
+        if not type(input_or_input_location) is str:
+            extension = None
+            return input_or_input_location, extension
 
         if type(input_or_input_location) is str and os.path.isfile(input_or_input_location):
             input_file = input_or_input_location
             extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
             with open(input_file) as stream:
                 payload_input = stream.read()
+                return payload_input, extension
+
         elif type(input_or_input_location) is str and _is_url(input_or_input_location):
             input_url = input_or_input_location
             path = urlparse(input_url).path
             extension = os.path.splitext(path)[1]
-
-            # print(input_url, extension)
-
             response = requests.get(input_url)
             response.raise_for_status()  # exception handling
             payload_input = response.text
-        else:
-            extension = None
-            maybe_a_good_value = input_or_input_location
-            payload_input = maybe_a_good_value
+            return payload_input, extension
 
-        return payload_input, extension
+        else:
+            """
+            TODO: we need to figure out why we got here: handle errors
+            """
+            print("good luck")
+            extension = None
+            return input_or_input_location, extension
 
     def get_data_frame(self):
         return self.results
