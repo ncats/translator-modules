@@ -1,15 +1,15 @@
-## ID Translation Module
+## ID Translation Module v0.1.0
 
 ### From the command-line:
 ```bash
 IDs.py --ids `readlink -f ../../wf9/data/csv/gene_list.csv` --translation `readlink -f ../../wf9/data/csv/HUGO_geneids_download_v2.csv` --in_id "Ensembl" --out_id "HGNC"
 ```
 
-Note: when being given `--ids`, it looks for a column equivalent to the name of the ID, OR takes the first column by default. If you think there's a better alternative, open an issue and we'll figure it out.
-
-Inputting a list of IDs instead of a CSV file path should also work.
+Note: when being given `--ids`, it looks for a column equivalent to the name of the ID. If you think there's a better alternative, open an issue and we'll figure it out.
 
 (All `readlink -f` does is let you point to relative paths and resolve them as absolute ones.)
+
+Inputting a list of IDs instead of a CSV file path should also work.
 
 ```bash
  IDs.py --ids '["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]'  --translation `readlink -f ../wf9/data/csv/HUGO_geneids_download_v2.csv` --in_id "Ensembl" --out_id "HGNC" results
