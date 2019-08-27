@@ -125,12 +125,10 @@ class ResultList():
     def getOutputCategory(self):
         return self.output_category
 
-    def setRelationship(self,relationship):
+    def setRelationship(self, relationship):
         self.relationship=relationship
 
     def setAttributes(self, attributes):
-        if self.attributes is None:
-            self.attributes = []
         self.attributes.append(attributes)
 
     def getAttributes(self):
