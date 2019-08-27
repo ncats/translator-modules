@@ -6,12 +6,15 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import List
 
+class BaseModel():
+    def to_json(self):
+        return str(asdict(self))
 
-@dataclass
-class Attribute():
+@dataclass(frozen=True)
+class Attribute(BaseModel):
     """
     # Both 'Result' data objects and their aggregate collections
     # may be documented with additional metadata attributes.
@@ -33,8 +36,8 @@ class Attribute():
     source: str = ''
 
 
-@dataclass
-class Identifier():
+@dataclass(frozen=True)
+class Identifier(BaseModel):
     """
     # Data objects in a 'Result' may be globally identified by different identifiers asserted by
     # diverse bioinformatics authorities as indexed by their XML Namespace prefix
@@ -48,18 +51,21 @@ class Identifier():
           # For example, for genes: NCBIGene, HGNC, ENSEMBL, MIM (actually missing from the context.jsonld?)
           xmlns:
             type: string
-          id:
+          object_id:
             type: string
         required:
           - xmlns
           - id
     """
     xmlns: str
-    id: str
+    object_id: str
+
+    def curie(self):
+        return self.xmlns+":"+self.object_id
 
 
-@dataclass
-class Result():
+@dataclass(frozen=True)
+class Result(BaseModel):
     """
     # A 'Result' is a single data record about a single entity
     # in a possible list of results discovered by a computation.
@@ -96,7 +102,7 @@ class Result():
 
 
 @dataclass
-class ResultList():
+class ResultList(BaseModel):
     """
     # A 'ResultList' is a (possibly ordered) documented collection of
     # 'Result' data objects returned by a computation.
