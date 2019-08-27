@@ -2,32 +2,27 @@ from unittest import TestCase
 
 from .model import Identifier
 
+mock_identifier_xmlns = 'Namespace'
+mock_identifier_object_id = '1'
+
+
+def stub_identifier():
+    return Identifier(mock_identifier_xmlns, mock_identifier_object_id)
 
 class TestIdentifier(TestCase):
 
     def test_identifier_creation(self):
 
-        xmlns = 'Namespace'
-        object_id = '1'
+        i = stub_identifier()
 
-        i = Identifier(xmlns, object_id)
-
-        self.assertEqual(i.xmlns, xmlns, 'Identifier xmlns set')
-        self.assertEqual(i.object_id, object_id, 'Identifier object_id set')
+        self.assertEqual(i.xmlns, mock_identifier_xmlns, 'Identifier xmlns set')
+        self.assertEqual(i.object_id, mock_identifier_object_id, 'Identifier object_id set')
 
     def test_identifier_to_json(self):
-        xmlns = 'Namespace'
-        object_id = '1'
-
-        i = Identifier(xmlns, object_id)
-
+        i = stub_identifier()
         print("\n\nIdentifier JSON output: \n", i.to_json())
 
     def test_curie(self):
+        i = stub_identifier()
 
-        xmlns = 'Namespace'
-        object_id = '1'
-
-        i = Identifier(xmlns, object_id)
-
-        self.assertEqual(i.curie(), "Namespace:1", "Identifier CURIE properly constructed")
+        self.assertEqual(i.curie(), "Namespace:1", "Identifier CURIE is properly constructed")

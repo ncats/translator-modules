@@ -101,7 +101,7 @@ class Result(BaseModel):
     attributes: List[Attribute] = field(default_factory=list)
 
 
-@dataclass
+@dataclass(frozen=True)
 class ResultList(BaseModel):
     """
     # A 'ResultList' is a (possibly ordered) documented collection of
