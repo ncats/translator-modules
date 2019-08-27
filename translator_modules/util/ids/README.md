@@ -5,7 +5,7 @@
 IDs.py --ids `readlink -f ../../wf9/data/csv/gene_list.csv` --translation `readlink -f ../../wf9/data/csv/HUGO_geneids_download_v2.csv` --in_id "Ensembl" --out_id "HGNC"
 ```
 
-Note: when being given `--ids`, it looks for a column equivalent to the name of the ID. If you think there's a better alternative, open an issue and we'll figure it out.
+Note: when being given `--ids`, it looks for a column equivalent to the name of the ID type (like "Ensembl" or "HGNC"). If you think there's a better alternative, open an issue and we'll figure it out.
 
 (All `readlink -f` does is let you point to relative paths and resolve them as absolute ones.)
 
