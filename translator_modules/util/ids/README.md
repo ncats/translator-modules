@@ -15,7 +15,7 @@ Inputting a list of IDs instead of a CSV file path should also work.
  IDs.py --ids '["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]'  --translation `readlink -f ../wf9/data/csv/HUGO_geneids_download_v2.csv` --in_id "Ensembl" --out_id "HGNC" results
 ```
 
-Note: it's important for there to be quotes around the list (`'["like this"]'`, or `"['like that']"`) if your list contains strings. Else the list gets handled as if it was one marked up string instead, because that's what Bash wants instead of Python.
+Note: it's important for there to be quotes around the list (`'["like this"]'`, or `"['like that']"`) if your list contains strings. Else the list gets handled as if it was one marked up string instead: that's what Bash wants over Python.
 
 Speaking of which. 
 
