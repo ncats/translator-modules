@@ -12,6 +12,7 @@ from typing import List, Tuple
 from rdflib import Namespace
 from BioLink.model import Association, NamedThing
 
+__version__ = '0.0.1'
 
 class BaseModel():
     def to_json(self):
