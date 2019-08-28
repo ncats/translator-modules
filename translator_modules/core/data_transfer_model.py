@@ -5,9 +5,10 @@ Partially inspired by the Indigo (Broad) team 'Gene Sharpener" data model for ge
 plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML=like notation)
 
 """
+import pandas as pd
 
 from dataclasses import dataclass, field, asdict
-from typing import List, Tuple
+from typing import List
 
 from BioLink.model import Association, NamedThing
 
@@ -16,7 +17,12 @@ __version__ = '0.0.1'
 
 class BaseModel():
 
-    def to_json(self):
+    def to_json(self) -> str:
+        """
+        Given an instance of data_transfer_model class, dumps a JSON representation as a String
+        :
+        return: String representation of the model
+        """
         return str(asdict(self))
 
 
@@ -75,10 +81,10 @@ class Identifier(BaseModel):
     #    if not isinstance(self.xmlns, Namespace):
     #        raise RuntimeError("Identifier.xmlns must be specified as an instance of rdflib.Namespace!")
 
-    def curie(self):
+    def curie(self) -> str:
         return self.xmlns+":"+self.object_id
 
-    @classmethod
+    @classmethod # returns an instance of Identifier constructed from a CURIE
     def parse(cls, curie):
         part = curie.split(':', 1)
         if len(part) < 2 :
@@ -96,6 +102,9 @@ class ConceptSpace(BaseModel):
     namespace: str  # should be Biolink Model registered identifier namespace
     category: str   # should be Biolink Model registered category
 
+    def __post_init__(self):
+        # Can the namespace and category be validated here as Biolink Model compliant?
+        pass
 
 @dataclass(frozen=True)
 class Concept(BaseModel):
@@ -243,3 +252,28 @@ class ResultList(BaseModel):
                                str(self.range) + "' of Result List '" + self.list_id +
                                "' is uninitialized or not a ConceptSpace")
 
+    @classmethod
+    def load(cls, result_list_json: str):
+        """
+        Loads a JSON String representation of ResultList into a new ResultList instance
+
+        :param result_list_json: the input JSON String
+        :return: returns a new ResultList instance
+        """
+        pass
+
+    @classmethod
+    def import_data_frame(cls, data_frame: pd.DataFrame):
+        """
+        Convert a Pandas DataFrame into a ResultList
+        :param data_frame: a Pandas DataFrame with results
+        :return: ResultList data instance
+        """
+        pass
+
+    def export_data_frame(self) -> pd.DataFrame:
+        """
+        Convert this ResultList into a Pandas DataFrame
+        :return: a Python Pandas DataFrame representation of (most of) the data in a given ResultList
+        """
+        pass
