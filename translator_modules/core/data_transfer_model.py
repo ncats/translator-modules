@@ -15,6 +15,7 @@ __version__ = '0.0.1'
 
 
 class BaseModel():
+
     def to_json(self):
         return str(asdict(self))
 
@@ -231,3 +232,14 @@ class ResultList(BaseModel):
     range:  ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     concepts: List[Concept] = field(default_factory=list)
     results:  List[Result]  = field(default_factory=list)
+
+    def __post_init__(self):
+        if self.domain is None or not isinstance(self.domain, ConceptSpace):
+            raise RuntimeError("Value of Domain '" +
+                               str(self.domain) + "' of Result List '" + self.list_id +
+                               "' is uninitialized or not a ConceptSpace")
+        if self.range is None or not isinstance(self.range, ConceptSpace):
+            raise RuntimeError("Range '" +
+                               str(self.range) + "' of Result List '" + self.list_id +
+                               "' is uninitialized or not a ConceptSpace")
+
