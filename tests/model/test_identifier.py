@@ -11,6 +11,7 @@ mock_identifier_object_id = '1'
 def stub_identifier():
     return Identifier(mock_identifier_xmlns, mock_identifier_object_id)
 
+
 class TestIdentifier(TestCase):
 
     def test_identifier_creation(self):
@@ -26,5 +27,21 @@ class TestIdentifier(TestCase):
 
     def test_curie(self):
         i = stub_identifier()
+        self.assertEqual(
+            i.curie(),
+            mock_identifier_xmlns+":"+mock_identifier_object_id,
+            "Identifier CURIE is properly constructed"
+        )
 
-        self.assertEqual(i.curie(), "Namespace:1", "Identifier CURIE is properly constructed")
+    def test_parse_succeed(self):
+        test_curie = 'HGNC:4567'
+        i = Identifier.parse(test_curie)
+        print("\n\nIdentifier JSON output: \n", i.to_json())
+
+    def test_parse_fail(self):
+        not_a_curie = 'not a curie'
+        try:
+            i = Identifier.parse(not_a_curie)
+            print("\n\nI should not see this JSON output: \n", i.to_json())
+        except RuntimeError as re:
+            print("\n", re)
