@@ -9,6 +9,8 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 from dataclasses import dataclass, field, asdict
 from typing import List
 
+from BioLink.model import Association, NamedThing
+
 class BaseModel():
     def to_json(self):
         return str(asdict(self))
@@ -149,8 +151,8 @@ class ResultList(BaseModel):
     """
     list_id: str
     source: str = ''
-    input_category: str = ''
-    output_category: str = ''
-    relationship: str = ''
+    input_category: str = NamedThing.class_name
+    output_category: str = NamedThing.class_name
+    relationship: str = Association.class_name
     attributes: List[Attribute] = field(default_factory=list)
     results: List[Result] = field(default_factory=list)

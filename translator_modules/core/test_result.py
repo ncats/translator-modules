@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from translator_modules.core.model import Result, Attribute, Identifier
-from translator_modules.core.test_attribute import stub_attribute
-from translator_modules.core.test_identifier import stub_identifier
+from .data_transfer_model import Result, Attribute, Identifier
+from .test_attribute import stub_attribute
+from .test_identifier import stub_identifier
 
 
 def stub_result():
