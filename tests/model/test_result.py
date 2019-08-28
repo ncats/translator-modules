@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from translator_modules.core.data_transfer_model import Result
+from translator_modules.core.data_transfer_model import Result, Identifier
 from .test_attribute import stub_attribute
 from .test_identifier import stub_identifier
 
@@ -10,9 +10,7 @@ def stub_result():
     i = stub_identifier()
     a = stub_attribute()
 
-    primary_id = 'some result'
-
-    r = Result(primary_id)
+    r = Result(Identifier("HGNC", "1234"), score='100')
     r.identifiers.append(i)
     r.attributes.append(a)
 

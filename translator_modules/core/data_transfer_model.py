@@ -86,6 +86,11 @@ class Result(BaseModel):
               $ref: '#/definitions/Identifier'
             description: >-
               A standard list of equivalent identifiers for a given result (see below)
+          score:
+            type: string
+            description: >-
+              The computational generation of each result may (optionally) be associated with a score, which is
+              managed as a string variable. If the string is empty, then it is assumed that no score is available.
           attributes:
             type: array
             items:
@@ -98,10 +103,14 @@ class Result(BaseModel):
         required:
           - result_id
     """
-    primary_id: str
+    primary_id: Identifier
     identifiers: List[Identifier] = field(default_factory=list)
+    score: str = ''
     attributes: List[Attribute] = field(default_factory=list)
 
+    def __post_init__(self):
+        if not isinstance(self.primary_id, Identifier):
+            raise RuntimeError("Result.primary_id must be specified as an Identifier DataClass object!")
 
 @dataclass(frozen=True)
 class ResultList(BaseModel):
