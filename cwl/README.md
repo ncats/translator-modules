@@ -178,6 +178,8 @@ baseCommand: [ disease_associated_genes.py, get-data-frame, to-json ]
 
 ## Running a CWL tool
 
+### CWL File
+
 CWL tools are not scripts, but blueprints for running scripts. They let users clarify beforehand the kinds of data they 
 should expected for a script: names for the data, their types and formats, and what arguments they satisfy. Let's take a simple example:
 
@@ -205,6 +207,8 @@ structure. We will run `module0.py` with inputs given by `disease_name` and `dis
 `--input-disease-name`, and `--input-disease-mondo`, which are the names of variables inside the module. 
 The tokens `get-data-frame to-json --orient records` make `module0.py` return a list of JSON records; see 
 [exposing your module to the command line](#exposing-your-module-to-the-command-line) for details.
+
+### Data File
 
 If CWL is a blueprint, what makes it real? Inputs to CWL tools are YAML files that share the same keywords as the tool's
 inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `disease_id`, 
@@ -338,7 +342,7 @@ SMEs and application developers.
 
 #### Why Python Fire?
 
-Fire makes it simple to expose any Python class to the command-line, in only **three lines of code**. This means it is easy for
+Fire makes it simple to expose any Python class to the command-line, in only **two lines of code**. This means it is easy for
 maintainers to add command-line functionality to modules, and it's easy to delete Fire if we change our minds about the approach.
 
 It does have limitations: complex arguments (like mutually exclusive yet simultaneously required arguments) are not supported.

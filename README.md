@@ -76,7 +76,7 @@ frameworks. A number of execution frameworks for doing this have been explored t
 
 1. Jupyter Notebooks (see https://github.com/ncats/translator-workflows for numerous examples)
 2. Python scripts: see the [WF2_automation.py script](direct-command-line-workflow2-script-usage) for an exemplar
-3. Using the Common Workflow Language (CWL) standard: see the [TranslatorCWL prototype here](./biocwl)
+3. Using the Common Workflow Language (CWL) standard: see the [TranslatorCWL prototype here](./cwl)
 
 ## NCATS Translator Workflow 2
 
