@@ -9,14 +9,15 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 from dataclasses import dataclass, field, asdict
 from typing import List, Tuple
 
-from rdflib import Namespace
 from BioLink.model import Association, NamedThing
 
 __version__ = '0.0.1'
 
+
 class BaseModel():
     def to_json(self):
         return str(asdict(self))
+
 
 @dataclass(frozen=True)
 class Attribute(BaseModel):
@@ -50,34 +51,49 @@ class Identifier(BaseModel):
       Identifier:
         type: object
         properties:
-          # The namespaces will be a data type specific list
-          # Generally as found in the Biolink Model json-ld context file at
-          # https://github.com/biolink/biolink-model/blob/master/context.jsonld
-          # For example, for genes: NCBIGene, HGNC, ENSEMBL, MIM (actually missing from the context.jsonld?)
           xmlns:
             type: string
+            description: >-
+                The namespaces will be a data type specific list of namespaces
+                Generally as found in the Biolink Model json-ld context file at
+                https://github.com/biolink/biolink-model/blob/master/context.jsonld
+                For example, for genes: NCBIGene, HGNC, ENSEMBL, MIM (actually missing from the context.jsonld?)
           object_id:
             type: string
         required:
           - xmlns
           - id
     """
-    xmlns: Namespace
+    xmlns: str  # generally should be a namespace prefix as found in the Biolink Model context.jsonld file
     object_id: str
 
-    def __post_init__(self):
-        if not isinstance(self.xmlns, Namespace):
-            raise RuntimeError("Identifier.xmlns must be specified as an instance of rdflib.Namespace!")
+    # We might validate the xmlns against registered ones in the future.
+    # Enforcing use of the rdfLib.Namespace is deprecated for now
+
+    # def __post_init__(self):
+    #    if not isinstance(self.xmlns, Namespace):
+    #        raise RuntimeError("Identifier.xmlns must be specified as an instance of rdflib.Namespace!")
 
     def curie(self):
         return self.xmlns+":"+self.object_id
 
     @classmethod
     def parse(cls, curie):
-        xmlns, object_id = curie.split(':', 1)
-        if object_id is None:
+        part = curie.split(':', 1)
+        if len(part) < 2 :
             raise RuntimeError("String '"+curie+"' is not a CURIE?")
+        xmlns = part[0]
+        object_id = part[1]
         return Identifier(xmlns, object_id)
+
+
+@dataclass(frozen=True)
+class ConceptSpace(BaseModel):
+    """
+    A ConceptSpace tracks metadata about a class of Concept identifiers and types
+    """
+    namespace: str  # should be Biolink Model registered identifier namespace
+    category: str   # should be Biolink Model registered category
 
 
 @dataclass(frozen=True)
@@ -111,7 +127,8 @@ class Concept(BaseModel):
     """
     primary_id: Identifier
     identifiers: List[Identifier] = field(default_factory=list)
-    attributes: List[Attribute] = field(default_factory=list)
+    attributes:  List[Attribute]  = field(default_factory=list)
+
 
 @dataclass(frozen=True)
 class Result(BaseModel):
@@ -179,29 +196,19 @@ class ResultList(BaseModel):
                 $ref: '#/definitions/Attribute'
             description: Additional global information and provenance about the result list.
           domain:
-            category:
-                type: string
-                description: >-
-                    Biolink Model concept category applicable to the module input 'domain' data type (e.g. 'disease')
-            namespace:
-                type: string
-                description: >-
-                    Namespace of identifiers for input data, following the Biolink Model context catalog
-                    documented at https://github.com/biolink/biolink-model/blob/master/context.jsonld
+            type: '#/definitions/ConceptSpace'
+            description: >-
+                Namespace and Category of identifiers for input data, following the Biolink Model context catalog
+                documented at https://github.com/biolink/biolink-model/blob/master/context.jsonld
           relationship:
                 type: string
                 description: >-
                     Biolink Model predicate mapping of the relationship (relating to "edge label" of a knowledge graph)
           range:
-            category:
-                type: string
-                description: >-
-                    Biolink Model concept category applicable to the module output 'range' data type  (e.g. 'gene')
-            namespace:
-                type: string
-                description: >-
-                    Namespace of identifiers for output data, following the Biolink Model context catalog
-                    documented at https://github.com/biolink/biolink-model/blob/master/context.jsonld
+            type: '#/definitions/ConceptSpace'
+            description: >-
+                Namespace and Category of identifiers for output data, following the Biolink Model context catalog
+                documented at https://github.com/biolink/biolink-model/blob/master/context.jsonld
           results:
             type: array
             items:
@@ -219,8 +226,8 @@ class ResultList(BaseModel):
     list_id: str
     source:  str = ''
     attributes: List[Attribute] = field(default_factory=list)
-    domain: Tuple[str] = (NamedThing.class_name, 'SEMMEDDB')
+    domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     relationship:  str = Association.class_name
-    range:  Tuple[str] = (NamedThing.class_name, 'SEMMEDDB')
+    range:  ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     concepts: List[Concept] = field(default_factory=list)
-    results:  List[Result] = field(default_factory=list)
+    results:  List[Result]  = field(default_factory=list)

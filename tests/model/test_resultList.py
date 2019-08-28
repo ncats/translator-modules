@@ -1,41 +1,42 @@
 from unittest import TestCase
 
-from BioLink.model import Disease, Gene, GeneToDiseaseAssociation, BiologicalEntity, PhenotypicFeature
+from BioLink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
 
-from translator_modules.core.data_transfer_model import ResultList
-from .test_result import stub_result
-from .test_attribute import stub_attribute
+from tests.model.test_concept import mock_concept
+from translator_modules.core.data_transfer_model import ResultList, ConceptSpace
 
-r = stub_result()
-a = stub_attribute()
+from .test_attribute import mock_attribute
+from .test_result import mock_result
+
+r = mock_result()
+a = mock_attribute()
 
 
 def default_mock_result_list():
 
-    rl = ResultList(
-        'fake result list',
-        source='ncats'
-    )
+    rl = ResultList('default mock result list')
     rl.attributes.append(a)
+    rl.concepts.append(mock_concept())
     rl.results.append(r)
 
     return rl
 
 
 def overridden_mock_result_list(
-        input_category=Disease.class_name,
-        output_category=Gene.class_name,
-        relationship=GeneToDiseaseAssociation.class_name
+        domain=ConceptSpace('MONDO', Disease.class_name),
+        relationship=GeneToDiseaseAssociation.class_name,
+        range=ConceptSpace('HGNC', Gene.class_name)
 ):
 
     rl = ResultList(
-        'fake result list',
+        'overridden mock result list',
         source='ncats',
-        input_category=input_category,
-        output_category=output_category,
-        relationship=relationship
+        domain=domain,
+        relationship=relationship,
+        range=range
     )
     rl.attributes.append(a)
+    rl.concepts.append(mock_concept())
     rl.results.append(r)
 
     return rl
@@ -56,9 +57,9 @@ class TestResultList(TestCase):
         print("\n\nOverridden ResultList JSON output: \n", rl.to_json())
 
         rl = overridden_mock_result_list(
-            input_category=BiologicalEntity.class_name,
-            output_category=PhenotypicFeature.class_name,
-            relationship=TestResultList.mock_predicate
+            domain=ConceptSpace('UBERON',Disease.class_name),
+            relationship=TestResultList.mock_predicate,
+            range=ConceptSpace('UPHENO', PhenotypicFeature.class_name)
         )
 
         self.assertEqual(rl.relationship, TestResultList.mock_predicate, "Set relationship to predicate")

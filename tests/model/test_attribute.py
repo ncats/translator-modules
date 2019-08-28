@@ -7,7 +7,7 @@ mock_value = 'some attribute value'
 mock_source = 'ncats'
 
 
-def stub_attribute():
+def mock_attribute():
     return Attribute(mock_attribute_name, mock_value, mock_source)
 
 class TestAttribute(TestCase):
@@ -23,9 +23,9 @@ class TestAttribute(TestCase):
         self.assertEqual(a.value, value, 'Attribute value set')
         self.assertEqual(a.source, '', 'Attribute source is empty by default')
 
-        a = stub_attribute()
+        a = mock_attribute()
         self.assertEqual(a.source, 'ncats', 'Optional Attribute source field is set to ncats')
 
     def test_attribute_to_json(self):
-        a = stub_attribute()
+        a = mock_attribute()
         print("\n\nAttribute JSON output: \n", a.to_json())
