@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from .data_transfer_model import Attribute
+from translator_modules.core.data_transfer_model import Attribute
 
 mock_attribute_name = 'some attribute name'
 mock_value = 'some attribute value'

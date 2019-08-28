@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from BioLink.model import Disease, Gene, GeneToDiseaseAssociation, BiologicalEntity, PhenotypicFeature
 
-from .data_transfer_model import ResultList
+from translator_modules.core.data_transfer_model import ResultList
 from .test_result import stub_result
 from .test_attribute import stub_attribute
 

@@ -21,7 +21,7 @@ BioCWL Test Coverage
         * The CWL-Runner must run the template class with multiple several complex types (non-injective, custom types)
 
 * Model Validation
-    * For each Systems Integration test, these custom types must be Biolink Types
+    * For each Systems Integration tests, these custom types must be Biolink Types
 """
 
 from cwl.Biocwl import BiolinkWorkflow

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from .data_transfer_model import Result, Attribute, Identifier
+from translator_modules.core.data_transfer_model import Result
 from .test_attribute import stub_attribute
 from .test_identifier import stub_identifier
 

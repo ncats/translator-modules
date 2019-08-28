@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from .data_transfer_model import Identifier
+from translator_modules.core.data_transfer_model import Identifier
 
 mock_identifier_xmlns = 'Namespace'
 mock_identifier_object_id = '1'
