@@ -338,7 +338,7 @@ SMEs and application developers.
 
 #### Why Python Fire?
 
-Fire makes it simple to expose any Python class to the command-line, in only **three lines of code**. This means it is easy for
+Fire makes it simple to expose any Python class to the command-line, in only **two lines of code**. This means it is easy for
 maintainers to add command-line functionality to modules, and it's easy to delete Fire if we change our minds about the approach.
 
 It does have limitations: complex arguments (like mutually exclusive yet simultaneously required arguments) are not supported.
