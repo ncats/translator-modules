@@ -9,7 +9,9 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 from dataclasses import dataclass, field, asdict
 from typing import List
 
+from rdflib import Namespace
 from BioLink.model import Association, NamedThing
+
 
 class BaseModel():
     def to_json(self):
@@ -59,8 +61,13 @@ class Identifier(BaseModel):
           - xmlns
           - id
     """
-    xmlns: str
+    xmlns: Namespace
     object_id: str
+
+    def __post_init__(self):
+        if not isinstance(self.xmlns, Namespace):
+            raise RuntimeError("Identifier.xmlns must be specified as an instance of rdflib.Namespace!")
+
 
     def curie(self):
         return self.xmlns+":"+self.object_id
