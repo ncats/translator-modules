@@ -1,6 +1,5 @@
 from unittest import TestCase
 
-
 from translator_modules.core.data_transfer_model import Identifier
 
 mock_identifier_xmlns = "HGNC"
@@ -8,6 +7,10 @@ mock_identifier_object_id = '3582'
 mock_identifier_name = 'FA complementation group A'
 mock_identifier_symbol = 'FANCA'
 
+mock_identifier_xmlns_2 = "MONDO"
+mock_identifier_object_id_2= '0019391'
+mock_identifier_name_2 = 'Fanconi Anemia'
+mock_identifier_symbol_2 = 'FA'
 
 def mock_identifier():
     return Identifier(
@@ -15,6 +18,14 @@ def mock_identifier():
         mock_identifier_object_id,
         mock_identifier_name,
         mock_identifier_symbol
+    )
+
+def mock_identifier_2():
+    return Identifier(
+        mock_identifier_xmlns_2,
+        mock_identifier_object_id_2,
+        mock_identifier_name_2,
+        mock_identifier_symbol_2
     )
 
 

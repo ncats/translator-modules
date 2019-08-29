@@ -3,21 +3,24 @@ from unittest import TestCase
 from BioLink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
 
 from tests.model.test_concept import mock_concept
+from tests.model.test_identifier import mock_identifier_2
 from translator_modules.core.data_transfer_model import ResultList, ConceptSpace
-
 from .test_attribute import mock_attribute
 from .test_result import mock_result
 
-r = mock_result()
-a = mock_attribute()
+_r = mock_result()
+_a = mock_attribute()
+
+mock_predicate = "has_phenotype"
 
 
 def default_mock_result_list():
 
     rl = ResultList('default mock result list')
-    rl.attributes.append(a)
+    rl.attributes.append(_a)
     rl.concepts.append(mock_concept())
-    rl.results.append(r)
+    rl.concepts.append(mock_concept(identifier=mock_identifier_2()))
+    rl.results.append(_r)
 
     return rl
 
@@ -35,16 +38,18 @@ def overridden_mock_result_list(
         relationship=relationship,
         range=range
     )
-    rl.attributes.append(a)
+    rl.attributes.append(_a)
     rl.concepts.append(mock_concept())
-    rl.results.append(r)
+    rl.concepts.append(mock_concept(identifier=mock_identifier_2()))
+    rl.results.append(_r)
 
     return rl
 
 
-class TestResultList(TestCase):
+_json_test_file = "result_list_test.json"
 
-    mock_predicate = "has_phenotype"
+
+class TestResultList(TestCase):
 
     def test_default_result_list_to_json(self):
 
@@ -62,11 +67,11 @@ class TestResultList(TestCase):
 
         rl = overridden_mock_result_list(
             domain=ConceptSpace('UBERON',Disease.class_name),
-            relationship=TestResultList.mock_predicate,
+            relationship=mock_predicate,
             range=ConceptSpace('UPHENO', PhenotypicFeature.class_name)
         )
 
-        self.assertEqual(rl.relationship, TestResultList.mock_predicate, "Set relationship to predicate")
+        self.assertEqual(rl.relationship, mock_predicate, "Set relationship to predicate")
         print("\n\nOverridden ResultList JSON output with changed parameters: \n", rl.to_json())
 
     def test_defective_result_list_creation(self):
@@ -74,7 +79,7 @@ class TestResultList(TestCase):
         try:
             rl = overridden_mock_result_list(
                 domain=None,
-                relationship=TestResultList.mock_predicate,
+                relationship=mock_predicate,
                 range=ConceptSpace('UPHENO', PhenotypicFeature.class_name)
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
@@ -85,7 +90,7 @@ class TestResultList(TestCase):
         try:
             rl = overridden_mock_result_list(
                 domain=None,
-                relationship=TestResultList.mock_predicate,
+                relationship=mock_predicate,
                 range=ConceptSpace('UPHENO', PhenotypicFeature.class_name)
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
@@ -96,7 +101,7 @@ class TestResultList(TestCase):
         try:
             rl = overridden_mock_result_list(
                 domain=ConceptSpace('UBERON', Disease.class_name),
-                relationship=TestResultList.mock_predicate,
+                relationship=mock_predicate,
                 range=None
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
@@ -107,9 +112,23 @@ class TestResultList(TestCase):
         try:
             rl = overridden_mock_result_list(
                 domain=ConceptSpace('UBERON', Disease.class_name),
-                relationship=TestResultList.mock_predicate,
+                relationship=mock_predicate,
                 range="Not a ConceptSpace!"
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
         except RuntimeError as re:
             print("\nPASSED! Proper ResultList exception thrown for incorrect Range data type:", re)
+
+    def test_result_list_json_loading(self):
+
+        rl_out = overridden_mock_result_list(
+            domain=ConceptSpace('HGNC', PhenotypicFeature.class_name),
+            relationship=mock_predicate,
+            range=ConceptSpace('MONDO', Disease.class_name)
+        )
+
+        rl_json = rl_out.to_json()
+
+        rl_in = ResultList.load(rl_json)
+
+        print("\n\nReloaded ResultList JSON: \n", rl_in.to_json())

@@ -25,7 +25,7 @@ class BaseModel():
         :
         return: String representation of the model
         """
-        return str(asdict(self))
+        return json.dumps(asdict(self))
 
 
 @dataclass(frozen=True)
@@ -103,6 +103,25 @@ class Identifier(BaseModel):
         object_id = part[1]
         return Identifier(xmlns, object_id)
 
+    @classmethod
+    def annotate(cls, identifier, name=None, symbol=None):
+        """
+        Annotate a bare identifier with full name and/or associated symbol.
+
+        :param identifier: the Identifier to be annotated
+        :param name: (optional) human readable name to annotate the identifier
+        :param symbol: (optional) symbol to annotate the identifier
+        :return:
+        """
+        if not isinstance(identifier, Identifier):
+            raise RuntimeError("Identifier.annotate(): requires a valid identifier as input!")
+        # Don't overwrite existing name or symbol if new ones are not provided
+        if not name:
+            name = identifier.name
+        if not symbol:
+            symbol = identifier.symbol
+        # Immutability of Identifier instances requires re-creation of the identifier
+        return Identifier(identifier.xmlns, identifier.object_id, name, symbol)
 
 @dataclass(frozen=True)
 class ConceptSpace(BaseModel):
@@ -250,7 +269,7 @@ class ResultList(BaseModel):
     relationship:  str = Association.class_name
     range:  ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     concepts: List[Concept] = field(default_factory=list)
-    results:  List[Result]  = field(default_factory=list)
+    results:  List[Result] = field(default_factory=list)
 
     def __post_init__(self):
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
@@ -277,14 +296,68 @@ class ResultList(BaseModel):
             relationship=Association.class_name,
             range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
         )
-        rl.attributes.append(Attributes...)
-        rl.concepts.append(Concepts...)
-        rl.results.append(Results...)
+        rl.attributes.extend(Attributes...)
+        rl.concepts.extend(Concept,...)
+        rl.results.extend(Result,...)
 
         """
+        # Load the json into a Python Object
         python_obj = json.loads(result_list_json)
 
-        return ResultList('ResultList.load(): Stub ResultList')
+        def parse_concept_space(cs_obj):
+            return ConceptSpace(
+                namespace=cs_obj['namespace'],
+                category=cs_obj['category'],
+            )
+
+        # Load the resulting Python object into a ResultList instance
+        rl = ResultList(
+            list_id=python_obj['list_id'],
+            source=python_obj['source'],
+            domain=parse_concept_space(python_obj['domain']),
+            relationship=python_obj['relationship'],
+            range=parse_concept_space(python_obj['range'])
+        )
+
+        def parse_attribute(a_obj):
+            return Attribute(
+                name=a_obj['name'],
+                value=a_obj['value'],
+                source=a_obj['source']
+            )
+
+        rl.attributes.extend([parse_attribute(a_obj) for a_obj in python_obj['attributes']])
+
+        def parse_identifier(i_obj):
+            return Identifier(
+                xmlns=i_obj['xmlns'],
+                object_id=i_obj['object_id'],
+                name=i_obj['name'],
+                symbol=i_obj['symbol']
+            )
+
+        def parse_concept(c_obj):
+            c = Concept(
+                primary_id=parse_identifier(c_obj['primary_id'])
+            )
+            c.identifiers.extend([parse_identifier(i_obj) for i_obj in c_obj['identifiers']])
+            c.attributes.extend([parse_attribute(a_obj) for a_obj in c_obj['attributes']])
+            return c
+
+        rl.concepts.extend([parse_concept(c_obj) for c_obj in python_obj['concepts']])
+
+        def parse_result(r_obj):
+            r = Result(
+                input_id=r_obj['input_id'],
+                output_id=r_obj['output_id'],
+                score=r_obj['score'],
+            )
+            r.attributes.extend([parse_attribute(a_obj) for a_obj in r_obj['attributes']])
+            return r
+
+        rl.results.extend([parse_result(r_obj) for r_obj in python_obj['results']])
+
+        return rl
 
     @classmethod
     def import_data_frame(cls, data_frame: pd.DataFrame):
@@ -300,9 +373,9 @@ class ResultList(BaseModel):
             relationship=Association.class_name,
             range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
         )
-        rl.attributes.append(Attributes...)
-        rl.concepts.append(Concepts...)
-        rl.results.append(Results...)
+        rl.attributes.extend(Attributes...)
+        rl.concepts.extend(Concepts...)
+        rl.results.extend(Results...)
 
         """
         return ResultList('ResultList.import_data_frame(): Stub ResultList')
