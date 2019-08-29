@@ -69,12 +69,20 @@ class Identifier(BaseModel):
                 For example, for genes: NCBIGene, HGNC, ENSEMBL, MIM (actually missing from the context.jsonld?)
           object_id:
             type: string
+          name:
+            type: string
+            description: longer human readable name of a given conceptual entity
+          symbol:
+            type: string
+            description: (optional) symbol representing a given conceptual entity, e.g. gene symbol
         required:
           - xmlns
           - id
     """
-    xmlns: str  # generally should be a namespace prefix as found in the Biolink Model context.jsonld file
+    xmlns: str
     object_id: str
+    name: str = ''
+    symbol: str = ''
 
     # We might validate the xmlns against registered ones in the future.
     # Enforcing use of the rdfLib.Namespace is deprecated for now

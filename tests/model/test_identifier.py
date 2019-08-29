@@ -4,11 +4,18 @@ from unittest import TestCase
 from translator_modules.core.data_transfer_model import Identifier
 
 mock_identifier_xmlns = "HGNC"
-mock_identifier_object_id = '1234'
+mock_identifier_object_id = '3582'
+mock_identifier_name = 'FA complementation group A'
+mock_identifier_symbol = 'FANCA'
 
 
 def mock_identifier():
-    return Identifier(mock_identifier_xmlns, mock_identifier_object_id)
+    return Identifier(
+        mock_identifier_xmlns,
+        mock_identifier_object_id,
+        mock_identifier_name,
+        mock_identifier_symbol
+    )
 
 
 class TestIdentifier(TestCase):
@@ -19,6 +26,8 @@ class TestIdentifier(TestCase):
 
         self.assertEqual(i.xmlns, mock_identifier_xmlns, 'Identifier xmlns set')
         self.assertEqual(i.object_id, mock_identifier_object_id, 'Identifier object_id set')
+        self.assertEqual(i.name, mock_identifier_name, 'Identifier name set')
+        self.assertEqual(i.symbol, mock_identifier_symbol, 'Identifier symbol set')
 
     def test_identifier_to_json(self):
         i = mock_identifier()
@@ -33,7 +42,7 @@ class TestIdentifier(TestCase):
         )
 
     def test_parse_succeed(self):
-        test_curie = 'HGNC:4567'
+        test_curie = mock_identifier_xmlns+":"+mock_identifier_object_id
         i = Identifier.parse(test_curie)
         print("\n\nIdentifier JSON output: \n", i.to_json())
 
