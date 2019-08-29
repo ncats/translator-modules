@@ -16,6 +16,7 @@ from BioLink.model import Association, NamedThing
 __version__ = '0.0.1'
 
 
+@dataclass(frozen=True)
 class BaseModel():
 
     def to_json(self) -> str:
