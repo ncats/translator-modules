@@ -2,7 +2,10 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
+# Original baseCommand
 baseCommand: [ functional_similarity.py, get-data-frame, to-json,--orient, records ]
+# ResultList-driven baseCommand
+# baseCommand: [ functional_similarity.py, get-result-list, to-json ]
 inputs:
   input_genes:
     type: File

@@ -4,6 +4,10 @@ from urllib.parse import urlparse
 
 import requests
 
+import pandas as pd
+
+from translator_modules.core.data_transfer_model import ResultList
+
 
 class Payload(ABC):
 
@@ -62,5 +66,12 @@ class Payload(ABC):
 
         return payload_input, extension
 
-    def get_data_frame(self):
+    def get_data_frame(self) -> pd.DataFrame:
         return self.results
+
+    def get_result_list(self) -> ResultList:
+        """
+        Alternate form of output: NCATS Translator Module data transfer model ResultList instance
+        :return: ResultList
+        """
+        return ResultList.import_data_frame(self.results)

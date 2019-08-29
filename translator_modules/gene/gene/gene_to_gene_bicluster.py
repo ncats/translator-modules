@@ -208,7 +208,12 @@ class GeneToGeneBiclusters(Payload):
                 # assume records format
                 input_gene_ids = [record["hit_id"] for record in input_json]
         elif extension is None:
-            input_gene_ids = input_obj
+            if isinstance(input_obj, str):
+                # Assume a comma delimited list of input identifiers?
+                input_gene_ids = input_obj.split(',')
+            else:
+                # Assume that an iterable Tuple or equivalent is given here
+                input_gene_ids = input_obj
 
         related_biclusters_and_genes_for_each_input_gene = asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_ids))
 
@@ -220,9 +225,6 @@ class GeneToGeneBiclusters(Payload):
         genes_in_unique_biclusters_not_in_input_gene_list = self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
         sorted_list_of_output_genes = self.mod.sorted_list_of_output_genes(genes_in_unique_biclusters_not_in_input_gene_list)
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes, columns=["score", "hit_id"])
-
-        if self.results is not None:
-            print(self.results.to_json())
 
 
 if __name__ == '__main__':

@@ -89,13 +89,16 @@ class PhenotypeToDiseaseBiclusters(Payload):
                 # assume records format
                 input_phenotype_ids = [record["hit_id"] for record in input_json]
         elif extension is None:
-            input_phenotype_ids = input_obj
+            if isinstance(input_obj, str):
+                # Assume a comma delimited list of input identifiers?
+                input_phenotype_ids = input_obj.split(',')
+            else:
+                # Assume that an iterable Tuple or equivalent is given here
+                input_phenotype_ids = input_obj
 
         most_common_diseases = asyncio.run(self.mod.phenotype_to_disease_biclusters_async(input_phenotype_ids))
         self.results = pd.DataFrame.from_records(most_common_diseases, columns=["hit_id", "score"])
 
-        if self.results is not None:
-            print(self.results.to_json())
 
 if __name__ == '__main__':
     fire.Fire(PhenotypeToDiseaseBiclusters)

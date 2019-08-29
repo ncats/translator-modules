@@ -80,14 +80,16 @@ class GeneToTissueBiclusters(Payload):
                 # assume records format
                 input_gene_ids = [record["hit_id"] for record in input_json]
         elif extension is None:
-            input_gene_ids = input_obj
+            if isinstance(input_obj, str):
+                # Assume a comma delimited list of input identifiers?
+                input_gene_ids = input_obj.split(',')
+            else:
+                # Assume that an iterable Tuple or equivalent is given here
+                input_gene_ids = input_obj
 
         most_common_tissues = asyncio.run(self.mod.gene_to_tissue_biclusters_async(input_gene_ids))
 
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
-
-        if self.results is not None:
-            print(self.results.to_json())
 
 if __name__ == '__main__':
     fire.Fire(GeneToTissueBiclusters)

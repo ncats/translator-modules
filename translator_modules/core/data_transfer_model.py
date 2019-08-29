@@ -5,6 +5,7 @@ Partially inspired by the Indigo (Broad) team 'Gene Sharpener" data model for ge
 plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML=like notation)
 
 """
+import json
 import pandas as pd
 
 from dataclasses import dataclass, field, asdict
@@ -259,8 +260,22 @@ class ResultList(BaseModel):
 
         :param result_list_json: the input JSON String
         :return: returns a new ResultList instance
+
+        rl = ResultList(
+            'Stub Resultlist',
+            source='ncats',
+            domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
+            relationship=Association.class_name,
+            range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
+        )
+        rl.attributes.append(Attributes...)
+        rl.concepts.append(Concepts...)
+        rl.results.append(Results...)
+
         """
-        pass
+        python_obj = json.loads(result_list_json)
+
+        return ResultList('ResultList.load(): Stub ResultList')
 
     @classmethod
     def import_data_frame(cls, data_frame: pd.DataFrame):
@@ -268,12 +283,24 @@ class ResultList(BaseModel):
         Convert a Pandas DataFrame into a ResultList
         :param data_frame: a Pandas DataFrame with results
         :return: ResultList data instance
+
+        rl = ResultList(
+            'Stub Resultlist',
+            source='ncats',
+            domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
+            relationship=Association.class_name,
+            range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
+        )
+        rl.attributes.append(Attributes...)
+        rl.concepts.append(Concepts...)
+        rl.results.append(Results...)
+
         """
-        pass
+        return ResultList('ResultList.import_data_frame(): Stub ResultList')
 
     def export_data_frame(self) -> pd.DataFrame:
         """
         Convert this ResultList into a Pandas DataFrame
         :return: a Python Pandas DataFrame representation of (most of) the data in a given ResultList
         """
-        pass
+        return pd.DataFrame()
