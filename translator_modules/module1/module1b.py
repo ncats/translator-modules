@@ -97,7 +97,8 @@ class PhenotypeSimilarity(GenericSimilarity):
                 if gene['sim_input_curie'] == result['input_id']:
                     result['input_symbol'] = gene['input_symbol']
 
-        results = GenericSimilarity.sort_results(input_gene_set, results)
+        if len(results) > 0:
+            results = GenericSimilarity.sort_results(input_gene_set, results)
 
         return results
 
@@ -108,12 +109,20 @@ class PhenotypicallySimilarGenes(Payload):
         super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        if "json" in extension:
+        if extension is not None and "json" in extension:
             # assuming it's JSON and it's a record list
             input_gene_set = pd.read_json(input_genes, orient='records')
         elif extension is None:  # TODO: this was written for the sharpener. maybe more generic if we get biolink model adherence
-            gene_ids = [gene.gene_id for gene in input_genes]
-            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'gene_symbol']
+            gene_ids = []
+            symbols = []
+            for gene in input_genes:
+                symbol = None
+                for attribute in gene.attributes:
+                    if attribute.name == 'gene_symbol':
+                        symbol = attribute.value
+                if symbol is not None:
+                    gene_ids.append(gene.gene_id)
+                    symbols.append(symbol)
             genes = {"hit_id": gene_ids, "hit_symbol": symbols}
             input_gene_set = pd.DataFrame(data=genes)
 
