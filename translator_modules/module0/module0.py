@@ -13,7 +13,6 @@ from json import dump
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload
 
-
 class LookUp(object):
 
     def __init__(self):
@@ -39,10 +38,17 @@ class LookUp(object):
     def metadata(self):
         print("""Mod O DiseaseGeneLookup metadata:""")
         pprint(self.meta)
+        
+    ## CX: need function to look up just the disease name
+    def disease_name_lookup(self, disease_id):
+        print(self.blw.get_obj(disease_id))
+        disease_label = self.blw.get_obj(disease_id)["label"]
+        return disease_label
 
     def disease_geneset_lookup(self, disease_id):
         # TODO: does this get faster if we specify the API type
-        disease_label = self.blw.get_obj(disease_id)["label"]
+#        disease_label = self.blw.get_obj(disease_id)["label"]
+        disease_label = self.disease_name_lookup(disease_id)  ## CX: does this work???
         disease_gene_association_results = self.blw.disease2genes(disease_id)
         input_gene_set = [self.blw.parse_association(disease_id, disease_label, association) for association in
                           disease_gene_association_results['associations']]
@@ -67,7 +73,19 @@ class DiseaseAssociatedGeneSet(Payload):
         # get genes associated with disease from Biolink
         self.results = self.mod.disease_geneset_lookup(disease_id)
         self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
+        
+#        ## CX: get disease name
+#        self.disease_name = self.mod.disease_name_lookup(disease_id)
 
+
+# CX: doing for now. Need a better way than to set this up twice though. 
+class DiseaseNameLookup(Payload):
+
+    def __init__(self, disease_id):
+        super(DiseaseNameLookup, self).__init__(LookUp())
+
+        ## CX: get disease name
+        self.disease_name = self.mod.disease_name_lookup(disease_id)
 
 if __name__ == '__main__':
     fire.Fire(DiseaseAssociatedGeneSet)
