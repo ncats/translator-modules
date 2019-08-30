@@ -7,7 +7,7 @@ from pprint import pprint
 from biothings_client import get_client
 import pandas as pd
 import fire
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 
 
 class FunctionalSimilarity(GenericSimilarity):
@@ -111,20 +111,25 @@ class FunctionalSimilarity(GenericSimilarity):
 
 class FunctionallySimilarGenes(Payload):
 
-    def __init__(self, input_genes, threshold, file=False):
+    def __init__(self, input_genes, threshold):
         super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
+        input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        if file:
-            with open(input_genes) as stream:
-                # assuming it's JSON and it's a record list
-                input_gene_set = pd.read_json(stream, orient='records')
-        else:
+        if extension == "csv":
+            input_gene_set = pd.read_csv(input_genes, orient='records')
+        elif extension == "json":
+            # assuming it's JSON and it's a record list
+            input_gene_set = pd.read_json(input_genes, orient='records')
+        elif extension is None:  # TODO: this was written for the sharpener. maybe more generic if we get biolink model adherence
+            # TODO: rewrite into schema check
             gene_ids = [gene.gene_id for gene in input_genes]
-            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'gene_symbol']
+            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if
+                       attribute.name == 'gene_symbol']
             genes = {"hit_id": gene_ids, "hit_symbol": symbols}
             input_gene_set = pd.DataFrame(data=genes)
 
         self.results = self.mod.compute_similarity(input_gene_set, threshold)
+
 
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)

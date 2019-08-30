@@ -11,7 +11,7 @@ from sys import stdout
 from json import dump
 
 from translator_modules.core import Config
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 
 
 class LookUp(object):
@@ -40,30 +40,13 @@ class LookUp(object):
         print("""Mod O DiseaseGeneLookup metadata:""")
         pprint(self.meta)
 
-    #
-    # def load_input_object(self, input_object):
-    #     input_object = self.blw.get_obj(obj_id=input_object['input'])
-    #     self.input_object = {
-    #         'id': input_object['id'],
-    #         'label': input_object['label'],
-    #         'description': input_object['description'],
-    #     }
-    #
-    # def get_input_object_id(self):
-    #     return self.input_object['id']
+    def disease_geneset_lookup(self, disease_id):
+        # TODO: does this get faster if we specify the API type
+        disease_label = self.blw.get_obj(disease_id)["label"]
+        disease_gene_association_results = self.blw.disease2genes(disease_id)
+        input_gene_set = [self.blw.parse_association(disease_id, disease_label, association) for association in
+                          disease_gene_association_results['associations']]
 
-    def echo_input_object(self, output=None):
-        if output:
-            dump(self.input_object, output, indent=4, separators=(',', ': '))
-        else:
-            dump(self.input_object, stdout, indent=4, separators=(',', ': '))
-
-    def disease_geneset_lookup(self, name, id):
-        input_disease_label = name
-        input_disease_id = id
-        input_gene_set = self.blw.disease2genes(input_disease_id)
-        input_gene_set = [self.blw.parse_association(input_disease_id, input_disease_label, x) for x in
-                          input_gene_set['associations']]
         for input_gene in input_gene_set:
             igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
                                      fields='entrez,HGNC,symbol')
@@ -78,21 +61,12 @@ class LookUp(object):
 
 class DiseaseAssociatedGeneSet(Payload):
 
-    def __init__(self, input_disease_name, input_disease_mondo):
+    def __init__(self, disease_id):
         super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
 
-        self.input_disease_name = input_disease_name
-        self.input_disease_mondo = input_disease_mondo
-
         # get genes associated with disease from Biolink
-        self.results = self.mod.disease_geneset_lookup(self.input_disease_name, self.input_disease_mondo)
+        self.results = self.mod.disease_geneset_lookup(disease_id)
         self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
-
-    def get_input_disease_name(self):
-        return self.input_disease_name
-
-    def get_input_disease_id(self):
-        return self.input_disease_mondo
 
 
 if __name__ == '__main__':

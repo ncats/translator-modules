@@ -9,7 +9,7 @@ from pprint import pprint
 import pandas as pd
 
 from translator_modules.core import Config
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 
 
 class GeneInteractions(object):
@@ -84,16 +84,13 @@ class GeneInteractions(object):
 
 
 class GeneInteractionSet(Payload):
-
     def __init__(self, input_genes, threshold=12):
-
         super(GeneInteractionSet, self).__init__(GeneInteractions())
+        input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        input_gene_set = None
-        if input_genes:
-            with open(input_genes) as stream:
-                # assuming it's JSON and it's a record list
-                input_gene_set = pd.read_json(stream, orient='records')
+        if "json" in extension:
+            input_gene_set = pd.read_json(input_genes, orient='records')
+        # TODO: add schema check
 
         self.results = self.mod.get_interactions(input_gene_set, threshold)
 

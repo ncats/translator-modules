@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module1e.py, --file=True, get-data-frame, to-json, --orient, records ]
+baseCommand: [ module1e.py, get-data-frame, to-json, --orient, records ]
 inputs:
   input_genes:
     type: File
@@ -15,6 +15,6 @@ inputs:
       position: 1
       prefix: --threshold
 outputs:
-  gene_interaction_list:
+  interacting_genes:
     type: stdout
 stdout: module1e.records.json

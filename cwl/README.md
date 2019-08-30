@@ -43,16 +43,37 @@ python -m pip install cwltool
 
 ### Running the CWL Workflow
 
+#### NCATS Translator Workflow 2
+
+You can run a CWL workflow constructed to implement the NCATS Translator Workflow 2.
 In the project directory, run
 
 ```bash
-cwltool cwl/workflows/wf2.cwl cwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/wf2/wf2.cwl cwl/data/inputs/fanconi.yaml
 ```
+
+A series of JSON files marked "module*.records.json" will contain the output of the run.
 
 If you can run `wf2.cwl` with `fanconi.yaml` successfully,
 * You have just run a CWL tool.
 * You have just used multiple modules chained together at once.
-* You have replicated the [Fanconi Anaemia Tidbit]().
+* You have replicated the NCATS Translator Workflow 2 [Fanconi Anaemia Tidbit]().
+
+#### NCATS Translator Workflow 9
+
+Similarly, a CWL workflow can be run which executes (a portion of(*)) the NCATS Translator Workflow 9, as follows:
+
+
+```bash
+cwltool cwl/workflows/wf9/wf9_for_genes.cwl cwl/data/inputs/bicluster_input_genes.yaml
+```
+
+Result files *geneToGeneBicluster.records.json* and *geneToGeneBicluster.records.json* will be outputted.
+
+Similar additional workflow 9 CWL scripts are alongside this one, which take tissue, phenotype and disease identifiers, 
+taking analogous input (YAML) files and outputting analogous (JSON) result files.
+
+# Full CWL Installation & Configuration
 
 ## Installation of Docker
 
@@ -140,7 +161,10 @@ brew install findutils
 
 ```
 
-then substitute the *gfind* command for the *find* command in the PATH command above.
+then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shells script
+_~/scripts/set_macosx_path.sh_ to help you. *Note:* you may need to run this script afresh in every new terminal 
+session unless you add it into your shell login profile).
+
 Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run 
 them, like so.
 
@@ -234,7 +258,7 @@ The most important accessor is just `get_data_frame`, returning the `Payload`'s 
 Here is an example of these modifications in `translator_modules/module1/module1a.py`. This class, `FunctionallySimilarGenes`, is defined at the bottom of the file, underneath `FunctionalSimilarity`.
 
 ```python
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 import fire
 
 class FunctionallySimilarGenes(Payload):
@@ -273,7 +297,7 @@ Let's say you want to do this for your own module. If exposing your own module t
 After you've ensured that your module is executable, add the following to the bottom of its script:
 
 ```python
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 import fire
 import pandas as pd
 

@@ -205,6 +205,7 @@ class SummaryMod(object):
 ## Possible NEXT STEP: condensing these functions? like get_brief/full, show_brief/full, write_brief/full
 
     # Method takes in a query or list of queries (module names) and returns their brief summary
+  
     def show_single_mod_summary(self,query):
         # check if single query and make into list if it is
         if isinstance(query, str):

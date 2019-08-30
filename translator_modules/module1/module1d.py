@@ -5,7 +5,7 @@ import fire
 # Workflow 2, Module 1D: Chemical-gene interactions
 from CTD.CTD_wrapper import CTDWrapper
 import pandas as pd
-from translator_modules.core import Payload
+from translator_modules.core.module_payload import Payload
 
 
 # TODO: Refactor towards methods being functional
@@ -44,14 +44,14 @@ class ChemicalGeneInteractions(object):
 # TODO: Test the module separately to observe baseline behavior
 class ChemicalGeneInteractionSet(Payload):
 
-    def __init__(self, input_gene_set_file, action, rows=50):
+    def __init__(self, input_genes, action, rows=50):
         super(ChemicalGeneInteractionSet, self).__init__(ChemicalGeneInteractionSet())
+        input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        input_gene_set_df = None
-        if input_gene_set_file:
-            with open(input_gene_set_file) as stream:
-                # assuming it's JSON and it's a record list
-                input_gene_set_df = pd.read_json(stream, orient='records')
+        if "json" in extension:
+            # assuming it's JSON and it's a record list
+            input_gene_set_df = pd.read_json(input_genes, orient='records')
+        # TODO: add schema check
 
         self.mod.load_gene_set(input_gene_set_df.to_dict(orient='records'))
         self.mod.get_chemicals(action)

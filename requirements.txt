@@ -13,6 +13,7 @@ typing>=0.0
 graphviz
 #
 html3
+aiohttp
 #
 # NCATS Dependencies
 #
