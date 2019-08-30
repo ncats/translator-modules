@@ -40,6 +40,9 @@ python -m pip install cwltool
 ```
 
 * Finally, follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). 
+Note in particular the general need to put the modules on your path (if you don't set this up automatically
+for all your shell sessions, you'll need to set the PATH up for each new terminal session within which you
+wish to run the CWL workflows)
 
 ### Running the CWL Workflow
 
@@ -161,8 +164,13 @@ brew install findutils
 
 ```
 
-then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shells script
-_~/scripts/set_macosx_path.sh_ to help you. *Note:* you may need to run this script afresh in every new terminal 
+then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shell script
+which you can use to set the environment using the bash 'source' command, as follows:
+
+```bash
+source scripts/set_macosx_path.sh
+```
+to help you. *Note:* you may need to run this script afresh in every new terminal 
 session unless you add it into your shell login profile).
 
 Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run 
@@ -179,7 +187,8 @@ baseCommand: [ disease_associated_genes.py, get-data-frame, to-json ]
 ## Running a CWL tool
 
 CWL tools are not scripts, but blueprints for running scripts. They let users clarify beforehand the kinds of data they 
-should expected for a script: names for the data, their types and formats, and what arguments they satisfy. Let's take a simple example:
+should expected for a script: names for the data, their types and formats, and what arguments they satisfy. 
+Let's take a simple example:
 
 ```yaml
 cwlVersion: v1.0
