@@ -33,7 +33,7 @@ class LookUp(object):
             'limit': None,
             'source': 'Monarch Biolink',
             'association': '',
-            'predicate': 'gene_associated_with_condition'
+            'relationship': 'gene_associated_with_condition'
         }
 
     def metadata(self):

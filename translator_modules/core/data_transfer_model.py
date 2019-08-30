@@ -95,33 +95,13 @@ class Identifier(BaseModel):
         return self.xmlns+":"+self.object_id
 
     @classmethod # returns an instance of Identifier constructed from a CURIE
-    def parse(cls, curie):
+    def parse(cls, curie, name='', symbol=''):
         part = curie.split(':', 1)
         if len(part) < 2 :
             raise RuntimeError("String '"+curie+"' is not a CURIE?")
         xmlns = part[0]
         object_id = part[1]
-        return Identifier(xmlns, object_id)
-
-    @classmethod
-    def annotate(cls, identifier, name=None, symbol=None):
-        """
-        Annotate a bare identifier with full name and/or associated symbol.
-
-        :param identifier: the Identifier to be annotated
-        :param name: (optional) human readable name to annotate the identifier
-        :param symbol: (optional) symbol to annotate the identifier
-        :return:
-        """
-        if not isinstance(identifier, Identifier):
-            raise RuntimeError("Identifier.annotate(): requires a valid identifier as input!")
-        # Don't overwrite existing name or symbol if new ones are not provided
-        if not name:
-            name = identifier.name
-        if not symbol:
-            symbol = identifier.symbol
-        # Immutability of Identifier instances requires re-creation of the identifier
-        return Identifier(identifier.xmlns, identifier.object_id, name, symbol)
+        return Identifier(xmlns, object_id, name=name, symbol=symbol)
 
 @dataclass(frozen=True)
 class ConceptSpace(BaseModel):
@@ -278,16 +258,15 @@ class ResultList(BaseModel):
     results:  List[Result] = field(default_factory=list)
     attributes: List[Attribute] = field(default_factory=list)
 
-    list_number = InitVar[int] = 0
+    list_number: InitVar[int] = 0
 
-    # set 'list_id' with unique value: simpleminded variable increment for now
-    def next_list_id(cls):
-        cls.list_number += 1
-        return cls.list_number
+    def __post_init__(self, list_number):
 
-    def __post_init__(self):
+        # DOESN'T WORK? 'list_id' is Frozen...
+        # set 'list_id' with unique value: simpleminded variable incremented for now
+        #list_number += 1
 
-        self.__setattr__('list_id', ResultList.next_list_id)
+        #self.__setattr__('list_id', list_number)
 
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
             raise RuntimeError("Value of Domain '" +
@@ -390,7 +369,7 @@ class ResultList(BaseModel):
         """
         # Grab Payload 'model' metadata dictionary
         # Assumed defined as such. If not, let this method trigger a RuntimeError!
-        meta = payload.mod.meta
+        meta = payload.meta
 
         input_type = meta['input_type']
         input_type['id_type'] = \
@@ -423,6 +402,25 @@ class ResultList(BaseModel):
             relationship=meta['relationship'],
             range=range
         )
+
+        # Convert all the records from the DataFrame into ResultList recorded data
+        for entry in data_frame.to_dict(orient='records'):
+            # Initial iteration: assume a simple Pandas DataFrame with columns
+            # 'input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score'
+            input_id = Identifier.parse(entry['input_id'], entry['input_symbol'])
+            output_id = Identifier.parse(entry['hit_id'], entry['hit_symbol'])
+            score = entry['score'] # assumes a score... better check if key is present!
+
+            # Here, you make sure that the identified Concepts are recorded already
+            #rl.concepts.append(Concept(input_id))
+            #rl.concepts.append(Concept(output_id))
+
+            # ... then append the results to the results list
+            r = Result(input_id, output_id, score)
+            rl.results.append(r)
+
+            # Add any additional DataFrame columns as Attributes (how??)
+            # attributes: List[Attribute] = field(default_factory=list)
 
         return rl
 
