@@ -14,12 +14,12 @@ outputs:
     outputSource: geneToTissueBicluster/gene_to_tissue_bicluster_list
 steps:
   geneToGeneBicluster:
-    run: geneToGeneBicluster.cwl
+    run: gene_to_gene_bicluster.cwl
     in:
       input_genes: input_genes
     out: [ gene_to_gene_bicluster_list ]
   geneToTissueBicluster:
-    run: geneToTissueBicluster.cwl
+    run: gene_to_tissue_bicluster.cwl
     in:
       input_genes: input_genes
     out: [ gene_to_tissue_bicluster_list ]

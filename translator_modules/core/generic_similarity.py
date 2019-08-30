@@ -1,17 +1,9 @@
 # Shared core similarity functions
-from ontobio.ontol_factory import OntologyFactory
-from ontobio.io.gafparser import GafParser
-from ontobio.assoc_factory import AssociationSetFactory
 from typing import List
+
 import pandas as pd
-
-# We override the Ontobio version of the jaccard_similarity
-# function below, to return shared ontology term annotation
-#
-# from ontobio.analysis.semsim import jaccard_similarity
-
+from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.assocmodel import AssociationSet
-
 ###################################################################
 # First, before loading all our ontobio dependent analysis modules,
 # we need to tweak OntoBio to disable its @cachier cache. Our
@@ -25,6 +17,13 @@ from ontobio.assocmodel import AssociationSet
 # catalogs in just once into memory, for readonly reuse.
 ###################################################################
 from ontobio.config import get_config
+from ontobio.io.gafparser import GafParser
+from ontobio.ontol_factory import OntologyFactory
+
+# We override the Ontobio version of the jaccard_similarity
+# function below, to return shared ontology term annotation
+#
+# from ontobio.analysis.semsim import jaccard_similarity
 get_config().ignore_cache = True
 
 

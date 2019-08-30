@@ -26,27 +26,27 @@ outputs:
     outputSource: gene_interactions/interacting_genes
 steps:
   diseases:
-    run: module0.cwl
+    run: disease_associated_genes.cwl
     in:
       disease_id: disease_id
     out: [ disease_list ]
 
   functional_similarity:
-    run: module1a.cwl
+    run: functional_similarity.cwl
     in:
       input_genes: diseases/disease_list
       threshold: threshold_functional_similarity
     out: [ functionally_similar_genes ]
 
   phenotype_similarity:
-    run: module1b.cwl
+    run: phenotype_similarity.cwl
     in:
       input_genes: diseases/disease_list
       threshold: threshold_phenotype_similarity
     out: [ phenotypically_similar_genes ]
 
   gene_interactions:
-     run: module1e.cwl
+     run: gene_interaction.cwl
      in:
        input_genes: diseases/disease_list
        threshold: threshold_gene_interaction
