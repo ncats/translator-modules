@@ -8,7 +8,7 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 import json
 import pandas as pd
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, asdict, InitVar
 from typing import List
 
 from BioLink.model import Association, NamedThing
@@ -278,7 +278,17 @@ class ResultList(BaseModel):
     results:  List[Result] = field(default_factory=list)
     attributes: List[Attribute] = field(default_factory=list)
 
+    list_number = InitVar[int] = 0
+
+    # set 'list_id' with unique value: simpleminded variable increment for now
+    def next_list_id(cls):
+        cls.list_number += 1
+        return cls.list_number
+
     def __post_init__(self):
+
+        self.__setattr__('list_id', ResultList.next_list_id)
+
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
             raise RuntimeError("Value of Domain '" +
                                str(self.domain) + "' of Result List '" + self.list_id +
@@ -299,8 +309,8 @@ class ResultList(BaseModel):
         rl = ResultList(
             'Stub Resultlist',
             source='ncats',
-            domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
             association=Association.class_name,
+            domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
             relationship='related_to',
             range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
         )
@@ -371,6 +381,7 @@ class ResultList(BaseModel):
     def import_data_frame(cls, data_frame: pd.DataFrame, payload):
         """
         Convert standard Pandas DataFrame "results" into Results of an NCATS ResultList instance.
+
         For now (first iteration), we assume a static mapping of Workflow 2 style of DataFrame columns
         into a list of Results, combined with Payload metadata provided alongside.
 
@@ -384,19 +395,19 @@ class ResultList(BaseModel):
         input_type = meta['input_type']
         input_type['id_type'] = \
             input_type['id_type'] \
-                if isinstance(input_type['id_type'], list) \
-                else [input_type['id_type']]
+            if isinstance(input_type['id_type'], list) \
+            else [input_type['id_type']]
 
         domain = ConceptSpace(
-                category=input_type['data_type'],
-                namespace=input_type['id_type']
+            category=input_type['data_type'],
+            namespace=input_type['id_type']
         )
 
         output_type = meta['output_type']
         output_type['id_type'] = \
             output_type['id_type'] \
-                if isinstance(output_type['id_type'], list) \
-                else [output_type['id_type']]
+            if isinstance(output_type['id_type'], list) \
+            else [output_type['id_type']]
 
         range = ConceptSpace(
                 category=output_type['data_type'],
@@ -405,7 +416,7 @@ class ResultList(BaseModel):
 
         # Load the resulting Python object into a ResultList instance
         rl = ResultList(
-            list_id='',  # python_obj['list_id'],
+            list_id='',  # python_obj['list_id'],  # undecided how to set this ... should it simply be anonymous?
             source=meta['source'],
             association=meta['association'],
             domain=domain,
@@ -413,7 +424,7 @@ class ResultList(BaseModel):
             range=range
         )
 
-        return ResultList('ResultList.import_data_frame(): Stub ResultList')
+        return rl
 
     def export_data_frame(self) -> pd.DataFrame:
         """
