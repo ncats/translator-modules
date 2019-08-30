@@ -16,7 +16,7 @@ mock_predicate = "has_phenotype"
 
 def default_mock_result_list():
 
-    rl = ResultList('default mock result list')
+    rl = ResultList()
     rl.attributes.append(_a)
     rl.concepts.append(mock_concept())
     rl.concepts.append(mock_concept(identifier=mock_identifier_2()))
@@ -39,7 +39,6 @@ def overridden_mock_result_list(
 ):
 
     rl = ResultList(
-        list_id='overridden mock result list',
         source='ncats',
         association=association,
         domain=domain,
@@ -97,7 +96,7 @@ class TestResultList(TestCase):
         print("\n\nOverridden ResultList JSON output with changed parameters: \n", rl.to_json())
 
     def test_defective_result_list_creation(self):
-        print("\nTest creation of ResultList with missing Domain value: ")
+        print("\nTest creation of ResultList with missing Domain value:")
         try:
             rl = overridden_mock_result_list(
                 domain=None,
@@ -106,20 +105,20 @@ class TestResultList(TestCase):
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
         except RuntimeError as re:
-            print("\nPASSED: Proper ResultList exception thrown for missing Domain value:", re)
+            print("\nPASSED: Proper ResultList exception thrown for missing Domain value\n", re)
 
-        print("\nTest creation of ResultList with missing Domain value which is not a ConceptSpace: ")
+        print("\nTest creation of ResultList with a Domain value which is not a ConceptSpace:")
         try:
             rl = overridden_mock_result_list(
-                domain=None,
+                domain="Not a ConceptSpace!",
                 relationship=mock_predicate,
                 range=_mock_upheno_concept_space
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
         except RuntimeError as re:
-            print("\nPASSED: Proper ResultList exception thrown for incorrect Domain data type:", re)
+            print("\nPASSED: Proper ResultList exception thrown for incorrect Domain data type\n", re)
 
-        print("\nTest creation of ResultList with missing Range value: ")
+        print("\nTest creation of ResultList with missing Range value:")
         try:
             rl = overridden_mock_result_list(
                 domain=_mock_uberon_concept_space,
@@ -128,9 +127,9 @@ class TestResultList(TestCase):
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
         except RuntimeError as re:
-            print("\nPASSED! Proper ResultList exception thrown for Range which is not a ConceptSpace:", re)
+            print("\nPASSED! Proper ResultList exception thrown for missing Range value\n", re)
 
-        print("\nTest creation of ResultList with missing Range value: ")
+        print("\nTest creation of ResultList with invalid Range value:")
         try:
             rl = overridden_mock_result_list(
                 domain=_mock_uberon_concept_space,
@@ -139,7 +138,7 @@ class TestResultList(TestCase):
             )
             print("\nI should not see this JSON output: \n", rl.to_json())
         except RuntimeError as re:
-            print("\nPASSED! Proper ResultList exception thrown for incorrect Range data type:", re)
+            print("\nPASSED! Proper ResultList exception thrown for incorrect Range data type\n", re)
 
     def test_result_list_json_loading(self):
         rl_out = overridden_mock_result_list(

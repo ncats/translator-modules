@@ -6,10 +6,12 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 
 """
 import json
+from datetime import datetime
+
 import pandas as pd
 
 from dataclasses import dataclass, field, asdict, InitVar
-from typing import List
+from typing import List, ClassVar, Mapping, Any
 
 from BioLink.model import Association, NamedThing
 
@@ -248,7 +250,6 @@ class ResultList(BaseModel):
           - concepts
           - results
     """
-    list_id: str
     source:  str = ''
     domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     association:  str = Association.class_name
@@ -256,26 +257,36 @@ class ResultList(BaseModel):
     range:  ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     concepts: List[Concept] = field(default_factory=list)
     results:  List[Result] = field(default_factory=list)
+    list_id: Mapping[str, Any] = field(default_factory=dict)
     attributes: List[Attribute] = field(default_factory=list)
 
-    list_number: InitVar[int] = 0
+    list_number: ClassVar[List[int]] = [0]
 
-    def __post_init__(self, list_number):
+    def __post_init__(self):
 
-        # DOESN'T WORK? 'list_id' is Frozen...
         # set 'list_id' with unique value: simpleminded variable incremented for now
-        #list_number += 1
+        self.list_number[0] += 1  # maybe a UUID later?
+        self.list_id['id'] = self.list_number[0]
 
-        #self.__setattr__('list_id', list_number)
+        # current date and time.
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
+        self.list_id['timestamp'] = str(datetime.fromtimestamp(timestamp))
 
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
             raise RuntimeError("Value of Domain '" +
-                               str(self.domain) + "' of Result List '" + self.list_id +
+                               str(self.domain) + "' of Result List '" + self.get_list_id() +
                                "' is uninitialized or not a ConceptSpace")
         if self.range is None or not isinstance(self.range, ConceptSpace):
             raise RuntimeError("Range '" +
-                               str(self.range) + "' of Result List '" + self.list_id +
+                               str(self.range) + "' of Result List '" + self.get_list_id() +
                                "' is uninitialized or not a ConceptSpace")
+
+    def get_list_id(self):
+        return str(self.list_id['id'])
+
+    def get_timestamp(self):
+        return str(self.list_id['timestamp'])
 
     @classmethod
     def load(cls, result_list_json: str):
