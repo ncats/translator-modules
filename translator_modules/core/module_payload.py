@@ -71,7 +71,9 @@ class Payload(ABC):
 
     def get_result_list(self) -> ResultList:
         """
-        Alternate form of output: NCATS Translator Module data transfer model ResultList instance
+        Alternate form of output: convert module Pandas DataFrame data into a
+        NCATS Translator Module data transfer model Results in a ResultList instance.
+
         :return: ResultList
         """
-        return ResultList.import_data_frame(self.results)
+        return ResultList.import_data_frame(self.results, self.mod)

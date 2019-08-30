@@ -34,7 +34,8 @@ class PhenotypeSimilarity(GenericSimilarity):
             },
 
             'source': 'Monarch Biolink',
-            'predicate': ['blm:has phenotype']
+            'association': '',
+            'predicate': 'has phenotype'
         }
 
         # Load the associated Biolink (Monarch)

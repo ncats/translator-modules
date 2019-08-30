@@ -21,21 +21,19 @@ class FunctionalSimilarity(GenericSimilarity):
         self.taxon = taxon
         self.ont = 'go'
         self.meta = {
+            'source': 'Monarch Biolink',
+            'association': 'functional association',
             'input_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
+            'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
-
-            'source': 'Monarch Biolink',
-            'predicate': ['blm:macromolecular machine to biological process association',
-                          # TODO: also requires a blm curie?
-                          'macromolecular machine to molecular activity association']
         }
 
         # Load the functional catalog of
@@ -122,7 +120,8 @@ class FunctionallySimilarGenes(Payload):
         elif extension == "json":
             # assuming it's JSON and it's a record list
             input_gene_set = pd.read_json(input_genes, orient='records')
-        elif extension is None:  # TODO: this was written for the sharpener. maybe more generic if we get biolink model adherence
+        elif extension is None:
+            # TODO: this was written for the sharpener. maybe more generic if we get Biolink Model adherence
             # TODO: rewrite into schema check
             gene_ids = [gene.gene_id for gene in input_genes]
             symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if

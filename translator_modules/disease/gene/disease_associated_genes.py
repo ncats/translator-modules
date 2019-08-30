@@ -19,19 +19,21 @@ class LookUp(object):
         self.mg = get_client('gene')
         self.input_object = ''
         self.meta = {
-            'data_type': 'disease',
             'input_type': {
                 'complexity': 'single',
+                'data_type': 'disease',
                 'id_type': ['MONDO', 'DO', 'OMIM'],
             },
             'output_type': {
                 'complexity': 'set',
+                'data_type': 'gene',
                 'id_type': 'HGNC'
             },
             'taxon': 'human',
             'limit': None,
             'source': 'Monarch Biolink',
-            'predicate': 'blm:gene associated with condition'
+            'association': '',
+            'predicate': 'gene_associated_with_condition'
         }
 
     def metadata(self):

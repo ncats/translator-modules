@@ -126,13 +126,14 @@ class Identifier(BaseModel):
 @dataclass(frozen=True)
 class ConceptSpace(BaseModel):
     """
-    A ConceptSpace tracks metadata about a class of Concept identifiers and types
+    A ConceptSpace tracks namespace (xmlns prefixes) and associated concept category of
+    about a given set of Concept identifiers and types
     """
-    namespace: str  # should be Biolink Model registered identifier namespace
     category: str   # should be Biolink Model registered category
+    namespace: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
 
     def __post_init__(self):
-        # Can the namespace and category be validated here as Biolink Model compliant?
+        # Can the namespaces and category be validated here as Biolink Model compliant?
         pass
 
 @dataclass(frozen=True)
@@ -229,11 +230,10 @@ class ResultList(BaseModel):
           source:
             type: string
             description: Module that produced the result list.
-          attributes:
-            type: array
-            items:
-                $ref: '#/definitions/Attribute'
-            description: Additional global information and provenance about the result list.
+          association:
+                type: string
+                description: >-
+                    Biolink Model association ("association type" of a knowledge graph)
           domain:
             type: '#/definitions/ConceptSpace'
             description: >-
@@ -242,7 +242,7 @@ class ResultList(BaseModel):
           relationship:
                 type: string
                 description: >-
-                    Biolink Model predicate mapping of the relationship (relating to "edge label" of a knowledge graph)
+                    Biolink Model predicate of the relationship type ("edge label" of a knowledge graph)
           range:
             type: '#/definitions/ConceptSpace'
             description: >-
@@ -253,9 +253,15 @@ class ResultList(BaseModel):
             items:
                 $ref: '#/definitions/Result'
             description: Members of the list of result entries.
+          attributes:
+            type: array
+            items:
+                $ref: '#/definitions/Attribute'
+            description: Additional global information and provenance about the Result List.
         required:
           - list_id
           - source
+          - association
           - domain
           - relationship
           - range
@@ -264,12 +270,13 @@ class ResultList(BaseModel):
     """
     list_id: str
     source:  str = ''
-    attributes: List[Attribute] = field(default_factory=list)
     domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
-    relationship:  str = Association.class_name
+    association:  str = Association.class_name
+    relationship: str = "related_to" # should correspond with a Biolink Model minimal predicate ("relationship type")
     range:  ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     concepts: List[Concept] = field(default_factory=list)
     results:  List[Result] = field(default_factory=list)
+    attributes: List[Attribute] = field(default_factory=list)
 
     def __post_init__(self):
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
@@ -293,13 +300,13 @@ class ResultList(BaseModel):
             'Stub Resultlist',
             source='ncats',
             domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
-            relationship=Association.class_name,
+            association=Association.class_name,
+            relationship='related_to',
             range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
         )
-        rl.attributes.extend(Attributes...)
         rl.concepts.extend(Concept,...)
         rl.results.extend(Result,...)
-
+        rl.attributes.extend(Attributes...)
         """
         # Load the json into a Python Object
         python_obj = json.loads(result_list_json)
@@ -315,6 +322,7 @@ class ResultList(BaseModel):
             list_id=python_obj['list_id'],
             source=python_obj['source'],
             domain=parse_concept_space(python_obj['domain']),
+            association=python_obj['association'],
             relationship=python_obj['relationship'],
             range=parse_concept_space(python_obj['range'])
         )
@@ -325,8 +333,6 @@ class ResultList(BaseModel):
                 value=a_obj['value'],
                 source=a_obj['source']
             )
-
-        rl.attributes.extend([parse_attribute(a_obj) for a_obj in python_obj['attributes']])
 
         def parse_identifier(i_obj):
             return Identifier(
@@ -357,27 +363,56 @@ class ResultList(BaseModel):
 
         rl.results.extend([parse_result(r_obj) for r_obj in python_obj['results']])
 
+        rl.attributes.extend([parse_attribute(a_obj) for a_obj in python_obj['attributes']])
+
         return rl
 
     @classmethod
-    def import_data_frame(cls, data_frame: pd.DataFrame):
+    def import_data_frame(cls, data_frame: pd.DataFrame, payload):
         """
-        Convert a Pandas DataFrame into a ResultList
+        Convert standard Pandas DataFrame "results" into Results of an NCATS ResultList instance.
+        For now (first iteration), we assume a static mapping of Workflow 2 style of DataFrame columns
+        into a list of Results, combined with Payload metadata provided alongside.
+
         :param data_frame: a Pandas DataFrame with results
         :return: ResultList data instance
-
-        rl = ResultList(
-            'Stub Resultlist',
-            source='ncats',
-            domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
-            relationship=Association.class_name,
-            range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
-        )
-        rl.attributes.extend(Attributes...)
-        rl.concepts.extend(Concepts...)
-        rl.results.extend(Results...)
-
         """
+        # Grab Payload 'model' metadata dictionary
+        # Assumed defined as such. If not, let this method trigger a RuntimeError!
+        meta = payload.mod.meta
+
+        input_type = meta['input_type']
+        input_type['id_type'] = \
+            input_type['id_type'] \
+                if isinstance(input_type['id_type'], list) \
+                else [input_type['id_type']]
+
+        domain = ConceptSpace(
+                category=input_type['data_type'],
+                namespace=input_type['id_type']
+        )
+
+        output_type = meta['output_type']
+        output_type['id_type'] = \
+            output_type['id_type'] \
+                if isinstance(output_type['id_type'], list) \
+                else [output_type['id_type']]
+
+        range = ConceptSpace(
+                category=output_type['data_type'],
+                namespace=output_type['id_type']
+        )
+
+        # Load the resulting Python object into a ResultList instance
+        rl = ResultList(
+            list_id='',  # python_obj['list_id'],
+            source=meta['source'],
+            association=meta['association'],
+            domain=domain,
+            relationship=meta['relationship'],
+            range=range
+        )
+
         return ResultList('ResultList.import_data_frame(): Stub ResultList')
 
     def export_data_frame(self) -> pd.DataFrame:
