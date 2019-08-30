@@ -285,8 +285,6 @@ and associated MONDO identifiers - in the second column"""
     # file of diseases named (column 0) with their MONDO identifiers (column 1)
     # The optional header should read 'Disease' in the first column
     for disease_name, mondo_id in disease_list:
-        # intialize summary module object
-        summary_mod = SummaryMod(disease_name, mondo_id)
         
         print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
 
@@ -302,6 +300,9 @@ and associated MONDO identifiers - in the second column"""
                 disease_name + "(" + mondo_id + "):\n")
             print(disease_associated_gene_set.get_data_frame().to_string())
 
+        # intialize summary module object
+        summary_mod = SummaryMod(disease_name, mondo_id)
+        
         mod1a_results = \
             similarity(
                 func_sim_human,
