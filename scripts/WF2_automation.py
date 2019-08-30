@@ -301,6 +301,11 @@ def main():
             disease_gene_lookup(
                 mondo_id
             )
+        """
+        CX: disease_associated_gene_set inherits from Payload (abstract base class 'ABC')
+        It has the class variables mod (I don't know what this is), results and the function get_data_frame
+        The function get_data_frame returns the results object from DiseaseAssociatedGeneSet (input gene df). 
+        """
 
         if _echo_to_console:
             print(

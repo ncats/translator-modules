@@ -66,6 +66,13 @@ class LookUp(object):
 
 
 class DiseaseAssociatedGeneSet(Payload):
+    """
+    CX: Payload is an abstract base class 'ABC'. 
+    It has the class variables mod, results and the function get_data_frame. 
+    in this class, results will be saved as the input_genes_df returned by disease_geneset_lookup. 
+    WF2_automation.py will use the get_data_frame function to get the results object. 
+    I'm not sure what mod is
+    """
 
     def __init__(self, disease_id):
         super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
