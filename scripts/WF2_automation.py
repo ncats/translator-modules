@@ -285,10 +285,8 @@ and associated MONDO identifiers - in the second column"""
     # file of diseases named (column 0) with their MONDO identifiers (column 1)
     # The optional header should read 'Disease' in the first column
     for disease_name, mondo_id in disease_list:
-        # intialize summary module object
-        summary_mod = SummaryMod(disease_name, mondo_id)
         
-        print("\nProcessing '" + disease_name + "(" + mondo_id + "):\n")
+        print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
 
         disease_associated_gene_set = \
             disease_gene_lookup(
@@ -298,10 +296,13 @@ and associated MONDO identifiers - in the second column"""
 
         if _echo_to_console:
             print(
-                "\nDisease Associated Input Gene Set for '" +
+                "\nDisease Associated Input Gene Set for " +
                 disease_name + "(" + mondo_id + "):\n")
             print(disease_associated_gene_set.get_data_frame().to_string())
 
+        # intialize summary module object
+        summary_mod = SummaryMod(disease_name, mondo_id)
+        
         mod1a_results = \
             similarity(
                 func_sim_human,
@@ -311,17 +312,11 @@ and associated MONDO identifiers - in the second column"""
                 'Functionally Similar Genes'
             )
             
-        ## JG: Add output into summary 
-        ## This builds a brief summary for just this module as well as begins the across summary tables
-        ## Additionally stores the raw data itself
-        summary_mod.add1A(mod1a_results) 
-        
-        if _echo_to_console:
-            ## CX: this functionality from summary module can replace previous code?
-            summary_mod.show_single_mod_summary('mod1A')
-#            print("\nMod1A Results for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(mod1a_results.to_string(columns=STD_RESULT_COLUMNS))
+        ## This builds a brief summary for just this module and creates the across summary tables
+        if not mod1a_results.empty:  # will only work if Mod1A returned results
+            summary_mod.add_scorebased_module(mod1a_results) 
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1A')
 
         mod1b_results = \
             similarity(
@@ -331,16 +326,12 @@ and associated MONDO identifiers - in the second column"""
                 'Mod1B',
                 'Phenotypic Similar Genes'
             )
-            
-        ## JG: Add output into summary 
-        summary_mod.add1B(mod1b_results)
-
-        if _echo_to_console:
-            ## CX: this functionality from summary module can replace previous code?
-            summary_mod.show_single_mod_summary('mod1B')
-#            print("\nMod1B Results for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
+        
+        ## Add output to brief summary
+        if not mod1b_results.empty:
+            summary_mod.add_scorebased_module(mod1b_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1B')
 
         # Find Interacting Genes from Monarch data
         mod1e_results = \
@@ -353,28 +344,18 @@ and associated MONDO identifiers - in the second column"""
             )
             
         ## JG: Add output into summary 
-        summary_mod.add1E(mod1e_results)
-
-        if _echo_to_console:
-            ## CX: this functionality from summary module can replace previous code?
-            summary_mod.show_single_mod_summary('mod1E')            
-#            print("\nMod1E Results for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
+        if not mod1e_results.empty:
+            summary_mod.add1E(mod1e_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1E')            
 
         # CX: Summary module code here
-        # Put it in list for disease pipeline
+        # Put it in list (only used really used when multiple diseases in one file are queried at once)
         disease_summaries.append(summary_mod)
 
         ## END OF MODULE QUERIES 
         if _echo_to_console:
             summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
-        # CX: I don't think this is necessary. Too cluttered to show all of this. 
-#            summary_mod.show_brief()
-#            summary_mod.show_descriptive()
-
-        ## Get both
-        brief_summary, full_summary = summary_mod.get_all()
 
         ## Write all out
         summary_csv_filenames = [disease_name+'_brief_summary.csv',disease_name+'_full_summary.csv']
