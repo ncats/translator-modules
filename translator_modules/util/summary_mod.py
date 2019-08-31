@@ -137,20 +137,28 @@ class SummaryMod(object):
         module = list(results['module'])[0]            
         
         # drop irrelevant columns
-        processed_results = results.drop(columns=['shared_terms','shared_term_names', 'module'])
+#        processed_results = results.drop(columns=['shared_terms','shared_term_names', 'module'])
+        processed_results = results.drop(columns=['shared_term_names', 'module'])
         
         # WIP: drop duplicate gene symbols. BUT maybe we want to keep these?
         processed_results = processed_results.drop_duplicates(subset=['input_symbol','hit_symbol'])
+
         
         # ADD ELIF statements for additional columns
         # rename columns according to module the results are from, create ranks
         # Smaller ranks = higher scores. This is easier: if larger scores = better, rank depends on how many entries are in table
         if module=='Mod1A':
-            processed_results = processed_results.rename(index = str, columns = {'score':'functional_sim_score'})
+            processed_results = processed_results.rename(index = str, columns = {'score':'functional_sim_score', \
+                                                                                 'shared_terms':'funct_shared_terms', \
+                                                                                 'shared_term_names':'funct_shared_termnames'})
             processed_results['functional_sim_rank'] = processed_results['functional_sim_score'].rank(ascending=False, method='min')        
 
         elif module=='Mod1B':
-            processed_results = processed_results.rename(index = str, columns = {'score':'phenotype_sim_score'})
+            ## ISSUE WITH EFO 'PHENOTYPE' TERMS
+            processed_results = processed_results.loc[[False if "EFO" in str(x) else True for x in processed_results.shared_terms],:]
+            processed_results = processed_results.rename(index = str, columns = {'score':'phenotype_sim_score', \
+                                                                                 'shared_terms':'pheno_shared_terms', \
+                                                                                 'shared_term_names':'pheno_shared_termnames'})            
             processed_results['phenotype_sim_rank'] = processed_results['phenotype_sim_score'].rank(ascending=False, method='min')          
         
         # Update full table
