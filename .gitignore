@@ -113,7 +113,7 @@ Tidbit
 # Ignore local PyCharms virtualenv
 py*/
 
-# can't guarantee script outputs are going to matter
+# ignore JSON workflow output files
 *.json
 
 translator-modules/

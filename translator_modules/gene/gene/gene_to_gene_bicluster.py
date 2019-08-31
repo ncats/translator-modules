@@ -2,18 +2,16 @@
 
 # Workflow 9, Gene-to-Gene Bicluster
 import asyncio
-
-import fire
-import pandas as pd
-
-from translator_modules.core.module_payload import Payload
-
 import concurrent.futures
 import urllib.request
 from collections import defaultdict
 from datetime import datetime
 
+import fire
+import pandas as pd
 import requests
+
+from translator_modules.core.module_payload import Payload
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'

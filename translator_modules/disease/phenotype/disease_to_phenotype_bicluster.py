@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 
 import asyncio
-
-import fire
-import pandas as pd
-
-from translator_modules.core.module_payload import Payload
-
 import concurrent.futures
 import urllib.request
 from collections import defaultdict, Counter
 
+import fire
+import pandas as pd
 import requests
+
+from translator_modules.core.module_payload import Payload
 
 base_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list/'
 

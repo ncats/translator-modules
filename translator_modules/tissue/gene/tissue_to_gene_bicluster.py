@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 
 import asyncio
-
-import fire
-import pandas as pd
-
-from translator_modules.core.module_payload import Payload
-
 import concurrent.futures
 import urllib.request
 from collections import defaultdict, Counter
 
+import fire
+import pandas as pd
 import requests
+
+from translator_modules.core.module_payload import Payload
 
 bicluster_tissue_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_all_col_labels/'
 
