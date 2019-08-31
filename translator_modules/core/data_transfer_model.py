@@ -6,13 +6,11 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 
 """
 import json
+from dataclasses import dataclass, field, asdict
 from datetime import datetime
+from typing import List, ClassVar
 
 import pandas as pd
-
-from dataclasses import dataclass, field, asdict, InitVar
-from typing import List, ClassVar, Mapping, Any
-
 from BioLink.model import Association, NamedThing
 
 __version__ = '0.0.1'
@@ -53,6 +51,13 @@ class Attribute(BaseModel):
     source: str = ''
 
 
+def timestamp():
+    # current date and time.
+    now = datetime.now()
+    ts = datetime.timestamp(now)
+    return str(datetime.fromtimestamp(ts))
+
+
 @dataclass(frozen=True)
 class Identifier(BaseModel):
     """
@@ -77,6 +82,9 @@ class Identifier(BaseModel):
           symbol:
             type: string
             description: (optional) symbol representing a given conceptual entity, e.g. gene symbol
+          version:
+            type: string
+            description: (optional) identifier version string
         required:
           - xmlns
           - id
@@ -85,6 +93,8 @@ class Identifier(BaseModel):
     object_id: str
     name: str = ''
     symbol: str = ''
+    version: str = '1'
+    timestamp: str = timestamp()
 
     # We might validate the xmlns against registered ones in the future.
     # Enforcing use of the rdfLib.Namespace is deprecated for now
@@ -97,13 +107,13 @@ class Identifier(BaseModel):
         return self.xmlns+":"+self.object_id
 
     @classmethod # returns an instance of Identifier constructed from a CURIE
-    def parse(cls, curie, name='', symbol=''):
+    def parse(cls, curie, name='', symbol='', version='1'):
         part = curie.split(':', 1)
         if len(part) < 2 :
             raise RuntimeError("String '"+curie+"' is not a CURIE?")
         xmlns = part[0]
         object_id = part[1]
-        return Identifier(xmlns, object_id, name=name, symbol=symbol)
+        return Identifier(xmlns, object_id, name=name, symbol=symbol, version=version)
 
 @dataclass(frozen=True)
 class ConceptSpace(BaseModel):
@@ -206,9 +216,11 @@ class ResultList(BaseModel):
       ResultList:
         type: object
         properties:
-          list_id:
-            type: string
-            description: Id of the list of results. Generally an anonymous, globally unique UUID
+          identifiers:
+            type: array
+            items:
+                $ref: '#/definitions/Identifier'
+            description: identifiers associated with a ResultList; identifiers[0] is the primary one
           source:
             type: string
             description: Module that produced the result list.
@@ -241,7 +253,7 @@ class ResultList(BaseModel):
                 $ref: '#/definitions/Attribute'
             description: Additional global information and provenance about the Result List.
         required:
-          - list_id
+          - identifiers # at least, identifiers[0] == canonical
           - source
           - association
           - domain
@@ -255,38 +267,35 @@ class ResultList(BaseModel):
     association:  str = Association.class_name
     relationship: str = "related_to" # should correspond with a Biolink Model minimal predicate ("relationship type")
     range:  ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
+    identifiers: List[Identifier] = field(default_factory=list)
+    attributes: List[Attribute] = field(default_factory=list)
     concepts: List[Concept] = field(default_factory=list)
     results:  List[Result] = field(default_factory=list)
-    list_id: Mapping[str, Any] = field(default_factory=dict)
-    attributes: List[Attribute] = field(default_factory=list)
 
     list_number: ClassVar[List[int]] = [0]
 
     def __post_init__(self):
 
-        # set 'list_id' with unique value: simpleminded variable incremented for now
+        # identifiers is an empty array upon initialization, so
+        # identifiers[0] is set to a constructed canonical identifier
         self.list_number[0] += 1  # maybe a UUID later?
-        self.list_id['id'] = self.list_number[0]
-
-        # current date and time.
-        now = datetime.now()
-        timestamp = datetime.timestamp(now)
-        self.list_id['timestamp'] = str(datetime.fromtimestamp(timestamp))
+        object_id = str(self.list_number[0])
+        self.identifiers.append(
+                Identifier(
+                    xmlns='NCATS',
+                    object_id=object_id,
+                    name='ResultList '+object_id
+                )
+        )
 
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
             raise RuntimeError("Value of Domain '" +
-                               str(self.domain) + "' of Result List '" + self.get_list_id() +
+                               str(self.domain) + "' of Result List '" + self.identifiers[0].curie() +
                                "' is uninitialized or not a ConceptSpace")
         if self.range is None or not isinstance(self.range, ConceptSpace):
             raise RuntimeError("Range '" +
-                               str(self.range) + "' of Result List '" + self.get_list_id() +
+                               str(self.range) + "' of Result List '" + self.identifiers[0].curie() +
                                "' is uninitialized or not a ConceptSpace")
-
-    def get_list_id(self):
-        return str(self.list_id['id'])
-
-    def get_timestamp(self):
-        return str(self.list_id['timestamp'])
 
     @classmethod
     def load(cls, result_list_json: str):
@@ -311,6 +320,13 @@ class ResultList(BaseModel):
         # Load the json into a Python Object
         python_obj = json.loads(result_list_json)
 
+        def parse_attribute(a_obj):
+            return Attribute(
+                name=a_obj['name'],
+                value=a_obj['value'],
+                source=a_obj['source']
+            )
+
         def parse_concept_space(cs_obj):
             return ConceptSpace(
                 namespace=cs_obj['namespace'],
@@ -319,28 +335,23 @@ class ResultList(BaseModel):
 
         # Load the resulting Python object into a ResultList instance
         rl = ResultList(
-            list_id=python_obj['list_id'],
             source=python_obj['source'],
             domain=parse_concept_space(python_obj['domain']),
             association=python_obj['association'],
             relationship=python_obj['relationship'],
             range=parse_concept_space(python_obj['range'])
         )
-
-        def parse_attribute(a_obj):
-            return Attribute(
-                name=a_obj['name'],
-                value=a_obj['value'],
-                source=a_obj['source']
-            )
-
         def parse_identifier(i_obj):
             return Identifier(
                 xmlns=i_obj['xmlns'],
                 object_id=i_obj['object_id'],
                 name=i_obj['name'],
-                symbol=i_obj['symbol']
+                symbol=i_obj['symbol'],
+                version=i_obj['version'],
+                timestamp=i_obj['timestamp']
             )
+
+        rl.identifiers.extend([parse_identifier(i_obj) for i_obj in python_obj['identifiers']])
 
         def parse_concept(c_obj):
             c = Concept(
@@ -406,7 +417,6 @@ class ResultList(BaseModel):
 
         # Load the resulting Python object into a ResultList instance
         rl = ResultList(
-            list_id='',  # python_obj['list_id'],  # undecided how to set this ... should it simply be anonymous?
             source=meta['source'],
             association=meta['association'],
             domain=domain,
@@ -420,7 +430,8 @@ class ResultList(BaseModel):
             # 'input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score'
             input_id = Identifier.parse(entry['input_id'], entry['input_symbol'])
             output_id = Identifier.parse(entry['hit_id'], entry['hit_symbol'])
-            score = entry['score'] # assumes a score... better check if key is present!
+
+            score = entry.get('score', '.')
 
             # Here, you make sure that the identified Concepts are recorded already
             #rl.concepts.append(Concept(input_id))

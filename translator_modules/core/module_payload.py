@@ -2,9 +2,8 @@ import os.path
 from abc import ABC
 from urllib.parse import urlparse
 
-import requests
-
 import pandas as pd
+import requests
 
 from translator_modules.core.data_transfer_model import ResultList
 

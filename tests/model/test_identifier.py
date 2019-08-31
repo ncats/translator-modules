@@ -17,7 +17,8 @@ def mock_identifier():
         mock_identifier_xmlns,
         mock_identifier_object_id,
         mock_identifier_name,
-        mock_identifier_symbol
+        mock_identifier_symbol,
+        '1'
     )
 
 def mock_identifier_2():
@@ -25,7 +26,8 @@ def mock_identifier_2():
         mock_identifier_xmlns_2,
         mock_identifier_object_id_2,
         mock_identifier_name_2,
-        mock_identifier_symbol_2
+        mock_identifier_symbol_2,
+        '2'
     )
 
 
