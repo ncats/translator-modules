@@ -50,10 +50,11 @@ class LookUp(object):
                                      fields='entrez,HGNC,symbol')
             input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
         input_genes_df = pd.DataFrame(data=input_gene_set)
-        # # group duplicate ids and gather sources
-        input_genes_df['sources'] = input_genes_df['sources'].str.join(', ')
-        input_genes_df = input_genes_df.groupby(
-            ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'relation'])['sources'].apply(', '.join).reset_index()
+        if not input_genes_df.empty:
+            # group duplicate ids and gather sources
+            input_genes_df['sources'] = input_genes_df['sources'].str.join(', ')
+            input_genes_df = input_genes_df.groupby(
+                ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'relation'])['sources'].apply(', '.join).reset_index()
         return input_genes_df
 
 
@@ -64,7 +65,10 @@ class DiseaseAssociatedGeneSet(Payload):
 
         # get genes associated with disease from Biolink
         self.results = self.mod.disease_geneset_lookup(disease_id)
-        self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
+        if not self.results.empty:
+            self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
+        else:
+            self.disease_associated_genes = []
 
 
 if __name__ == '__main__':
