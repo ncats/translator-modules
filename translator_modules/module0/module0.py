@@ -41,7 +41,7 @@ class LookUp(object):
         
     ## CX: need function to look up just the disease name
     def disease_name_lookup(self, disease_id):
-        print(self.blw.get_obj(disease_id))
+#        print(self.blw.get_obj(disease_id))
         disease_label = self.blw.get_obj(disease_id)["label"]
         return disease_label
 
