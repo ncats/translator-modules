@@ -64,9 +64,8 @@ class Payload(ABC):
 
         else:
             """
-            TODO: we need to figure out why we got here: handle errors
+            Raw input from command line processed directly?
             """
-            print("good luck")
             extension = None
             return input_or_input_location, extension
 
