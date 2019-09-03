@@ -32,7 +32,7 @@ class LookUp(object):
             'taxon': 'human',
             'limit': None,
             'source': 'Monarch Biolink',
-            'association': '',
+            'association': 'gene to disease association',
             'relationship': 'gene_associated_with_condition'
         }
 

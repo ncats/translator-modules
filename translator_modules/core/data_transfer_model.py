@@ -425,6 +425,7 @@ class ResultList(BaseModel):
         )
 
         # Convert all the records from the DataFrame into ResultList recorded data
+        concepts = {}
         for entry in data_frame.to_dict(orient='records'):
             # Initial iteration: assume a simple Pandas DataFrame with columns
             # 'input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score'
@@ -434,8 +435,13 @@ class ResultList(BaseModel):
             score = entry.get('score', '.')
 
             # Here, you make sure that the identified Concepts are recorded already
-            #rl.concepts.append(Concept(input_id))
-            #rl.concepts.append(Concept(output_id))
+            curie = input_id.curie()
+            if curie not in concepts:
+                concepts[curie] = input_id
+
+            curie = output_id.curie()
+            if curie not in concepts:
+                concepts[curie] = output_id
 
             # ... then append the results to the results list
             r = Result(input_id, output_id, score)
@@ -443,6 +449,10 @@ class ResultList(BaseModel):
 
             # Add any additional DataFrame columns as Attributes (how??)
             # attributes: List[Attribute] = field(default_factory=list)
+
+        # compile the list of Concepts seen
+        for curie in concepts.keys():
+            rl.concepts.append(Concept(concepts[curie]))
 
         return rl
 
