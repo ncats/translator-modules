@@ -91,8 +91,14 @@ class GeneInteractionSet(Payload):
 
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        if "json" in extension:
+        if extension == "csv":
+            input_gene_set = pd.read_csv(input_genes, orient='records')
+        elif extension == "json":
+            # assuming it's JSON and it's a record list
             input_gene_set = pd.read_json(input_genes, orient='records')
+        elif extension is None:
+            pass
+
         # TODO: add schema check
 
         self.results = self.mod.get_interactions(input_gene_set, threshold)

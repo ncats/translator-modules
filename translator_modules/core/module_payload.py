@@ -23,6 +23,28 @@ def fix_curies(raw_list, prefix=''):
     return curie_list
 
 
+def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
+
+    if extension == "csv":
+        input_gene_set = pd.read_csv(input_genes, orient='records')
+    elif extension == "json":
+        # assuming it's JSON and it's a record list
+        input_gene_set = pd.read_json(input_genes, orient='records')
+    elif extension is None:
+        # TODO: this was written for the sharpener. maybe more generic if we get Biolink Model adherence
+        # TODO: rewrite into schema check
+        gene_ids = [gene.gene_id for gene in input_genes]
+        symbols = [attribute.value
+                   for gene in input_genes
+                   for attribute in gene.attributes
+                   if attribute.name == 'gene_symbol'
+                   ]
+        genes = {"hit_id": gene_ids, "hit_symbol": symbols}
+        input_gene_set = pd.DataFrame(data=genes)
+
+    return input_gene_set
+
+
 class Payload(ABC):
 
     def __init__(self, mod):
