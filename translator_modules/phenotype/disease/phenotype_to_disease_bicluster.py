@@ -35,7 +35,7 @@ class BiclusterByPhenotypeToDisease():
             'output_type': {
                 'complexity': 'single',
                 'data_type': 'disease',
-                'id_type': ['MONDO', 'DO', 'OMIM'],
+                'id_type': 'MONDO',
             },
         }
 
@@ -75,7 +75,8 @@ class BiclusterByPhenotypeToDisease():
                 for x in response_json:
                     disease = x['mondo_list'].split('__')
                     for y in disease:
-                        all_diseases.append(y)
+                        mondo_id = y.split('.')
+                        all_diseases.append('MONDO:'+mondo_id[1])
             disease_counted = Counter(all_diseases)
         return disease_counted.most_common()
 
