@@ -481,8 +481,8 @@ class ResultList(BaseModel):
                 if key in ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score']:
                     continue
 
-                # ...capture the rest as attributes
-                rl.attributes.append(Attribute(entry[key], entry[value]))
+                # ...capture the rest as attributes for a given Result
+                r.attributes.append(Attribute(key, value))
 
         # compile the list of Concepts seen
         for curie in concepts.keys():
