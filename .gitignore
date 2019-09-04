@@ -35,7 +35,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Unit tests / coverage reports
 htmlcov/
 .tox/
 .coverage
@@ -113,10 +113,8 @@ Tidbit
 # Ignore local PyCharms virtualenv
 py*/
 
-# can't guarantee script outputs are going to matter
-cwl/data/outputs/*
-module*.json
-*Bicluster.*.json
+# ignore JSON workflow output files
+*.json
 
 translator-modules/
 

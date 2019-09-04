@@ -1,7 +1,11 @@
+import os.path
 from abc import ABC
 from urllib.parse import urlparse
+
+import pandas as pd
 import requests
-import os.path
+
+from translator_modules.core.data_transfer_model import ResultList
 
 
 class Payload(ABC):
@@ -60,11 +64,19 @@ class Payload(ABC):
 
         else:
             """
-            TODO: we need to figure out why we got here: handle errors
+            Raw input from command line processed directly?
             """
-            print("good luck")
             extension = None
             return input_or_input_location, extension
 
-    def get_data_frame(self):
+    def get_data_frame(self) -> pd.DataFrame:
         return self.results
+
+    def get_result_list(self) -> ResultList:
+        """
+        Alternate form of output: convert module Pandas DataFrame data into a
+        NCATS Translator Module data transfer model Results in a ResultList instance.
+
+        :return: ResultList
+        """
+        return ResultList.import_data_frame(self.results, self.mod)
