@@ -105,7 +105,9 @@ class PhenotypeSimilarity(GenericSimilarity):
 class PhenotypicallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold):
+
         super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
+
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
         if "json" in extension:

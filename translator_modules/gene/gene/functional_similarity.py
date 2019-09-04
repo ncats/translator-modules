@@ -112,7 +112,9 @@ class FunctionalSimilarity(GenericSimilarity):
 class FunctionallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold):
+
         super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
+
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
         if extension == "csv":

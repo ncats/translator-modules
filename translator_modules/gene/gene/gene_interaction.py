@@ -13,7 +13,7 @@ from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload
 
 
-class GeneInteractions(object):
+class GeneInteractions:
 
     def __init__(self):
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
@@ -86,7 +86,9 @@ class GeneInteractions(object):
 
 class GeneInteractionSet(Payload):
     def __init__(self, input_genes, threshold=12):
+
         super(GeneInteractionSet, self).__init__(GeneInteractions())
+
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
         if "json" in extension:

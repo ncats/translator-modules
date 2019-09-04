@@ -75,7 +75,9 @@ class BiclusterByGeneToTissue():
 class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes):
-        self.mod = BiclusterByGeneToTissue()
+
+        super(GeneToTissueBiclusters, self).__init__(BiclusterByGeneToTissue())
+
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 
         input_gene_ids: list

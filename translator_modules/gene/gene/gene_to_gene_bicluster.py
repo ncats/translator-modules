@@ -205,7 +205,7 @@ class GeneToGeneBiclusters(Payload):
 
     def __init__(self, input_genes):
 
-        self.mod = BiclusterByGeneToGene()
+        super(GeneToGeneBiclusters, self).__init__(BiclusterByGeneToGene())
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 

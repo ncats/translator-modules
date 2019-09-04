@@ -63,6 +63,7 @@ class LookUp(object):
 class DiseaseAssociatedGeneSet(Payload):
 
     def __init__(self, disease_id):
+
         super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
 
         # get genes associated with disease from Biolink
