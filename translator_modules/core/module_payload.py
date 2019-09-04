@@ -1,11 +1,26 @@
 import os.path
 from abc import ABC
 from urllib.parse import urlparse
+from collections import defaultdict
 
 import pandas as pd
 import requests
 
 from translator_modules.core.data_transfer_model import ResultList
+
+
+def fix_curies(raw_list, prefix=''):
+    """
+    Adds a suitable XMLNS prefix to identifiers known to
+    be "raw" IDs assumed to be in the leading item in a tuple
+    :param id_list:
+    :param prefix:
+    :return:
+    """
+    curie_list = defaultdict(dict)
+    for key in raw_list.keys():
+        curie_list[prefix+':'+key] = raw_list[key]
+    return curie_list
 
 
 class Payload(ABC):
