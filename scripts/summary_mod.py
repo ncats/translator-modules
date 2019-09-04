@@ -134,72 +134,101 @@ class SummaryMod(object):
         Builds full summary, brief summary, and individual module output table
         """
         # record what module the results are from
-        module = list(results['module'])[0]            
-        
-        # drop irrelevant columns
-        processed_results = results.drop(columns=['shared_terms','shared_term_names', 'module'])
+        module = list(results['module'])[0]    
         
         # WIP: drop duplicate gene symbols. BUT maybe we want to keep these?
-        processed_results = processed_results.drop_duplicates(subset=['input_symbol','hit_symbol'])
-        
-        # ADD ELIF statements for additional columns
-        # rename columns according to module the results are from, create ranks
-        # Smaller ranks = higher scores. This is easier: if larger scores = better, rank depends on how many entries are in table
-        if module=='Mod1A':
-            processed_results = processed_results.rename(index = str, columns = {'score':'functional_sim_score'})
-            processed_results['functional_sim_rank'] = processed_results['functional_sim_score'].rank(ascending=False, method='min')        
+        processed_results = results.drop_duplicates(subset=['input_symbol','hit_symbol'])        
 
-        elif module=='Mod1B':
-            processed_results = processed_results.rename(index = str, columns = {'score':'phenotype_sim_score'})
-            processed_results['phenotype_sim_rank'] = processed_results['phenotype_sim_score'].rank(ascending=False, method='min')          
+        if results.empty==True:  ## don't need to go forward 
+            print(module + " returned no results and was not loaded into summary.")
+            return  ## exit function
         
-        # Update full table
-        self.build_full_summary(processed_results)
+        else:  ## run normally
+            # drop irrelevant columns
+    #        processed_results = results.drop(columns=['shared_terms','shared_term_names', 'module'])
+            processed_results = processed_results.drop(columns=['shared_term_names', 'module'])
+        
+            
+            # ADD ELIF statements for additional columns
+            # rename columns according to module the results are from, create ranks
+            # Smaller ranks = higher scores. This is easier: if larger scores = better, rank depends on how many entries are in table
+            if module=='Mod1A':
+                processed_results = processed_results.drop(columns=['shared_terms'])
+                processed_results = processed_results.rename(index = str, columns = {'score':'functional_sim_score'})
+                processed_results['functional_sim_rank'] = processed_results['functional_sim_score'].rank(ascending=False, method='min')        
+    
+            elif module=='Mod1B':
+                ## ISSUE WITH EFO 'PHENOTYPE' TERMS
+                ## wait this code doesn't seem to be working for lafora disease because all results are filtered out by loc statement
+                ## ..but it's working for fanconi anemia...
+                processed_results = processed_results.loc[[False if "EFO" in str(x) else True for x in processed_results.shared_terms],:]
 
-        # Update brief table
-        self.build_brief_summary()
-        
-        # Make individual module summary (counts number of input genes corresponding to a unique output gene for this module)
-        individual_sum = pd.DataFrame.copy(processed_results)
-        individual_sum = individual_sum.groupby(['hit_symbol']).agg(list)  # grouping by unique output gene
-        individual_sum['sim_count'] = [len(x) for x in individual_sum.filter(regex='_score$', axis=1).squeeze()]
-        ## WARNING: if other columns of lists were included, they would no longer correspond to input_symbols after this sorting
-        ## columns: input_id, functional_sim_score, functional_sim_rank
-        individual_sum['input_symbol'] = [sorted(x) for x in individual_sum['input_symbol']] 
-        # Smaller ranks = higher scores. 
-        individual_sum = individual_sum.sort_values(by=['sim_count','hit_symbol'], ascending=[False, True]).reset_index()
-        individual_sum = individual_sum.filter(items=['hit_symbol', 'input_symbol', 'sim_count'])
-        self.module_summaries[module] = individual_sum        
+                ## Like in Lafora Disease case, if processed_results is empty there's no need to go forward
+                if processed_results.empty==True:
+                    print(module + " returned no results and was not loaded into summary.")
+                    return  ## exit function
+                
+                ## The following code continues for Mod1B output if processed_results wasn't empty
+                processed_results = processed_results.drop(columns=['shared_terms'])
+                processed_results = processed_results.rename(index = str, columns = {'score':'phenotype_sim_score'})            
+                processed_results['phenotype_sim_rank'] = processed_results['phenotype_sim_score'].rank(ascending=False, method='min')          
+            
+            else:  ## what to do if module not recognized. placeholder code?
+                print("Module not recognized and not loaded into summary.")
+                return  ## exit function
+            
+            ## run for any module (when processed results aren't empty)
+            # Update full table
+            self.build_full_summary(processed_results)
+    
+            # Update brief table
+            self.build_brief_summary()
+            
+            # Make individual module summary (counts number of input genes corresponding to a unique output gene for this module)
+            individual_sum = pd.DataFrame.copy(processed_results)
+            individual_sum = individual_sum.groupby(['hit_symbol']).agg(list)  # grouping by unique output gene
+            individual_sum['sim_count'] = [len(x) for x in individual_sum.filter(regex='_score$', axis=1).squeeze()]
+            ## WARNING: if other columns of lists were included, they would no longer correspond to input_symbols after this sorting
+            ## columns: input_id, functional_sim_score, functional_sim_rank
+            individual_sum['input_symbol'] = [sorted(x) for x in individual_sum['input_symbol']] 
+            # Smaller ranks = higher scores. 
+            individual_sum = individual_sum.sort_values(by=['sim_count','hit_symbol'], ascending=[False, True]).reset_index()
+            individual_sum = individual_sum.filter(items=['hit_symbol', 'input_symbol', 'sim_count'])
+            self.module_summaries[module] = individual_sum        
         
 
     # This function takes in the Module1E results and updates both tables
-    # NOTE: could be expanded to work with more presence/absence or even categorical data?
-    def add1E(self, mod1e_results):
-        mod1e_processed = mod1e_results.drop(columns=['module'])
-        
+    # NOTE: could be expanded to work with more presence/absence modules (where counting presence makes sense)
+    def add1E(self, results):
         # WIP: drop duplicate gene symbols. BUT maybe we want to keep these?
-        mod1e_processed = mod1e_processed.drop_duplicates(subset=['input_symbol','hit_symbol'])
+        processed_results = results.drop_duplicates(subset=['input_symbol','hit_symbol'])
 
-        # NOTICE this column isn't named 'count'. Counting these (presence of interactions) happens later. 
-        mod1e_processed = mod1e_processed.rename(index = str, columns = {'score':'num_protein_interactions'})
-
-        # Update full table
-        self.build_full_summary(mod1e_processed)
-
-        # Update brief table
-        self.build_brief_summary()
-
-        # Make individual module summary (counts number of input genes corresponding to a unique output gene for this module)
-        individual_sum = pd.DataFrame.copy(mod1e_processed)
-        individual_sum = individual_sum.groupby(['hit_symbol']).agg(list)
-        # adjust the columns' values: number of hits found, sort input genes
-        individual_sum['protein_interaction_count'] = [len(x) for x in individual_sum['num_protein_interactions']]
-        ## WARNING: input_id list won't correspond to input_symbols after this sorting
-        individual_sum['input_symbol'] = [sorted(x) for x in individual_sum['input_symbol']]
-        # Smaller ranks = higher scores. 
-        individual_sum = individual_sum.sort_values(by=['protein_interaction_count','hit_symbol'], ascending=[False, True]).reset_index()
-        individual_sum = individual_sum.filter(items=['hit_symbol', 'input_symbol', 'protein_interaction_count'])
-        self.module_summaries['Mod1E'] = individual_sum
+        if results.empty==True:          ## don't need to go forward 
+            print("Mod1E returned no results and was not loaded into summary.")
+            return  ## exit function
+        
+        else:        ## going forward normally
+            processed_results = processed_results.drop(columns=['module'])
+            processed_results = processed_results.rename(index = str, columns = {'score':'num_protein_interactions'})
+            
+            # Update full table
+            self.build_full_summary(processed_results)
+    
+            # Update brief table
+            self.build_brief_summary()
+            
+            ## NEED TO UPDATE THIS PART'S COLUMN NAMES IN ORDER TO EXPAND THIS FUNCTION TO OTHER MODULES
+            # Make individual module summary (counts number of input genes corresponding to a unique output gene for this module)
+            individual_sum = pd.DataFrame.copy(processed_results)
+            individual_sum = individual_sum.groupby(['hit_symbol']).agg(list)
+            # adjust the columns' values: number of hits found, sort input genes
+            individual_sum['protein_interaction_count'] = [len(x) for x in individual_sum['num_protein_interactions']]
+            ## WARNING: input_id list won't correspond to input_symbols after this sorting
+            individual_sum['input_symbol'] = [sorted(x) for x in individual_sum['input_symbol']]
+            # Smaller ranks = higher scores. 
+            individual_sum = individual_sum.sort_values(by=['protein_interaction_count','hit_symbol'], ascending=[False, True]).reset_index()
+            individual_sum = individual_sum.filter(items=['hit_symbol', 'input_symbol', 'protein_interaction_count'])
+            self.module_summaries['Mod1E'] = individual_sum
         
 
 ## Possible NEXT STEP: condensing these functions? like get_brief/full, show_brief/full, write_brief/full
