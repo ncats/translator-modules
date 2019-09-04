@@ -18,19 +18,19 @@ class GeneInteractions(object):
     def __init__(self):
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.meta = {
+            'source': 'Monarch Biolink',
+            'association': 'gene to gene association',
             'input_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
+            'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
-
-            'source': 'Monarch Biolink',
-            'predicate': ['blm:interacts with']
         }
 
     def metadata(self):

@@ -16,7 +16,21 @@ base_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list
 
 class BiclusterByDiseaseToPhenotype():
     def __init__(self):
-        pass
+        self.meta = {
+            'source': 'RNAseqDB Biclustering',
+            'association': 'disease to phenotypic feature association',
+            'input_type': {
+                'complexity': 'single',
+                'data_type': 'disease',
+                'id_type': ['MONDO', 'DO', 'OMIM'],
+            },
+            'relationship': 'has_phenotype',
+            'output_type': {
+                'complexity': 'set',
+                'data_type': 'phenotypic feature',
+                'id_type': 'HP'
+            },
+        }
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -86,6 +100,7 @@ class DiseaseToPhenotypeBiclusters(Payload):
 
         if self.results is not None:
             print(self.results.to_json())
+
 
 if __name__ == '__main__':
     fire.Fire(DiseaseToPhenotypeBiclusters)

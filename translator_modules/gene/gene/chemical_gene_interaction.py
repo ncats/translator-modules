@@ -16,6 +16,21 @@ class ChemicalGeneInteractions(object):
         self.gene_set = ''
         self.chemicals = []
         self.gene_hits = []
+        self.meta = {
+            'source': 'RENCI ChemoInformatics',
+            'association': 'chemical to gene association',
+            'input_type': {
+                'complexity': 'set',
+                'id_type': 'ChemicalID',
+                'data_type': 'chemical',
+            },
+            'relationship': 'interacts_with',
+            'output_type': {
+                'complexity': 'set',
+                'id_type': 'HGNC',
+                'data_type': 'gene',
+            },
+        }
 
     def load_gene_set(self, gene_set):
         self.gene_set = gene_set

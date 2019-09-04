@@ -22,20 +22,19 @@ class PhenotypeSimilarity(GenericSimilarity):
         if self.taxon == 'human':
             self.ont = 'hp'
         self.meta = {
+            'source': 'Monarch Biolink',
+            'association': 'gene to phenotypic feature',
             'input_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
+            'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
-
-            'source': 'Monarch Biolink',
-            'association': '',
-            'predicate': 'has phenotype'
         }
 
         # Load the associated Biolink (Monarch)

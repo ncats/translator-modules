@@ -16,7 +16,21 @@ bicluster_tissue_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_t
 
 class BiclusterByTissueToGene():
     def __init__(self):
-        pass
+        self.meta = {
+            'source': 'RNAseqDB Biclustering',
+            'association': 'gene to expression site association',
+            'input_type': {
+                'complexity': 'set',
+                'id_type': 'UBERON',
+                'data_type': 'gene',
+            },
+            'relationship': 'related_to',
+            'output_type': {
+                'complexity': 'set',
+                'id_type': 'ENSEMBL',
+                'data_type': 'gene',
+            },
+        }
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:

@@ -20,7 +20,21 @@ related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
 class BiclusterByGeneToGene():
     def __init__(self):
-        pass
+        self.meta = {
+            'source': 'RNAseqDB Biclustering',
+            'association': 'gene to gene association',
+            'input_type': {
+                'complexity': 'set',
+                'id_type': 'HGNC',
+                'data_type': 'gene',
+            },
+            'relationship': 'related_to',
+            'output_type': {
+                'complexity': 'set',
+                'id_type': 'HGNC',
+                'data_type': 'gene',
+            },
+        }
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
