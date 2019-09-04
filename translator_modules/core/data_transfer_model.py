@@ -434,13 +434,18 @@ class ResultList(BaseModel):
         # Convert all the records from the DataFrame into ResultList recorded data
         concepts = {}
         for entry in data_frame.to_dict(orient='records'):
+
             # Initial iteration: assume a simple Pandas DataFrame with columns
             # 'input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score'
 
+            if entry['hit_id'] == 'NONE':
+                # null entry, for some reason? not meaningful? Ignore?
+                continue
+
             # Second iteration: assume that input_symbol mappings
-            # may be optional in some algorithms, i.e. biclustering?
+            # may be missing in the output of some algorithms, i.e. biclustering?
             input_id = None
-            if 'input_symbol' in entry:
+            if 'input_id' in entry:
                 input_id = Identifier.parse(
                     entry['input_id'],
                     symbol=entry['input_symbol'] if 'input_symbol' in entry else ''
@@ -469,8 +474,15 @@ class ResultList(BaseModel):
             )
             rl.results.append(r)
 
-            # Add any additional DataFrame columns as Attributes (how??)
-            # attributes: List[Attribute] = field(default_factory=list)
+            # Collect other fields as attributes
+            for (key, value) in entry.items():
+
+                # Ignore core data columns...
+                if key in ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score']:
+                    continue
+
+                # ...capture the rest as attributes
+                rl.attributes.append(Attribute(entry[key], entry[value]))
 
         # compile the list of Concepts seen
         for curie in concepts.keys():
