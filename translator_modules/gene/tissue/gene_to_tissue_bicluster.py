@@ -27,8 +27,8 @@ class BiclusterByGeneToTissue():
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'UBERON',
-                'data_type': 'tissue',
+                'id_type': ['MONDO', 'DOID', 'UBERON'],
+                'data_type': 'anatomical entity',
             },
         }
 

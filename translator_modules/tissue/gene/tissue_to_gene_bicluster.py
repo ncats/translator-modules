@@ -22,7 +22,7 @@ class BiclusterByTissueToGene():
             'input_type': {
                 'complexity': 'set',
                 'id_type': 'UBERON',
-                'data_type': 'gene',
+                'data_type': 'anatomical entity',
             },
             'relationship': 'related_to',
             'output_type': {

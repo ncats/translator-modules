@@ -24,7 +24,7 @@ class LookUp(object):
             'input_type': {
                 'complexity': 'single',
                 'data_type': 'disease',
-                'id_type': ['MONDO', 'DO', 'OMIM'],
+                'id_type': 'MONDO',
             },
             'relationship': 'gene_associated_with_condition',
             'output_type': {

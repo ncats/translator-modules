@@ -25,13 +25,13 @@ class BiclusterByGeneToGene():
             'association': 'gene to gene association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
+                'id_type': 'ENSEMBL',
                 'data_type': 'gene',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
+                'id_type': 'ENSEMBL',
                 'data_type': 'gene',
             },
         }

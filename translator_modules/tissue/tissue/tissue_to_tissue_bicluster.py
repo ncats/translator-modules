@@ -17,14 +17,14 @@ class CooccurrenceByBicluster():
             'association': 'gene to expression site association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'ENSEMBL',
-                'data_type': 'gene',
+                'id_type': 'UBERON',
+                'data_type': 'anatomical entity',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
                 'id_type': 'UBERON',
-                'data_type': 'gene',
+                'data_type': 'anatomical entity',
             },
         }
 

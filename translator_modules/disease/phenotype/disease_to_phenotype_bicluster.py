@@ -22,7 +22,7 @@ class BiclusterByDiseaseToPhenotype():
             'input_type': {
                 'complexity': 'single',
                 'data_type': 'disease',
-                'id_type': ['MONDO', 'DO', 'OMIM'],
+                'id_type': 'MONDO',
             },
             'relationship': 'has_phenotype',
             'output_type': {
@@ -97,9 +97,6 @@ class DiseaseToPhenotypeBiclusters(Payload):
 
         most_common_phenotype = asyncio.run(self.mod.disease_to_phenotype_biclusters_async(input_disease_ids))
         self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
-
-        if self.results is not None:
-            print(self.results.to_json())
 
 
 if __name__ == '__main__':
