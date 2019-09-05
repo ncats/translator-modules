@@ -38,7 +38,7 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
         # characteristic high level ResultList key (i.e. 'result_list_name')
         if 'result_list_name' in input_genes_obj:
             # assuming it's NCATS ResultList compliant JSON
-            input_result_list = ResultList.load(input_genes)
+            input_result_list = ResultList.load(input_genes_obj)
 
             # I coerce the ResultList internally into a Pandas DataFrame
             # Perhaps we'll remove this intermediate step sometime in the future
