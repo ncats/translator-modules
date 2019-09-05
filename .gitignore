@@ -113,10 +113,8 @@ Tidbit
 # Ignore local PyCharms virtualenv
 py*/
 
-# can't guarantee script outputs are going to matter
-cwl/data/outputs/*
-module*.json
-*Bicluster.*.json
+# Ignore json output files
+*.json
 
 translator-modules/
 
