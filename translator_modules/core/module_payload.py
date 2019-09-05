@@ -44,13 +44,16 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
 
     elif extension is None:
         # TODO: this was written for the sharpener. maybe more generic if we get Biolink Model adherence
-        # TODO: rewrite into schema check
-        gene_ids = [gene.gene_id for gene in input_genes]
-        symbols = [attribute.value
-                   for gene in input_genes
-                   for attribute in gene.attributes
-                   if attribute.name == 'gene_symbol'
-                   ]
+        gene_ids = []
+        symbols = []
+        for gene in input_genes:
+            symbol = None
+            for attribute in gene.attributes:
+                if attribute.name == 'gene_symbol':
+                    symbol = attribute.value
+            if symbol is not None:
+                gene_ids.append(gene.gene_id)
+                symbols.append(symbol)
         genes = {"hit_id": gene_ids, "hit_symbol": symbols}
         input_gene_set = pd.DataFrame(data=genes)
 
