@@ -1,4 +1,5 @@
 import os.path
+import json
 from abc import ABC
 from urllib.parse import urlparse
 from collections import defaultdict
@@ -30,17 +31,21 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
 
     elif extension == "json":
 
-        # assuming it's Pandas DataFrame compliant JSON and it's a record list
-        input_gene_set = pd.read_json(input_genes, orient='records')
+        # Load the json into a Python Object
+        input_genes_obj = json.loads(input_genes)
 
-    elif extension == "ncats":
+        # check if the json object input has a
+        # characteristic high level ResultList key (i.e. 'result_list_name')
+        if 'result_list_name' in input_genes_obj:
+            # assuming it's NCATS ResultList compliant JSON
+            input_result_list = ResultList.load(input_genes)
 
-        # assuming it's NCATS ResultList compliant JSON
-        input_result_list = ResultList.load(input_genes)
-
-        # I coerce the ResultList internally into a Pandas DataFrame
-        # Perhaps we'll remove this intermediate step sometime in the future
-        input_gene_set = input_result_list.export_data_frame()
+            # I coerce the ResultList internally into a Pandas DataFrame
+            # Perhaps we'll remove this intermediate step sometime in the future
+            input_gene_set = input_result_list.export_data_frame()
+        else:
+            # Assume that it's Pandas DataFrame compliant JSON
+            input_gene_set = pd.DataFrame(input_genes_obj)
 
     elif extension is None:
         # TODO: this was written for the sharpener. maybe

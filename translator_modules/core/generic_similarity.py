@@ -85,8 +85,10 @@ class GenericSimilarity(object):
             return 0.0, set()
 
         shared_terms = a1.intersection(a2)
-        
-        return len(shared_terms) / num_union, shared_terms
+
+        # Note: we need to convert the shared_terms set to a list
+        # to avoid later JSON serialization problems
+        return len(shared_terms) / num_union, list(shared_terms)
 
     def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
         similarities = []

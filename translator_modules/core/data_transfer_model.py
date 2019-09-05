@@ -11,9 +11,25 @@ from datetime import datetime
 from typing import List, ClassVar
 
 import pandas as pd
+from json.encoder import JSONEncoder
+
 from BioLink.model import Association, NamedThing
 
 __version__ = '0.0.1'
+
+
+class ResultListEncoder(JSONEncoder):
+
+    # Need to override the JSONEncoder.default() to handle 'set'
+    def default(self, o):
+        try:
+            iterable = iter(o)
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
+        # Let the base class default method raise the TypeError
+        return JSONEncoder.default(self, o)
 
 
 @dataclass(frozen=True)
@@ -25,7 +41,8 @@ class BaseModel():
         :
         return: String representation of the model
         """
-        return json.dumps(asdict(self))
+        result_obj = asdict(self)
+        return json.dumps(result_obj, cls=ResultListEncoder)
 
 
 @dataclass(frozen=True)
@@ -225,14 +242,17 @@ class ResultList(BaseModel):
       ResultList:
         type: object
         properties:
+          result_list_name:
+            type: string
+            description: Human readable name of the result list.
+          source:
+            type: string
+            description: Module that produced the result list.
           identifiers:
             type: array
             items:
                 $ref: '#/definitions/Identifier'
             description: identifiers associated with a ResultList; identifiers[0] is the primary one
-          source:
-            type: string
-            description: Module that produced the result list.
           association:
                 type: string
                 description: >-
@@ -271,9 +291,10 @@ class ResultList(BaseModel):
           - concepts
           - results
     """
+    result_list_name: str = None
     source: str = ''
-    domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     association: str = Association.class_name
+    domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     relationship: str = "related_to"  # should correspond with a Biolink Model minimal predicate ("relationship type")
     range: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     identifiers: List[Identifier] = field(default_factory=list)
@@ -293,7 +314,7 @@ class ResultList(BaseModel):
             Identifier(
                 xmlns='NCATS',
                 object_id=object_id,
-                name='ResultList ' + object_id
+                name=self.result_list_name if self.result_list_name else 'ResultList ' + object_id
             )
         )
 
@@ -307,7 +328,7 @@ class ResultList(BaseModel):
                                "' is uninitialized or not a ConceptSpace")
 
     @classmethod
-    def load(cls, result_list_json: str):
+    def load(cls, result_list_obj: dict):
         """
         Loads a JSON String representation of ResultList into a new ResultList instance
 
@@ -315,7 +336,7 @@ class ResultList(BaseModel):
         :return: returns a new ResultList instance
 
         rl = ResultList(
-            'Stub Resultlist',
+            result_list_name='Stub Resultlist',
             source='ncats',
             association=Association.class_name,
             domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
@@ -326,9 +347,6 @@ class ResultList(BaseModel):
         rl.results.extend(Result,...)
         rl.attributes.extend(Attributes...)
         """
-        # Load the json into a Python Object
-        python_obj = json.loads(result_list_json)
-
         def parse_attribute(a_obj):
             return Attribute(
                 name=a_obj['name'],
@@ -344,11 +362,12 @@ class ResultList(BaseModel):
 
         # Load the resulting Python object into a ResultList instance
         rl = ResultList(
-            source=python_obj['source'],
-            domain=parse_concept_space(python_obj['domain']),
-            association=python_obj['association'],
-            relationship=python_obj['relationship'],
-            range=parse_concept_space(python_obj['range'])
+            result_list_name=result_list_obj['result_list_name'],
+            source=result_list_obj['source'],
+            domain=parse_concept_space(result_list_obj['domain']),
+            association=result_list_obj['association'],
+            relationship=result_list_obj['relationship'],
+            range=parse_concept_space(result_list_obj['range'])
         )
 
         def parse_identifier(i_obj):
@@ -361,7 +380,7 @@ class ResultList(BaseModel):
                 timestamp=i_obj['timestamp']
             )
 
-        rl.identifiers.extend([parse_identifier(i_obj) for i_obj in python_obj['identifiers']])
+        rl.identifiers.extend([parse_identifier(i_obj) for i_obj in result_list_obj['identifiers']])
 
         def parse_concept(c_obj):
             c = Concept(
@@ -371,7 +390,7 @@ class ResultList(BaseModel):
             c.attributes.extend([parse_attribute(a_obj) for a_obj in c_obj['attributes']])
             return c
 
-        rl.concepts.extend([parse_concept(c_obj) for c_obj in python_obj['concepts']])
+        rl.concepts.extend([parse_concept(c_obj) for c_obj in result_list_obj['concepts']])
 
         def parse_result(r_obj):
             r = Result(
@@ -382,9 +401,9 @@ class ResultList(BaseModel):
             r.attributes.extend([parse_attribute(a_obj) for a_obj in r_obj['attributes']])
             return r
 
-        rl.results.extend([parse_result(r_obj) for r_obj in python_obj['results']])
+        rl.results.extend([parse_result(r_obj) for r_obj in result_list_obj['results']])
 
-        rl.attributes.extend([parse_attribute(a_obj) for a_obj in python_obj['attributes']])
+        rl.attributes.extend([parse_attribute(a_obj) for a_obj in result_list_obj['attributes']])
 
         return rl
 
