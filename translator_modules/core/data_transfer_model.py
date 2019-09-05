@@ -93,7 +93,7 @@ class Identifier(BaseModel):
     object_id: str
     name: str = ''
     symbol: str = ''
-    version: str = '1'
+    version: str = ''
     timestamp: str = timestamp()
 
     # We might validate the xmlns against registered ones in the future.
@@ -104,10 +104,13 @@ class Identifier(BaseModel):
     #        raise RuntimeError("Identifier.xmlns must be specified as an instance of rdflib.Namespace!")
 
     def curie(self) -> str:
-        return self.xmlns + ":" + self.object_id
+        curie = self.xmlns + ":" + self.object_id
+        if self.version:
+            curie = curie + "." + self.version
+        return curie
 
     @classmethod  # returns an instance of Identifier constructed from a CURIE
-    def parse(cls, curie, name='', symbol='', version='1'):
+    def parse(cls, curie, name='', symbol='', version=''):
         part = curie.split(':', 1)
         if len(part) < 2:
             raise RuntimeError("String '" + curie + "' is not a CURIE?")
@@ -495,4 +498,40 @@ class ResultList(BaseModel):
         Convert this ResultList into a Pandas DataFrame
         :return: a Python Pandas DataFrame representation of (most of) the data in a given ResultList
         """
-        return pd.DataFrame()
+        curie_map = {}
+        for concept in self.concepts:
+            curie_map[concept.primary_id.curie()] = concept
+
+        input_ids = []
+        input_symbols = []
+        hit_ids = []
+        hit_symbols = []
+        scores = []
+
+        def _map_ids(id, curies, symbols):
+            if id in curie_map:
+                c = curie_map[id]
+                cid = c.primary_id
+                curies.append(cid.curie())
+                symbols.append(cid.symbol)
+            else:
+                curies.append('')
+                symbols.append('')
+
+        for result in self.results:
+            _map_ids(result.input_id, input_ids, input_symbols)
+            _map_ids(result.output_id, hit_ids, hit_symbols)
+            scores.append(result.score)
+
+        # First iteration doesn't consider Result.attributes.. how can we load these?
+        entries = {
+            "input_id": input_ids,
+            "input_symbol": input_symbols,
+            "hit_id": hit_ids,
+            "hit_symbol": hit_symbols,
+            "score": scores
+        }
+
+        df = pd.DataFrame(data=entries)
+
+        return df
