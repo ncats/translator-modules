@@ -25,14 +25,14 @@ class BiclusterByGeneToGene():
             'association': 'gene to gene association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'ENSEMBL',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'ENSEMBL',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'ENSEMBL',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'ENSEMBL',
             },
         }
 

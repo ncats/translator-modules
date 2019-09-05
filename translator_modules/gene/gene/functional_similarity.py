@@ -25,14 +25,14 @@ class FunctionalSimilarity(GenericSimilarity):
             'association': 'functional association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'HGNC',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'HGNC',
             },
         }
 

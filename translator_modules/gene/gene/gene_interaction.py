@@ -22,14 +22,14 @@ class GeneInteractions:
             'association': 'gene to gene association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'HGNC',
             },
             'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'HGNC',
             },
         }
 

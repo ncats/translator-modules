@@ -22,14 +22,14 @@ class BiclusterByTissueToTissue():
             'association': 'anatomical entity to anatomical entity association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'UBERON',
-                'data_type': 'anatomical entity',
+                'category': 'anatomical entity',
+                'mappings': 'UBERON',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'UBERON',
-                'data_type': 'anatomical entity',
+                'category': 'anatomical entity',
+                'mappings': 'UBERON',
             },
         }
 

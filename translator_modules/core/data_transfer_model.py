@@ -404,25 +404,25 @@ class ResultList(BaseModel):
         meta = payload.meta
 
         input_type = meta['input_type']
-        input_type['id_type'] = \
-            input_type['id_type'] \
-                if isinstance(input_type['id_type'], list) \
-                else [input_type['id_type']]
+        input_type['mappings'] = \
+            input_type['mappings'] \
+                if isinstance(input_type['mappings'], list) \
+                else [input_type['mappings']]
 
         domain = ConceptSpace(
-            category=input_type['data_type'],
-            namespace=input_type['id_type']
+            category=input_type['category'],
+            namespace=input_type['mappings']
         )
 
         output_type = meta['output_type']
-        output_type['id_type'] = \
-            output_type['id_type'] \
-            if isinstance(output_type['id_type'], list) \
-            else [output_type['id_type']]
+        output_type['mappings'] = \
+            output_type['mappings'] \
+            if isinstance(output_type['mappings'], list) \
+            else [output_type['mappings']]
 
         range = ConceptSpace(
-            category=output_type['data_type'],
-            namespace=output_type['id_type']
+            category=output_type['category'],
+            namespace=output_type['mappings']
         )
 
         # Load the resulting Python object into a ResultList instance

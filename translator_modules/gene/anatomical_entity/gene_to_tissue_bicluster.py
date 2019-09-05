@@ -21,14 +21,14 @@ class BiclusterByGeneToTissue():
             'association': 'gene to expression site association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'ENSEMBL',
-                'data_type': 'gene',
+                'mappings': 'ENSEMBL',
+                'category': 'gene',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'id_type': ['MONDO', 'DOID', 'UBERON'],
-                'data_type': 'anatomical entity',
+                'mappings': ['MONDO', 'DOID', 'UBERON'],
+                'category': 'anatomical entity',
             },
         }
 

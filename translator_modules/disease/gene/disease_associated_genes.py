@@ -23,14 +23,14 @@ class LookUp(object):
             'association': 'gene to disease association',
             'input_type': {
                 'complexity': 'single',
-                'data_type': 'disease',
-                'id_type': 'MONDO',
+                'category': 'disease',
+                'mappings': 'MONDO',
             },
             'relationship': 'gene_associated_with_condition',
             'output_type': {
                 'complexity': 'set',
-                'data_type': 'gene',
-                'id_type': 'HGNC'
+                'category': 'gene',
+                'mappings': 'HGNC'
             },
             'taxon': 'human',
             'limit': None,

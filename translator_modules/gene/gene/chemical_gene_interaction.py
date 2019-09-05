@@ -21,14 +21,14 @@ class ChemicalGeneInteractions(object):
             'association': 'chemical to gene association',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'ChemicalID',
-                'data_type': 'chemical',
+                'category': 'chemical',
+                'mappings': 'ChemicalID',
             },
             'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'HGNC',
             },
         }
 

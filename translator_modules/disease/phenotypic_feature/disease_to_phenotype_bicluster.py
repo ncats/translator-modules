@@ -21,14 +21,14 @@ class BiclusterByDiseaseToPhenotype():
             'association': 'disease to phenotypic feature association',
             'input_type': {
                 'complexity': 'single',
-                'data_type': 'disease',
-                'id_type': 'MONDO',
+                'category': 'disease',
+                'mappings': 'MONDO',
             },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
-                'data_type': 'phenotypic feature',
-                'id_type': 'HP'
+                'category': 'phenotypic feature',
+                'mappings': 'HP',
             },
         }
 

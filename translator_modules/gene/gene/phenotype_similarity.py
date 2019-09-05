@@ -26,14 +26,14 @@ class PhenotypeSimilarity(GenericSimilarity):
             'association': 'gene to phenotypic feature',
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'HGNC',
             },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': 'gene',
+                'mappings': 'HGNC',
             },
         }
 
