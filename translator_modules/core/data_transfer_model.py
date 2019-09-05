@@ -70,7 +70,7 @@ class Identifier(BaseModel):
           xmlns:
             type: string
             description: >-
-                The namespaces will be a data type specific list of namespaces
+                The xmlns will be a data type specific list of namespaces
                 Generally as found in the Biolink Model json-ld context file at
                 https://github.com/biolink/biolink-model/blob/master/context.jsonld
                 For example, for genes: NCBIGene, HGNC, ENSEMBL, MIM (actually missing from the context.jsonld?)
@@ -126,14 +126,14 @@ class Identifier(BaseModel):
 @dataclass(frozen=True)
 class ConceptSpace(BaseModel):
     """
-    A ConceptSpace tracks namespace (xmlns prefixes) and associated concept category of
+    A ConceptSpace tracks namespace mappings (xmlns prefixes) and associated concept category of
     about a given set of Concept identifiers and types
     """
     category: str  # should be Biolink Model registered category
-    namespace: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
+    mappings: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
 
     def __post_init__(self):
-        # Can the namespaces and category be validated here as Biolink Model compliant?
+        # Can the mappings and category be validated here as Biolink Model compliant?
         pass
 
 
@@ -338,7 +338,7 @@ class ResultList(BaseModel):
 
         def parse_concept_space(cs_obj):
             return ConceptSpace(
-                namespace=cs_obj['namespace'],
+                mappings=cs_obj['mappings'],
                 category=cs_obj['category'],
             )
 
@@ -411,7 +411,7 @@ class ResultList(BaseModel):
 
         domain = ConceptSpace(
             category=input_type['category'],
-            namespace=input_type['mappings']
+            mappings=input_type['mappings']
         )
 
         output_type = meta['output_type']
@@ -422,7 +422,7 @@ class ResultList(BaseModel):
 
         range = ConceptSpace(
             category=output_type['category'],
-            namespace=output_type['mappings']
+            mappings=output_type['mappings']
         )
 
         # Load the resulting Python object into a ResultList instance
