@@ -29,12 +29,12 @@ def overridden_mock_result_list(
         association=GeneToDiseaseAssociation.class_name,
         domain=ConceptSpace(
             category=Disease.class_name,
-            namespace=['MONDO']
+            mappings=['MONDO']
         ),
         relationship='related_to',
         range=ConceptSpace(
             category=Gene.class_name,
-            namespace=['HGNC']
+            mappings=['HGNC']
         )
 ):
 
@@ -57,22 +57,22 @@ _json_test_file = "result_list_test.json"
 
 _mock_uberon_concept_space = ConceptSpace(
     category=Disease.class_name,
-    namespace=['UBERON']
+    mappings=['UBERON']
 )
 
 _mock_upheno_concept_space = ConceptSpace(
     category=PhenotypicFeature.class_name,
-    namespace=['UPHENO']
+    mappings=['UPHENO']
 )
 
 _mock_hgnc_concept_space = ConceptSpace(
     category=Gene.class_name,
-    namespace=['HGNC']
+    mappings=['HGNC']
 )
 
 _mock_mondo_concept_space = ConceptSpace(
     category=Disease.class_name,
-    namespace=['MONDO']
+    mappings=['MONDO']
 )
 
 
