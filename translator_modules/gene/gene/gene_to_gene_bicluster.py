@@ -11,7 +11,7 @@ import fire
 import pandas as pd
 import requests
 
-from translator_modules.core.module_payload import Payload
+from translator_modules.core.module_payload import Payload, fix_curies
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
@@ -20,7 +20,21 @@ related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
 class BiclusterByGeneToGene():
     def __init__(self):
-        pass
+        self.meta = {
+            'source': 'RNAseqDB Biclustering',
+            'association': 'gene to gene association',
+            'input_type': {
+                'complexity': 'set',
+                'id_type': 'ENSEMBL',
+                'data_type': 'gene',
+            },
+            'relationship': 'related_to',
+            'output_type': {
+                'complexity': 'set',
+                'id_type': 'ENSEMBL',
+                'data_type': 'gene',
+            },
+        }
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -152,13 +166,15 @@ class BiclusterByGeneToGene():
                         dict_of_genes_in_unique_biclusters_not_in_inputs[gene] += 1
         return dict_of_genes_in_unique_biclusters_not_in_inputs
 
-    def sorted_list_of_output_genes(self, dict_of_genes_in_unique_biclusters_not_in_inputs):
+    @staticmethod
+    def sorted_list_of_output_genes(dict_of_genes_in_unique_biclusters_not_in_inputs):
         sorted_list_of_output_genes = sorted(
             (value, key) for (key, value) in dict_of_genes_in_unique_biclusters_not_in_inputs.items())
         sorted_list_of_output_genes.reverse()
         return sorted_list_of_output_genes
 
-    def ids_in_unique_biclusters(self, list_of_unique_biclusters, related_biclusters_and_ids_for_each_input_id):
+    @staticmethod
+    def ids_in_unique_biclusters(list_of_unique_biclusters, related_biclusters_and_ids_for_each_input_id):
         dict_of_ids_in_unique_biclusters = defaultdict(dict)
         for key, value in related_biclusters_and_ids_for_each_input_id.items():
             for key, value in value.items():
@@ -169,7 +185,8 @@ class BiclusterByGeneToGene():
                             dict_of_ids_in_unique_biclusters[key].append(value)
         return dict_of_ids_in_unique_biclusters
 
-    def ids_in_unique_biclusters_not_in_input_ID_list(self, curated_ID_list, dict_of_ids_in_unique_biclusters):
+    @staticmethod
+    def ids_in_unique_biclusters_not_in_input_ID_list(curated_ID_list, dict_of_ids_in_unique_biclusters):
         dict_of_ids_in_unique_biclusters_not_in_inputs = defaultdict(dict)
         for key, value in dict_of_ids_in_unique_biclusters.items():
             if value:
@@ -188,7 +205,7 @@ class GeneToGeneBiclusters(Payload):
 
     def __init__(self, input_genes):
 
-        self.mod = BiclusterByGeneToGene()
+        super(GeneToGeneBiclusters, self).__init__(BiclusterByGeneToGene())
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 
@@ -213,15 +230,26 @@ class GeneToGeneBiclusters(Payload):
                 # Assume that an iterable Tuple or equivalent is given here
                 input_gene_ids = input_obj
 
-        related_biclusters_and_genes_for_each_input_gene = asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_ids))
+        related_biclusters_and_genes_for_each_input_gene = \
+            asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_ids))
 
         #print("related biclusters", related_biclusters_and_genes_for_each_input_gene)
 
-        bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict(related_biclusters_and_genes_for_each_input_gene)
+        bicluster_occurrences_dict = \
+            self.mod.bicluster_occurrences_dict(related_biclusters_and_genes_for_each_input_gene)
         unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
-        genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters, related_biclusters_and_genes_for_each_input_gene)
-        genes_in_unique_biclusters_not_in_input_gene_list = self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
-        sorted_list_of_output_genes = self.mod.sorted_list_of_output_genes(genes_in_unique_biclusters_not_in_input_gene_list)
+        genes_in_unique_biclusters = \
+            self.mod.genes_in_unique_biclusters(unique_biclusters, related_biclusters_and_genes_for_each_input_gene)
+        genes_in_unique_biclusters_not_in_input_gene_list = \
+            self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
+
+        # need to convert the raw Ensembl ID's to CURIES
+        genes_in_unique_biclusters_not_in_input_gene_list = \
+            fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix='ENSEMBL')
+
+        sorted_list_of_output_genes = \
+            self.mod.sorted_list_of_output_genes(genes_in_unique_biclusters_not_in_input_gene_list)
+
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes, columns=["score", "hit_id"])
 
 

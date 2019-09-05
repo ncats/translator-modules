@@ -23,7 +23,21 @@ base_phenotype_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_hpo/'
 
 class BiclusterByPhenotypeToDisease():
     def __init__(self):
-        pass
+        self.meta = {
+            'source': 'RNAseqDB Biclustering',
+            'association': 'disease to phenotypic feature association',
+            'input_type': {
+                'complexity': 'set',
+                'data_type': 'phenotypic feature',
+                'id_type': 'HP'
+            },
+            'relationship': 'has_phenotype',
+            'output_type': {
+                'complexity': 'single',
+                'data_type': 'disease',
+                'id_type': 'MONDO',
+            },
+        }
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -61,7 +75,8 @@ class BiclusterByPhenotypeToDisease():
                 for x in response_json:
                     disease = x['mondo_list'].split('__')
                     for y in disease:
-                        all_diseases.append(y)
+                        mondo_id = y.split('.')
+                        all_diseases.append('MONDO:'+mondo_id[1])
             disease_counted = Counter(all_diseases)
         return disease_counted.most_common()
 
@@ -69,7 +84,9 @@ class BiclusterByPhenotypeToDisease():
 class PhenotypeToDiseaseBiclusters(Payload):
 
     def __init__(self, input_phenotypes):
-        self.mod = BiclusterByPhenotypeToDisease()
+
+        super(PhenotypeToDiseaseBiclusters, self).__init__(BiclusterByPhenotypeToDisease())
+
         input_obj, extension = self.handle_input_or_input_location(input_phenotypes)
 
         input_phenotype_ids: list

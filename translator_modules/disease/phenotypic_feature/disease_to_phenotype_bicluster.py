@@ -16,7 +16,21 @@ base_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list
 
 class BiclusterByDiseaseToPhenotype():
     def __init__(self):
-        pass
+        self.meta = {
+            'source': 'RNAseqDB Biclustering',
+            'association': 'disease to phenotypic feature association',
+            'input_type': {
+                'complexity': 'single',
+                'data_type': 'disease',
+                'id_type': 'MONDO',
+            },
+            'relationship': 'has_phenotype',
+            'output_type': {
+                'complexity': 'set',
+                'data_type': 'phenotypic feature',
+                'id_type': 'HP'
+            },
+        }
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -61,7 +75,8 @@ class BiclusterByDiseaseToPhenotype():
 class DiseaseToPhenotypeBiclusters(Payload):
 
     def __init__(self, input_diseases):
-        self.mod = BiclusterByDiseaseToPhenotype()
+
+        super(DiseaseToPhenotypeBiclusters, self).__init__(BiclusterByDiseaseToPhenotype())
 
         input_obj, extension = self.handle_input_or_input_location(input_diseases)
 
@@ -84,8 +99,6 @@ class DiseaseToPhenotypeBiclusters(Payload):
         most_common_phenotype = asyncio.run(self.mod.disease_to_phenotype_biclusters_async(input_disease_ids))
         self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
 
-        if self.results is not None:
-            print(self.results.to_json())
 
 if __name__ == '__main__':
     fire.Fire(DiseaseToPhenotypeBiclusters)

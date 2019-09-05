@@ -13,24 +13,24 @@ from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload
 
 
-class GeneInteractions(object):
+class GeneInteractions:
 
     def __init__(self):
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.meta = {
+            'source': 'Monarch Biolink',
+            'association': 'gene to gene association',
             'input_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
+            'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
-
-            'source': 'Monarch Biolink',
-            'predicate': ['blm:interacts with']
         }
 
     def metadata(self):
@@ -86,11 +86,19 @@ class GeneInteractions(object):
 
 class GeneInteractionSet(Payload):
     def __init__(self, input_genes, threshold=12):
+
         super(GeneInteractionSet, self).__init__(GeneInteractions())
+
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        if "json" in extension:
+        if extension == "csv":
+            input_gene_set = pd.read_csv(input_genes, orient='records')
+        elif extension == "json":
+            # assuming it's JSON and it's a record list
             input_gene_set = pd.read_json(input_genes, orient='records')
+        elif extension is None:
+            pass
+
         # TODO: add schema check
 
         self.results = self.mod.get_interactions(input_gene_set, threshold)

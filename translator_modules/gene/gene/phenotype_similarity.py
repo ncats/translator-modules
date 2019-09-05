@@ -8,7 +8,7 @@ import pandas as pd
 from biothings_client import get_client
 
 from translator_modules.core.generic_similarity import GenericSimilarity
-from translator_modules.core.module_payload import Payload
+from translator_modules.core.module_payload import Payload, get_input_gene_set
 
 
 class PhenotypeSimilarity(GenericSimilarity):
@@ -22,20 +22,19 @@ class PhenotypeSimilarity(GenericSimilarity):
         if self.taxon == 'human':
             self.ont = 'hp'
         self.meta = {
+            'source': 'Monarch Biolink',
+            'association': 'gene to phenotypic feature',
             'input_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
+            'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
                 'id_type': 'HGNC',
                 'data_type': 'gene',
             },
-
-            'source': 'Monarch Biolink',
-            'association': '',
-            'predicate': 'has phenotype'
         }
 
         # Load the associated Biolink (Monarch)
@@ -106,17 +105,12 @@ class PhenotypeSimilarity(GenericSimilarity):
 class PhenotypicallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold):
+
         super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
+
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        if "json" in extension:
-            # assuming it's JSON and it's a record list
-            input_gene_set = pd.read_json(input_genes, orient='records')
-        elif extension is None:  # TODO: this was written for the sharpener. maybe more generic if we get biolink model adherence
-            gene_ids = [gene.gene_id for gene in input_genes]
-            symbols = [attribute.value for gene in input_genes for attribute in gene.attributes if attribute.name == 'gene_symbol']
-            genes = {"hit_id": gene_ids, "hit_symbol": symbols}
-            input_gene_set = pd.DataFrame(data=genes)
+        input_gene_set = get_input_gene_set(input_genes, extension)
 
         self.results = self.mod.compute_similarity(input_gene_set, threshold)
 

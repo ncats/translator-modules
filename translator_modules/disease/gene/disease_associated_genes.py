@@ -18,11 +18,14 @@ class LookUp(object):
         self.mg = get_client('gene')
         self.input_object = ''
         self.meta = {
+            'source': 'Monarch Biolink',
+            'association': 'gene to disease association',
             'input_type': {
                 'complexity': 'single',
                 'data_type': 'disease',
-                'id_type': ['MONDO', 'DO', 'OMIM'],
+                'id_type': 'MONDO',
             },
+            'relationship': 'gene_associated_with_condition',
             'output_type': {
                 'complexity': 'set',
                 'data_type': 'gene',
@@ -30,9 +33,6 @@ class LookUp(object):
             },
             'taxon': 'human',
             'limit': None,
-            'source': 'Monarch Biolink',
-            'association': '',
-            'relationship': 'gene_associated_with_condition'
         }
 
     def metadata(self):
@@ -76,6 +76,7 @@ class DiseaseAssociatedGeneSet(Payload):
     """
 
     def __init__(self, disease_id):
+
         super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
 
         # get genes associated with disease from Biolink

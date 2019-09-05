@@ -3,16 +3,35 @@ import concurrent.futures
 import urllib.request
 from collections import defaultdict
 
+
+import fire
+import pandas as pd
 import requests
+
+from translator_modules.core.module_payload import Payload
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
 related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
 
-class CooccurrenceByBicluster():
+class BiclusterByTissueToTissue():
     def __init__(self):
-        pass
+        self.meta = {
+            'source': 'RNAseqDB Biclustering',
+            'association': 'anatomical entity to anatomical entity association',
+            'input_type': {
+                'complexity': 'set',
+                'id_type': 'UBERON',
+                'data_type': 'anatomical entity',
+            },
+            'relationship': 'related_to',
+            'output_type': {
+                'complexity': 'set',
+                'id_type': 'UBERON',
+                'data_type': 'anatomical entity',
+            },
+        }
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -58,7 +77,7 @@ class CooccurrenceByBicluster():
             related_biclusters_and_genes_for_each_input_gene[gene] = dict(cooccurrence_dict_each_gene)
         return related_biclusters_and_genes_for_each_input_gene
 
-    async def gene_to_gene_biclusters_async(self, curated_ID_list):
+    async def tissue_to_tissue_biclusters_async(self, curated_ID_list):
         bicluster_url_list = [bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in curated_ID_list]
         length_bicluster_url_list = len(bicluster_url_list)
         with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor_1:
@@ -168,3 +187,37 @@ class CooccurrenceByBicluster():
                     else:
                         dict_of_ids_in_unique_biclusters_not_in_inputs[ID] += 1
         return dict_of_ids_in_unique_biclusters_not_in_inputs
+
+class TissueToTissueBicluster(Payload):
+
+    def __init__(self, input_tissues):
+        self.mod = BiclusterByTissueToTissue()
+        input_obj, extension = self.handle_input_or_input_location(input_tissues)
+
+        input_tissue_ids: list
+        # NB: push this out to the handle_input_or_input_location function?
+        if extension == "csv":
+            import csv
+            with open(input_tissues) as genes:
+                input_reader = csv.DictReader(genes)
+                input_tissue_ids = list(set([row['input_id'] for row in input_reader]))
+        elif extension == "json":
+            import json
+            with open(input_tissues) as genes:
+                input_json = json.loads(genes)
+                # assume records format
+                input_tissue_ids = [record["hit_id"] for record in input_json]
+        elif extension is None:
+            if isinstance(input_obj, str):
+                # Assume a comma delimited list of input identifiers?
+                input_tissue_ids = input_obj.split(',')
+            else:
+                # Assume that an iterable Tuple or equivalent is given here
+                input_tissue_ids = input_obj
+
+        most_common_tissues = asyncio.run(self.mod.tissue_to_tissue_biclusters_async(input_tissue_ids))
+        self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
+
+
+if __name__ == '__main__':
+    fire.Fire(TissueToTissueBicluster)

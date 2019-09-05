@@ -8,6 +8,10 @@ from translator_modules.core.module_payload import Payload
 
 
 class TranslateIDs(Payload):
+    """
+    This class handles identifier conversions. Note that, for now, the 'translations' catalog and the 'input_ids'
+    need to have matching identifier formatting, in particular, with respect to xmlns (curie) prefixes.
+    """
 
     def convertIDs(self, input_ids, translations):
         translation_dict = dict(translations)

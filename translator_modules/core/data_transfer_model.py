@@ -93,7 +93,7 @@ class Identifier(BaseModel):
     object_id: str
     name: str = ''
     symbol: str = ''
-    version: str = '1'
+    version: str = ''
     timestamp: str = timestamp()
 
     # We might validate the xmlns against registered ones in the future.
@@ -104,16 +104,24 @@ class Identifier(BaseModel):
     #        raise RuntimeError("Identifier.xmlns must be specified as an instance of rdflib.Namespace!")
 
     def curie(self) -> str:
-        return self.xmlns+":"+self.object_id
+        curie = self.xmlns + ":" + self.object_id
+        if self.version:
+            curie = curie + "." + self.version
+        return curie
 
-    @classmethod # returns an instance of Identifier constructed from a CURIE
-    def parse(cls, curie, name='', symbol='', version='1'):
+    @classmethod  # returns an instance of Identifier constructed from a CURIE
+    def parse(cls, curie, name='', symbol='', version=''):
         part = curie.split(':', 1)
-        if len(part) < 2 :
-            raise RuntimeError("String '"+curie+"' is not a CURIE?")
+        if len(part) < 2:
+            raise RuntimeError("String '" + curie + "' is not a CURIE?")
         xmlns = part[0]
-        object_id = part[1]
+        identifier = part[1].split('.', 1)  # split out optional 'dot' delimited version number
+        object_id = identifier[0]
+        if len(identifier) == 2:
+            version = identifier[1]
+
         return Identifier(xmlns, object_id, name=name, symbol=symbol, version=version)
+
 
 @dataclass(frozen=True)
 class ConceptSpace(BaseModel):
@@ -121,12 +129,13 @@ class ConceptSpace(BaseModel):
     A ConceptSpace tracks namespace (xmlns prefixes) and associated concept category of
     about a given set of Concept identifiers and types
     """
-    category: str   # should be Biolink Model registered category
+    category: str  # should be Biolink Model registered category
     namespace: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
 
     def __post_init__(self):
         # Can the namespaces and category be validated here as Biolink Model compliant?
         pass
+
 
 @dataclass(frozen=True)
 class Concept(BaseModel):
@@ -159,7 +168,7 @@ class Concept(BaseModel):
     """
     primary_id: Identifier
     identifiers: List[Identifier] = field(default_factory=list)
-    attributes:  List[Attribute]  = field(default_factory=list)
+    attributes: List[Attribute] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -197,8 +206,8 @@ class Result(BaseModel):
           - output_id
           - score
     """
-    input_id:  str   # should be a CURIE
-    output_id: str   # should be a CURIE
+    input_id: str  # should be a CURIE
+    output_id: str  # should be a CURIE
     score: str = ''
     attributes: List[Attribute] = field(default_factory=list)
 
@@ -262,15 +271,15 @@ class ResultList(BaseModel):
           - concepts
           - results
     """
-    source:  str = ''
+    source: str = ''
     domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
-    association:  str = Association.class_name
-    relationship: str = "related_to" # should correspond with a Biolink Model minimal predicate ("relationship type")
-    range:  ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
+    association: str = Association.class_name
+    relationship: str = "related_to"  # should correspond with a Biolink Model minimal predicate ("relationship type")
+    range: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
     identifiers: List[Identifier] = field(default_factory=list)
     attributes: List[Attribute] = field(default_factory=list)
     concepts: List[Concept] = field(default_factory=list)
-    results:  List[Result] = field(default_factory=list)
+    results: List[Result] = field(default_factory=list)
 
     list_number: ClassVar[List[int]] = [0]
 
@@ -281,11 +290,11 @@ class ResultList(BaseModel):
         self.list_number[0] += 1  # maybe a UUID later?
         object_id = str(self.list_number[0])
         self.identifiers.append(
-                Identifier(
-                    xmlns='NCATS',
-                    object_id=object_id,
-                    name='ResultList '+object_id
-                )
+            Identifier(
+                xmlns='NCATS',
+                object_id=object_id,
+                name='ResultList ' + object_id
+            )
         )
 
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
@@ -341,6 +350,7 @@ class ResultList(BaseModel):
             relationship=python_obj['relationship'],
             range=parse_concept_space(python_obj['range'])
         )
+
         def parse_identifier(i_obj):
             return Identifier(
                 xmlns=i_obj['xmlns'],
@@ -396,8 +406,8 @@ class ResultList(BaseModel):
         input_type = meta['input_type']
         input_type['id_type'] = \
             input_type['id_type'] \
-            if isinstance(input_type['id_type'], list) \
-            else [input_type['id_type']]
+                if isinstance(input_type['id_type'], list) \
+                else [input_type['id_type']]
 
         domain = ConceptSpace(
             category=input_type['data_type'],
@@ -411,8 +421,8 @@ class ResultList(BaseModel):
             else [output_type['id_type']]
 
         range = ConceptSpace(
-                category=output_type['data_type'],
-                namespace=output_type['id_type']
+            category=output_type['data_type'],
+            namespace=output_type['id_type']
         )
 
         # Load the resulting Python object into a ResultList instance
@@ -425,24 +435,61 @@ class ResultList(BaseModel):
         )
 
         # Convert all the records from the DataFrame into ResultList recorded data
+        concepts = {}
         for entry in data_frame.to_dict(orient='records'):
+
             # Initial iteration: assume a simple Pandas DataFrame with columns
             # 'input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score'
-            input_id = Identifier.parse(entry['input_id'], entry['input_symbol'])
-            output_id = Identifier.parse(entry['hit_id'], entry['hit_symbol'])
+
+            if entry['hit_id'] == 'NONE':
+                # null entry, for some reason? not meaningful? Ignore?
+                continue
+
+            # Second iteration: assume that input_symbol mappings
+            # may be missing in the output of some algorithms, i.e. biclustering?
+            input_id = None
+            if 'input_id' in entry:
+                input_id = Identifier.parse(
+                    entry['input_id'],
+                    symbol=entry['input_symbol'] if 'input_symbol' in entry else ''
+                )
+            output_id = Identifier.parse(
+                entry['hit_id'],
+                symbol=entry['hit_symbol'] if 'hit_symbol' in entry else ''
+            )
 
             score = entry.get('score', '.')
 
             # Here, you make sure that the identified Concepts are recorded already
-            #rl.concepts.append(Concept(input_id))
-            #rl.concepts.append(Concept(output_id))
+            if input_id:
+                curie = input_id.curie()
+                if curie not in concepts:
+                    concepts[curie] = input_id
+
+            curie = output_id.curie()
+            if curie not in concepts:
+                concepts[curie] = output_id
 
             # ... then append the results to the results list
-            r = Result(input_id, output_id, score)
+            r = Result(
+                input_id.curie() if input_id else '',  # input_id may be unmapped in some situations
+                output_id.curie(), score
+            )
             rl.results.append(r)
 
-            # Add any additional DataFrame columns as Attributes (how??)
-            # attributes: List[Attribute] = field(default_factory=list)
+            # Collect other fields as attributes
+            for (key, value) in entry.items():
+
+                # Ignore core data columns...
+                if key in ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score']:
+                    continue
+
+                # ...capture the rest as attributes for a given Result
+                r.attributes.append(Attribute(key, value))
+
+        # compile the list of Concepts seen
+        for curie in concepts.keys():
+            rl.concepts.append(Concept(concepts[curie]))
 
         return rl
 
@@ -451,4 +498,40 @@ class ResultList(BaseModel):
         Convert this ResultList into a Pandas DataFrame
         :return: a Python Pandas DataFrame representation of (most of) the data in a given ResultList
         """
-        return pd.DataFrame()
+        curie_map = {}
+        for concept in self.concepts:
+            curie_map[concept.primary_id.curie()] = concept
+
+        input_ids = []
+        input_symbols = []
+        hit_ids = []
+        hit_symbols = []
+        scores = []
+
+        def _map_ids(id, curies, symbols):
+            if id in curie_map:
+                c = curie_map[id]
+                cid = c.primary_id
+                curies.append(cid.curie())
+                symbols.append(cid.symbol)
+            else:
+                curies.append('')
+                symbols.append('')
+
+        for result in self.results:
+            _map_ids(result.input_id, input_ids, input_symbols)
+            _map_ids(result.output_id, hit_ids, hit_symbols)
+            scores.append(result.score)
+
+        # First iteration doesn't consider Result.attributes.. how can we load these?
+        entries = {
+            "input_id": input_ids,
+            "input_symbol": input_symbols,
+            "hit_id": hit_ids,
+            "hit_symbol": hit_symbols,
+            "score": scores
+        }
+
+        df = pd.DataFrame(data=entries)
+
+        return df
