@@ -40,7 +40,7 @@ class LookUp(object):
         print("""Mod O DiseaseGeneLookup metadata:""")
         pprint(self.meta)
 
-    def disease_geneset_lookup(self, disease_id):
+    def disease_geneset_lookup(self, disease_id, query_biolink=True):
         # TODO: does this get faster if we specify the API type
         disease_label = self.blw.get_obj(disease_id)["label"]
         disease_gene_association_results = self.blw.disease2genes(disease_id)
@@ -48,9 +48,10 @@ class LookUp(object):
                           disease_gene_association_results['associations']]
 
         for input_gene in input_gene_set:
-            igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
-                                     fields='entrez,HGNC,symbol')
-            input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
+            if query_biolink:
+                igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
+                                         fields='entrez,HGNC,symbol')
+                input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
         input_genes_df = pd.DataFrame(data=input_gene_set)
         if not input_genes_df.empty:
             # group duplicate ids and gather sources
@@ -62,12 +63,12 @@ class LookUp(object):
 
 class DiseaseAssociatedGeneSet(Payload):
 
-    def __init__(self, disease_id):
+    def __init__(self, disease_id, query_biolink=True):
 
         super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
 
         # get genes associated with disease from Biolink
-        self.results = self.mod.disease_geneset_lookup(disease_id)
+        self.results = self.mod.disease_geneset_lookup(disease_id, query_biolink)
         if not self.results.empty:
             self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
         else:

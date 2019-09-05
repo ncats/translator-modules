@@ -97,7 +97,8 @@ class PhenotypeSimilarity(GenericSimilarity):
                 if gene['sim_input_curie'] == result['input_id']:
                     result['input_symbol'] = gene['input_symbol']
 
-        results = GenericSimilarity.sort_results(input_gene_set, results)
+        if len(results) > 0:
+            results = GenericSimilarity.sort_results(input_gene_set, results)
 
         return results
 
