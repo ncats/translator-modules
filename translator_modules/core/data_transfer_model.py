@@ -446,7 +446,11 @@ class ResultList(BaseModel):
 
         # Load the resulting Python object into a ResultList instance
         result_list_name = \
-            meta['source']+' '+input_type['category']+' '+meta['relationship']+' '+output_type['category']
+            meta['source']+' '+\
+            input_type['category']+' '+\
+            str(meta['relationship']).replace('_',' ')+' '+\
+            output_type['category']
+
         rl = ResultList(
             result_list_name=result_list_name,
             source=meta['source'],
