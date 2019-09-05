@@ -149,3 +149,7 @@ class TestResultList(TestCase):
         rl_json = rl_out.to_json()
         rl_in = ResultList.load(rl_json)
         print("\n\nReloaded ResultList JSON: \n", rl_in.to_json())
+
+        print("\n\nDataFrame conversion?\n")
+        df = rl_in.export_data_frame()
+        print("\n"+df.to_json())

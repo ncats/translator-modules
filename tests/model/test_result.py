@@ -1,13 +1,15 @@
 from unittest import TestCase
 
-from tests.model.test_identifier import mock_identifier_xmlns, mock_identifier_object_id, mock_identifier_xmlns_2, \
-    mock_identifier_object_id_2
+from tests.model.test_identifier \
+    import mock_identifier_xmlns, mock_identifier_object_id, mock_identifier_version, \
+    mock_identifier_xmlns_2, mock_identifier_object_id_2, mock_identifier_version_2
 from translator_modules.core.data_transfer_model import Result
 from .test_attribute import mock_attribute
 
-mock_result_input_id  = mock_identifier_xmlns+":"+mock_identifier_object_id
-mock_result_output_id = mock_identifier_xmlns_2+":"+mock_identifier_object_id_2
+mock_result_input_id = mock_identifier_xmlns+":"+mock_identifier_object_id+'.'+mock_identifier_version
+mock_result_output_id = mock_identifier_xmlns_2+":"+mock_identifier_object_id_2+'.'+mock_identifier_version_2
 mock_result_score = '0.00001'
+
 
 def mock_result(
         input_id=mock_result_input_id,
