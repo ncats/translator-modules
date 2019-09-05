@@ -27,9 +27,21 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
 
     if extension == "csv":
         input_gene_set = pd.read_csv(input_genes, orient='records')
+
     elif extension == "json":
-        # assuming it's JSON and it's a record list
+
+        # assuming it's Pandas DataFrame compliant JSON and it's a record list
         input_gene_set = pd.read_json(input_genes, orient='records')
+
+    elif extension == "ncats":
+
+        # assuming it's NCATS ResultList compliant JSON
+        input_result_list = ResultList.load(input_genes)
+
+        # I coerce the ResultList internally into a Pandas DataFrame
+        # Perhaps we'll remove this intermediate step sometime in the future
+        input_gene_set = input_result_list.export_data_frame()
+
     elif extension is None:
         # TODO: this was written for the sharpener. maybe more generic if we get Biolink Model adherence
         # TODO: rewrite into schema check
