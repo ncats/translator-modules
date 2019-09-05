@@ -53,7 +53,7 @@ class TestIdentifier(TestCase):
         i = mock_identifier()
         self.assertEqual(
             i.curie(),
-            mock_identifier_xmlns+":"+mock_identifier_object_id,
+            mock_identifier_xmlns+':'+mock_identifier_object_id+'.'+mock_identifier_version,
             "Identifier CURIE is properly constructed"
         )
 
