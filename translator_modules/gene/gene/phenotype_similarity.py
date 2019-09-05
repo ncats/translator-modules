@@ -23,7 +23,7 @@ class PhenotypeSimilarity(GenericSimilarity):
             self.ont = 'hp'
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': 'gene to phenotypic feature',
+            'association': 'gene to phenotypic feature association',
             'input_type': {
                 'complexity': 'set',
                 'category': 'gene',
