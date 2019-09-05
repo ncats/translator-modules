@@ -43,17 +43,25 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
         input_gene_set = input_result_list.export_data_frame()
 
     elif extension is None:
-        # TODO: this was written for the sharpener. maybe more generic if we get Biolink Model adherence
+        # TODO: this was written for the sharpener. maybe
+        # more generic if we get Biolink Model adherence
         gene_ids = []
         symbols = []
-        for gene in input_genes:
-            symbol = None
-            for attribute in gene.attributes:
-                if attribute.name == 'gene_symbol':
-                    symbol = attribute.value
-            if symbol is not None:
-                gene_ids.append(gene.gene_id)
-                symbols.append(symbol)
+        if isinstance(input_genes, str):
+            # simple list of curies?
+            input_genes = input_genes.split(',')
+            for gene in input_genes:
+                gene_ids.append(gene)
+                symbols.append('') # symbol unknown for now?
+        else: # assume iterable
+            for gene in input_genes:
+                symbol = None
+                for attribute in gene.attributes:
+                    if attribute.name == 'gene_symbol':
+                        symbol = attribute.value
+                if symbol is not None:
+                    gene_ids.append(gene.gene_id)
+                    symbols.append(symbol)
         genes = {"hit_id": gene_ids, "hit_symbol": symbols}
         input_gene_set = pd.DataFrame(data=genes)
 
