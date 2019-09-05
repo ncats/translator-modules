@@ -12,4 +12,4 @@ inputs:
 outputs:
   disease_list:
     type: stdout
-stdout: disease_associated_genes.ncats
+stdout: disease_associated_genes.json

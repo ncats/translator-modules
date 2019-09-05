@@ -18,4 +18,4 @@ inputs:
 outputs:
   functionally_similar_genes:
     type: stdout
-stdout: functional_similarity.ncats
+stdout: functional_similarity.json
