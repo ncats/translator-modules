@@ -1,7 +1,51 @@
+import os.path
 from abc import ABC
 from urllib.parse import urlparse
+from collections import defaultdict
+
+import pandas as pd
 import requests
-import os.path
+
+from translator_modules.core.data_transfer_model import ResultList
+
+
+def fix_curies(raw_list, prefix=''):
+    """
+    Adds a suitable XMLNS prefix to identifiers known to
+    be "raw" IDs assumed to be in the leading item in a tuple
+    :param id_list:
+    :param prefix:
+    :return:
+    """
+    curie_list = defaultdict(dict)
+    for key in raw_list.keys():
+        curie_list[prefix+':'+key] = raw_list[key]
+    return curie_list
+
+
+def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
+
+    if extension == "csv":
+        input_gene_set = pd.read_csv(input_genes, orient='records')
+    elif extension == "json":
+        # assuming it's JSON and it's a record list
+        input_gene_set = pd.read_json(input_genes, orient='records')
+    elif extension is None:
+        # TODO: this was written for the sharpener. maybe more generic if we get Biolink Model adherence
+        gene_ids = []
+        symbols = []
+        for gene in input_genes:
+            symbol = None
+            for attribute in gene.attributes:
+                if attribute.name == 'gene_symbol':
+                    symbol = attribute.value
+            if symbol is not None:
+                gene_ids.append(gene.gene_id)
+                symbols.append(symbol)
+        genes = {"hit_id": gene_ids, "hit_symbol": symbols}
+        input_gene_set = pd.DataFrame(data=genes)
+
+    return input_gene_set
 
 
 class Payload(ABC):
@@ -28,9 +72,6 @@ class Payload(ABC):
         then returns the value of the input once it is extracted.
         """
 
-        payload_input: object
-        extension: str
-
         # https://stackoverflow.com/a/52455972
         def _is_url(url):
             try:
@@ -38,28 +79,44 @@ class Payload(ABC):
                 return all([result.scheme, result.netloc])
             except ValueError:
                 return False
+            except AttributeError:
+                return False
+
+        if not type(input_or_input_location) is str:
+            extension = None
+            return input_or_input_location, extension
 
         if type(input_or_input_location) is str and os.path.isfile(input_or_input_location):
             input_file = input_or_input_location
             extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
             with open(input_file) as stream:
                 payload_input = stream.read()
+                return payload_input, extension
+
         elif type(input_or_input_location) is str and _is_url(input_or_input_location):
             input_url = input_or_input_location
             path = urlparse(input_url).path
             extension = os.path.splitext(path)[1]
-
-            # print(input_url, extension)
-
             response = requests.get(input_url)
             response.raise_for_status()  # exception handling
             payload_input = response.text
+            return payload_input, extension
+
         else:
+            """
+            Raw input from command line processed directly?
+            """
             extension = None
-            maybe_a_good_value = input_or_input_location
-            payload_input = maybe_a_good_value
+            return input_or_input_location, extension
 
-        return payload_input, extension
-
-    def get_data_frame(self):
+    def get_data_frame(self) -> pd.DataFrame:
         return self.results
+
+    def get_result_list(self) -> ResultList:
+        """
+        Alternate form of output: convert module Pandas DataFrame data into a
+        NCATS Translator Module data transfer model Results in a ResultList instance.
+
+        :return: ResultList
+        """
+        return ResultList.import_data_frame(self.results, self.mod)

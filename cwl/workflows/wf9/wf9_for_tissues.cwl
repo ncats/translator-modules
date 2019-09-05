@@ -11,7 +11,7 @@ outputs:
     outputSource: tissueToGeneBicluster/tissue_to_gene_bicluster_list
 steps:
   tissueToGeneBicluster:
-    run: tissueToGeneBicluster.cwl
+    run: tissue_to_gene_bicluster.cwl
     in:
       input_tissues: input_tissues
     out: [ tissue_to_gene_bicluster_list ]

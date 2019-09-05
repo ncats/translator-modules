@@ -40,6 +40,9 @@ python -m pip install cwltool
 ```
 
 * Finally, follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). 
+Note in particular the general need to put the modules on your path (if you don't set this up automatically
+for all your shell sessions, you'll need to set the PATH up for each new terminal session within which you
+wish to run the CWL workflows)
 
 ### Running the CWL Workflow
 
@@ -49,7 +52,7 @@ You can run a CWL workflow constructed to implement the NCATS Translator Workflo
 In the project directory, run
 
 ```bash
-cwltool cwl/workflows/wf2/wf2.cwl cwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/wf2/wf2.cwl test/data/fanconi.yaml
 ```
 
 A series of JSON files marked "module*.records.json" will contain the output of the run.
@@ -65,10 +68,10 @@ Similarly, a CWL workflow can be run which executes (a portion of(*)) the NCATS 
 
 
 ```bash
-cwltool cwl/workflows/wf9/wf9_for_genes.cwl cwl/data/inputs/bicluster_input_genes.yaml
+cwltool cwl/workflows/wf9/wf9_for_genes.cwl test/data/bicluster/yaml/input_genes.yaml
 ```
 
-Result files *geneToGeneBicluster.records.json* and *geneToGeneBicluster.records.json* will be outputted.
+Result files *gene_to_gene_bicluster.records.json* and *gene_to_tissue_bicluster.records.json* will be outputted.
 
 Similar additional workflow 9 CWL scripts are alongside this one, which take tissue, phenotype and disease identifiers, 
 taking analogous input (YAML) files and outputting analogous (JSON) result files.
@@ -161,8 +164,13 @@ brew install findutils
 
 ```
 
-then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shells script
-_~/scripts/set_macosx_path.sh_ to help you. *Note:* you may need to run this script afresh in every new terminal 
+then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shell script
+which you can use to set the environment using the bash 'source' command, as follows:
+
+```bash
+source scripts/set_macosx_path.sh
+```
+to help you. *Note:* you may need to run this script afresh in every new terminal 
 session unless you add it into your shell login profile).
 
 Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run 
@@ -173,18 +181,21 @@ them, like so.
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module0.py, get-data-frame, to-json ]
+baseCommand: [ disease_associated_genes.py, get-data-frame, to-json ]
 ```
 
 ## Running a CWL tool
 
+### CWL File
+
 CWL tools are not scripts, but blueprints for running scripts. They let users clarify beforehand the kinds of data they 
-should expected for a script: names for the data, their types and formats, and what arguments they satisfy. Let's take a simple example:
+should expected for a script: names for the data, their types and formats, and what arguments they satisfy. 
+Let's take a simple example:
 
 ```yaml
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ module0.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ disease_associated_genes.py, get-data-frame, to-json, --orient, records ]
 inputs:
   disease_name:
     type: string
@@ -197,17 +208,20 @@ inputs:
 outputs:
   disease_list:
     type: stdout
-stdout: module0.records.json
+stdout: disease_associated_genes.records.json
 ```
 
-This is `cwl/workflows/module0.cwl` wrapping `translator_modules/module0.py`. All CWL tools for Translator Modules share this
-structure. We will run `module0.py` with inputs given by `disease_name` and `disease_id`, corresponding to the flags 
+This is `cwl/workflows/disease_associated_genes.cwl` wrapping `translator_modules/disease_associated_genes.py`. All CWL tools for Translator Modules share this
+structure. We will run `disease_associated_genes.py` with inputs given by `disease_name` and `disease_id`, corresponding to the flags 
 `--input-disease-name`, and `--input-disease-mondo`, which are the names of variables inside the module. 
-The tokens `get-data-frame to-json --orient records` make `module0.py` return a list of JSON records; see 
+The tokens `get-data-frame to-json --orient records` make `disease_associated_genes.py` return a list of JSON records; see 
 [exposing your module to the command line](#exposing-your-module-to-the-command-line) for details.
 
+### Data File
+
 If CWL is a blueprint, what makes it real? Inputs to CWL tools are YAML files that share the same keywords as the tool's
-inputs. For `module0.cwl`, this means we want a YAML file with `disease_name` and `diease_id`, like in `cwl/data/inputs/fanconi.yaml`:
+inputs. For `disease_associated_genes.cwl`, this means we want a YAML file with `disease_name` and `disease_id`, 
+like in `test/data/fanconi.yaml`:
 
 ```yaml
 disease_name: "FA"
@@ -222,13 +236,13 @@ cwltool <translator cwl tool> <file with keywords matching the tool's inputs>
 And taken together, it means that this UNIX command:
 
 ```bash
-module0.py --inputs-disease-name "FA" --input-disease-mondo "MONDO:0019391" get-data-frame to-json --orient records
+disease_associated_genes.py --inputs-disease-name "FA" --input-disease-mondo "MONDO:0019391" get-data-frame to-json --orient records
 ```
 
 Is *equivalent to* **this CWL tool running Translator Module 0:**
 
 ```bash
-cwltool cwl/workflows/module0.cwl cwl/data/inputs/fanconi.yaml
+cwltool cwl/workflows/disease_associated_genes.cwl test/data/fanconi.yaml
 ```
 
 ## Writing a CWL tool for an existing module
@@ -337,7 +351,7 @@ SMEs and application developers.
 
 #### Why Python Fire?
 
-Fire makes it simple to expose any Python class to the command-line, in only **three lines of code**. This means it is easy for
+Fire makes it simple to expose any Python class to the command-line, in only **two lines of code**. This means it is easy for
 maintainers to add command-line functionality to modules, and it's easy to delete Fire if we change our minds about the approach.
 
 It does have limitations: complex arguments (like mutually exclusive yet simultaneously required arguments) are not supported.
@@ -410,14 +424,14 @@ outputs:
     outputSource: functional_similarity/functionally_similar_genes
 steps:
   diseases:
-    run: module0.cwl
+    run: disease_associated_genes.cwl
     in:
       disease_name: disease_name
       disease_id: disease_id
     out: [ disease_list ]
 
   functional_similarity:
-    run: module1a.cwl
+    run: functional_similarity.cwl
     in:
       input_genes: diseases/disease_list
       threshold: threshold
@@ -427,7 +441,7 @@ steps:
 It is like creating a large CWL tool out of smaller ones. Like in a simple CWL tool, you need `inputs` and `outputs` to 
 be specified. Multiple tools are used together by linking the outputs of one tool, into the inputs of another.
 
-For instance, the tool `diseases` runs `module0.cwl`, that outputs a `disease_list`, which we address specifically in the 
+For instance, the tool `diseases` runs `disease_associated_genes.cwl`, that outputs a `disease_list`, which we address specifically in the 
 property `out`.  We place `disease_list` into `functional_similarity`'s inputs by referencing what it is and where it came 
 from, `diseases/disease_list`, and placing it as the value of the relevant input, `input_genes`.
 
@@ -454,7 +468,7 @@ threshold: 0.35
 ... are both valid input files.
 
 Note that the order in which modules are run, depends solely on when one tool has finished computing the required data 
-for another. Thus `module1a.cwl` runs after `module0.cwl` because of `diseases/disease_list` being referenced as an input.
+for another. Thus `module1a.cwl` runs after `disease_associated_genes.cwl` because of `diseases/disease_list` being referenced as an input.
 
 Also note that there can be multiple outputs: you don't need to generally receive the results of one script, but can list
 out the results of each script if necessary.

@@ -1,4 +1,0 @@
-disease_id: "MONDO:0019391"
-threshold_functional_similarity: 0.75
-threshold_phenotype_similarity: 0.10
-threshold_gene_interaction: 12

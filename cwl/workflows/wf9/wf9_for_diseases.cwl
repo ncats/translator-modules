@@ -11,7 +11,7 @@ outputs:
     outputSource: diseaseToPhenotypeBicluster/disease_to_phenotype_bicluster_list
 steps:
   diseaseToPhenotypeBicluster:
-    run: diseaseToPhenotypeBicluster.cwl
+    run: disease_to_phenotype_bicluster.cwl
     in:
       input_diseases: input_diseases
     out: [ disease_to_phenotype_bicluster_list ]
