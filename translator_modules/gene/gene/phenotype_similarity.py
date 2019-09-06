@@ -7,6 +7,8 @@ import fire
 import pandas as pd
 from biothings_client import get_client
 
+from BioLink.model import GeneToPhenotypicFeatureAssociation, Gene
+
 from translator_modules.core.generic_similarity import GenericSimilarity
 from translator_modules.core.module_payload import Payload, get_input_gene_set
 
@@ -23,16 +25,16 @@ class PhenotypeSimilarity(GenericSimilarity):
             self.ont = 'hp'
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': 'gene to phenotypic feature association',
+            'association': GeneToPhenotypicFeatureAssociation.class_name,
             'input_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'HGNC',
             },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'HGNC',
             },
         }
@@ -46,9 +48,9 @@ class PhenotypeSimilarity(GenericSimilarity):
         pprint(self.meta)
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
-    def load_gene_set(self, gene_records):
+    def load_gene_set(self, input_gene_set):
         annotated_gene_set = []
-        for gene in gene_records.to_dict(orient='records'):
+        for gene in input_gene_set.to_dict(orient='records'):
             gene_curie = ''
             sim_input_curie = ''
             symbol = ''
@@ -88,6 +90,7 @@ class PhenotypeSimilarity(GenericSimilarity):
     def compute_similarity(self, input_gene_set, threshold):
 
         annotated_input_gene_set = self.load_gene_set(input_gene_set)
+
         lower_bound = float(threshold)
 
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)

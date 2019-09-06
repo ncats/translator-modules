@@ -12,26 +12,28 @@ import pandas as pd
 import requests
 
 from translator_modules.core.module_payload import Payload, fix_curies
+from BioLink.model import GeneToGeneAssociation, Gene
+
+related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
-related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
 
 class BiclusterByGeneToGene():
     def __init__(self):
         self.meta = {
             'source': 'RNAseqDB Biclustering',
-            'association': 'gene to gene association',
+            'association': GeneToGeneAssociation.class_name,
             'input_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'ENSEMBL',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'ENSEMBL',
             },
         }

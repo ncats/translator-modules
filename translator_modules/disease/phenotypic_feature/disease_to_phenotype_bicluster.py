@@ -9,6 +9,8 @@ import fire
 import pandas as pd
 import requests
 
+from BioLink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
+
 from translator_modules.core.module_payload import Payload
 
 base_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list/'
@@ -18,16 +20,16 @@ class BiclusterByDiseaseToPhenotype():
     def __init__(self):
         self.meta = {
             'source': 'RNAseqDB Biclustering',
-            'association': 'disease to phenotypic feature association',
+            'association': DiseaseToPhenotypicFeatureAssociation.class_name,
             'input_type': {
                 'complexity': 'single',
-                'category': 'disease',
+                'category': Disease.class_name,
                 'mappings': 'MONDO',
             },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
-                'category': 'phenotypic feature',
+                'category': PhenotypicFeature.class_name,
                 'mappings': 'HP',
             },
         }

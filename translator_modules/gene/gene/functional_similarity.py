@@ -8,9 +8,11 @@ import fire
 
 from biothings_client import get_client
 
-from translator_modules.core.generic_similarity import GenericSimilarity
 from translator_modules.core.module_payload import Payload, get_input_gene_set
 
+from translator_modules.core.generic_similarity import GenericSimilarity
+
+from BioLink.model import FunctionalAssociation, Gene
 
 class FunctionalSimilarity(GenericSimilarity):
 
@@ -22,16 +24,16 @@ class FunctionalSimilarity(GenericSimilarity):
         self.ont = 'go'
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': 'functional association',
+            'association': FunctionalAssociation.class_name,
             'input_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'HGNC',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'HGNC',
             },
         }
@@ -45,9 +47,9 @@ class FunctionalSimilarity(GenericSimilarity):
         pprint(self.meta)
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
-    def load_gene_set(self, gene_records):
+    def load_gene_set(self, input_gene_set):
         annotated_gene_set = []
-        for gene in gene_records.to_dict(orient='records'):
+        for gene in input_gene_set.to_dict(orient='records'):
             mg = self.mg
             gene_curie = ''
             sim_input_curie = ''
@@ -82,6 +84,7 @@ class FunctionalSimilarity(GenericSimilarity):
     def compute_similarity(self, input_gene_set, threshold):
 
         annotated_input_gene_set = self.load_gene_set(input_gene_set)
+
         lower_bound = float(threshold)
 
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)

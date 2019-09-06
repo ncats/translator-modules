@@ -9,6 +9,8 @@ import pandas as pd
 # Workflow 2, Module 1E: Gene interactions
 from BioLink.biolink_client import BioLinkWrapper
 
+from BioLink.model import GeneToGeneAssociation, Gene
+
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload, get_input_gene_set
 
@@ -19,16 +21,16 @@ class GeneInteractions:
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': 'gene to gene association',
+            'association': GeneToGeneAssociation.class_name,
             'input_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'HGNC',
             },
             'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'HGNC',
             },
         }

@@ -67,8 +67,11 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
                 if symbol is not None:
                     gene_ids.append(gene.gene_id)
                     symbols.append(symbol)
+
         genes = {"hit_id": gene_ids, "hit_symbol": symbols}
         input_gene_set = pd.DataFrame(data=genes)
+    else:
+        raise RuntimeWarning("Unrecognized data file extension: '"+extension+"'?")
 
     return input_gene_set
 

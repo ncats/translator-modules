@@ -9,6 +9,8 @@ import fire
 import pandas as pd
 import requests
 
+from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+
 from translator_modules.core.module_payload import Payload
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
@@ -18,17 +20,17 @@ class BiclusterByGeneToTissue():
     def __init__(self):
         self.meta = {
             'source': 'RNAseqDB Biclustering',
-            'association': 'gene to expression site association',
+            'association': GeneToExpressionSiteAssociation.class_name,
             'input_type': {
                 'complexity': 'set',
                 'mappings': 'ENSEMBL',
-                'category': 'gene',
+                'category': Gene.class_name,
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
                 'mappings': ['MONDO', 'DOID', 'UBERON'],
-                'category': 'anatomical entity',
+                'category': AnatomicalEntity.class_name,
             },
         }
 

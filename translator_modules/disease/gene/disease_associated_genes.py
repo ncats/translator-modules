@@ -8,9 +8,10 @@ import pandas as pd
 from BioLink.biolink_client import BioLinkWrapper
 from biothings_client import get_client
 
+from BioLink.model import GeneToDiseaseAssociation, Gene, Disease
+
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload
-
 
 class LookUp(object):
 
@@ -20,16 +21,16 @@ class LookUp(object):
         self.input_object = ''
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': 'gene to disease association',
+            'association': GeneToDiseaseAssociation.class_name,
             'input_type': {
                 'complexity': 'single',
-                'category': 'disease',
+                'category': Disease.class_name,
                 'mappings': 'MONDO',
             },
             'relationship': 'gene_associated_with_condition',
             'output_type': {
                 'complexity': 'set',
-                'category': 'gene',
+                'category': Gene.class_name,
                 'mappings': 'HGNC'
             },
             'taxon': 'human',
