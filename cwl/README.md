@@ -71,10 +71,16 @@ Similarly, a CWL workflow can be run which executes (a portion of(*)) the NCATS 
 cwltool cwl/workflows/wf9/wf9_for_genes.cwl test/data/bicluster/yaml/input_genes.yaml
 ```
 
-Result files *gene_to_gene_bicluster.records.json* and *gene_to_tissue_bicluster.records.json* will be outputted.
+Result files **gene_to_gene_bicluster.records.json** and **gene_to_tissue_bicluster.records.json** will be outputted.
 
 Similar additional workflow 9 CWL scripts are alongside this one, which take tissue, phenotype and disease identifiers, 
 taking analogous input (YAML) files and outputting analogous (JSON) result files.
+
+## Alternate CWL Workflow Data Exchange Formats
+
+The **\*\_rl.cwl** files in the **result_list** subdirectories for each workflow are rewritten to use the 
+new **ResultList** JSON format (see core data_transfer_model.py); the cwl files in the core workflow subdirectories,
+lacking the **\_rl** infix, use the legacy **Pandas DataFrame** JSON for data sharing.
 
 # Full CWL Installation & Configuration
 

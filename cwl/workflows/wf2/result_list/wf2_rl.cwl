@@ -38,16 +38,16 @@ steps:
       threshold: threshold_functional_similarity
     out: [ functionally_similar_genes ]
 
-#  phenotype_similarity:
-#    run: phenotype_similarity.cwl
-#    in:
-#      input_genes: diseases/disease_list
-#      threshold: threshold_phenotype_similarity
-#    out: [ phenotypically_similar_genes ]
+  phenotype_similarity:
+    run: phenotype_similarity_rl.cwl
+    in:
+      input_genes: diseases/disease_list
+      threshold: threshold_phenotype_similarity
+    out: [ phenotypically_similar_genes ]
 
-#  gene_interactions:
-#     run: gene_interaction.cwl
-#     in:
-#       input_genes: diseases/disease_list
-#       threshold: threshold_gene_interaction
-#     out: [ interacting_genes ]
+  gene_interactions:
+     run: gene_interaction_rl.cwl
+     in:
+       input_genes: diseases/disease_list
+       threshold: threshold_gene_interaction
+     out: [ interacting_genes ]
