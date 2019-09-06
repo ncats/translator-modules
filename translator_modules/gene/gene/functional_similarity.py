@@ -14,6 +14,7 @@ from translator_modules.core.generic_similarity import GenericSimilarity
 
 from BioLink.model import FunctionalAssociation, Gene
 
+
 class FunctionalSimilarity(GenericSimilarity):
 
     def __init__(self, taxon):
