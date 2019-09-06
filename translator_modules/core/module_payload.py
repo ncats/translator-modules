@@ -57,7 +57,7 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
             input_genes = input_genes.split(',')
             for gene in input_genes:
                 gene_ids.append(gene)
-                symbols.append('') # symbol unknown for now?
+                symbols.append('')  # symbol unknown for now?
         else: # assume iterable
             for gene in input_genes:
                 symbol = None

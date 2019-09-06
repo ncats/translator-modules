@@ -90,8 +90,9 @@ class FunctionalSimilarity(GenericSimilarity):
             if self.taxon == 'human':
                 result['hit_id'] = self.symbol2hgnc(result['hit_symbol'])
             for gene in annotated_input_gene_set:
-                if gene['sim_input_curie'] != result['input_id']:
-                    result['input_id'] = self.symbol2hgnc(result['input_symbol'])
+                if result['input_symbol']: # not None or empty input_symbol?
+                    if gene['sim_input_curie'] != result['input_id']:
+                        result['input_id'] = self.symbol2hgnc(result['input_symbol'])
 
         results = GenericSimilarity.sort_results(input_gene_set, results)
 
