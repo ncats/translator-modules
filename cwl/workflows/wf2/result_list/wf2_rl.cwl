@@ -8,22 +8,22 @@ inputs:
     threshold_functional_similarity:
       type: float
       default: 0.75
-#    threshold_phenotype_similarity:
-#      type: float
-#      default: 0.10
-#    threshold_gene_interaction:
-#      type: int
-#      default: 12
+    threshold_phenotype_similarity:
+      type: float
+      default: 0.10
+    threshold_gene_interaction:
+      type: int
+      default: 12
 outputs:
   functionally_similar_genes:
     type: File
     outputSource: functional_similarity/functionally_similar_genes
-#  phenotypically_similar_genes:
-#    type: File
-#    outputSource: phenotype_similarity/phenotypically_similar_genes
-#  interacting_genes:
-#    type: File
-#    outputSource: gene_interactions/interacting_genes
+  phenotypically_similar_genes:
+    type: File
+    outputSource: phenotype_similarity/phenotypically_similar_genes
+  interacting_genes:
+    type: File
+    outputSource: gene_interactions/interacting_genes
 steps:
   diseases:
     run: disease_associated_genes_rl.cwl
