@@ -10,6 +10,8 @@ from pathlib import Path
 import argparse
 
 import pandas as pd
+import numpy as np
+import re 
 from html3.html3 import XHTML
 
 #############################################################
@@ -325,7 +327,7 @@ def main():
         # LATER PUT THIS STUFF IN A FUNCTION AT THE TOP?
         
         # first get a UNIQUE list of the disease associated gene IDs (these are HGNC).
-        hgnc_disease_gene_list = list(set(disease_associated_gene_set.  get_data_frame()['hit_id']))
+        hgnc_disease_gene_list = list(set(disease_associated_gene_set.get_data_frame()['hit_id']))
 #        trial_list = ['ENSG00000272603', 'ENSG00000263050', 'fjdsaklfjdkasl']
         
         # second, convert hgnc ids to ensembl
@@ -346,9 +348,31 @@ def main():
 
         print(ensembl_disease_gene_list)
 
-        tryingThisOut = GeneToGeneBiclusters(ensembl_disease_gene_list)
         tryingThisOut = GeneToGeneBiclusters(ensembl_disease_gene_list).get_data_frame()
-        print(tryingThisOut.to_string())
+        regexTry = re.compile(r'ENSEMBL:(.+)\.')
+        tryingRegex = [re.match(regexTry, x).group(1) for x in tryingThisOut['hit_id']]
+#        print(tryingRegex[:10])
+
+        ## next is replacing hit_id column with hgnc symbols, then removing any empty columns?
+        ## or do we want to leave Ensembl IDs in the results (if there aren't any hgnc symbols)...
+        hgnc_output_gene_list = []
+        for (input_id, output_id) in TranslateIDs(tryingRegex, translation, \
+            out_id="HGNC ID", in_id="Ensembl gene ID").results:
+            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
+            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
+            if (output_id!='' and output_id!=None):
+                hgnc_output_gene_list.append(output_id)
+            else:
+                hgnc_output_gene_list.append(np.nan)
+#                print("Error: Matching Ensembl ID for "+input_id+" not found.")       
+#        print(hgnc_output_gene_list[:10]) 
+        print("length of initial list is ", len(hgnc_output_gene_list))
+        tryingThisOut['hit_id'] = hgnc_output_gene_list
+        tryingThisOut = tryingThisOut.dropna()
+        print(tryingThisOut.shape)
+        print(tryingThisOut)
+        ## note that some of these are the input genes! Errr...how? weren't these filtered out?
+        
         
 #        mod1a_results = \
 #            similarity(
