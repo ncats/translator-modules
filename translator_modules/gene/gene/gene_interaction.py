@@ -10,7 +10,7 @@ import pandas as pd
 from BioLink.biolink_client import BioLinkWrapper
 
 from translator_modules.core import Config
-from translator_modules.core.module_payload import Payload
+from translator_modules.core.module_payload import Payload, get_input_gene_set
 
 
 class GeneInteractions:
@@ -91,13 +91,7 @@ class GeneInteractionSet(Payload):
 
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        if extension == "csv":
-            input_gene_set = pd.read_csv(input_genes, orient='records')
-        elif extension == "json":
-            # assuming it's JSON and it's a record list
-            input_gene_set = pd.read_json(input_genes, orient='records')
-        elif extension is None:
-            pass
+        input_gene_set = get_input_gene_set(input_genes, extension)
 
         # TODO: add schema check
 
