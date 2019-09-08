@@ -1,5 +1,5 @@
 # Shared core similarity functions
-from typing import List
+from typing import List, Tuple
 
 import pandas as pd
 from ontobio.assoc_factory import AssociationSetFactory
@@ -30,12 +30,13 @@ get_config().ignore_cache = True
 class GenericSimilarity(object):
 
     def __init__(self) -> None:
-        self.associations = ''
+        self.associations = None
+        self.ont = ''
         self.ontology = ''
         self.assocs = ''
         self.afactory = AssociationSetFactory()
 
-    def load_associations(self, taxon):
+    def load_associations(self, taxon) -> None:
         taxon_map = {
             'human': 'NCBITaxon:9606',
             'mouse': 'NCBITaxon:10090',
@@ -69,7 +70,7 @@ class GenericSimilarity(object):
             )
 
     @staticmethod
-    def jaccard_similarity(aset: AssociationSet, s1: str, s2: str) -> float:
+    def jaccard_similarity(aset: AssociationSet, s1: str, s2: str) -> Tuple[float, list]:
         """
         Calculate jaccard index of inferred associations of two subjects
 
@@ -82,11 +83,13 @@ class GenericSimilarity(object):
         a2 = aset.inferred_types(s2)
         num_union = len(a1.union(a2))
         if num_union == 0:
-            return 0.0, set()
+            return 0.0, list()
 
         shared_terms = a1.intersection(a2)
-        
-        return len(shared_terms) / num_union, shared_terms
+
+        # Note: we need to convert the shared_terms set to a list
+        # to avoid later JSON serialization problems
+        return len(shared_terms) / num_union, list(shared_terms)
 
     def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
         similarities = []
@@ -115,7 +118,7 @@ class GenericSimilarity(object):
         return similarities
 
     @staticmethod
-    def trim_mgi_prefix(input_gene, subject_curie):
+    def trim_mgi_prefix(input_gene, subject_curie) -> str:
         if 'MGI:MGI:' in subject_curie and 'MGI:MGI:' in input_gene:
             return input_gene
         elif 'MGI:MGI:' not in subject_curie and 'MGI:MGI:' in input_gene:
@@ -125,7 +128,7 @@ class GenericSimilarity(object):
             return input_gene
 
     @staticmethod
-    def sort_results(input_gene_set, results):
+    def sort_results(input_gene_set, results) -> pd.DataFrame:
 
         results = pd.DataFrame(results)
         # CX: Some users need to know the scores that input genes have for each other. 

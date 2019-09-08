@@ -1,4 +1,5 @@
 import os.path
+import json
 from abc import ABC
 from urllib.parse import urlparse
 from collections import defaultdict
@@ -27,20 +28,50 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
 
     if extension == "csv":
         input_gene_set = pd.read_csv(input_genes, orient='records')
+
     elif extension == "json":
-        # assuming it's JSON and it's a record list
-        input_gene_set = pd.read_json(input_genes, orient='records')
+
+        # Load the json into a Python Object
+        input_genes_obj = json.loads(input_genes)
+
+        # check if the json object input has a
+        # characteristic high level ResultList key (i.e. 'result_list_name')
+        if 'result_list_name' in input_genes_obj:
+            # assuming it's NCATS ResultList compliant JSON
+            input_result_list = ResultList.load(input_genes_obj)
+
+            # I coerce the ResultList internally into a Pandas DataFrame
+            # Perhaps we'll remove this intermediate step sometime in the future
+            input_gene_set = input_result_list.export_data_frame()
+        else:
+            # Assume that it's Pandas DataFrame compliant JSON
+            input_gene_set = pd.DataFrame(input_genes_obj)
+
     elif extension is None:
-        # TODO: this was written for the sharpener. maybe more generic if we get Biolink Model adherence
-        # TODO: rewrite into schema check
-        gene_ids = [gene.gene_id for gene in input_genes]
-        symbols = [attribute.value
-                   for gene in input_genes
-                   for attribute in gene.attributes
-                   if attribute.name == 'gene_symbol'
-                   ]
+        # TODO: this was written for the sharpener. maybe
+        # more generic if we get Biolink Model adherence
+        gene_ids = []
+        symbols = []
+        if isinstance(input_genes, str):
+            # simple list of curies?
+            input_genes = input_genes.split(',')
+            for gene in input_genes:
+                gene_ids.append(gene)
+                symbols.append('')  # symbol unknown for now?
+        else: # assume iterable
+            for gene in input_genes:
+                symbol = None
+                for attribute in gene.attributes:
+                    if attribute.name == 'gene_symbol':
+                        symbol = attribute.value
+                if symbol is not None:
+                    gene_ids.append(gene.gene_id)
+                    symbols.append(symbol)
+
         genes = {"hit_id": gene_ids, "hit_symbol": symbols}
         input_gene_set = pd.DataFrame(data=genes)
+    else:
+        raise RuntimeWarning("Unrecognized data file extension: '"+extension+"'?")
 
     return input_gene_set
 

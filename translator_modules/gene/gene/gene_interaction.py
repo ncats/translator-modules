@@ -9,8 +9,10 @@ import pandas as pd
 # Workflow 2, Module 1E: Gene interactions
 from BioLink.biolink_client import BioLinkWrapper
 
+from BioLink.model import GeneToGeneAssociation, Gene
+
 from translator_modules.core import Config
-from translator_modules.core.module_payload import Payload
+from translator_modules.core.module_payload import Payload, get_input_gene_set
 
 
 class GeneInteractions:
@@ -19,17 +21,17 @@ class GeneInteractions:
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': 'gene to gene association',
+            'association': GeneToGeneAssociation.class_name,
             'input_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': Gene.class_name,
+                'mappings': 'HGNC',
             },
             'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
-                'id_type': 'HGNC',
-                'data_type': 'gene',
+                'category': Gene.class_name,
+                'mappings': 'HGNC',
             },
         }
 
@@ -91,13 +93,7 @@ class GeneInteractionSet(Payload):
 
         input_genes, extension = self.handle_input_or_input_location(input_genes)
 
-        if extension == "csv":
-            input_gene_set = pd.read_csv(input_genes, orient='records')
-        elif extension == "json":
-            # assuming it's JSON and it's a record list
-            input_gene_set = pd.read_json(input_genes, orient='records')
-        elif extension is None:
-            pass
+        input_gene_set = get_input_gene_set(input_genes, extension)
 
         # TODO: add schema check
 

@@ -8,6 +8,8 @@ import pandas as pd
 from BioLink.biolink_client import BioLinkWrapper
 from biothings_client import get_client
 
+from BioLink.model import GeneToDiseaseAssociation, Gene, Disease
+
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload
 
@@ -19,17 +21,17 @@ class LookUp(object):
         self.input_object = ''
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': 'gene to disease association',
+            'association': GeneToDiseaseAssociation.class_name,
             'input_type': {
                 'complexity': 'single',
-                'data_type': 'disease',
-                'id_type': 'MONDO',
+                'category': Disease.class_name,
+                'mappings': 'MONDO',
             },
             'relationship': 'gene_associated_with_condition',
             'output_type': {
                 'complexity': 'set',
-                'data_type': 'gene',
-                'id_type': 'HGNC'
+                'category': Gene.class_name,
+                'mappings': 'HGNC'
             },
             'taxon': 'human',
             'limit': None,
@@ -45,7 +47,7 @@ class LookUp(object):
         disease_label = self.blw.get_obj(disease_id)["label"]
         return disease_label
 
-    def disease_geneset_lookup(self, disease_id):
+    def disease_geneset_lookup(self, disease_id, query_biolink=True):
         # TODO: does this get faster if we specify the API type
 #        disease_label = self.blw.get_obj(disease_id)["label"]
         disease_label = self.disease_name_lookup(disease_id)  ## CX: does this work???
@@ -54,9 +56,10 @@ class LookUp(object):
                           disease_gene_association_results['associations']]
 
         for input_gene in input_gene_set:
-            igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
-                                     fields='entrez,HGNC,symbol')
-            input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
+            if query_biolink:
+                igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
+                                         fields='entrez,HGNC,symbol')
+                input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
         input_genes_df = pd.DataFrame(data=input_gene_set)
         if not input_genes_df.empty:
             # group duplicate ids and gather sources
@@ -75,12 +78,12 @@ class DiseaseAssociatedGeneSet(Payload):
     I'm not sure what mod is
     """
 
-    def __init__(self, disease_id):
+    def __init__(self, disease_id, query_biolink=True):
 
         super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
 
         # get genes associated with disease from Biolink
-        self.results = self.mod.disease_geneset_lookup(disease_id)
+        self.results = self.mod.disease_geneset_lookup(disease_id, query_biolink)
 
         if not self.results.empty:
             self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')

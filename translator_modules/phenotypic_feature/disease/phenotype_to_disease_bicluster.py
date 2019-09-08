@@ -9,33 +9,38 @@ import fire
 import pandas as pd
 import requests
 
+from BioLink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
+
 from translator_modules.core.module_payload import Payload
 
 bicluster_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_bicluster/'
 base_phenotype_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_hpo/'
 
 
-# HP is phenotype ... example URL: https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_hpo/HP%3A0002193/?include_similar=false
-# MONDO is disease ... example URL: https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list/MONDO.0007030/?include_similar=true
+# HP is phenotype, example URL:
+# https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_hpo/HP%3A0002193/?include_similar=false
+# MONDO is disease ... example URL:
+# https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list/MONDO.0007030/?include_similar=true
 
-# source for diabetes phenotypic features: https://bionames.renci.org/lookup/diabetes/phenotypic%20feature/?include_similar=true
+# source for diabetes phenotypic features:
+# https://bionames.renci.org/lookup/diabetes/phenotypic%20feature/?include_similar=true
 # diabetes phenotypic features: ['HP:0000819', 'HP:0000873', 'HP:0005978', 'HP:0100651']
 
 class BiclusterByPhenotypeToDisease():
     def __init__(self):
         self.meta = {
             'source': 'RNAseqDB Biclustering',
-            'association': 'disease to phenotypic feature association',
+            'association': DiseaseToPhenotypicFeatureAssociation.class_name,
             'input_type': {
                 'complexity': 'set',
-                'data_type': 'phenotypic feature',
-                'id_type': 'HP'
-            },
+                'category': PhenotypicFeature.class_name,
+                'mappings': 'HP',
+           },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'single',
-                'data_type': 'disease',
-                'id_type': 'MONDO',
+                'category': Disease.class_name,
+                'mappings': 'MONDO',
             },
         }
 

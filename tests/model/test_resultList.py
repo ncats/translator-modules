@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 
 from BioLink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
@@ -16,7 +17,7 @@ mock_predicate = "has_phenotype"
 
 def default_mock_result_list():
 
-    rl = ResultList()
+    rl = ResultList(result_list_name="default_mock_result_list")
     rl.attributes.append(_a)
     rl.concepts.append(mock_concept())
     rl.concepts.append(mock_concept(identifier=mock_identifier_2()))
@@ -26,19 +27,21 @@ def default_mock_result_list():
 
 
 def overridden_mock_result_list(
+        result_list_name="overridden_mock_result_list",
         association=GeneToDiseaseAssociation.class_name,
         domain=ConceptSpace(
             category=Disease.class_name,
-            namespace=['MONDO']
+            mappings=['MONDO']
         ),
         relationship='related_to',
         range=ConceptSpace(
             category=Gene.class_name,
-            namespace=['HGNC']
+            mappings=['HGNC']
         )
 ):
 
     rl = ResultList(
+        result_list_name=result_list_name,
         source='ncats',
         association=association,
         domain=domain,
@@ -57,22 +60,22 @@ _json_test_file = "result_list_test.json"
 
 _mock_uberon_concept_space = ConceptSpace(
     category=Disease.class_name,
-    namespace=['UBERON']
+    mappings=['UBERON']
 )
 
 _mock_upheno_concept_space = ConceptSpace(
     category=PhenotypicFeature.class_name,
-    namespace=['UPHENO']
+    mappings=['UPHENO']
 )
 
 _mock_hgnc_concept_space = ConceptSpace(
     category=Gene.class_name,
-    namespace=['HGNC']
+    mappings=['HGNC']
 )
 
 _mock_mondo_concept_space = ConceptSpace(
     category=Disease.class_name,
-    namespace=['MONDO']
+    mappings=['MONDO']
 )
 
 
@@ -88,6 +91,7 @@ class TestResultList(TestCase):
 
     def test_customized_result_list_to_json(self):
         rl = overridden_mock_result_list(
+            result_list_name="test_customized_result_list_to_json",
             domain=_mock_uberon_concept_space,
             relationship=mock_predicate,
             range=_mock_upheno_concept_space
@@ -142,12 +146,15 @@ class TestResultList(TestCase):
 
     def test_result_list_json_loading(self):
         rl_out = overridden_mock_result_list(
+            result_list_name="test_result_list_json_loading",
             domain=_mock_hgnc_concept_space,
             relationship=mock_predicate,
             range=_mock_mondo_concept_space
         )
+        # generate JSON representation of ResultList
         rl_json = rl_out.to_json()
-        rl_in = ResultList.load(rl_json)
+        rl_in_obj = json.loads(rl_json)
+        rl_in = ResultList.load(rl_in_obj)
         print("\n\nReloaded ResultList JSON: \n", rl_in.to_json())
 
         print("\n\nDataFrame conversion?\n")
