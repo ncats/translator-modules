@@ -349,12 +349,14 @@ def main():
         print(ensembl_disease_gene_list)
 
         tryingThisOut = GeneToGeneBiclusters(ensembl_disease_gene_list).get_data_frame()
+        
+        ## next is replacing hit_id column with hgnc symbols, then removing any empty columns?
+        ## or do we want to leave Ensembl IDs in the results (if there aren't any hgnc symbols)...
         regexTry = re.compile(r'ENSEMBL:(.+)\.')
         tryingRegex = [re.match(regexTry, x).group(1) for x in tryingThisOut['hit_id']]
 #        print(tryingRegex[:10])
 
-        ## next is replacing hit_id column with hgnc symbols, then removing any empty columns?
-        ## or do we want to leave Ensembl IDs in the results (if there aren't any hgnc symbols)...
+
         hgnc_output_gene_list = []
         for (input_id, output_id) in TranslateIDs(tryingRegex, translation, \
             out_id="HGNC ID", in_id="Ensembl gene ID").results:
@@ -369,6 +371,11 @@ def main():
         print("length of initial list is ", len(hgnc_output_gene_list))
         tryingThisOut['hit_id'] = hgnc_output_gene_list
         tryingThisOut = tryingThisOut.dropna()
+        
+        ## getting the hit symbol
+        tryingThisOut['hit_symbol'] = [output_id \
+                     for (input_id, output_id) in TranslateIDs(list(tryingThisOut['hit_id']), translation, \
+            out_id="Approved symbol", in_id="HGNC ID").results]
         print(tryingThisOut.shape)
         print(tryingThisOut)
         ## note that some of these are the input genes! Errr...how? weren't these filtered out?
