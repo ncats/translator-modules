@@ -15,6 +15,9 @@ class TranslateIDs(Payload):
 
     def convertIDs(self, input_ids, translations):
         translation_dict = dict(translations)
+        
+        ## CX: The second entry of the tuple will be None if the key/input_id isn't found in the translation dict
+        ## The second entry of the tuple will be an empty string '' if output/converted_id isn't found in translation dict        
         converted_ids = list([(input_id, translation_dict.get(input_id)) for input_id in input_ids])
         return converted_ids
 
@@ -28,7 +31,7 @@ class TranslateIDs(Payload):
             import csv
             with open(ids) as genes:
                 input_reader = csv.DictReader(genes)
-                self.ids = list([row[in_id] for row in input_reader])
+                self.ids = list([row[in_id] for row in input_reader])       
         elif extension1 == "json":
             with open(ids) as genes:
                 input_json = json.loads(genes)
@@ -48,6 +51,11 @@ class TranslateIDs(Payload):
             import csv
             with open(translation) as genes:
                 input_reader = csv.DictReader(genes)
+                self.translation = list([(row[in_id], row[out_id]) for row in input_reader])
+        elif extension2 == "txt":  # CX: tabbed, correct input
+            import csv
+            with open(translation) as genes:
+                input_reader = csv.DictReader(genes, delimiter="\t")
                 self.translation = list([(row[in_id], row[out_id]) for row in input_reader])
         elif extension2 == "json":
             with open(translation) as genes:
