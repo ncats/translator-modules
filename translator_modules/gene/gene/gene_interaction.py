@@ -12,7 +12,7 @@ from BioLink.biolink_client import BioLinkWrapper
 from BioLink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
-from translator_modules.core.module_payload import Payload, get_input_gene_set
+from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
 
 
 class GeneInteractions:
@@ -91,13 +91,13 @@ class GeneInteractionSet(Payload):
 
         super(GeneInteractionSet, self).__init__(GeneInteractions())
 
-        input_genes, extension = self.handle_input_or_input_location(input_genes)
+        input_obj, extension = self.handle_input_or_input_location(input_genes)
 
-        input_gene_set = get_input_gene_set(input_genes, extension)
+        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
 
         # TODO: add schema check
 
-        self.results = self.mod.get_interactions(input_gene_set, threshold)
+        self.results = self.mod.get_interactions(input_gene_data_frame, threshold)
 
 
 if __name__ == '__main__':

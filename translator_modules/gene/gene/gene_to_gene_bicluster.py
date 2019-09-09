@@ -11,7 +11,7 @@ import fire
 import pandas as pd
 import requests
 
-from translator_modules.core.module_payload import Payload, fix_curies
+from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
 from BioLink.model import GeneToGeneAssociation, Gene
 
 related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
@@ -103,8 +103,7 @@ class BiclusterByGeneToGene():
                 if length_response_json > 0:
                     gene = response_json[0]['gene']
                     for x in response_json:
-                        bicluster = x['bicluster']
-                        cooccurrence_dict_each_gene['related_biclusters'][x['bicluster']] = []
+                        cooccurrence_dict_each_gene['related_biclusters'][x['bicluster']] = defaultdict(dict)
                     related_biclusters = [x for x in cooccurrence_dict_each_gene['related_biclusters']]
                     bicluster_bicluster_url_list = [bicluster_bicluster_url + related_bicluster + '/' for
                                                     related_bicluster in related_biclusters]
@@ -211,6 +210,11 @@ class GeneToGeneBiclusters(Payload):
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 
+        input_gene_set = get_simple_input_gene_list(input_obj, extension)
+
+        """
+        # Old gene input code - trying to replace with generic data loading
+        
         input_gene_ids: list
         # NB: push this out to the handle_input_or_input_location function?
         if extension == "csv":
@@ -230,10 +234,10 @@ class GeneToGeneBiclusters(Payload):
                 input_gene_ids = input_obj.split(',')
             else:
                 # Assume that an iterable Tuple or equivalent is given here
-                input_gene_ids = input_obj
+                input_gene_ids = input_obj"""
 
         related_biclusters_and_genes_for_each_input_gene = \
-            asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_ids))
+            asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_set))
 
         #print("related biclusters", related_biclusters_and_genes_for_each_input_gene)
 

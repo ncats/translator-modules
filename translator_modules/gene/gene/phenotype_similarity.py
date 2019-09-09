@@ -10,7 +10,7 @@ from biothings_client import get_client
 from BioLink.model import GeneToPhenotypicFeatureAssociation, Gene
 
 from translator_modules.core.generic_similarity import GenericSimilarity
-from translator_modules.core.module_payload import Payload, get_input_gene_set
+from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
 
 
 class PhenotypeSimilarity(GenericSimilarity):
@@ -112,11 +112,11 @@ class PhenotypicallySimilarGenes(Payload):
 
         super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
 
-        input_genes, extension = self.handle_input_or_input_location(input_genes)
+        input_obj, extension = self.handle_input_or_input_location(input_genes)
 
-        input_gene_set = get_input_gene_set(input_genes, extension)
+        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
 
-        self.results = self.mod.compute_similarity(input_gene_set, threshold)
+        self.results = self.mod.compute_similarity(input_gene_data_frame, threshold)
 
 
 if __name__ == '__main__':
