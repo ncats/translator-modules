@@ -11,18 +11,32 @@ from typing import List
 from translator_modules.core.data_transfer_model import ResultList
 
 
-def fix_curies(raw_list, prefix=''):
+def fix_curies(object_id, prefix=''):
     """
-    Adds a suitable XMLNS prefix to identifiers known to
-    be "raw" IDs assumed to be in the leading item in a tuple
-    :param id_list:
+    Adds a suitable XMLNS prefix to (an) identifier(s) known to
+    be "raw" IDs as keys in a dictionary or elements in a list (or a simple string)
+    :param object_id:
     :param prefix:
     :return:
     """
-    curie_list = defaultdict(dict)
-    for key in raw_list.keys():
-        curie_list[prefix+':'+key] = raw_list[key]
-    return curie_list
+    if not prefix:
+        raise RuntimeWarning('fix_curies(): empty prefix argument?')
+
+    if isinstance(object_id, dict):
+        curie_dict = defaultdict(dict)
+        for key in object_id.keys():
+            curie_dict[prefix+':'+key] = object_id[key]
+        return curie_dict
+
+    elif isinstance(object_id, list):
+        return [prefix+':'+x for x in object_id]
+
+    elif isinstance(object_id, str):
+        # single string to convert
+        return prefix+':'+object_id
+
+    else:
+        raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(object_id))
 
 
 def get_input_gene_data_frame(input_genes, extension) -> pd.DataFrame:

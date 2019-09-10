@@ -149,26 +149,36 @@ class BiclusterByGeneToGene():
         dict_of_genes_in_unique_biclusters_not_in_inputs = defaultdict(dict)
         for gene_list in dict_of_genes_in_unique_biclusters.values():
             if gene_list:
+                # using an array here in case a unique
+                # bicluster shares more than one input gene
+                input_id = []
                 for gene in gene_list:
-                    # curated id's may be not have versions therefore need
+                    # curated input id's may be not have versions therefore need
                     # to only compare the object_id part with the curated input list
                     id_part = gene.split('.')
-                    if id_part[0] in curated_id_list:
+                    if id_part[0] in curated_id_list or gene in curated_id_list:
+                        input_id.append(gene)
                         continue
                     if gene not in dict_of_genes_in_unique_biclusters_not_in_inputs:
-                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene] = 1
+                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene] = {'input_id': input_id, 'score': 1}
                     else:
-                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene] += 1
+                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene]['score'] += 1
         return dict_of_genes_in_unique_biclusters_not_in_inputs
 
     @staticmethod
     def list_of_output_genes_sorted_high_to_low_count(dict_of_genes_in_unique_biclusters_not_in_inputs):
-        sorted_list_of_output_genes = sorted(
-            (value, key) for (key, value) in dict_of_genes_in_unique_biclusters_not_in_inputs.items())
-        sorted_list_of_output_genes.reverse()
+        score_list = [
+            {
+                'input_id': ','.join(fix_curies(tally['input_id'], prefix='ENSEMBL')),
+                'hit_id': gene,
+                'score': tally['score']
+            } for (gene, tally) in dict_of_genes_in_unique_biclusters_not_in_inputs.items()
+        ]
+        sorted_list_of_output_genes = sorted(score_list, key=lambda item: item['score'], reverse=True)
         return sorted_list_of_output_genes
 
     @staticmethod
+    # Not sure that this function is ever used in the module anymore?
     def ids_in_unique_biclusters(list_of_unique_biclusters, related_biclusters_and_ids_for_each_input_id):
         dict_of_ids_in_unique_biclusters = defaultdict(dict)
         for key, value in related_biclusters_and_ids_for_each_input_id.items():
@@ -186,7 +196,8 @@ class BiclusterByGeneToGene():
         for key, value in dict_of_ids_in_unique_biclusters.items():
             if value:
                 for ID in value[0]:
-                    # try inserting a split fcn here and basically making a dictionary where every gene gets split and counted, etc, idk...
+                    # try inserting a split fcn here and basically making
+                    # a dictionary where every gene gets split and counted, etc, idk...
                     if ID in curated_id_list:
                         continue
                     if not dict_of_ids_in_unique_biclusters_not_in_inputs[ID]:
@@ -199,7 +210,6 @@ class BiclusterByGeneToGene():
 class GeneToGeneBiclusters(Payload):
 
     def __init__(self, input_genes):
-
         super(GeneToGeneBiclusters, self).__init__(BiclusterByGeneToGene())
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
@@ -212,7 +222,6 @@ class GeneToGeneBiclusters(Payload):
         unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
         genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters)
 
-#        print("genes in unique biclusters all\n", genes_in_unique_biclusters)
         genes_in_unique_biclusters_not_in_input_gene_list = \
             self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
 
@@ -223,7 +232,7 @@ class GeneToGeneBiclusters(Payload):
         sorted_list_of_output_genes = \
             self.mod.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
 
-        self.results = pd.DataFrame.from_records(sorted_list_of_output_genes, columns=["score", "hit_id"])
+        self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 
 
 if __name__ == '__main__':
