@@ -64,17 +64,16 @@ class ChemicalGeneInteractions(object):
 
     def get_chemicals(self, input_gene_set, action) -> List[dict]:
 
-        target_gene_set = self.load_gene_set(input_gene_set)
+        target_gene_symbols = self.load_gene_set(input_gene_set)
 
         chemicals = list()
-        for gene_id in target_gene_set:
+        for symbol in target_gene_symbols:
             # The 'gene_id' is assumed to be a curie to be parsed here for
             # its object identifier which is a valid gene query to the CTD wrapper
-            target_id = gene_id.split(':')[-1]
             try:
-                all_gene_chemicals = self.ctd.gene2chem(target_id)
+                all_gene_chemicals = self.ctd.gene2chem(symbol)
             except JSONDecodeError as e:
-                print("Error: gene2chem target_id '"+target_id+"':"+e.msg, file=stderr)
+                print("Error: gene2chem target_id '"+symbol+"':"+e.msg, file=stderr)
                 continue
 
             gene_chemicals = [

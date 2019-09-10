@@ -15,6 +15,9 @@ inputs:
       type: int
       default: 12
 outputs:
+  disease_list:
+    type: File
+    outputSource: diseases/disease_list
   functionally_similar_genes:
     type: File
     outputSource: functional_similarity/functionally_similar_genes

@@ -6,28 +6,43 @@ from collections import defaultdict
 
 import pandas as pd
 import requests
+from typing import List, Iterable
 
 from translator_modules.core.data_transfer_model import ResultList
 
 
-def fix_curies(raw_list, prefix=''):
+def fix_curies(object_id, prefix=''):
     """
-    Adds a suitable XMLNS prefix to identifiers known to
-    be "raw" IDs assumed to be in the leading item in a tuple
-    :param id_list:
+    Adds a suitable XMLNS prefix to (an) identifier(s) known to
+    be "raw" IDs as keys in a dictionary or elements in a list (or a simple string)
+    :param object_id:
     :param prefix:
     :return:
     """
-    curie_list = defaultdict(dict)
-    for key in raw_list.keys():
-        curie_list[prefix+':'+key] = raw_list[key]
-    return curie_list
+    if not prefix:
+        raise RuntimeWarning('fix_curies(): empty prefix argument?')
+
+    if isinstance(object_id, dict):
+        curie_dict = defaultdict(dict)
+        for key in object_id.keys():
+            curie_dict[prefix+':'+key] = object_id[key]
+        return curie_dict
+
+    elif isinstance(object_id, str):
+        # single string to convert
+        return prefix+':'+object_id
+
+    elif isinstance(object_id, Iterable):
+        return [prefix+':'+x for x in object_id]
+
+    else:
+        raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(object_id))
 
 
-def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
+def get_input_gene_data_frame(input_genes, extension) -> pd.DataFrame:
 
     if extension == "csv":
-        input_gene_set = pd.read_csv(input_genes, orient='records')
+        input_gene_data_frame = pd.read_csv(input_genes, orient='records')
 
     elif extension == "json":
 
@@ -42,10 +57,10 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
 
             # I coerce the ResultList internally into a Pandas DataFrame
             # Perhaps we'll remove this intermediate step sometime in the future
-            input_gene_set = input_result_list.export_data_frame()
+            input_gene_data_frame = input_result_list.export_data_frame()
         else:
             # Assume that it's Pandas DataFrame compliant JSON
-            input_gene_set = pd.DataFrame(input_genes_obj)
+            input_gene_data_frame = pd.DataFrame(input_genes_obj)
 
     elif extension is None:
         # TODO: this was written for the sharpener. maybe
@@ -58,7 +73,12 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
             for gene in input_genes:
                 gene_ids.append(gene)
                 symbols.append('')  # symbol unknown for now?
-        else: # assume iterable
+        elif isinstance(input_genes, tuple):
+            # another simple list of curies?
+            for gene in input_genes:
+                gene_ids.append(gene)
+                symbols.append('')  # symbol unknown for now?
+        else:  # assume iterable
             for gene in input_genes:
                 symbol = None
                 for attribute in gene.attributes:
@@ -69,11 +89,24 @@ def get_input_gene_set(input_genes, extension) -> pd.DataFrame:
                     symbols.append(symbol)
 
         genes = {"hit_id": gene_ids, "hit_symbol": symbols}
-        input_gene_set = pd.DataFrame(data=genes)
+        input_gene_data_frame = pd.DataFrame(data=genes)
     else:
         raise RuntimeWarning("Unrecognized data file extension: '"+extension+"'?")
 
-    return input_gene_set
+    return input_gene_data_frame
+
+
+def get_simple_input_gene_list(input_genes, extension) -> List[str]:
+    """
+    This function returns a simple list of genes identifiers rather than a Pandas DataFrame
+
+    :param input_genes:
+    :param extension:
+    :return: List[str] of input gene identifiers
+    """
+    input_gene_data_frame = get_input_gene_data_frame(input_genes, extension)
+    simple_gene_list = [hit_id for hit_id in input_gene_data_frame['hit_id']]
+    return simple_gene_list
 
 
 class Payload(ABC):
