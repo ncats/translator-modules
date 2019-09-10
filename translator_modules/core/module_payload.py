@@ -6,7 +6,7 @@ from collections import defaultdict
 
 import pandas as pd
 import requests
-from typing import List
+from typing import List, Iterable
 
 from translator_modules.core.data_transfer_model import ResultList
 
@@ -28,12 +28,12 @@ def fix_curies(object_id, prefix=''):
             curie_dict[prefix+':'+key] = object_id[key]
         return curie_dict
 
-    elif isinstance(object_id, list):
-        return [prefix+':'+x for x in object_id]
-
     elif isinstance(object_id, str):
         # single string to convert
         return prefix+':'+object_id
+
+    elif isinstance(object_id, Iterable):
+        return [prefix+':'+x for x in object_id]
 
     else:
         raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(object_id))
