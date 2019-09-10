@@ -67,7 +67,6 @@ class BiclusterByGeneToTissue():
         return results
 
 
-
 class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes):

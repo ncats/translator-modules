@@ -462,6 +462,12 @@ class ResultList(BaseModel):
 
         # Convert all the records from the DataFrame into ResultList recorded data
         concepts = {}
+
+        def add_concept(concept_id):
+            concept_curie = concept_id.curie()
+            if concept_curie not in concepts:
+                concepts[concept_curie] = concept_id
+
         for entry in data_frame.to_dict(orient='records'):
 
             # Initial iteration: assume a simple Pandas DataFrame with columns
@@ -471,37 +477,48 @@ class ResultList(BaseModel):
                 # null entry, for some reason? not meaningful? Ignore?
                 continue
 
-            # Second iteration: assume that input_symbol mappings
-            # may be missing in the output of some algorithms, i.e. biclustering?
-            input_id = None
+            # Second iteration: , i.e. biclustering?
+            input_id_list = []
             if 'input_id' in entry:
-                input_id = Identifier.parse(
-                    entry['input_id'],
-                    symbol=entry['input_symbol'] if 'input_symbol' in entry else ''
-                )
-            output_id = Identifier.parse(
-                entry['hit_id'],
-                symbol=entry['hit_symbol'] if 'hit_symbol' in entry else ''
-            )
+                # maybe only one identifier but accommodates multiple hits as well
+                input_id_list.extend(entry['input_id'].split(','))
+
+            # assume that input_symbol mappings may be missing
+            # in the output of some algorithms; record a blank input_id
+            if not len(input_id_list):
+                input_id_list.append('') # provision for empty identifier
+
+            output_id_list = []
+            if 'hit_id' in entry:
+                # maybe only one identifier but accommodates multiple hits as well
+                output_id_list.extend(entry['hit_id'].split(','))
 
             score = entry.get('score', '.')
 
-            # Here, you make sure that the identified Concepts are recorded already
-            if input_id:
-                curie = input_id.curie()
-                if curie not in concepts:
-                    concepts[curie] = input_id
+            # Build join of inputs and hits
+            for input_id in input_id_list:
+                input_id_obj = Identifier.parse(
+                    input_id,
+                    symbol=entry['input_symbol'] if 'input_symbol' in entry else ''
+                )
+                add_concept(input_id_obj)
 
-            curie = output_id.curie()
-            if curie not in concepts:
-                concepts[curie] = output_id
+                for output_id in output_id_list:
+                    output_id_obj = Identifier.parse(
+                        output_id,
+                        symbol=entry['hit_symbol'] if 'hit_symbol' in entry else ''
+                    )
+                    add_concept(output_id_obj)
 
-            # ... then append the results to the results list
-            r = Result(
-                input_id.curie() if input_id else '',  # input_id may be unmapped in some situations
-                output_id.curie(), score
-            )
-            rl.results.append(r)
+                    # ... then append the results to the results list
+                    # Hmm... note that input_id may be unmapped or
+                    # multiply mapped in some situations
+                    r = Result(
+                        input_id_obj.curie() if input_id_obj else '',
+                        output_id_obj.curie(),
+                        score
+                    )
+                    rl.results.append(r)
 
             # Collect other fields as attributes
             for (key, value) in entry.items():
