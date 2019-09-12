@@ -35,9 +35,9 @@ from translator_modules.gene.gene.functional_similarity import FunctionalSimilar
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
 
-from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
+#from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
 #from translator_modules.core.standard_output import StandardOutput
-from scripts.summary_mod import SummaryMod
+#from scripts.summary_mod import SummaryMod
 
 
 _SCRIPTNAME = 'WF2_automation.py'
@@ -120,7 +120,7 @@ def similarity(model, disease_associated_gene_set, threshold, module, title):
     # Perform the comparison on specified gene set
     results = model.compute_similarity(input_gene_set, threshold)
 
-    results['module'] = module
+#    results['module'] = module
     
 #    ## reset index
 #    results.reset_index(inplace=True)
@@ -146,7 +146,7 @@ def gene_interactions(model, disease_associated_gene_set, threshold, module, tit
     # Perform the comparison on specified gene set
     results = model.get_interactions(input_gene_set, threshold)
 
-    results['module'] = module
+#    results['module'] = module
 
     # save the gene list to a file under the "Tidbit" subdirectory
 
@@ -299,15 +299,15 @@ def main():
     # Functional similarity using Jaccard index threshold
     # Called once, creating this object triggers
     # its initialization with GO ontology and annotation
-#    func_sim_human = FunctionalSimilarity('human')
+    func_sim_human = FunctionalSimilarity('human')
 
     # Phenotype similarity using OwlSim calculation threshold
     # Called once, creating this object triggers
     # its initialization with GO ontology and annotation
     pheno_sim_human = PhenotypeSimilarity('human')
-#
-#    # Gene interactions curated in the Biolink (Monarch) resource
-#    interactions_human = GeneInteractions()
+
+    # Gene interactions curated in the Biolink (Monarch) resource
+    interactions_human = GeneInteractions()
 
 #    # Initalizing list of summaries, for use with a file of diseases 
 #    disease_summaries = []
@@ -335,6 +335,7 @@ def main():
                 disease_name + "(" + mondo_id + "):\n")
             print(disease_associated_gene_set.get_data_frame().to_string())
 
+        print("Using the normal API: http://api.monarchinitiative.org/api/  \n")
 #        # intialize summary module object
 #        summary_mod = SummaryMod(disease_name, mondo_id)
         
@@ -345,22 +346,25 @@ def main():
 #                                    'gene_gene_bicluster'
 #                                    )
 #        print(gene_bicluster_results)
-                                    
-#        mod1a_results = \
-#            similarity(
-#                func_sim_human,
-#                disease_associated_gene_set,
-#                functional_threshold,
-#                'Mod1A',
-#                'Functionally Similar Genes'
-#            )
+        
+        print("Functional annotation for input genes \n")
+        mod1a_results = \
+            similarity(
+                func_sim_human,
+                disease_associated_gene_set,
+                functional_threshold,
+                'Mod1A',
+                'Functionally Similar Genes'
+            )
+        print("\n\n")
 #        
 #        ## This builds a brief summary for just this module and creates the across summary tables
 #        if not mod1a_results.empty:  # will only work if Mod1A returned results
 #            summary_mod.add_scorebased_module(mod1a_results) 
 #            if _echo_to_console:
 #                summary_mod.show_single_mod_summary('Mod1A')
-#            
+#       
+        print("Phenotype annotation for input genes \n")
         mod1b_results = \
             similarity(
                 pheno_sim_human,
@@ -369,6 +373,8 @@ def main():
                 'Mod1B',
                 'Phenotypic Similar Genes'
             )
+        print("\n\n")
+
 #        print(mod1b_results.to_string())
         
 #        ## Add output to brief summary
@@ -376,17 +382,19 @@ def main():
 #            summary_mod.add_scorebased_module(mod1b_results)
 #            if _echo_to_console:
 #                summary_mod.show_single_mod_summary('Mod1B')
-
-#        # Find Interacting Genes from Monarch data
-#        mod1e_results = \
-#            gene_interactions(
-#                interactions_human,
-#                disease_associated_gene_set,
-#                gene_interaction_threshold,
-#                'Mod1E',
-#                "Gene Interactions"
-#            )
-#            
+        
+        print("Number of Interactions for input genes \n")
+        # Find Interacting Genes from Monarch data
+        mod1e_results = \
+            gene_interactions(
+                interactions_human,
+                disease_associated_gene_set,
+                gene_interaction_threshold,
+                'Mod1E',
+                "Gene Interactions"
+            )
+        print("\n\n")
+            
 #        ## JG: Add output into summary 
 #        if not mod1e_results.empty:
 #            summary_mod.add1E(mod1e_results)

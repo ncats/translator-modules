@@ -90,17 +90,17 @@ class FunctionalSimilarity(GenericSimilarity):
 
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
 
-        for result in results:
-            if self.taxon == 'human':
-                result['hit_id'] = self.symbol2hgnc(result['hit_symbol'])
-            for gene in annotated_input_gene_set:
-                if result['input_symbol']: # not None or empty input_symbol?
-                    if gene['sim_input_curie'] != result['input_id']:
-                        result['input_id'] = self.symbol2hgnc(result['input_symbol'])
-
-        results = GenericSimilarity.sort_results(input_gene_set, results)
-
-        return results
+#        for result in results:
+#            if self.taxon == 'human':
+#                result['hit_id'] = self.symbol2hgnc(result['hit_symbol'])
+#            for gene in annotated_input_gene_set:
+#                if result['input_symbol']: # not None or empty input_symbol?
+#                    if gene['sim_input_curie'] != result['input_id']:
+#                        result['input_id'] = self.symbol2hgnc(result['input_symbol'])
+#
+#        results = GenericSimilarity.sort_results(input_gene_set, results)
+#
+#        return results
 
     def symbol2hgnc(self, symbol):
         try:

@@ -95,13 +95,13 @@ class PhenotypeSimilarity(GenericSimilarity):
 
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
 
-        for result in results:
-            for gene in annotated_input_gene_set:
-                if gene['sim_input_curie'] == result['input_id']:
-                    result['input_symbol'] = gene['input_symbol']
-
-        if len(results) > 0:
-            results = GenericSimilarity.sort_results(input_gene_set, results)
+#        for result in results:
+#            for gene in annotated_input_gene_set:
+#                if gene['sim_input_curie'] == result['input_id']:
+#                    result['input_symbol'] = gene['input_symbol']
+#
+#        if len(results) > 0:
+#            results = GenericSimilarity.sort_results(input_gene_set, results)
 
         return results
 

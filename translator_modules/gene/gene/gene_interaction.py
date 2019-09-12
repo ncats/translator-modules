@@ -59,31 +59,34 @@ class GeneInteractions:
         results = []
         for gene in annotated_input_gene_set:
             interactions = self.blw.gene_interactions(gene_curie=gene['sim_input_curie'])
-            for assoc in interactions['associations']:
-                interaction = \
-                    self.blw.parse_association(
-                        input_id=gene['sim_input_curie'],
-                        input_label=gene['input_symbol'],
-                        association=assoc
-                    )
-                results.append({
-                    'input_id': interaction['input_id'],
-                    'input_symbol': interaction['input_symbol'],
-                    'hit_symbol': interaction['hit_symbol'],
-                    'hit_id': interaction['hit_id'],
-                    'score': 1,  # CX: changed score from 0 to 1
-                })
-
-        # Process the results
-        results = pd.DataFrame().from_records(results)
-        counts = results['hit_symbol'].value_counts().rename_axis('unique_values').to_frame('counts').reset_index()
-        high_counts = counts[counts['counts'] > lower_bound]['unique_values'].tolist()
-        results = pd.DataFrame(results[results['hit_symbol'].isin(high_counts)])
-
-        # CX: remove results where input gene = output gene. Output gene can still be disease associated genes. 
-        results = results[~(results['hit_symbol'] == results['input_symbol'])]
-
-        return results
+            ## debugging by looking into inputs
+            print(gene['input_symbol'], len(interactions['associations']))
+            
+#            for assoc in interactions['associations']:
+#                interaction = \
+#                    self.blw.parse_association(
+#                        input_id=gene['sim_input_curie'],
+#                        input_label=gene['input_symbol'],
+#                        association=assoc
+#                    )
+#                results.append({
+#                    'input_id': interaction['input_id'],
+#                    'input_symbol': interaction['input_symbol'],
+#                    'hit_symbol': interaction['hit_symbol'],
+#                    'hit_id': interaction['hit_id'],
+#                    'score': 1,  # CX: changed score from 0 to 1
+#                })
+#
+#        # Process the results
+#        results = pd.DataFrame().from_records(results)
+#        counts = results['hit_symbol'].value_counts().rename_axis('unique_values').to_frame('counts').reset_index()
+#        high_counts = counts[counts['counts'] > lower_bound]['unique_values'].tolist()
+#        results = pd.DataFrame(results[results['hit_symbol'].isin(high_counts)])
+#
+#        # CX: remove results where input gene = output gene. Output gene can still be disease associated genes. 
+#        results = results[~(results['hit_symbol'] == results['input_symbol'])]
+#
+#        return results
 
 
 class GeneInteractionSet(Payload):
