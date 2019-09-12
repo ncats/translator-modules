@@ -78,6 +78,9 @@ def get_input_gene_data_frame(input_genes, extension) -> pd.DataFrame:
             for gene in input_genes:
                 gene_ids.append(gene)
                 symbols.append('')  # symbol unknown for now?
+        ## CX: I want this to be able to handle DataFrame input 
+        elif isinstance(input_genes, pd.DataFrame):
+            return input_genes
         else:  # assume iterable
             for gene in input_genes:
                 symbol = None

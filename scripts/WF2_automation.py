@@ -4,15 +4,12 @@
 # import logging
 # logging.basicConfig(level=logging.INFO)
 
-import requests
-from os import makedirs
-from pathlib import Path
+#import requests
+#from os import makedirs
+#from pathlib import Path
 import argparse
-
-import pandas as pd
-import numpy as np
-import re 
-from html3.html3 import XHTML
+#
+#from html3.html3 import XHTML
 
 #############################################################
 # First, before loading all our analysis modules, we need
@@ -38,7 +35,6 @@ from translator_modules.gene.gene.functional_similarity import FunctionalSimilar
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
 
-from translator_modules.core.ids.IDs import TranslateIDs
 from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
 #from translator_modules.core.standard_output import StandardOutput
 from scripts.summary_mod import SummaryMod
@@ -125,9 +121,11 @@ def similarity(model, disease_associated_gene_set, threshold, module, title):
     results = model.compute_similarity(input_gene_set, threshold)
 
     results['module'] = module
-
+    
+#    ## reset index
+#    results.reset_index(inplace=True)
+    
     # save the gene list to a file under the "Tidbit" subdirectory
-
 #    # Dump HTML representation
 #    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
 #    dump_html(output, results, columns=STD_RESULT_COLUMNS)
@@ -166,6 +164,21 @@ def gene_interactions(model, disease_associated_gene_set, threshold, module, tit
 
     return results
 
+def gene_gene_bicluster(disease_associated_gene_set, threshold, module):
+# FROM WF9 GENE GENE BICLUSTER STUFF
+    input_gene_set = disease_associated_gene_set.get_data_frame()
+
+    ## get the raw results (only those above threshold)
+    results = GeneToGeneBiclusters(input_gene_set, threshold).get_data_frame()
+
+    ## set module column: used in summary module
+    results['module'] = module
+    
+    ## reorder columns 
+    cols = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score', 'module']
+    results = results.reindex(columns=cols)
+
+    return results
 
 #def aggregate_results(results_a, results_b, input_object_id):
 #    all_results = pd.concat([results_a, results_b])
@@ -225,6 +238,9 @@ def main():
     parser.add_argument('-g', '--geneInteractionThreshold',
                         type=float, default=12, help='value of Gene Interaction threshold')
 
+    parser.add_argument('-ggbicluster', '--geneGeneBiclusterThreshold',
+                        type=float, default=0.1, help='value of Gene-Gene Bicluster Score threshold')
+    
     args = parser.parse_args()
 
     print("\nRunning the " + _SCRIPTNAME + " script...")
@@ -251,22 +267,18 @@ def main():
 
         with open(disease_table_filename, "r") as diseases:
             for entry in diseases.readlines():
-
+                mondo_id = entry.strip()
+                disease_name = DiseaseNameLookup(mondo_id).disease_name
+                disease_list.append((disease_name, mondo_id))
 #                field = entry.split("\t")
-#
 #                # Skip the header
 #                if str(field[0]).lower() == "disease":
 #                    continue
-#
 #                # The first field is assumed to be the gene name or symbol, the second field, the MONDO identifier
 #                disease_name = field[0]
 #                disease_name = disease_name.strip()
-#
 #                mondo_id = field[1]
-                mondo_id = entry.strip()
-                disease_name = DiseaseNameLookup(mondo_id).disease_name
-                
-                disease_list.append((disease_name, mondo_id))
+
 
     functional_threshold = args.functionalThreshold
     print("Functional Similarity Threshold:\t" + str(functional_threshold))
@@ -276,6 +288,9 @@ def main():
 
     gene_interaction_threshold = args.geneInteractionThreshold
     print("Gene Interaction Threshold: \t\t" + str(gene_interaction_threshold))
+    
+    gene_gene_bicluster_threshold = args.geneGeneBiclusterThreshold
+    print("Gene-Gene Bicluster Score Threshold: \t" + str(gene_gene_bicluster_threshold))
 
     print("\nLoading source ontology and annotation...")
 
@@ -285,17 +300,17 @@ def main():
     # Called once, creating this object triggers
     # its initialization with GO ontology and annotation
 #    func_sim_human = FunctionalSimilarity('human')
-#
-#    # Phenotype similarity using OwlSim calculation threshold
-#    # Called once, creating this object triggers
-#    # its initialization with GO ontology and annotation
-#    pheno_sim_human = PhenotypeSimilarity('human')
+
+    # Phenotype similarity using OwlSim calculation threshold
+    # Called once, creating this object triggers
+    # its initialization with GO ontology and annotation
+    pheno_sim_human = PhenotypeSimilarity('human')
 #
 #    # Gene interactions curated in the Biolink (Monarch) resource
 #    interactions_human = GeneInteractions()
 
-    # Initalizing list of summaries, for use with a file of diseases 
-    disease_summaries = []
+#    # Initalizing list of summaries, for use with a file of diseases 
+#    disease_summaries = []
 
     # diseases.tsv is assumed to be a tab delimited
     # file of diseases named (column 0) with their MONDO identifiers (column 1)
@@ -323,64 +338,14 @@ def main():
 #        # intialize summary module object
 #        summary_mod = SummaryMod(disease_name, mondo_id)
         
-        # WF9 GENE GENE BICLUSTER STUFF
-        # LATER PUT THIS STUFF IN A FUNCTION AT THE TOP?
-        
-        # first get a UNIQUE list of the disease associated gene IDs (these are HGNC).
-        hgnc_disease_gene_list = list(set(disease_associated_gene_set.get_data_frame()['hit_id']))
-#        trial_list = ['ENSG00000272603', 'ENSG00000263050', 'fjdsaklfjdkasl']
-        
-        # second, convert hgnc ids to ensembl
-        # file is downloaded from Biomart (with gene IDs for Ensembl, HGNC, NCBI (no NCBI: prefix), Uniprot (no prefix) 
-        translation = "../translator-modules/translator_modules/core/ids/HUGO_geneids_download_v2.txt"
-        ## use headers of original file for now: "Gene stable ID" is Ensembl ID
-        
-        ## I'm writing out the list comprehension so I can add print statement for error
-        ensembl_disease_gene_list = []
-        for (input_id, output_id) in TranslateIDs(hgnc_disease_gene_list, translation, \
-            in_id="HGNC ID", out_id="Ensembl gene ID").results:
-            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
-            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
-            if (output_id!='' and output_id!=None):
-                ensembl_disease_gene_list.append(output_id)
-            else:
-                print("Error: Matching Ensembl ID for "+input_id+" not found. Excluded from Module.")       
-
-        print(ensembl_disease_gene_list)
-
-        tryingThisOut = GeneToGeneBiclusters(ensembl_disease_gene_list).get_data_frame()
-        
-        ## next is replacing hit_id column with hgnc symbols, then removing any empty columns?
-        ## or do we want to leave Ensembl IDs in the results (if there aren't any hgnc symbols)...
-        regexTry = re.compile(r'ENSEMBL:(.+)\.')
-        tryingRegex = [re.match(regexTry, x).group(1) for x in tryingThisOut['hit_id']]
-#        print(tryingRegex[:10])
-
-
-        hgnc_output_gene_list = []
-        for (input_id, output_id) in TranslateIDs(tryingRegex, translation, \
-            out_id="HGNC ID", in_id="Ensembl gene ID").results:
-            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
-            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
-            if (output_id!='' and output_id!=None):
-                hgnc_output_gene_list.append(output_id)
-            else:
-                hgnc_output_gene_list.append(np.nan)
-#                print("Error: Matching Ensembl ID for "+input_id+" not found.")       
-#        print(hgnc_output_gene_list[:10]) 
-        print("length of initial list is ", len(hgnc_output_gene_list))
-        tryingThisOut['hit_id'] = hgnc_output_gene_list
-        tryingThisOut = tryingThisOut.dropna()
-        
-        ## getting the hit symbol
-        tryingThisOut['hit_symbol'] = [output_id \
-                     for (input_id, output_id) in TranslateIDs(list(tryingThisOut['hit_id']), translation, \
-            out_id="Approved symbol", in_id="HGNC ID").results]
-        print(tryingThisOut.shape)
-        print(tryingThisOut)
-        ## note that some of these are the input genes! Errr...how? weren't these filtered out?
-        
-        
+#        ## YAY THIS IS READY FOR SUMMARY MODULE INPUT NOW
+#        gene_bicluster_results = gene_gene_bicluster( 
+#                                    disease_associated_gene_set, 
+#                                    gene_gene_bicluster_threshold,
+#                                    'gene_gene_bicluster'
+#                                    )
+#        print(gene_bicluster_results)
+                                    
 #        mod1a_results = \
 #            similarity(
 #                func_sim_human,
@@ -389,28 +354,29 @@ def main():
 #                'Mod1A',
 #                'Functionally Similar Genes'
 #            )
-#            
+#        
 #        ## This builds a brief summary for just this module and creates the across summary tables
 #        if not mod1a_results.empty:  # will only work if Mod1A returned results
 #            summary_mod.add_scorebased_module(mod1a_results) 
 #            if _echo_to_console:
 #                summary_mod.show_single_mod_summary('Mod1A')
-#
-#        mod1b_results = \
-#            similarity(
-#                pheno_sim_human,
-#                disease_associated_gene_set,
-#                phenotype_threshold,
-#                'Mod1B',
-#                'Phenotypic Similar Genes'
-#            )
-#        
+#            
+        mod1b_results = \
+            similarity(
+                pheno_sim_human,
+                disease_associated_gene_set,
+                phenotype_threshold,
+                'Mod1B',
+                'Phenotypic Similar Genes'
+            )
+#        print(mod1b_results.to_string())
+        
 #        ## Add output to brief summary
 #        if not mod1b_results.empty:
 #            summary_mod.add_scorebased_module(mod1b_results)
 #            if _echo_to_console:
 #                summary_mod.show_single_mod_summary('Mod1B')
-#
+
 #        # Find Interacting Genes from Monarch data
 #        mod1e_results = \
 #            gene_interactions(
@@ -426,16 +392,15 @@ def main():
 #            summary_mod.add1E(mod1e_results)
 #            if _echo_to_console:
 #                summary_mod.show_single_mod_summary('Mod1E')            
-
-        # CX: Summary module code here
-        # Put it in list (only used really used when multiple diseases in one file are queried at once)
+#
+#        ## Put it in list (only used really used when multiple diseases in one file are queried at once)
 #        disease_summaries.append(summary_mod)
 #
 #        ## END OF MODULE QUERIES 
 #        if _echo_to_console:
 #            summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
 
-#        ## Write all out
+        ## Write all out
         
 #        summary_csv_filenames = [disease_name.replace(" ", "_") + '_brief_summary.csv', \
 #                                 disease_name.replace(" ", "_") + '_full_summary.csv']
@@ -459,10 +424,10 @@ def main():
 #                  disease_name + "(" + mondo_id + "):\n")
 #            print(std_api_response_json)
 
-#    print("\nWF2 Processing complete!")
-#
-#    # Success!
-#    exit(0)
+    print("\nWF2 Processing complete!")
+
+    # Success!
+    exit(0)
 
 
 if __name__ == '__main__':

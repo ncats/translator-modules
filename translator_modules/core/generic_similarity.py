@@ -82,6 +82,8 @@ class GenericSimilarity(object):
         a1 = aset.inferred_types(s1)
         a2 = aset.inferred_types(s2)
         num_union = len(a1.union(a2))
+#        print(s1, a1)
+#        print(s2, a2)
         if num_union == 0:
             return 0.0, list()
 
@@ -90,9 +92,26 @@ class GenericSimilarity(object):
         # Note: we need to convert the shared_terms set to a list
         # to avoid later JSON serialization problems
         return len(shared_terms) / num_union, list(shared_terms)
+    
+    
+    ## CX: used for debugging by seeing the underlying annotations retrieved for a gene
+    def seeing_annotation(aset: AssociationSet, s1, s2):
+        """
+        Looking at annotations
+        """
+        a1 = aset.inferred_types(s1)
+#        print(s2, " (" +s1 + ") ", a1)
+        print(s2, " (" +s1 + ") ", len(a1))
+        
+
 
     def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
         similarities = []
+        for gene in input_genes:
+            query = gene['sim_input_curie']
+            query_symbol = gene['input_symbol']
+            GenericSimilarity.seeing_annotation(self.associations, query, query_symbol)
+       
         for index, igene in enumerate(input_genes):
             for subject_curie in self.associations.subject_label_map.keys():
                 input_gene = GenericSimilarity.trim_mgi_prefix(
