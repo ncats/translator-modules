@@ -147,8 +147,20 @@ This format is mainly to empower interoperability of the modules with one anothe
 The Python code of the "ResultList" module data model is in the module
 [data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py) .
 
-In both cases, a short list of genes is provided using a string of comma-delimited identifiers (which should ideally be  
-CURIE formatted but in some cases (e.g. the above Ensembl identifiers) may be just the object identifiers of the data.
+In both cases above, a relatively short list of genes is provided using a string of comma-delimited identifiers 
+which should ideally be CURIE formatted but in some cases (e.g.  *Ensembl* identifiers) may be just the 
+object identifiers of the data (the module *may* be clever enough to resolve them - your mileage may vary!). 
+
+That said, these modules can also take CSV, tab delimited text and JSON files or URL-resolvable web (REST) resources 
+as the source of module input, as long as those files comply with the expected text format. 
+
+``` 
+gene_to_gene_bicluster.py --input_genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json       
+```
+
+For the JSON inputs (which may either
+be in Pandas DataFrame or ResultList format), the input process simply checks for a top level JSON object tag
+called 'result_list_name' to discriminate (the Pandas DataFrame JSON doesn't contain it!)
 
 ### How the Modules are Indexed
 
