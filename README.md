@@ -2,10 +2,15 @@
 
 This package provides a Python-based implementation of the NCATS Translator workflow modules.
 
+## Installation
 
-## Development
+The **translator-modules** package is not yet available through PyPI, thus, to install, clone this repo using git.
 
-**Note:** code is now validated to work only with Python 3.7 only.  We recommend using a **virtualenv** to enforce this.
+```bash
+git clone https://github.com/ncats/translator-modules.git
+```
+
+The code is now validated to work only with Python 3.7 only.  We recommend using a **virtualenv** to enforce this.
 
 ``` 
 virtualenv -p python3.7 py37
@@ -23,8 +28,8 @@ Some IDE's (e.g. PyCharm) may also have provisions for directly creating such a 
 
 ## Installation of Dependencies
 
-Making sure that your pip version is 3.7 compliant.  The **translator-modules** package is not yet available 
-through PyPI, thus, to install, clone this repo and run the following command within the `translator_modules` directory:
+Make sure that your pip version is 3.7 compliant.  Then, run the following command within 
+the `translator_modules` directory:
 
 ``` 
 # sometimes better to use the 'python -m pip' version of pip rather than just 'pip'
@@ -39,19 +44,55 @@ include the `-e` flag with `pip`:
 python -m pip install -r requirements.txt -e .
 ```
 
-# Translator Workflows
+## Put the Modules on your System PATH
+
+Some development tools (e.g. PyCharms, Eclipse) will do this for you but you often need to explicitly put the 
+modules on your operating system path,
+
+Assuming that you are in the project directory (as the 'present working directory'), then a way to do this is by 
+adding `translator_modules` onto the system path directly.  On Linux, type the following
+
+```bash
+export PATH=$PATH$( find `pwd`/translator_modules/ -type d ! -name "__pycache__"  -printf ":%p" )
+```
+
+On the Mac, the standard (BSD) 'find' doesn't have the -printf flag. A workaround is to install the Gnu findutils using
+[Homebrew](https://brew.sh) as follows:
+
+```bash
+brew install findutils
+
+```
+
+then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shell script
+which you can use to set the environment using the bash 'source' command, as follows:
+
+```bash
+source scripts/set_macosx_path.sh
+```
+to help you. *Note:* you may need to run this script afresh in every new terminal 
+session unless you add it into your shell login profile).
+
+# Running the Translator Workflows
 
 The modules in this repository may be composed into larger scientific workflows, managed by suitable software 
 frameworks. A number of execution frameworks for doing this have been explored to date within NCATS:
 
-1. Jupyter Notebooks (see https://github.com/ncats/translator-workflows for numerous examples)
-2. Python scripts: see the [WF2_automation.py script](direct-command-line-workflow2-script-usage) for an exemplar
-3. Using the Common Workflow Language (CWL) standard: see the [TranslatorCWL prototype here](./cwl)
+1. Jupyter Notebooks 
+2. Complete workflows can scripted
+3. Workflow modules may be run individually from the command line (see below)
+4. Using the Common Workflow Language (CWL) standard
+5. Roll your own: call workflow modules from your own clients
 
-## NCATS Translator Workflow 2
+##  1. Workflows in Jupyter Notebooks
 
-A Python 3 command line script is currently provided that will directly execute the relevant modules and commands for 
-the NCATS Translator "Workflow 2".  To display the full parameters of the script, type:
+See https://github.com/ncats/translator-workflows for numerous examples.
+
+## 2. Running Complete Workflows as Python Scripts
+
+A Python 3 command line script [WF2_automation.py script](direct-command-line-workflow2-script-usage)  
+is currently provided that will directly execute the relevant modules and commands for 
+the *NCATS Translator Workflow 2*.  To display the full parameters of the script, type:
 
 ``` 
 python scripts/WF2_automation.py --help
@@ -64,18 +105,60 @@ of the input gene list with the other genes listed in the given row.
 
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
-## NCATS Translator Workflow 9
-
-The implementation of NCATS Translator Workflow 9 is a "work-in-progress" but a piece of the workflow may be run
-as follows (assuming that the translator_modules/wf9/cmd is on your PATH):
+A similar script is available for Translator workflow 9, i.e.
 
 ``` 
-python GeneToGeneBicluster.py  get-data-frame to-json --orient records \
-           --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584"
+python scripts/WF9_automation.py --help
 ```
 
-# Calling the Code Directly in your own Python Clients
-    
+## 3. Running Workflow Modules individually from the Command line
+
+Assuming that you have put the translator modules on your path (see below), then they may be run 
+as individual programs from the command line terminal of your operation system.
+
+For example, a "gene to gene bicluster" algorithm implemented as a module in NCATS Translator Workflow 9 
+may be run  as follows:
+
+``` 
+gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-json --orient records
+```
+
+This outputs the results as a JSON formatted dump of a Pandas DataFrame.
+
+An alternate JSON output format which is more complete with annotation and Biolink model metadata, 
+may be generated as follows:
+
+``` 
+gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json 
+           
+```
+
+The Python code of the "ResultList" module data model is in the module
+[data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py) .
+
+In both cases, a short list of genes is provided using a string of comma-delimited identifiers (which should ideally be  
+CURIE formatted but in some cases (e.g. the above Ensembl identifiers) may be just the object identifiers of the data.
+
+### How the Modules are Indexed
+
+The modules themselves have been partitioned in packages indexed by their input and output Biolink concept categories.
+For example, the "disease associated genes" module is found under the *translator_modules.disease.gene* package 
+[here](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/gene/disease_associated_genes.py)
+
+Additional documentation for the various scripts will generally be found within each package containing the scripts,
+for example, [here](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/gene/README.md)
+
+## 4. Common Workflow Language Running of Translator Workflows
+
+See the [Translator CWL workflow scripts and documentation](./cwl)
+
+## 5. Calling the Code Directly in your own Python Clients
+
+Review of the available workflow scripts (e.g. for workflow  2 and  9) provides some guidance on how to use the modules
+directly. You can also directly review the modules themselves.  As an example, we discuss here the Workflow 2 modules.
+
+### Workflow 2 Gene Similarities and Interactions
+
 Within your application, there is a three step process for similarity searching:
 
 I. An _in memory_ copy of the relevant ontology and annotation catalogs plus other setup processes are 
