@@ -38,7 +38,7 @@ from translator_modules.gene.gene.functional_similarity import FunctionalSimilar
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
 
-from translator_modules.core.ids.IDs import TranslateIDs
+from translator_modules.core.identifier import Resolver
 from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
 #from translator_modules.core.standard_output import StandardOutput
 from scripts.summary_mod import SummaryMod
@@ -330,15 +330,15 @@ def main():
         hgnc_disease_gene_list = list(set(disease_associated_gene_set.get_data_frame()['hit_id']))
 #        trial_list = ['ENSG00000272603', 'ENSG00000263050', 'fjdsaklfjdkasl']
         
-        # second, convert hgnc ids to ensembl
+        # second, convert hgnc identifier to ensembl
         # file is downloaded from Biomart (with gene IDs for Ensembl, HGNC, NCBI (no NCBI: prefix), Uniprot (no prefix) 
-        translation = "../translator-modules/translator_modules/core/ids/HUGO_geneids_download_v2.txt"
+        translation = "../translator-modules/translator_modules/core/identifier/HUGO_geneids_download_v2.txt"
         ## use headers of original file for now: "Gene stable ID" is Ensembl ID
         
         ## I'm writing out the list comprehension so I can add print statement for error
         ensembl_disease_gene_list = []
-        for (input_id, output_id) in TranslateIDs(hgnc_disease_gene_list, translation, \
-            in_id="HGNC ID", out_id="Ensembl gene ID").results:
+        for (input_id, output_id) in Resolver(hgnc_disease_gene_list, translation, \
+                                              in_id="HGNC ID", out_id="Ensembl gene ID").results:
             ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
             ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
             if (output_id!='' and output_id!=None):
@@ -356,8 +356,8 @@ def main():
         ## next is replacing hit_id column with hgnc symbols, then removing any empty columns?
         ## or do we want to leave Ensembl IDs in the results (if there aren't any hgnc symbols)...
         hgnc_output_gene_list = []
-        for (input_id, output_id) in TranslateIDs(tryingRegex, translation, \
-            out_id="HGNC ID", in_id="Ensembl gene ID").results:
+        for (input_id, output_id) in Resolver(tryingRegex, translation, \
+                                              out_id="HGNC ID", in_id="Ensembl gene ID").results:
             ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
             ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
             if (output_id!='' and output_id!=None):

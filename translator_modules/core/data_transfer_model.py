@@ -187,6 +187,12 @@ class Concept(BaseModel):
     identifiers: List[Identifier] = field(default_factory=list)
     attributes: List[Attribute] = field(default_factory=list)
 
+    def __post_init__(self):
+        """
+        Here we'll add 'value added' identifier resolution
+        :return:
+        """
+        pass
 
 @dataclass(frozen=True)
 class Result(BaseModel):

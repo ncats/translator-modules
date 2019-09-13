@@ -21,12 +21,13 @@ Speaking of which.
 
 ### In Python 3:
 ```python
-from translator_modules.core.ids import TranslateIDs
+from translator_modules.core.identifier import Resolver
 
 ids = ["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]
     
-translation = "absolute/path/to/HUGO_geneids_download_v2.csv"
-converted_ids = TranslateIDs(ids, translation, in_id="Ensembl", out_id="HGNC").results
+identifier_map = "absolute/path/to/HUGO_geneids_download_v2.csv"
+resolver = Resolver(identifier_map)
+converted_ids = resolver.translate(ids, source="Ensembl", target="HGNC").results
 
 print(converted_ids)
 ```
