@@ -20,7 +20,7 @@ class Resolver(Payload):
             input_reader = csv.DictReader(identifier_map_file, delimiter)
             headers = input_reader.fieldnames
             print("Headers:\t"+','.join(headers))
-            self.identifier_map = list([(row[self.source], row[self.target]) for row in input_reader])
+            self.identifier_map = [(row[self.source], row[self.target]) for row in input_reader]
 
     def __init__(self, identifier_map, source, target):
         """
@@ -81,7 +81,7 @@ class Resolver(Payload):
     def _read_identifiers_in_flatfile(self, identifiers, delimiter=','):
         with open(identifiers) as id_file:
             input_reader = csv.DictReader(id_file, delimiter)
-            self.ids = list([row[self.source] for row in input_reader])
+            self.ids = [row[self.source] for row in input_reader]
 
     def load_identifiers(self, identifiers):
         """
