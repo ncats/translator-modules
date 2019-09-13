@@ -39,36 +39,6 @@ include the `-e` flag with `pip`:
 python -m pip install -r requirements.txt -e .
 ```
 
-### Ontobio Cache Configuration (temporary workaround)
-
-Note that some modules rely on the Biolink "Ontobio" module to import ontology for functional and 
-phenotypic similarity computations. It is a known issue, however, that the use of the Python "cachier" cache library 
-in Ontobio causes runtime problems in some operating environments (e.g. PyCharm under MS Windows?). Since ontology catalogs
-used are imported once in memory, caching of the ontology is not needed.
-
-We therefore disable "cachier" in our code using the following ontobio configuration flag override (the flag defaults to 
-'False' as it is defined in the library's _ontobio/config.yaml_ file):
-
-    from ontobio.config import get_config
-    get_config().ignore_cache = True  
-  
-where the Ontobio version we are using is a patched version which has an  _ignore_cache_ flag in the library's 
-_ontobio/config.yaml_ file) to disable the cachier cache. As of June 4th, 2019, this code is only available on a Git 
-repository forked from the main Biolink Ontobio project. 
-
-This patch version may be installed after the above pip requirements is run, as follows:
-
-``` 
-# Uninstall the default version of Ontobio installed by the requirements file
-python -m pip uninstall ontobio
-
-# install a fresh version of the STAR forked code
-python -m pip install git+https://github.com/STARInformatics/ontobio@master#egg=ontobio
-```
-
-Once the main Biolink Ontobio project has validated the pull request for the insertion of the *ignore_cache* flag, 
-then this patch will not be required and these README instructions will be revised accordingly.
-
 # Translator Workflows
 
 The modules in this repository may be composed into larger scientific workflows, managed by suitable software 
