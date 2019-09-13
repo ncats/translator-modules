@@ -160,36 +160,25 @@ class Payload(ABC):
                 response.raise_for_status()  # exception handling
                 payload_input = response.text
                 return payload_input, extension
-
-            if os.path.isabs(input_or_input_location):
-                absolute_input_or_input_location = input_or_input_location
             else:
-                absolute_input_or_input_location = os.path.abspath(input_or_input_location)
+                if os.path.isabs(input_or_input_location):
+                    absolute_input_or_input_location = input_or_input_location
+                else:
+                    absolute_input_or_input_location = os.path.abspath(input_or_input_location)
 
-            if os.path.isfile(absolute_input_or_input_location):
+                if os.path.isfile(absolute_input_or_input_location):
 
-                input_file = absolute_input_or_input_location
-                extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
-                with open(input_file) as stream:
-                    payload_input = stream.read()
-                    return payload_input, extension
-
-            elif _is_url(input_or_input_location):
-
-                input_url = input_or_input_location
-                path = urlparse(input_url).path
-                extension = os.path.splitext(path)[1]
-                response = requests.get(input_url)
-                response.raise_for_status()  # exception handling
-                payload_input = response.text
-                return payload_input, extension
-
-            else:
-                """
-                Raw input from command line processed directly?
-                """
-                extension = None
-                return input_or_input_location, extension
+                    input_file = absolute_input_or_input_location
+                    extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
+                    with open(input_file) as stream:
+                        payload_input = stream.read()
+                        return payload_input, extension
+                else:
+                    """
+                    Raw input from command line processed directly?
+                    """
+                    extension = None
+                    return input_or_input_location, extension
 
     def get_data_frame(self) -> pd.DataFrame:
         return self.results

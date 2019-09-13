@@ -4,7 +4,7 @@
 ```bash
  translator_modules.core.identifier.py \
 --identifier-map `readlink -f ./HUGO_geneids_download_v2.txt` --source "Ensembl" --target "HGNC" \
-load-identifiers --identifiers `readlink -f ../../../test/data/bicluster/csv/gene_list.csv`  \
+load-identifiers --identifiers `readlink -f ../../../tests/data/bicluster/csv/gene_list.csv`  \
 translate
 ```
 

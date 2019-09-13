@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import csv
 import json
 
 import fire
@@ -15,11 +16,10 @@ class Resolver(Payload):
     """
 
     def _read_identifier_map_in_flatfile(self, identifier_map, delimiter=','):
-        import csv
         with open(identifier_map) as identifier_map_file:
             input_reader = csv.DictReader(identifier_map_file, delimiter)
-            for row in input_reader:
-                print(row)
+            headers = input_reader.fieldnames
+            print("Headers:\t"+','.join(headers))
             self.identifier_map = list([(row[self.source], row[self.target]) for row in input_reader])
 
     def __init__(self, identifier_map, source, target):
@@ -78,35 +78,6 @@ class Resolver(Payload):
             else:
                 raise RuntimeError("Resolver() ERROR: unrecognized 'identifier_map' specification?")
 
-    def translate_one(self, input_id):
-        """
-        Lookup translation of a single input identifier in the (previously loaded) identifier map
-        :param input_id:
-        :return: mapping of input onto target namespace (empty string if no mapping available)
-        """
-        return input_id, self.identifier_map.get(input_id, '')
-
-    def translate(self, input_ids=None):
-        """
-        Translate an iterable input list of identifiers.
-        :param input_ids: iterable; If not specified, use a list previously loaded (using load_identifiers)
-        :return: tuple mappings of input source identifiers to target namespace
-        """
-        if not input_ids:
-            input_ids = self.ids
-
-        # The second entry of the tuple will be an empty string ''
-        # if output/converted_id isn't found in identifier_map dict
-        translated_ids = [self.translate_one(input_id) for input_id in input_ids]
-
-        return translated_ids
-
-    def _read_identifiers_in_flatfile(self, identifiers, delimiter=','):
-        import csv
-        with open(identifiers) as id_file:
-            input_reader = csv.DictReader(id_file, delimiter)
-            self.ids = list([row[self.source] for row in input_reader])
-
     def load_identifiers(self, identifiers):
         """
         Load a file of identifiers into
@@ -139,10 +110,36 @@ class Resolver(Payload):
                 # assume records format
                 self.ids = [record[self.source] for record in input_json]
 
-        elif extension1 is None:
+        elif extension is None:
             if type(identifiers) is Iterable:
                 self.ids = [entry for entry in identifiers]
 
+        return self
+
+    def translate_one(self, input_id):
+        """
+        Lookup translation of a single input identifier in the (previously loaded) identifier map
+        :param input_id:
+        :return: mapping of input onto target namespace (empty string if no mapping available)
+        """
+        return input_id, self.identifier_map.get(input_id, '')
+
+    def translate(self):
+        """
+        Translate an iterable input list of identifiers.
+        :param input_ids: iterable; If not specified, use a list previously loaded (using load_identifiers)
+        :return: tuple mappings of input source identifiers to target namespace
+        """
+        # The second entry of the tuple will be an empty string ''
+        # if output/converted_id isn't found in identifier_map dict
+        translated_ids = [self.translate_one(input_id) for input_id in self.ids]
+
+        return translated_ids
+
+    def _read_identifiers_in_flatfile(self, identifiers, delimiter=','):
+        with open(identifiers) as id_file:
+            input_reader = csv.DictReader(id_file, delimiter)
+            self.ids = list([row[self.source] for row in input_reader])
 
 if __name__ == '__main__':
     fire.Fire(Resolver)
