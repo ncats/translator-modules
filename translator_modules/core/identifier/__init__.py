@@ -78,6 +78,11 @@ class Resolver(Payload):
             else:
                 raise RuntimeError("Resolver() ERROR: unrecognized 'identifier_map' specification?")
 
+    def _read_identifiers_in_flatfile(self, identifiers, delimiter=','):
+        with open(identifiers) as id_file:
+            input_reader = csv.DictReader(id_file, delimiter)
+            self.ids = list([row[self.source] for row in input_reader])
+
     def load_identifiers(self, identifiers):
         """
         Load a file of identifiers into
@@ -136,10 +141,6 @@ class Resolver(Payload):
 
         return translated_ids
 
-    def _read_identifiers_in_flatfile(self, identifiers, delimiter=','):
-        with open(identifiers) as id_file:
-            input_reader = csv.DictReader(id_file, delimiter)
-            self.ids = list([row[self.source] for row in input_reader])
 
 if __name__ == '__main__':
     fire.Fire(Resolver)
