@@ -173,8 +173,8 @@ called 'result_list_name' to discriminate (the Pandas DataFrame JSON doesn't con
 ### How the Modules are Indexed
 
 The modules themselves have been partitioned in packages indexed by their input and output Biolink concept categories.
-For example, the "disease associated genes" module is found under the *translator_modules.disease.gene* package 
-[here](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/gene/disease_associated_genes.py)
+For example, the **disease_associated_genes.py** module is found under the *translator_modules.disease.gene* package 
+[here](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/gene)
 
 Additional documentation for the various scripts will generally be found within each package containing the scripts,
 for example, [here](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/gene/README.md)
