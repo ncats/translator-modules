@@ -171,6 +171,19 @@ For example, the "disease associated genes" module is found under the *translato
 Additional documentation for the various scripts will generally be found within each package containing the scripts,
 for example, [here](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/gene/README.md)
 
+Here is a summary table of the current inventory of Biolink data type categories processed with their associated modules
+
+| Input Category | Output Category | Module(s) |
+| --- | --- | --- |
+| anatomical entity | anatomical entity | tissue_to_tissue_bicluster.py |
+|   | gene | tissue_to_gene_bicluster.py |
+| disease | gene | disease_associated_genes.py |
+|  | phenotypic feature| disease_to_phenotype_bicluster.py |
+| gene | anatomical entity | gene_to_tissue_bicluster.py |
+|  | chemical substance | chemical_gene_interaction.py |
+|  | gene | functional_similarity.py<br>gene_interaction.py<br>gene_to_gene_bicluster.py<br>phenotype_similarity.py |
+| phenotypic feature | disease | phenotype_to_disease_bicluster.py |
+
 ## 4. Common Workflow Language Running of Translator Workflows
 
 See the [Translator CWL workflow scripts and documentation](./cwl)
