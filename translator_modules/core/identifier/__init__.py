@@ -18,6 +18,8 @@ class Resolver(Payload):
         import csv
         with open(identifier_map) as identifier_map_file:
             input_reader = csv.DictReader(identifier_map_file, delimiter)
+            for row in input_reader:
+                print(row)
             self.identifier_map = list([(row[self.source], row[self.target]) for row in input_reader])
 
     def __init__(self, identifier_map, source, target):
@@ -52,7 +54,7 @@ class Resolver(Payload):
             self._read_identifier_map_in_flatfile(identifier_map)
 
         elif extension == "txt":  # CX: tabbed, correct input
-            self._read_identifier_map_in_flatfile(identifier_map, delimiter="\t")
+            self._read_identifier_map_in_flatfile(identifier_map, delimiter='\t')
 
         elif extension == "json":
 
@@ -125,7 +127,7 @@ class Resolver(Payload):
             self._read_identifiers_in_flatfile(identifiers)
 
         elif extension == "txt":
-            self._read_identifiers_in_flatfile(identifiers, delimiter="\t")
+            self._read_identifiers_in_flatfile(identifiers, delimiter='\t')
 
         elif extension == "json":
 
