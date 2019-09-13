@@ -121,7 +121,7 @@ python scripts/WF2_automation.py --help
 
 ## 3. Running Workflow Modules individually from the Command line
 
-Assuming that you have put the translator modules on your path (see below), then they may be run 
+Assuming that you have put the translator modules on your path (see section above), then they may be run 
 as individual programs from the command line terminal of your operation system.
 
 For example, a "gene to gene bicluster" algorithm implemented as a module in NCATS Translator Workflow 9 
@@ -131,7 +131,7 @@ may be run  as follows:
 gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-json --orient records
 ```
 
-This outputs the results as a JSON formatted dump of a Pandas DataFrame.  If a CSV version of the data is desired, 
+This outputs the results as a JSON formatted dump of a Pandas DataFrame.  If a CSV version of the results is desired, 
 then a simple change to the command line will generate it:
 
 ``` 
@@ -150,10 +150,8 @@ may be generated as follows:
 gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json       
 ```
 
-This format is mainly to empower interoperability of the modules with one another and with other Translator tools.
-
-
-The Python code of the "ResultList" module data model is in the module
+This Translators specific JSON format is mainly to empower interoperability of the modules with one another 
+and with other Translator tools.  The Python code of the "ResultList" module data model is in the module
 [data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py) .
 
 In both cases above, a relatively short list of genes is provided using a string of comma-delimited identifiers 
@@ -161,7 +159,8 @@ which should ideally be CURIE formatted but in some cases (e.g.  *Ensembl* ident
 object identifiers of the data (the module *may* be clever enough to resolve them - your mileage may vary!). 
 
 That said, these modules can also take CSV, tab delimited text and JSON files or URL-resolvable web (REST) resources 
-as the source of module input, as long as those files comply with the expected text format. 
+as the source of module input, as long as those files comply with the expected text format (which can be, in fact, the
+text output file from another module, previously run!). 
 
 ``` 
 gene_to_gene_bicluster.py --input_genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json       
