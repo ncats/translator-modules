@@ -143,32 +143,53 @@ class Payload(ABC):
             except AttributeError:
                 return False
 
+        if not input_or_input_location:
+            raise RuntimeError("Payload.handle_input_or_input_location(): Null or empty 'input_or_input_location'?")
+
         if not type(input_or_input_location) is str:
             extension = None
             return input_or_input_location, extension
 
-        if type(input_or_input_location) is str and os.path.isfile(input_or_input_location):
-            input_file = input_or_input_location
-            extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
-            with open(input_file) as stream:
-                payload_input = stream.read()
+        else:
+            if _is_url(input_or_input_location):
+
+                input_url = input_or_input_location
+                path = urlparse(input_url).path
+                extension = os.path.splitext(path)[1]
+                response = requests.get(input_url)
+                response.raise_for_status()  # exception handling
+                payload_input = response.text
                 return payload_input, extension
 
-        elif type(input_or_input_location) is str and _is_url(input_or_input_location):
-            input_url = input_or_input_location
-            path = urlparse(input_url).path
-            extension = os.path.splitext(path)[1]
-            response = requests.get(input_url)
-            response.raise_for_status()  # exception handling
-            payload_input = response.text
-            return payload_input, extension
+            if os.path.isabs(input_or_input_location):
+                absolute_input_or_input_location = input_or_input_location
+            else:
+                absolute_input_or_input_location = os.path.abspath(input_or_input_location)
 
-        else:
-            """
-            Raw input from command line processed directly?
-            """
-            extension = None
-            return input_or_input_location, extension
+            if os.path.isfile(absolute_input_or_input_location):
+
+                input_file = absolute_input_or_input_location
+                extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
+                with open(input_file) as stream:
+                    payload_input = stream.read()
+                    return payload_input, extension
+
+            elif _is_url(input_or_input_location):
+
+                input_url = input_or_input_location
+                path = urlparse(input_url).path
+                extension = os.path.splitext(path)[1]
+                response = requests.get(input_url)
+                response.raise_for_status()  # exception handling
+                payload_input = response.text
+                return payload_input, extension
+
+            else:
+                """
+                Raw input from command line processed directly?
+                """
+                extension = None
+                return input_or_input_location, extension
 
     def get_data_frame(self) -> pd.DataFrame:
         return self.results

@@ -36,9 +36,9 @@ class Resolver(Payload):
         self.target = target
         self.ids = None
 
-        identifier_map_str, extension2 = self.handle_input_or_input_location(identifier_map)
+        identifier_map_str, extension = self.handle_input_or_input_location(identifier_map)
 
-        if extension2 in ["csv",  "txt", "json"]:
+        if extension in ["csv",  "txt", "json"]:
             if not self.source:
                 raise RuntimeError("Resolver() ERROR: identifier map file 'source' namespace unspecified "+
                                    "but is mandatory for csv, txt or json mapping file loading")
@@ -48,20 +48,20 @@ class Resolver(Payload):
 
         self.identifier_map: list
         # NB: push this out to the handle_input_or_input_location function?
-        if extension2 == "csv":
+        if extension == "csv":
             self._read_identifier_map_in_flatfile(identifier_map)
 
-        elif extension2 == "txt":  # CX: tabbed, correct input
+        elif extension == "txt":  # CX: tabbed, correct input
             self._read_identifier_map_in_flatfile(identifier_map, delimiter="\t")
 
-        elif extension2 == "json":
+        elif extension == "json":
 
             with open(identifier_map) as identifier_map_file:
                 input_json = json.loads(identifier_map_file)
                 # assume records format
                 self.identifier_map = [(record[source], record[target]) for record in input_json]
 
-        elif extension2 is None:
+        elif extension is None:
 
             # Not yet sure how to interpret a single string identifier map?
             if type(identifier_map) is str:
