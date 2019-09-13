@@ -1,4 +1,4 @@
-## ID Translation Module v0.1.0
+## ID Translation Module v0.2.0
 
 ### From the command-line:
 ```bash
