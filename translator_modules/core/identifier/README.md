@@ -2,7 +2,10 @@
 
 ### From the command-line:
 ```bash
-IDs.py --ids `readlink -f ../../../test/data/bicluster/csv/gene_list.csv` --translation `readlink -f ./HUGO_geneids_download_v2.csv` --in_id "Ensembl" --out_id "HGNC"
+ translator_modules.core.identifier.py \
+--identifier-map `readlink -f ./HUGO_geneids_download_v2.csv` --source "Ensembl" --target "HGNC" \
+load-identifiers --identifiers `readlink -f ../../../test/data/bicluster/csv/gene_list.csv`  \
+translate
 ```
 
 Note: when being given `--ids`, it looks for a column equivalent to the name of the ID type (like "Ensembl" or "HGNC"). If you think there's a better alternative, open an issue and we'll figure it out.
@@ -12,7 +15,11 @@ Note: when being given `--ids`, it looks for a column equivalent to the name of 
 Inputting a list of IDs instead of a CSV file path should also work.
 
 ```bash
- IDs.py --ids '["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]'  --translation `readlink -f ./HUGO_geneids_download_v2.csv` --in_id "Ensembl" --out_id "HGNC" results
+ translator_modules.core.identifier.py \
+--identifier-map `readlink -f ./HUGO_geneids_download_v2.csv` --source "Ensembl" --target "HGNC" \
+load-identifiers --identifiers \
+'["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]'  \
+translate
 ```
 
 Note: it's important for there to be quotes around the list if your list contains strings (`'["like this"]'`, or `"['like that']"`). Else the list gets handled as if it was one marked up string instead: that's what Bash wants over Python.
@@ -26,8 +33,8 @@ from translator_modules.core.identifier import Resolver
 ids = ["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]
     
 identifier_map = "absolute/path/to/HUGO_geneids_download_v2.csv"
-resolver = Resolver(identifier_map)
-converted_ids = resolver.translate(ids, source="Ensembl", target="HGNC").results
+resolver = Resolver(identifier_map, source="Ensembl", target="HGNC")
+converted_ids = resolver.translate(input_ids=ids)
 
 print(converted_ids)
 ```
