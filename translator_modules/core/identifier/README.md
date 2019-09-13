@@ -2,23 +2,20 @@
 
 ### From the command-line:
 ```bash
- translator_modules.core.identifier.py \
---identifier-map `readlink -f ./HUGO_geneids_download_v2.txt` --source "Ensembl" --target "HGNC" \
-load-identifiers --identifiers `readlink -f ../../../tests/data/bicluster/csv/gene_list.csv`  \
+ translator_modules/core/identifier/__init__.py \
+--identifier-map ./HUGO_geneids_download_v2.txt --source "Ensembl Gene ID" --target "HGNC ID" \
+load-identifiers --identifiers ../../../tests/data/bicluster/csv/gene_list.csv \
 translate
 ```
 
 Note: when being given `--identifiers`, it looks for a column equivalent to the name of the ID namespace 
-(like "Ensembl" or "HGNC"). If you think there's a better alternative, open an issue and we'll figure it out.
-
-(All `readlink -f` does is let you point to relative paths and resolve them as absolute ones. Note that on Mac OSX,
-you need to ```brew install coreutils``` then  use *greadlink* instead of *readlink*)
+(like "Ensembl Gene ID" or "HGNC ID").
 
 Inputting a list of IDs instead of a CSV file path should also work.
 
 ```bash
- translator_modules.core.identifier.py \
---identifier-map `readlink -f ./HUGO_geneids_download_v2.txt` --source "Ensembl" --target "HGNC" \
+ translator_modules/core/identifier/__init__.py \
+--identifier-map ./HUGO_geneids_download_v2.txt --source "Ensembl Gene ID" --target "HGNC ID" \
 load-identifiers --identifiers \
 '["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]'  \
 translate
