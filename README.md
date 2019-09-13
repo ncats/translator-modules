@@ -95,7 +95,7 @@ is currently provided that will directly execute the relevant modules and comman
 the *NCATS Translator Workflow 2*.  To display the full parameters of the script, type:
 
 ``` 
-python scripts/WF2_automation.py --help
+./scripts/WF2_automation.py --help
 ```
 
 A folder named  *Tidbit* will contain the results as HTML and JSON files. The latter (JSON) files include
@@ -108,7 +108,15 @@ When the '--verbose' flag is used, the script also echos tabular results to the 
 A similar script is available for Translator workflow 9, i.e.
 
 ``` 
-python scripts/WF9_automation.py --help
+./cripts/WF9_automation.py --help
+```
+
+The scripts (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
+if marked as executable, may be run directly as above, but in some environments (e.g. Windows) you may need to 
+explicitly run them as a Python script, i.e.
+
+``` 
+python scripts/WF2_automation.py --help
 ```
 
 ## 3. Running Workflow Modules individually from the Command line
@@ -132,7 +140,8 @@ gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG000
 
 
 In fact, all the various Pandas DataFrame output methods are available (see the 
-[Pandas IO docs](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion)
+[Pandas IO docs](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion)). 
+Just substitute the 'to-json' and 'to-csv' method command keywords with your chosen target format (e.g. to-excel, etc.)
 
 An alternate JSON output format which is more complete with annotation and Biolink model metadata, 
 may be generated as follows:
