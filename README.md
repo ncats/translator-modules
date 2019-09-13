@@ -123,15 +123,26 @@ may be run  as follows:
 gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-json --orient records
 ```
 
-This outputs the results as a JSON formatted dump of a Pandas DataFrame.
+This outputs the results as a JSON formatted dump of a Pandas DataFrame.  If a CSV version of the data is desired, 
+then a simple change to the command line will generate it:
+
+``` 
+gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-csv
+```
+
+
+In fact, all the various Pandas DataFrame output methods are available (see the 
+[Pandas IO docs](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion)
 
 An alternate JSON output format which is more complete with annotation and Biolink model metadata, 
 may be generated as follows:
 
 ``` 
-gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json 
-           
+gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json       
 ```
+
+This format is mainly to empower interoperability of the modules with one another and with other Translator tools.
+
 
 The Python code of the "ResultList" module data model is in the module
 [data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py) .
