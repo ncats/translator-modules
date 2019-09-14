@@ -152,7 +152,7 @@ gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG000
 
 This Translators-specific JSON format is mainly to empower interoperability of the modules with one another 
 and with other Translator tools. A sample version of it (from a  'functional similarity' run) may be found 
-[here](https://github.com/ncats/translator-modules/blob/master/docs/funcational_similarity.json) (Hint: use the
+[here](https://github.com/ncats/translator-modules/blob/master/docs/functional_similarity.json) (Hint: use the
  FireFox web browser for a convenient view of this JSON). The Python code 
 defining and manipulating the "ResultList" module data model is in the module
 [data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py).
