@@ -115,6 +115,5 @@ py*/
 
 # ignore JSON workflow output files
 *.json
-*.ncats
 
 translator-modules/
