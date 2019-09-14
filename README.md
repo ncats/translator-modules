@@ -183,14 +183,14 @@ Here is a summary table of the current inventory of Biolink data type categories
 
 | Input Category | Output Category | Module(s) |
 | --- | --- | --- |
-| anatomical entity | anatomical entity | tissue_to_tissue_bicluster.py |
-|   | gene | tissue_to_gene_bicluster.py |
-| disease | gene | disease_associated_genes.py |
-|  | phenotypic feature| disease_to_phenotype_bicluster.py |
-| gene | anatomical entity | gene_to_tissue_bicluster.py |
-|  | chemical substance | chemical_gene_interaction.py |
-|  | gene | functional_similarity.py<br>gene_interaction.py<br>gene_to_gene_bicluster.py<br>phenotype_similarity.py |
-| phenotypic feature | disease | phenotype_to_disease_bicluster.py |
+| anatomical entity | [anatomical entity](https://github.com/ncats/translator-modules/blob/master/translator_modules/anatomical_entity/anatomical_entity/README.md) | tissue_to_tissue_bicluster.py |
+|   | [gene](https://github.com/ncats/translator-modules/blob/master/translator_modules/anatomical_entity/gene/README.md)| tissue_to_gene_bicluster.py |
+| disease | [gene](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/gene/README.md)| disease_associated_genes.py |
+|  | [phenotypic feature](https://github.com/ncats/translator-modules/blob/master/translator_modules/disease/phenotypic_feature/README.md)| disease_to_phenotype_bicluster.py |
+| gene | [anatomical entity](https://github.com/ncats/translator-modules/blob/master/translator_modules/gene/anatomical_entity/README.md)| gene_to_tissue_bicluster.py |
+|  |  [chemical substance](https://github.com/ncats/translator-modules/blob/master/translator_modules/gene/chemical_substance/README.md)| chemical_gene_interaction.py |
+|  |  [gene](https://github.com/ncats/translator-modules/blob/master/translator_modules/gene/gene/README.md)| functional_similarity.py<br>gene_interaction.py<br>gene_to_gene_bicluster.py<br>phenotype_similarity.py |
+| phenotypic feature | [disease](https://github.com/ncats/translator-modules/blob/master/translator_modules/phenotypic_feature/disease/README.md)| phenotype_to_disease_bicluster.py |
 
 ## 4. Common Workflow Language Running of Translator Workflows
 
