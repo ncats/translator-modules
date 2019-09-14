@@ -22,16 +22,16 @@ class LookUp(object):
         self.input_object = ''
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': GeneToDiseaseAssociation.class_name,
+            'association': GeneToDiseaseAssociation,
             'input_type': {
                 'complexity': 'single',
-                'category': Disease.class_name,
+                'category': Disease,
                 'mappings': 'MONDO',
             },
             'relationship': 'gene_associated_with_condition',
             'output_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC'
             },
             'taxon': 'human',

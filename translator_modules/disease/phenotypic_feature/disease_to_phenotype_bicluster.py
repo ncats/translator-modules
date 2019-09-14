@@ -20,16 +20,16 @@ class BiclusterByDiseaseToPhenotype():
     def __init__(self):
         self.meta = {
             'source': 'RNAseqDB Biclustering',
-            'association': DiseaseToPhenotypicFeatureAssociation.class_name,
+            'association': DiseaseToPhenotypicFeatureAssociation,
             'input_type': {
                 'complexity': 'single',
-                'category': Disease.class_name,
+                'category': Disease,
                 'mappings': 'MONDO',
             },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
-                'category': PhenotypicFeature.class_name,
+                'category': PhenotypicFeature,
                 'mappings': 'HP',
             },
         }

@@ -21,16 +21,16 @@ class GeneInteractions:
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': GeneToGeneAssociation.class_name,
+            'association': GeneToGeneAssociation,
             'input_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC',
             },
             'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC',
             },
         }

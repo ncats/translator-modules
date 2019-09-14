@@ -25,16 +25,16 @@ class PhenotypeSimilarity(GenericSimilarity):
             self.ont = 'hp'
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': GeneToPhenotypicFeatureAssociation.class_name,
+            'association': GeneToPhenotypicFeatureAssociation,
             'input_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC',
             },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC',
             },
         }

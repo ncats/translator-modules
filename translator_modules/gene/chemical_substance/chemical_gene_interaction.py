@@ -23,16 +23,16 @@ class ChemicalGeneInteractions(object):
         self.ctd = CTDWrapper()
         self.meta = {
             'source': 'RENCI ChemoInformatics',
-            'association': ChemicalToGeneAssociation.class_name,
+            'association': ChemicalToGeneAssociation,
             'input_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC',
             },
             'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
-                'category': ChemicalSubstance.class_name,
+                'category': ChemicalSubstance,
                 'mappings': 'ChemicalID',
             },
         }

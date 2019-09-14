@@ -20,16 +20,16 @@ class BiclusterByTissueToTissue():
     def __init__(self):
         self.meta = {
             'source': 'RNAseqDB Biclustering',
-            'association': AnatomicalEntityToAnatomicalEntityAssociation.class_name,
+            'association': AnatomicalEntityToAnatomicalEntityAssociation,
             'input_type': {
                 'complexity': 'set',
-                'category': AnatomicalEntity.class_name,
+                'category': AnatomicalEntity,
                 'mappings': 'UBERON',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'category': AnatomicalEntity.class_name,
+                'category': AnatomicalEntity,
                 'mappings': 'UBERON',
             },
         }

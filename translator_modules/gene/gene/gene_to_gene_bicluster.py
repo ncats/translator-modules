@@ -22,16 +22,16 @@ class BiclusterByGeneToGene():
     def __init__(self):
         self.meta = {
             'source': 'RNAseqDB Biclustering',
-            'association': GeneToGeneAssociation.class_name,
+            'association': GeneToGeneAssociation,
             'input_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'ENSEMBL',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'ENSEMBL',
             },
         }

@@ -25,16 +25,16 @@ class FunctionalSimilarity(GenericSimilarity):
         self.ont = 'go'
         self.meta = {
             'source': 'Monarch Biolink',
-            'association': FunctionalAssociation.class_name,
+            'association': FunctionalAssociation,
             'input_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'category': Gene.class_name,
+                'category': Gene,
                 'mappings': 'HGNC',
             },
         }
