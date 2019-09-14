@@ -143,16 +143,19 @@ In fact, all the various Pandas DataFrame output methods are available (see the
 [Pandas IO docs](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion)). 
 Just substitute the 'to-json' and 'to-csv' method command keywords with your chosen target format (e.g. to-excel, etc.)
 
-An alternate JSON output format which is more complete with annotation and Biolink model metadata, 
-may be generated as follows:
+An alternate "ResultList" JSON output forma, which is more complete with additional annotation 
+and the Biolink model metadata, may be generated as follows:
 
 ``` 
 gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json       
 ```
 
-This Translators specific JSON format is mainly to empower interoperability of the modules with one another 
-and with other Translator tools.  The Python code of the "ResultList" module data model is in the module
-[data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py) .
+This Translators-specific JSON format is mainly to empower interoperability of the modules with one another 
+and with other Translator tools. A sample version of it (from a  'functional similarity' run) may be found 
+[here](https://github.com/ncats/translator-modules/blob/master/docs/funcational_similarity.json) (Hint: use the
+ FireFox web browser for a convenient view of this JSON). The Python code 
+defining and manipulating the "ResultList" module data model is in the module
+[data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py).
 
 In both cases above, a relatively short list of genes is provided using a string of comma-delimited identifiers 
 which should ideally be CURIE formatted but in some cases (e.g.  *Ensembl* identifiers) may be just the 
