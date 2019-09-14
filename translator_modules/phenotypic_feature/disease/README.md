@@ -11,4 +11,4 @@ disease_to_phenotype_bicluster.py --input-diseases "MONDO:0019391" get-data-fram
 ```
 
 will give a CSV formatted table of phenotypic features associated with the disease. Note that, 
-as with all the nmodules, other (possibly richer) format outputs are available (and perhaps more informative)
+as with all the modules, other (possibly richer) format outputs are available (and perhaps more informative)
