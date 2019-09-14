@@ -34,13 +34,13 @@ class BiclusterByPhenotypeToDisease():
             'input_type': {
                 'complexity': 'set',
                 'category': PhenotypicFeature,
-                'mappings': 'HP',
+                'id_prefixes': 'HP',
            },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'single',
                 'category': Disease,
-                'mappings': 'MONDO',
+                'id_prefixes': 'MONDO',
             },
         }
 

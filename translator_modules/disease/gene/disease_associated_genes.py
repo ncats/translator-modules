@@ -26,13 +26,13 @@ class LookUp(object):
             'input_type': {
                 'complexity': 'single',
                 'category': Disease,
-                'mappings': 'MONDO',
+                'id_prefixes': 'MONDO',
             },
             'relationship': 'gene_associated_with_condition',
             'output_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'HGNC'
+                'id_prefixes': 'HGNC'
             },
             'taxon': 'human',
             'limit': None,

@@ -26,13 +26,13 @@ class BiclusterByGeneToGene():
             'input_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'ENSEMBL',
+                'id_prefixes': 'ENSEMBL',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'ENSEMBL',
+                'id_prefixes': 'ENSEMBL',
             },
         }
         self.related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)

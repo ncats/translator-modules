@@ -29,13 +29,13 @@ class PhenotypeSimilarity(GenericSimilarity):
             'input_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'HGNC',
+                'id_prefixes': 'HGNC',
             },
             'relationship': 'has_phenotype',
             'output_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'HGNC',
+                'id_prefixes': 'HGNC',
             },
         }
 

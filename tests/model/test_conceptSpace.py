@@ -4,14 +4,14 @@ from BioLink.model import Gene
 
 from translator_modules.core.data_transfer_model import ConceptSpace
 
-mock_concept_space_mappings = 'HGNC'
+mock_concept_space_id_prefixes = 'HGNC'
 mock_concept_space_category = Gene.class_name
 
 
 def mock_concept_space():
     cs = ConceptSpace(
         category=mock_concept_space_category,
-        mappings=[mock_concept_space_mappings]
+        id_prefixes=[mock_concept_space_id_prefixes]
     )
     return cs
 
@@ -22,7 +22,7 @@ class TestConceptSpace(TestCase):
 
         cs = mock_concept_space()
 
-        self.assertEqual(cs.mappings[0], mock_concept_space_mappings, 'ConceptSpace mappings set')
+        self.assertEqual(cs.id_prefixes[0], mock_concept_space_id_prefixes, 'ConceptSpace id_prefixes set')
         self.assertEqual(cs.category,  mock_concept_space_category,  'ConceptSpace category set')
 
     def test_concept_space_to_json(self):

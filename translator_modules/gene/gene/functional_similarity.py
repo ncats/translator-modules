@@ -29,13 +29,13 @@ class FunctionalSimilarity(GenericSimilarity):
             'input_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'HGNC',
+                'id_prefixes': 'HGNC',
             },
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'HGNC',
+                'id_prefixes': 'HGNC',
             },
         }
 

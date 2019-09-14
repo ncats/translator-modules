@@ -141,7 +141,7 @@ class Resolver(Payload):
         """
         Translate an iterable input list of identifiers.
         :param input_ids: iterable; If not specified, use a list previously loaded (using load_identifiers)
-        :return: tuple mappings of input source identifiers to target namespace
+        :return: tuple mappings of input source identifiers onto target namespace
         """
         # The second entry of the tuple will be an empty string ''
         # if output/converted_id isn't found in identifier_map dict

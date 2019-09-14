@@ -25,13 +25,13 @@ class GeneInteractions:
             'input_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'HGNC',
+                'id_prefixes': 'HGNC',
             },
             'relationship': 'interacts_with',
             'output_type': {
                 'complexity': 'set',
                 'category': Gene,
-                'mappings': 'HGNC',
+                'id_prefixes': 'HGNC',
             },
         }
 

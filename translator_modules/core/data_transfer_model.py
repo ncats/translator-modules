@@ -15,7 +15,8 @@ from json.encoder import JSONEncoder
 
 from BioLink.model import Association, NamedThing
 
-__version__ = '0.0.1'
+# Also serves as the default "ResultList.version" tag
+__version__ = '0.0.2'
 
 
 class ResultListEncoder(JSONEncoder):
@@ -143,14 +144,14 @@ class Identifier(BaseModel):
 @dataclass(frozen=True)
 class ConceptSpace(BaseModel):
     """
-    A ConceptSpace tracks namespace mappings (xmlns prefixes) and associated concept category of
+    A ConceptSpace tracks namespace id_prefixes (xmlns prefixes) and associated concept category of
     about a given set of Concept identifiers and types
     """
     category: str  # should be Biolink Model registered category
-    mappings: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
+    id_prefixes: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
 
     def __post_init__(self):
-        # Can the mappings and category be validated here as Biolink Model compliant?
+        # Can the id_prefixes and category be validated here as Biolink Model compliant?
         pass
 
 
@@ -299,6 +300,7 @@ class ResultList(BaseModel):
           - results
     """
     result_list_name: str = None
+    result_list_version: str = __version__
     source: str = ''
     association: str = Association.class_name
     domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
@@ -363,13 +365,14 @@ class ResultList(BaseModel):
 
         def parse_concept_space(cs_obj):
             return ConceptSpace(
-                mappings=cs_obj['mappings'],
+                id_prefixes=cs_obj['id_prefixes'],
                 category=cs_obj['category'],
             )
 
         # Load the resulting Python object into a ResultList instance
         rl = ResultList(
             result_list_name=result_list_obj['result_list_name'],
+            result_list_version=result_list_obj['result_list_version'],
             source=result_list_obj['source'],
             domain=parse_concept_space(result_list_obj['domain']),
             association=result_list_obj['association'],
@@ -430,25 +433,25 @@ class ResultList(BaseModel):
         meta = payload.meta
 
         input_type = meta['input_type']
-        input_type['mappings'] = \
-            input_type['mappings'] \
-                if isinstance(input_type['mappings'], list) \
-                else [input_type['mappings']]
+        input_type['id_prefixes'] = \
+            input_type['id_prefixes'] \
+                if isinstance(input_type['id_prefixes'], list) \
+                else [input_type['id_prefixes']]
 
         domain = ConceptSpace(
             category=input_type['category'],
-            mappings=input_type['mappings']
+            id_prefixes=input_type['id_prefixes']
         )
 
         output_type = meta['output_type']
-        output_type['mappings'] = \
-            output_type['mappings'] \
-            if isinstance(output_type['mappings'], list) \
-            else [output_type['mappings']]
+        output_type['id_prefixes'] = \
+            output_type['id_prefixes'] \
+            if isinstance(output_type['id_prefixes'], list) \
+            else [output_type['id_prefixes']]
 
         range = ConceptSpace(
             category=output_type['category'],
-            mappings=output_type['mappings']
+            id_prefixes=output_type['id_prefixes']
         )
 
         # Load the resulting Python object into a ResultList instance
@@ -490,7 +493,7 @@ class ResultList(BaseModel):
                 # maybe only one identifier but accommodates multiple hits as well
                 input_id_list.extend(entry['input_id'].split(','))
 
-            # assume that input_symbol mappings may be missing
+            # assume that input_symbol id_prefixes may be missing
             # in the output of some algorithms; record a blank input_id
             if not len(input_id_list):
                 input_id_list.append('') # provision for empty identifier
