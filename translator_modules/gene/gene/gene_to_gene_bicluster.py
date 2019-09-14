@@ -12,7 +12,7 @@ import requests
 from typing import Dict, List
 
 from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
-from BioLink.model import GeneToGeneAssociation, Gene
+from biolink.model import GeneToGeneAssociation, Gene
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'

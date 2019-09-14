@@ -13,7 +13,7 @@ from typing import List, ClassVar
 import pandas as pd
 from json.encoder import JSONEncoder
 
-from BioLink.model import Association, NamedThing
+from biolink.model import Association, NamedThing
 
 __version__ = '0.0.1'
 
@@ -192,6 +192,7 @@ class Concept(BaseModel):
         Here we'll add 'value added' identifier resolution
         :return:
         """
+
         pass
 
 @dataclass(frozen=True)

@@ -1,5 +1,6 @@
 import os.path
 import json
+import pathlib
 from abc import ABC
 from urllib.parse import urlparse
 from collections import defaultdict
@@ -152,7 +153,6 @@ class Payload(ABC):
 
         else:
             if _is_url(input_or_input_location):
-
                 input_url = input_or_input_location
                 path = urlparse(input_url).path
                 extension = os.path.splitext(path)[1]
@@ -160,6 +160,7 @@ class Payload(ABC):
                 response.raise_for_status()  # exception handling
                 payload_input = response.text
                 return payload_input, extension
+
             else:
                 if os.path.isabs(input_or_input_location):
                     absolute_input_or_input_location = input_or_input_location
@@ -167,7 +168,6 @@ class Payload(ABC):
                     absolute_input_or_input_location = os.path.abspath(input_or_input_location)
 
                 if os.path.isfile(absolute_input_or_input_location):
-
                     input_file = absolute_input_or_input_location
                     extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
                     with open(input_file) as stream:
@@ -177,6 +177,7 @@ class Payload(ABC):
                     """
                     Raw input from command line processed directly?
                     """
+                    print("else")
                     extension = None
                     return input_or_input_location, extension
 
