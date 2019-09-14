@@ -59,7 +59,7 @@ author: kbruskiewicz
 ```bash
  translator_modules/core/identifiers.py \
 --identifier-map ./HUGO_geneids_download_v2.txt --source "Ensembl Gene ID" --target "HGNC ID" \
-load-identifiers --identifiers ../../../tests/data/bicluster/csv/gene_list.csv \
+load-identifiers --identifiers ../../tests/data/bicluster/csv/gene_list.csv \
 translate
 ```
 

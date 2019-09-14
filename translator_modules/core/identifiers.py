@@ -10,6 +10,7 @@ from translator_modules.core.module_payload import Payload
 
 DEBUG = False
 
+
 class Resolver(Payload):
     """
     This class handles identifier conversions. Note that, for now, the 'identifier_map' catalog and the 'input_ids'
