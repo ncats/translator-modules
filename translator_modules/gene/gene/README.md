@@ -10,7 +10,7 @@ metric of provenance (e.g. shared identifiers).
 This module retrieves a functionally similar genes as measured by Jaccard similarity of Gene Ontology. To run:
 
 ``` 
-functional_similarity.py --input_genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
+functional_similarity.py --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
                             get-data-frame to-csv
 ```
 
@@ -24,7 +24,7 @@ This module retrieves a phenotypically similar genes  as measured by Jaccard sim
 annotation of the genes. To run:
 
 ``` 
-phenotype_similarity.py --input_genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
+phenotype_similarity.py --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
                             get-data-frame to-csv
 ```
 
@@ -32,12 +32,12 @@ will give a CSV formatted table of associated genes, plus a score, "shared term 
 "shared terms" (specified as HP ontology identifiers). Note that, as with all the modules,
 other (possibly richer) format outputs are available (and perhaps more informative)
 
-## gene_interactions.py
+## gene_interaction.py
 
 This module retrieves sets of interacting genes from Monarch Biolink. To run:
 
 ``` 
-gene_interactions.py --input_genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
+gene_interaction.py --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
                      get-data-frame to-csv
 ```
 
@@ -49,7 +49,7 @@ other (possibly richer) format outputs are available (and perhaps more informati
 This module retrieves sets of genes clustered by similar gene expression in profiles extracted from RNAseqDB. To run:
 
 ``` 
-gene_to_gene_bicluster.py --input_genes "ENSG00000148584,ENSG00000070018,ENSG00000175899" \
+gene_to_gene_bicluster.py --input-genes "ENSG00000148584,ENSG00000070018,ENSG00000175899" \
                        get-data-frame to-csv
 ```
 

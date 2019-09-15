@@ -122,14 +122,14 @@ For example, a "gene to gene bicluster" algorithm implemented as a module in NCA
 may be run  as follows:
 
 ``` 
-gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-json --orient records
+gene_to_gene_bicluster.py --input-genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-json --orient records
 ```
 
 This outputs the results as a JSON formatted dump of a Pandas DataFrame.  If a CSV version of the results is desired, 
 then a simple change to the command line will generate it:
 
 ``` 
-gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-csv
+gene_to_gene_bicluster.py --input-genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-csv
 ```
 
 
@@ -141,7 +141,7 @@ An alternate "ResultList" JSON output forma, which is more complete with additio
 and the Biolink model metadata, may be generated as follows:
 
 ``` 
-gene_to_gene_bicluster.py --input_genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json       
+gene_to_gene_bicluster.py --input-genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json       
 ```
 
 This Translators-specific JSON format is mainly to empower interoperability of the modules with one another 
@@ -160,7 +160,7 @@ as the source of module input, as long as those files comply with the expected t
 text output file from another module, previously run!). 
 
 ``` 
-gene_to_gene_bicluster.py --input_genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json       
+gene_to_gene_bicluster.py --input-genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json       
 ```
 
 For the JSON inputs (which may either

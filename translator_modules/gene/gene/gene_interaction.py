@@ -13,7 +13,7 @@ from BioLink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
-from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
+from translator_modules.core.module_payload import Payload
 
 
 class GeneInteractions:
@@ -83,7 +83,7 @@ class GeneInteractionSet(Payload):
             )
         )
 
-        input_gene_data_frame = get_input_gene_data_frame(input_genes)
+        input_gene_data_frame = self.get_input_data_frame(input_genes)
 
         # TODO: add schema check
 

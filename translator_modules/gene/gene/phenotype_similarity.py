@@ -11,7 +11,7 @@ from BioLink.model import GeneToPhenotypicFeatureAssociation, Gene
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity
-from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
+from translator_modules.core.module_payload import Payload
 
 
 class PhenotypeSimilarity(GenericSimilarity):
@@ -104,7 +104,7 @@ class PhenotypicallySimilarGenes(Payload):
             )
         )
 
-        input_gene_data_frame = get_input_gene_data_frame(input_genes)
+        input_gene_data_frame = self.get_input_data_frame(input_genes)
 
         self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
