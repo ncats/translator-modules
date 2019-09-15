@@ -41,10 +41,7 @@ from translator_modules.core.ids.IDs import TranslateIDs
 
 from scripts.summary_mod import SummaryMod
 
-#from translator_modules.core.standard_output import StandardOutput
-
-_SCRIPTNAME = 'WF2_automation.py'
-
+_SCRIPTNAME = 'SummaryTableWorkflow.py'
 # Flag to control console output
 _echo_to_console = False
 
@@ -124,20 +121,19 @@ def main():
     # single disease input specification as a 2-tuple
     disease_query.add_argument('-d', '--disease',
                                help="""
-Comma delimited 'name, MONDO identifier'
-2-tuple string of a single disease to analyze"""
+                               MONDO:####### identifier of a single disease"""
                                )
 
     # disease input as a list
     disease_query.add_argument('-l', '--diseaseTable',
                                help="""
-name of a tab delimited text file table of disease names - in the first column - 
-and associated MONDO identifiers - in the second column"""
+                               name of text file - each line of file has the MONDO identifier of a single disease."""
                                )
+
     disease_query.add_argument('-j', '--geneTable',
                                help="""
-name of text file - first line of file is name of query, each subsequent line 
-has the approved gene symbol for one gene."""
+			       name of text file - first line of file is name of query, each subsequent line 
+			       has the approved gene symbol for one gene."""
                                )
 
     parser.add_argument('-f', '--functionalThreshold',

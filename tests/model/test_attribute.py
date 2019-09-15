@@ -10,6 +10,7 @@ mock_source = 'ncats'
 def mock_attribute():
     return Attribute(mock_attribute_name, mock_value, mock_source)
 
+
 class TestAttribute(TestCase):
 
     def test_attribute_creation(self):
