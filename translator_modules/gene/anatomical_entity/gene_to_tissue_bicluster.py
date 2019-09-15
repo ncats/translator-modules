@@ -76,7 +76,7 @@ class GeneToTissueBiclusters(Payload):
 
         input_gene_set = get_simple_input_gene_list(input_obj, extension)
 
-        most_common_tissues = asyncio.run(self.mod.gene_to_tissue_biclusters_async(input_gene_set))
+        most_common_tissues = asyncio.run(self.module.gene_to_tissue_biclusters_async(input_gene_set))
 
         self.results = pd.DataFrame.from_records(most_common_tissues)
 

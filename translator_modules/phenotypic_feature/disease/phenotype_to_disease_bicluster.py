@@ -116,7 +116,7 @@ class PhenotypeToDiseaseBiclusters(Payload):
                 # Assume that an iterable Tuple or equivalent is given here
                 input_phenotype_ids = input_obj
 
-        most_common_diseases = asyncio.run(self.mod.phenotype_to_disease_biclusters_async(input_phenotype_ids))
+        most_common_diseases = asyncio.run(self.module.phenotype_to_disease_biclusters_async(input_phenotype_ids))
         self.results = pd.DataFrame.from_records(most_common_diseases, columns=["hit_id", "score"])
 
 

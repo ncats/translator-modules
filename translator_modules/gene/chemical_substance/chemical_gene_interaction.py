@@ -141,7 +141,7 @@ class ChemicalGeneInteractionSet(Payload):
 
         input_gene_set = get_input_gene_set(input_genes, extension)
 
-        self.results = self.mod.get_gene_chemical_interactions(input_gene_set, action, rows)
+        self.results = self.module.get_gene_chemical_interactions(input_gene_set, action, rows)
 
 
 if __name__ == '__main__':

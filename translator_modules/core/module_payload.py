@@ -1,6 +1,7 @@
 import os.path
 import json
-import pathlib
+from pprint import pprint
+
 from abc import ABC
 from urllib.parse import urlparse
 from collections import defaultdict
@@ -9,7 +10,7 @@ import pandas as pd
 import requests
 from typing import List, Iterable
 
-from translator_modules.core.data_transfer_model import ResultList
+from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
 
 
 def fix_curies(object_id, prefix=''):
@@ -112,8 +113,9 @@ def get_simple_input_gene_list(input_genes, extension) -> List[str]:
 
 class Payload(ABC):
 
-    def __init__(self, mod):
+    def __init__(self, module, metadata: ModuleMetaData):
         """
+        TODO: TO REVIEW THIS PAYLOAD COMMENT - MAYBE OBSOLETE (AS OF SEPTEMBER 15, 2019)
         Conventions for Payloads?
         - They expect CSV/TSV files or JSON files in 'record' form (a list of dictionaries that name-index tuples of data)
         - Their internal representation of these datatypes
@@ -125,8 +127,14 @@ class Payload(ABC):
             about the method into a higher layer of the code.**
 
         """
-        self.mod = mod
+        self.module = module
+        self.metadata: ModuleMetaData = metadata
         self.results = None
+
+    def metadata(self):
+        # metadata is now a complex DataClass...
+        # not sure if or how  this will print properly?
+        pprint(self.metadata)
 
     def handle_input_or_input_location(self, input_or_input_location):
         """
@@ -191,4 +199,4 @@ class Payload(ABC):
 
         :return: ResultList
         """
-        return ResultList.import_data_frame(self.results, self.mod)
+        return ResultList.import_data_frame(self.results, self.metadata)

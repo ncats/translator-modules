@@ -131,6 +131,9 @@ class GenericSimilarity(object):
     def sort_results(input_gene_set, results) -> pd.DataFrame:
 
         results = pd.DataFrame(results)
+        if results.empty:
+            return results # empty result DataFrame
+
         # CX: Some users need to know the scores that input genes have for each other. 
         #     replacing code to remove GeneA input = GeneA output results
         results = \

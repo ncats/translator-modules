@@ -98,7 +98,7 @@ class DiseaseToPhenotypeBiclusters(Payload):
         elif extension is None:
             input_disease_ids = input_obj
 
-        most_common_phenotype = asyncio.run(self.mod.disease_to_phenotype_biclusters_async(input_disease_ids))
+        most_common_phenotype = asyncio.run(self.module.disease_to_phenotype_biclusters_async(input_disease_ids))
         self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
 
 

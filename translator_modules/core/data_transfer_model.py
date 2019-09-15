@@ -8,7 +8,7 @@ plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML
 import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
-from typing import List, ClassVar
+from typing import Any, List, ClassVar
 
 import pandas as pd
 from json.encoder import JSONEncoder
@@ -19,7 +19,7 @@ from BioLink.model import Association, NamedThing
 __version__ = '0.0.2'
 
 
-class ResultListEncoder(JSONEncoder):
+class ResultListJSONEncoder(JSONEncoder):
 
     # Need to override the JSONEncoder.default() to handle 'set'
     def default(self, o):
@@ -29,12 +29,16 @@ class ResultListEncoder(JSONEncoder):
             pass
         else:
             return list(iterable)
+
+        if issubclass(o, NamedThing) or issubclass(o, Association):
+            return o.class_name
+
         # Let the base class default method raise the TypeError
         return JSONEncoder.default(self, o)
 
 
 @dataclass(frozen=True)
-class BaseModel():
+class BaseModel:
 
     def to_json(self) -> str:
         """
@@ -43,7 +47,55 @@ class BaseModel():
         return: String representation of the model
         """
         result_obj = asdict(self)
-        return json.dumps(result_obj, cls=ResultListEncoder)
+        return json.dumps(result_obj, cls=ResultListJSONEncoder)
+
+
+@dataclass(frozen=True)
+class ConceptSpace(BaseModel):
+    """
+    A ConceptSpace tracks namespace id_prefixes (xmlns prefixes) and associated concept category of
+    about a given set of Concept identifiers and types
+    """
+    category: Any  # but should be Biolink Model registered concept 'category' inheriting from NamedType
+
+    # list of xmlns prefixes drawn from Biolink Model context.jsonld
+    id_prefixes: List[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        # Can the id_prefixes and category values be validated here against the Biolink Model?
+        pass
+
+
+@dataclass(frozen=True)
+class ModuleMetaData:
+    """
+     # ModuleMetaData is meant to wrap the module self.meta
+     # This is an example from the FunctionalSimilarity module
+
+     # We're going to ignore the 'complexity' argument for now
+
+     self.meta = {
+        'source': 'Monarch Biolink',
+        'association': FunctionalAssociation,
+        'input_type': {
+            'complexity': 'set',
+            'category': Gene,
+            'id_prefixes': 'HGNC',
+        },
+        'relationship': 'related_to',
+        'output_type': {
+            'complexity': 'set',
+            'category': Gene,
+            'id_prefixes': 'HGNC',
+        },
+    }
+    """
+    name: str  # name of the module
+    source: str  # knowledge source authority of the module
+    association: Any  # but should be BioLink Model class inheriting from Association
+    domain: ConceptSpace  # Input domain - category, id_prefixes - of the input data to the module
+    relationship: str  # BioLink Model minimal predicate defined the relationship of inputs to output
+    range: ConceptSpace  # Output Range - category, id_prefixes - of the results of the module
 
 
 @dataclass(frozen=True)
@@ -142,20 +194,6 @@ class Identifier(BaseModel):
 
 
 @dataclass(frozen=True)
-class ConceptSpace(BaseModel):
-    """
-    A ConceptSpace tracks namespace id_prefixes (xmlns prefixes) and associated concept category of
-    about a given set of Concept identifiers and types
-    """
-    category: str  # should be Biolink Model registered category
-    id_prefixes: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
-
-    def __post_init__(self):
-        # Can the id_prefixes and category be validated here as Biolink Model compliant?
-        pass
-
-
-@dataclass(frozen=True)
 class Concept(BaseModel):
     """
     # A 'Concept' is a single data record about a single conceptual entity
@@ -195,6 +233,7 @@ class Concept(BaseModel):
         """
 
         pass
+
 
 @dataclass(frozen=True)
 class Result(BaseModel):
@@ -301,17 +340,21 @@ class ResultList(BaseModel):
     """
     result_list_name: str = None
     result_list_version: str = __version__
+    module_name: str = ''
     source: str = ''
-    association: str = Association.class_name
-    domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
+    association: str = str(Association)
+    domain: ConceptSpace = ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB'])
     relationship: str = "related_to"  # should correspond with a Biolink Model minimal predicate ("relationship type")
-    range: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
+    range: ConceptSpace = ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB'])
     identifiers: List[Identifier] = field(default_factory=list)
     attributes: List[Attribute] = field(default_factory=list)
     concepts: List[Concept] = field(default_factory=list)
     results: List[Result] = field(default_factory=list)
 
     list_number: ClassVar[List[int]] = [0]
+
+    def size(self) -> int:
+        return self.results.count()
 
     def __post_init__(self):
 
@@ -327,6 +370,7 @@ class ResultList(BaseModel):
             )
         )
 
+        # Not sure how essential to do this validation here since the dataclass has typed its attributes?
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
             raise RuntimeError("Value of Domain '" +
                                str(self.domain) + "' of Result List '" + self.identifiers[0].curie() +
@@ -347,10 +391,10 @@ class ResultList(BaseModel):
         rl = ResultList(
             result_list_name='Stub Resultlist',
             source='ncats',
-            association=Association.class_name,
-            domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
+            association=str(Association),
+            domain=ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB']),
             relationship='related_to',
-            range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
+            range=ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB']),
         )
         rl.concepts.extend(Concept,...)
         rl.results.extend(Result,...)
@@ -418,7 +462,7 @@ class ResultList(BaseModel):
         return rl
 
     @classmethod
-    def import_data_frame(cls, data_frame: pd.DataFrame, payload):
+    def import_data_frame(cls, data_frame: pd.DataFrame, metadata: ModuleMetaData):
         """
         Convert standard Pandas DataFrame "results" into Results of an NCATS ResultList instance.
 
@@ -426,49 +470,32 @@ class ResultList(BaseModel):
         into a list of Results, combined with Payload metadata provided alongside.
 
         :param data_frame: a Pandas DataFrame with results
+        :param metadata:
         :return: ResultList data instance
         """
-        # Grab Payload 'model' metadata dictionary
-        # Assumed defined as such. If not, let this method trigger a RuntimeError!
-        meta = payload.meta
 
-        input_type = meta['input_type']
-        input_type['id_prefixes'] = \
-            input_type['id_prefixes'] \
-                if isinstance(input_type['id_prefixes'], list) \
-                else [input_type['id_prefixes']]
-
-        domain = ConceptSpace(
-            category=input_type['category'],
-            id_prefixes=input_type['id_prefixes']
-        )
-
-        output_type = meta['output_type']
-        output_type['id_prefixes'] = \
-            output_type['id_prefixes'] \
-            if isinstance(output_type['id_prefixes'], list) \
-            else [output_type['id_prefixes']]
-
-        range = ConceptSpace(
-            category=output_type['category'],
-            id_prefixes=output_type['id_prefixes']
-        )
+        module_domain = metadata.domain
+        module_range = metadata.range
 
         # Load the resulting Python object into a ResultList instance
         result_list_name = \
-            meta['source']+' '+\
-            input_type['category']+' '+\
-            str(meta['relationship']).replace('_',' ')+' '+\
-            output_type['category']
+            metadata.source+' ' + \
+            str(module_domain.category)+' ' + \
+            metadata.relationship.replace('_', ' ') + ' ' + \
+            str(module_range.category)
 
         rl = ResultList(
             result_list_name=result_list_name,
-            source=meta['source'],
-            association=meta['association'],
-            domain=domain,
-            relationship=meta['relationship'],
-            range=range
+            module_name=metadata.name,
+            source=metadata.source,
+            association=metadata.association,
+            domain=module_domain,
+            relationship=metadata.relationship,
+            range=module_range
         )
+
+        if data_frame.empty:
+            return rl  # sends back an empty ResultList
 
         # Convert all the records from the DataFrame into ResultList recorded data
         concepts = {}

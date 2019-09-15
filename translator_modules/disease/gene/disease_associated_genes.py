@@ -12,6 +12,7 @@ from BioLink.model import GeneToDiseaseAssociation, Gene, Disease
 
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
 class LookUp(object):
@@ -21,26 +22,9 @@ class LookUp(object):
         self.mg = get_client('gene')
         self.input_object = ''
         self.meta = {
-            'source': 'Monarch Biolink',
-            'association': GeneToDiseaseAssociation,
-            'input_type': {
-                'complexity': 'single',
-                'category': Disease,
-                'id_prefixes': 'MONDO',
-            },
-            'relationship': 'gene_associated_with_condition',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'HGNC'
-            },
             'taxon': 'human',
             'limit': None,
         }
-
-    def metadata(self):
-        print("""Mod O DiseaseGeneLookup metadata:""")
-        pprint(self.meta)
 
     ## CX: need function to look up just the disease name
     def disease_name_lookup(self, disease_id):
@@ -76,35 +60,34 @@ class DiseaseAssociatedGeneSet(Payload):
     CX: Payload is an abstract base class 'ABC'. 
     It has the class variables mod, results and the function get_data_frame. 
     in this class, results will be saved as the input_genes_df returned by disease_geneset_lookup. 
-    WF2_automation.py will use the get_data_frame function to get the results object. 
+    SummaryTableWorkflow.py will use the get_data_frame function to get the results object.
     I'm not sure what mod is
     """
 
     def __init__(self, disease_id, query_biolink=True):
 
-        super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
+        super(DiseaseAssociatedGeneSet, self).__init__(
+            module=LookUp(),
+            metadata=ModuleMetaData(
+                name="Mod2.0 - Disease Associated Genes",
+                source='Monarch Biolink',
+                association=GeneToDiseaseAssociation,
+                domain=ConceptSpace(Disease, ['MONDO']),
+                relationship='gene_associated_with_condition',
+                range=ConceptSpace(Gene, ['HGNC']),
+            )
+        )
+
+        ## CX: get disease name
+        self.disease_name = self.module.disease_name_lookup(disease_id)
 
         # get genes associated with disease from Biolink
-        self.results = self.mod.disease_geneset_lookup(disease_id, query_biolink)
+        self.results = self.module.disease_geneset_lookup(disease_id, query_biolink)
 
         if not self.results.empty:
             self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
         else:
             self.disease_associated_genes = []
-
-
-#        ## CX: get disease name
-#        self.disease_name = self.mod.disease_name_lookup(disease_id)
-
-
-# CX: doing for now. Need a better way than to set this up twice though. 
-class DiseaseNameLookup(Payload):
-
-    def __init__(self, disease_id):
-        super(DiseaseNameLookup, self).__init__(LookUp())
-
-        ## CX: get disease name
-        self.disease_name = self.mod.disease_name_lookup(disease_id)
 
 
 if __name__ == '__main__':

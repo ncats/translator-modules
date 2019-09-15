@@ -116,7 +116,7 @@ class PhenotypicallySimilarGenes(Payload):
 
         input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
 
-        self.results = self.mod.compute_similarity(input_gene_data_frame, threshold)
+        self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
 
 if __name__ == '__main__':

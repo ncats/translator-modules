@@ -216,21 +216,21 @@ class GeneToGeneBiclusters(Payload):
 
         input_gene_set = get_simple_input_gene_list(input_obj, extension)
 
-        asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_set))
+        asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 
-        bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict()
-        unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
-        genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters)
+        bicluster_occurrences_dict = self.module.bicluster_occurrences_dict()
+        unique_biclusters = self.module.unique_biclusters(bicluster_occurrences_dict)
+        genes_in_unique_biclusters = self.module.genes_in_unique_biclusters(unique_biclusters)
 
         genes_in_unique_biclusters_not_in_input_gene_list = \
-            self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
+            self.module.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
 
         # need to convert the raw Ensembl ID's to CURIES
         genes_in_unique_biclusters_not_in_input_gene_list = \
             fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix='ENSEMBL')
 
         sorted_list_of_output_genes = \
-            self.mod.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
+            self.module.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 

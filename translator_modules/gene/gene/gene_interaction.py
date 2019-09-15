@@ -35,10 +35,6 @@ class GeneInteractions:
             },
         }
 
-    def metadata(self):
-        print("""Mod1E Interaction Network metadata:""")
-        pprint(self.meta)
-
     @staticmethod
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(gene_records):
@@ -97,7 +93,7 @@ class GeneInteractionSet(Payload):
 
         # TODO: add schema check
 
-        self.results = self.mod.get_interactions(input_gene_data_frame, threshold)
+        self.results = self.module.get_interactions(input_gene_data_frame, threshold)
 
 
 if __name__ == '__main__':

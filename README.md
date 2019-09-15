@@ -105,13 +105,7 @@ of the input gene list with the other genes listed in the given row.
 
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
-A similar script is available for Translator workflow 9, i.e.
-
-``` 
-./cripts/WF9_automation.py --help
-```
-
-The scripts (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
+The script (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
 if marked as executable, may be run directly as above, but in some environments (e.g. Windows) you may need to 
 explicitly run them as a Python script, i.e.
 
