@@ -22,7 +22,7 @@ class PhenotypeSimilarity(GenericSimilarity):
         if self.taxon == 'mouse':
             self.ont = 'mp'
         if self.taxon == 'human':
-            self.ont = 'hp'
+            self.ont = 'hp'           ## changed this from hp to hpo - completely errors out
         self.meta = {
             'source': 'Monarch Biolink',
             'association': GeneToPhenotypicFeatureAssociation.class_name,
@@ -31,7 +31,7 @@ class PhenotypeSimilarity(GenericSimilarity):
                 'category': Gene.class_name,
                 'mappings': 'HGNC',
             },
-            'relationship': 'has_phenotype',
+            'relationship': 'has_phenotype',   ### this line doesn't seem to have any effect on result
             'output_type': {
                 'complexity': 'set',
                 'category': Gene.class_name,
@@ -49,6 +49,8 @@ class PhenotypeSimilarity(GenericSimilarity):
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, input_gene_set):
+        record_inputs = []  ## CX: to avoid duplicates in next steps
+
         annotated_gene_set = []
         for gene in input_gene_set.to_dict(orient='records'):
             gene_curie = ''
@@ -77,12 +79,14 @@ class PhenotypeSimilarity(GenericSimilarity):
 
                 except Exception as e:
                     print(__name__+".load_gene_set() Exception: ", gene, e)
-
-            annotated_gene_set.append({
-                'input_id': gene_curie,
-                'sim_input_curie': sim_input_curie,
-                'input_symbol': gene['hit_symbol']
-            })
+            
+            if gene_curie not in record_inputs: ## CX: to avoid duplicates in next steps
+                record_inputs.append(gene_curie)
+                annotated_gene_set.append({
+                    'input_id': gene_curie,
+                    'sim_input_curie': sim_input_curie,
+                    'input_symbol': gene['hit_symbol']
+                })
 
         return annotated_gene_set
 

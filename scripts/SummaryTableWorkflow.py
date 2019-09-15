@@ -4,15 +4,13 @@
 # import logging
 # logging.basicConfig(level=logging.INFO)
 
-import requests
-from os import makedirs
-from pathlib import Path
-import argparse
+#import requests
+#from os import makedirs
+#from pathlib import Path
+#from html3.html3 import XHTML
 
+import argparse
 import pandas as pd
-import numpy as np
-import re 
-from html3.html3 import XHTML
 
 #############################################################
 # First, before loading all our analysis modules, we need
@@ -32,19 +30,18 @@ from html3.html3 import XHTML
 
 # Now we can import the remainder of the modules (some which call Ontobio)
 
+from translator_modules.disease.gene.disease_associated_genes import DiseaseNameLookup  ## CX: to look up name
 from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 from translator_modules.gene.gene.functional_similarity import FunctionalSimilarity
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
 
-from translator_modules.core.identifier import Resolver
 from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
-#from translator_modules.core.standard_output import StandardOutput
+from translator_modules.core.ids.IDs import TranslateIDs
+
 from scripts.summary_mod import SummaryMod
 
-
 _SCRIPTNAME = 'SummaryTableWorkflow.py'
-
 # Flag to control console output
 _echo_to_console = False
 
@@ -55,138 +52,62 @@ def set_console_echo(switch):
     _echo_to_console = switch
 
 
-#def output_file(tag, title, ext):
-#    # takes the tidbit directory that is relative to the current directory
-#    # parameterized across two functions so that it's made explicit without
-#    # over-encoding the paths within their constructor arguments (makes it easier to edit.)
-#
-#    folder_name = tag.replace(" ", "_")
-#    tidbit_path = Path("Tidbit").relative_to(".") / folder_name
-#
-#    filename = title.replace(" ", "_")
-#    output_file_path = tidbit_path / (filename + "." + ext)
-#    makedirs(tidbit_path, exist_ok=True)
-#
-#    # Path objects compatible with file operations
-#    output = open(output_file_path, "w+")
-#    output.info = {'tag': tag, 'title': title}
-#    return output
-
-
-#def dump_html(output, body, columns=None):
-#    title = output.info['title'] + " for " + output.info['tag']
-#
-#    doc = XHTML()
-#
-#    doc.head.title(title)
-#    doc.body.h1(title)
-#    doc.body.p.text(body.to_html(escape=False, columns=columns), escape=False)
-#
-#    output.write(str(doc))
-
-
 def disease_gene_lookup(mondo_id):
 
     gene_set = DiseaseAssociatedGeneSet(mondo_id)
 
-    # save the seed gene definition and gene list to a
-    # file under the "Tidbit/<symbol>" subdirectory
-
-#    output = output_file(disease_name, "Definition", "json")
-#    gene_set.echo_input_object(output)
-#    output.close()
-#
-#    # save the gene list to a file under the "Tidbit" subdirectory
-#    df = gene_set.get_data_frame()
-#
-#    # Dump HTML representation
-#    output = output_file(disease_name, "Disease Associated Genes", "html")
-#    dump_html(output, df)
-#    output.close()
-#
-#    # Dump JSON representation
-#    output = output_file(disease_name, "Disease Associated Genes", "json")
-#    df.to_json(output)
-#    output.close()
-
-    # genes to investigate
     return gene_set
 
 
 STD_RESULT_COLUMNS = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score']
 
 
-def similarity(model, disease_associated_gene_set, threshold, module, title):
+def similarity(model, input_gene_set, threshold, module, title):
 
-    input_gene_set = disease_associated_gene_set.get_data_frame()
+#    input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
     results = model.compute_similarity(input_gene_set, threshold)
 
     results['module'] = module
 
-    # save the gene list to a file under the "Tidbit" subdirectory
-
-#    # Dump HTML representation
-#    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
-#    dump_html(output, results, columns=STD_RESULT_COLUMNS)
-#    output.close()
-#
-#    # Dump JSON representation
-#    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
-#    results.to_json(output)
-#    output.close()
-
     return results
 
 
-def gene_interactions(model, disease_associated_gene_set, threshold, module, title):
+def gene_interactions(model, input_gene_set, threshold, module, title):
 
-    input_gene_set = disease_associated_gene_set.get_data_frame()
+#    input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
-    results = model.get_interactions(input_gene_set, threshold)
+    
+    ## convert float input to int 
+    lower_bound = int(threshold)
+    results = model.get_interactions(input_gene_set, lower_bound)
 
     results['module'] = module
 
-    # save the gene list to a file under the "Tidbit" subdirectory
+    return results
 
-#    # Dump HTML representation
-#    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
-#    dump_html(output, results)  # CX: was head. I want all of the results. 
-#    output.close()
-#
-#    # Dump JSON representation
-#    output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
-#    # CX: you should dump the whole table. 
-#    # dumping the whole table in the JSON? or should I just dump the head?
-#    results.to_json(output)
-#    output.close()
+
+def gene_gene_bicluster(input_gene_set, threshold, module):
+    # Written by CX, from Marcin's WF9 gene-gene bicluster stuff
+#    input_gene_set = disease_associated_gene_set.get_data_frame()
+
+    ## get the raw results (only those above threshold)
+    results = GeneToGeneBiclusters(input_gene_set, threshold).get_data_frame()
+
+    ## set module column: used in summary module
+    results['module'] = module
+    
+    ## reorder columns 
+    cols = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score', 'module']
+    results = results.reindex(columns=cols)
 
     return results
 
 
-#def aggregate_results(results_a, results_b, input_object_id):
-#    all_results = pd.concat([results_a, results_b])
-#    so = StandardOutput(results=all_results.to_dict(orient='records'), input_object_id=input_object_id)
-#    return so.output_object
-#
-#
-#def publish_to_rtx(std_api_response_json, input_disease_symbol, input_disease_mondo, title):
-#    # get the URL for these results displayed in the RTX UI
-#    rtx_ui_request_url = "https://rtx.ncats.io/api/rtx/v1/response/process"
-#    to_post = {"options": ["Store", "ReturnResponseId"], "responses": [std_api_response_json]}
-#    rtx_ui_url = requests.post(rtx_ui_request_url, json=to_post)
-#
-#    # Write out a master index web page
-#    output = output_file(input_disease_symbol, "index", "html")
-#    file_index(output, input_disease_symbol, input_disease_mondo, rtx_ui_url)
-#    output.close()
-#
-#    return rtx_ui_url
-
-
 def main():
+    
     # Parse command line arguments
     parser = argparse.ArgumentParser(
         prog=_SCRIPTNAME, formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -201,18 +122,18 @@ def main():
     disease_query.add_argument('-d', '--disease',
                                help="""
                                MONDO:####### identifier of a single disease"""
-#                               help="""
-#Comma delimited 'name, MONDO identifier'
-#2-tuple string of a single disease to analyze"""
                                )
 
     # disease input as a list
     disease_query.add_argument('-l', '--diseaseTable',
                                help="""
                                name of text file - each line of file has the MONDO identifier of a single disease."""
-#                               help="""
-#name of a tab delimited text file table of disease names - in the first column - 
-#and associated MONDO identifiers - in the second column"""
+                               )
+
+    disease_query.add_argument('-j', '--geneTable',
+                               help="""
+			       name of text file - first line of file is name of query, each subsequent line 
+			       has the approved gene symbol for one gene."""
                                )
 
     parser.add_argument('-f', '--functionalThreshold',
@@ -224,6 +145,9 @@ def main():
     parser.add_argument('-g', '--geneInteractionThreshold',
                         type=float, default=12, help='value of Gene Interaction threshold')
 
+    parser.add_argument('-b', '--geneBiclusterThreshold',
+                        type=float, default=0.1, help='value of gene-gene bicluster threshold')
+
     args = parser.parse_args()
 
     print("\nRunning the " + _SCRIPTNAME + " script...")
@@ -232,229 +156,305 @@ def main():
         print("Echoing results verbosely to the console!\n")
         set_console_echo(True)
 
-    # read in the diseases to analyze
-    disease_list = []
+    print("\nLoading source ontology and annotation...")
 
+    
+    disease_list = []
+    # read in the diseases to analyze. disease_list will stay empty 
+    # if file (list of input genes) is given instead
     if args.disease:
         mondo_id = args.disease
         disease_name = DiseaseNameLookup(mondo_id).disease_name
-#        disease_name, mondo_id = args.disease.split(',')
-#        disease_name = disease_name.strip()
         print("\nSingle disease specified:\t" + disease_name + "(" + mondo_id + "):\n")
         disease_list.append((disease_name, mondo_id))
-
+    
     elif args.diseaseTable:
-
         disease_table_filename = args.diseaseTable
-        print("Table of diseases specified in file:\t\t" + disease_table_filename)
-
+        print("Table of diseases specified in file:\t\t" + disease_table_filename + "\n")
         with open(disease_table_filename, "r") as diseases:
             for entry in diseases.readlines():
-
-#                field = entry.split("\t")
-#
-#                # Skip the header
-#                if str(field[0]).lower() == "disease":
-#                    continue
-#
-#                # The first field is assumed to be the gene name or symbol, the second field, the MONDO identifier
-#                disease_name = field[0]
-#                disease_name = disease_name.strip()
-#
-#                mondo_id = field[1]
                 mondo_id = entry.strip()
                 disease_name = DiseaseNameLookup(mondo_id).disease_name
-                
                 disease_list.append((disease_name, mondo_id))
+    
+    elif args.geneTable:
+        gene_table_filename = args.geneTable
+        print("Table of input genes specified in file:\t" + gene_table_filename + "\n")
+        with open(gene_table_filename, "r") as gene_table:
+            gene_table_lines = gene_table.readlines()
+            query_name = gene_table_lines[0].strip()
+            input_gene_symbols = [line.strip() for line in gene_table_lines[1:]]
 
+    
+    ## CX - it would be nice if we only initiated the models we were going to use. 
+    ## otherwise we have to comment out modules here! 
+    
+    # Ontology Catalogs only need to be initialized once!
     functional_threshold = args.functionalThreshold
     print("Functional Similarity Threshold:\t" + str(functional_threshold))
+    ## Functional similarity using Jaccard index threshold
+    ## Called once, creating this object triggers
+    ## its initialization with GO ontology and annotation
+    print("Loading functional ontology (~4 minutes)...\n")
+    func_sim_human = FunctionalSimilarity('human')
 
     phenotype_threshold = args.phenotypeThreshold
     print("Phenotype Similarity Threshold: \t" + str(phenotype_threshold))
-
+    ## Phenotype similarity using OwlSim calculation threshold
+    ## Called once, creating this object triggers
+    ## its initialization with GO ontology and annotation
+    print("Loading phenotype ontology...\n")
+    pheno_sim_human = PhenotypeSimilarity('human')
+    
     gene_interaction_threshold = args.geneInteractionThreshold
     print("Gene Interaction Threshold: \t\t" + str(gene_interaction_threshold))
+    # Gene interactions curated in the Biolink (Monarch) resource
+    print("Loading gene interaction info...\n")
+    interactions_human = GeneInteractions()
+    
+    gene_gene_bicluster_threshold = args.geneBiclusterThreshold
+    print("Gene-Gene Bicluster Score Threshold: \t" + str(gene_gene_bicluster_threshold))
 
-    print("\nLoading source ontology and annotation...")
-
-    # Ontology Catalogs only need to be initialized once!
-
-    # Functional similarity using Jaccard index threshold
-    # Called once, creating this object triggers
-    # its initialization with GO ontology and annotation
-#    func_sim_human = FunctionalSimilarity('human')
-#
-#    # Phenotype similarity using OwlSim calculation threshold
-#    # Called once, creating this object triggers
-#    # its initialization with GO ontology and annotation
-#    pheno_sim_human = PhenotypeSimilarity('human')
-#
-#    # Gene interactions curated in the Biolink (Monarch) resource
-#    interactions_human = GeneInteractions()
-
-    # Initalizing list of summaries, for use with a file of diseases 
-    disease_summaries = []
-
-    # diseases.tsv is assumed to be a tab delimited
-    # file of diseases named (column 0) with their MONDO identifiers (column 1)
-    # The optional header should read 'Disease' in the first column
-    for disease_name, mondo_id in disease_list:
-        
-        print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
-
-        disease_associated_gene_set = \
-            disease_gene_lookup(
-                mondo_id
-            )
-        """
-        CX: disease_associated_gene_set inherits from Payload (abstract base class 'ABC')
-        It has the class variables mod (I don't know what this is), results and the function get_data_frame
-        The function get_data_frame returns the results object from DiseaseAssociatedGeneSet (input gene df). 
-        """
-
+    ## split the workflow based on whether this is disease based or query/input-gene-list based:
+    if args.geneTable:  # working with a query_name, input_gene_symbols (list of approved gene symbols)
+        print("\nProcessing " + query_name + ":\n")
+    
+        ## need to translate hgnc symbols -> hgnc ids in input_gene_list
+        # first get a UNIQUE list of the input genes 
+        input_gene_symbols = list(set(input_gene_symbols))
+    
+        # second, convert hgnc symbols to hgnc ids
+        translation = "./translator_modules/core/ids/HUGO_geneids_download_v2.txt"
+    
+        ## I'm writing out the list comprehension so I can add print statement 
+        input_hgnc_ids = []
+        final_input_gene_symbols = []
+        for (input_id, output_id) in TranslateIDs(input_gene_symbols, translation, \
+            in_id="Approved symbol", out_id="HGNC ID").results:
+            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
+            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
+            if (output_id!='' and output_id!=None):
+                input_hgnc_ids.append(output_id)
+                final_input_gene_symbols.append(input_id)
+            else:
+                print("Error: Matching HGNC ID for "+input_id+" not found. Excluded from Workflow.") 
+                        
+        query_input_genes = pd.DataFrame.from_dict({'hit_id':input_hgnc_ids, \
+                                        'hit_symbol':final_input_gene_symbols}, \
+                                         orient = 'columns')
+  
         if _echo_to_console:
-            print(
-                "\nDisease Associated Input Gene Set for " +
-                disease_name + "(" + mondo_id + "):\n")
-            print(disease_associated_gene_set.get_data_frame().to_string())
+            print("\nInput Gene Set for " + query_name + ":\n")
+            print(query_input_genes.to_string())
+    
+        # intialize summary module object
+        summary_mod = SummaryMod(query_name)
 
-#        # intialize summary module object
-#        summary_mod = SummaryMod(disease_name, mondo_id)
+        ## run modules based on whether argument was given in command prompt
+        print("\nRunning functional similarity module...")
+        mod1a_results = \
+            similarity(
+                func_sim_human,
+                query_input_genes,
+                functional_threshold,
+                'Mod1A',
+                'Functionally Similar Genes'
+            )
         
-        # WF9 GENE GENE BICLUSTER STUFF
-        # LATER PUT THIS STUFF IN A FUNCTION AT THE TOP?
+        ## This builds a brief summary for just this module and creates the across summary tables
+        if not mod1a_results.empty:  # will only work if Mod1A returned results
+            summary_mod.add_scorebased_module(mod1a_results) 
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1A')
+        else:
+            print("Mod1A (Functional similarity) returned no results. Not included in summary.")
+                
+        print("\nRunning phenotypic similarity module...")            
+        print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
+        mod1b_results = \
+            similarity(
+                pheno_sim_human,
+                query_input_genes,
+                phenotype_threshold,
+                'Mod1B',
+                'Phenotypic Similar Genes'
+            )
         
-        # first get a UNIQUE list of the disease associated gene IDs (these are HGNC).
-        hgnc_disease_gene_list = list(set(disease_associated_gene_set.get_data_frame()['hit_id']))
-#        trial_list = ['ENSG00000272603', 'ENSG00000263050', 'fjdsaklfjdkasl']
+        ## Add output to brief summary
+        if not mod1b_results.empty:
+            summary_mod.add_scorebased_module(mod1b_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1B')
+        else:
+            print("Mod1B (phenotypic similarity) returned no results. Not included in summary module.")
+                
+        print("\nRunning gene interaction module...")            
+        # Find Interacting Genes from Monarch data
+        mod1e_results = \
+            gene_interactions(
+                interactions_human,
+                query_input_genes,
+                gene_interaction_threshold,
+                'Mod1E',
+                "Gene Interactions"
+            )
+            
+        ## JG: Add output into summary 
+        if not mod1e_results.empty:
+            summary_mod.add1E(mod1e_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1E')   
+        else:
+            print("Mod1E (gene-gene interactions) returned no results. Not included in summary module.")
+          
+        print("\nRunning gene-gene bicluster module...")                        
+        # Find gene-gene bicluster information (from WF9)      
+        gene_bicluster_results = gene_gene_bicluster( 
+                                    query_input_genes, 
+                                    gene_gene_bicluster_threshold,
+                                    'gene_gene_bicluster'
+                                    )
         
-        # second, convert hgnc identifier to ensembl
-        # file is downloaded from Biomart (with gene IDs for Ensembl, HGNC, NCBI (no NCBI: prefix), Uniprot (no prefix) 
-        translation = "../translator-modules/translator_modules/core/identifier/HUGO_geneids_download_v2.txt"
-        ## use headers of original file for now: "Gene stable ID" is Ensembl ID
+        if not gene_bicluster_results.empty:
+            summary_mod.add_scorebased_module(gene_bicluster_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('gene_gene_bicluster')  
+        else:
+            print("gene_gene_bicluster returned no results. Not included in summary module.")
         
-        ## I'm writing out the list comprehension so I can add print statement for error
-        ensembl_disease_gene_list = []
-        for (input_id, output_id) in Resolver(hgnc_disease_gene_list, translation, \
-                                              in_id="HGNC ID", out_id="Ensembl gene ID").results:
-            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
-            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
-            if (output_id!='' and output_id!=None):
-                ensembl_disease_gene_list.append(output_id)
+        ## END OF WORKFLOW  
+        if _echo_to_console:
+            summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
+    
+        ## Write all out
+        summary_csv_filenames = [query_name.replace(" ", "_") + '_brief_summary.csv', \
+                                 query_name.replace(" ", "_") + '_full_summary.csv']
+        summary_json_filenames = [query_name.replace(" ", "_") + '_brief_summary.json', \
+                                  query_name.replace(" ", "_") + '_full_summary.json']
+        
+        summary_mod.write_all_csv(summary_csv_filenames[0], summary_csv_filenames[1])
+        summary_mod.write_all_json(summary_json_filenames[0], summary_json_filenames[1])        
+        
+    ## not empty for disease table or single disease 
+    elif disease_list!=[]:  
+        # Initalizing list of summaries, mainly to accommodate file of diseases 
+        disease_summaries = []
+    
+        for disease_name, mondo_id in disease_list:
+            
+            print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
+    
+            disease_associated_gene_set = \
+                disease_gene_lookup(
+                    mondo_id
+                )
+            """
+            CX: disease_associated_gene_set inherits from Payload (abstract base class 'ABC')
+            It has the class variables mod (I don't know what this is), results and the function get_data_frame
+            The function get_data_frame returns the results object from DiseaseAssociatedGeneSet (input gene df). 
+            """
+    
+            if _echo_to_console:
+                print(
+                    "\nDisease Associated Input Gene Set for " +
+                    disease_name + "(" + mondo_id + "):\n")
+                print(disease_associated_gene_set.get_data_frame().to_string())
+    
+            # intialize summary module object
+            summary_mod = SummaryMod(disease_name)
+
+            print("\nRunning functional similarity module...")
+            mod1a_results = \
+                similarity(
+                    func_sim_human,
+                    disease_associated_gene_set.get_data_frame(),
+                    functional_threshold,
+                    'Mod1A',
+                    'Functionally Similar Genes'
+                )
+        
+            ## This builds a brief summary for just this module and creates the across summary tables
+            if not mod1a_results.empty:  # will only work if Mod1A returned results
+                summary_mod.add_scorebased_module(mod1a_results) 
+                if _echo_to_console:
+                    summary_mod.show_single_mod_summary('Mod1A')
             else:
-                print("Error: Matching Ensembl ID for "+input_id+" not found. Excluded from Module.")       
-
-        print(ensembl_disease_gene_list)
-
-        tryingThisOut = GeneToGeneBiclusters(ensembl_disease_gene_list).get_data_frame()
-        regexTry = re.compile(r'ENSEMBL:(.+)\.')
-        tryingRegex = [re.match(regexTry, x).group(1) for x in tryingThisOut['hit_id']]
-#        print(tryingRegex[:10])
-
-        ## next is replacing hit_id column with hgnc symbols, then removing any empty columns?
-        ## or do we want to leave Ensembl IDs in the results (if there aren't any hgnc symbols)...
-        hgnc_output_gene_list = []
-        for (input_id, output_id) in Resolver(tryingRegex, translation, \
-                                              out_id="HGNC ID", in_id="Ensembl gene ID").results:
-            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
-            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
-            if (output_id!='' and output_id!=None):
-                hgnc_output_gene_list.append(output_id)
+                print("Mod1A (Functional similarity) returned no results. Not included in summary module.")
+                  
+            print("\nRunning phenotypic similarity module...")   
+            print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
+            mod1b_results = \
+                similarity(
+                    pheno_sim_human,
+                    disease_associated_gene_set.get_data_frame(),
+                    phenotype_threshold,
+                    'Mod1B',
+                    'Phenotypic Similar Genes'
+                )
+            
+            ## Add output to brief summary
+            if not mod1b_results.empty:
+                summary_mod.add_scorebased_module(mod1b_results)
+                if _echo_to_console:
+                    summary_mod.show_single_mod_summary('Mod1B')
             else:
-                hgnc_output_gene_list.append(np.nan)
-#                print("Error: Matching Ensembl ID for "+input_id+" not found.")       
-#        print(hgnc_output_gene_list[:10]) 
-        print("length of initial list is ", len(hgnc_output_gene_list))
-        tryingThisOut['hit_id'] = hgnc_output_gene_list
-        tryingThisOut = tryingThisOut.dropna()
-        print(tryingThisOut.shape)
-        print(tryingThisOut)
-        ## note that some of these are the input genes! Errr...how? weren't these filtered out?
+                print("Mod1B (Phenotypic similarity) returned no results. Not included in summary module.")
+                   
+            print("\nRunning gene interaction module...")               
+            # Find Interacting Genes from Monarch data
+            mod1e_results = \
+                gene_interactions(
+                    interactions_human,
+                    disease_associated_gene_set.get_data_frame(),
+                    gene_interaction_threshold,
+                    'Mod1E',
+                    "Gene Interactions"
+                )
+                
+            ## JG: Add output into summary 
+            if not mod1e_results.empty:
+                summary_mod.add1E(mod1e_results)
+                if _echo_to_console:
+                    summary_mod.show_single_mod_summary('Mod1E')         
+            else:
+                print("Mod1E (gene-gene interactions) returned no results. Not included in summary module.")
+
+            print("\nRunning gene-gene bicluster module...")                               
+            # Find gene-gene bicluster information (from WF9)                      
+            gene_bicluster_results = gene_gene_bicluster( 
+                                        disease_associated_gene_set.get_data_frame(), 
+                                        gene_gene_bicluster_threshold,
+                                        'gene_gene_bicluster'
+                                        )
+            
+            if not gene_bicluster_results.empty:
+                summary_mod.add_scorebased_module(gene_bicluster_results)
+                if _echo_to_console:
+                    summary_mod.show_single_mod_summary('gene_gene_bicluster')  
+            else:
+                print("gene_gene_bicluster returned no results. Not included in summary.")
+                        
+            ## Put summary in list (only used when multiple diseases in one file are queried at once)
+            disease_summaries.append(summary_mod)
+    
+            ## END OF WORKFLOW
+            if _echo_to_console:
+                summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
+    
+            ## Write all out            
+            summary_csv_filenames = [disease_name.replace(" ", "_") + '_brief_summary.csv', \
+                                     disease_name.replace(" ", "_") + '_full_summary.csv']
+            summary_json_filenames = [disease_name.replace(" ", "_") + '_brief_summary.json', \
+                                      disease_name.replace(" ", "_") + '_full_summary.json']
+            
+            summary_mod.write_all_csv(summary_csv_filenames[0], summary_csv_filenames[1])
+            summary_mod.write_all_json(summary_json_filenames[0], summary_json_filenames[1])
         
-        
-#        mod1a_results = \
-#            similarity(
-#                func_sim_human,
-#                disease_associated_gene_set,
-#                functional_threshold,
-#                'Mod1A',
-#                'Functionally Similar Genes'
-#            )
-#            
-#        ## This builds a brief summary for just this module and creates the across summary tables
-#        if not mod1a_results.empty:  # will only work if Mod1A returned results
-#            summary_mod.add_scorebased_module(mod1a_results) 
-#            if _echo_to_console:
-#                summary_mod.show_single_mod_summary('Mod1A')
-#
-#        mod1b_results = \
-#            similarity(
-#                pheno_sim_human,
-#                disease_associated_gene_set,
-#                phenotype_threshold,
-#                'Mod1B',
-#                'Phenotypic Similar Genes'
-#            )
-#        
-#        ## Add output to brief summary
-#        if not mod1b_results.empty:
-#            summary_mod.add_scorebased_module(mod1b_results)
-#            if _echo_to_console:
-#                summary_mod.show_single_mod_summary('Mod1B')
-#
-#        # Find Interacting Genes from Monarch data
-#        mod1e_results = \
-#            gene_interactions(
-#                interactions_human,
-#                disease_associated_gene_set,
-#                gene_interaction_threshold,
-#                'Mod1E',
-#                "Gene Interactions"
-#            )
-#            
-#        ## JG: Add output into summary 
-#        if not mod1e_results.empty:
-#            summary_mod.add1E(mod1e_results)
-#            if _echo_to_console:
-#                summary_mod.show_single_mod_summary('Mod1E')            
 
-        # CX: Summary module code here
-        # Put it in list (only used really used when multiple diseases in one file are queried at once)
-#        disease_summaries.append(summary_mod)
-#
-#        ## END OF MODULE QUERIES 
-#        if _echo_to_console:
-#            summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
+    print("\nWF2 Processing complete!")
 
-#        ## Write all out
-        
-#        summary_csv_filenames = [disease_name.replace(" ", "_") + '_brief_summary.csv', \
-#                                 disease_name.replace(" ", "_") + '_full_summary.csv']
-#        summary_json_filenames = [disease_name.replace(" ", "_") + '_brief_summary.json', \
-#                                  disease_name.replace(" ", "_") + '_full_summary.json']
-#        
-#        summary_mod.write_all_csv(summary_csv_filenames[0], summary_csv_filenames[1])
-#        summary_mod.write_all_json(summary_json_filenames[0], summary_json_filenames[1])
-
-        ## CX: not sure how much we need this code below...
-#        std_api_response_json = \
-#            aggregate_results(
-#                mod1a_results,
-#                mod1b_results,
-#                disease_associated_gene_set.get_input_disease_id()
-#            )
-#
-#        # Echo to console
-#        if _echo_to_console:
-#            print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(std_api_response_json)
-
-#    print("\nWF2 Processing complete!")
-#
-#    # Success!
-#    exit(0)
+    # Success!
+    exit(0)
 
 
 if __name__ == '__main__':

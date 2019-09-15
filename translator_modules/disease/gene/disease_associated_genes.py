@@ -40,12 +40,17 @@ class LookUp(object):
     def metadata(self):
         print("""Mod O DiseaseGeneLookup metadata:""")
         pprint(self.meta)
+        
+    ## CX: need function to look up just the disease name
+    def disease_name_lookup(self, disease_id):
+#        print(self.blw.get_obj(disease_id))
+        disease_label = self.blw.get_obj(disease_id)["label"]
+        return disease_label
 
-    def disease_geneset_lookup(self, disease_id, disease_label, query_biolink=True):
-
-        if not disease_label:
-            disease_label = disease_id
-
+    def disease_geneset_lookup(self, disease_id, query_biolink=True):
+        # TODO: does this get faster if we specify the API type
+#        disease_label = self.blw.get_obj(disease_id)["label"]
+        disease_label = self.disease_name_lookup(disease_id)  
         disease_gene_association_results = self.blw.disease2genes(disease_id)
         input_gene_set = [self.blw.parse_association(disease_id, disease_label, association) for association in
                           disease_gene_association_results['associations']]

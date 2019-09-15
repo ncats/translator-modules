@@ -45,7 +45,7 @@ class GenericSimilarity(object):
         self.ontology = ofactory.create(self.ont)
         p = GafParser()
         url = ''
-        if self.ont == 'go':
+        if self.ont == 'go':    # used for functional similarity
             # CX: GO:0008150 is biological_process, GO:0003674 is molecular_function. 
             # CX: These are 2 out of 3 top-level terms in GO ontology. 
             # CX: The excluded term is cellular_component (where gene carries out a molecular function)
@@ -60,7 +60,7 @@ class GenericSimilarity(object):
             assocs = [x for x in assocs if 'header' not in x.keys()]
             assocs = [x for x in assocs if x['object']['id'] in go_roots]
             self.associations = self.afactory.create_from_assocs(assocs, ontology=sub_ont)
-        else:
+        else:   ## used for phenotype similarity
             self.associations = \
                 self.afactory.create(
                         ontology=self.ontology,
@@ -90,9 +90,29 @@ class GenericSimilarity(object):
         # Note: we need to convert the shared_terms set to a list
         # to avoid later JSON serialization problems
         return len(shared_terms) / num_union, list(shared_terms)
+    
+    
+    ## CX: used for debugging by seeing the underlying annotations retrieved for a gene
+    def seeing_annotation(aset: AssociationSet, s1, s2):
+        """
+        Looking at annotations
+        """
+        print("annotations function\n{0}\t{1}\t\n{2}".format(s1, s2, aset.annotations(s1)))
+        print("length of annotations", len(aset.annotations(s1)))
+        
+        print("objects for subject function\n{0}\t{1}\t\n{2}".format(s1, s2, aset.objects_for_subject(s1)))
 
+        print("inferred_types\n{0}\t{1}\t\n{2}".format(s1, s2, aset.inferred_types(s1)))    
+        print("length of inferred types", len(aset.inferred_types(s1)))
+
+        
     def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
         similarities = []
+#        for gene in input_genes:
+#            query = gene['sim_input_curie']
+#            query_symbol = gene['input_symbol']
+#            GenericSimilarity.seeing_annotation(self.associations, query, query_symbol)
+       
         for index, igene in enumerate(input_genes):
             for subject_curie in self.associations.subject_label_map.keys():
                 input_gene = GenericSimilarity.trim_mgi_prefix(
@@ -131,7 +151,7 @@ class GenericSimilarity(object):
     def sort_results(input_gene_set, results) -> pd.DataFrame:
 
         results = pd.DataFrame(results)
-        # CX: Some users need to know the scores that input genes have for each other. 
+        # CX: Some users may want to know the scores that input genes have for each other. 
         #     replacing code to remove GeneA input = GeneA output results
         results = \
             results[~(results.hit_id == results.input_id)]. \

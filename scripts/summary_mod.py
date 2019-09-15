@@ -11,10 +11,9 @@ import numpy as np
 # Main class
 class SummaryMod(object):
     # Initializing function
-    def __init__(self, disease_name='NA', mondo_id='MONDO:XXXXXXX'):
-        # Store the disease names and mondo id
-        self.disease_name = disease_name
-        self.mondo_id = mondo_id
+    def __init__(self, name='query_result'):
+        # Store the query name
+        self.name = name
         
 #        # Store a set of the input gene symbols
 #        self.input_gene_set = [x['hit_symbol'] for x in input_gene_set]
@@ -31,8 +30,7 @@ class SummaryMod(object):
 
     # Method formats the disease name for printing 
     def format_print(self, title=''):
-        print('\n' + title + ' for ' +
-                  self.disease_name + '(' + self.mondo_id + '):\n')
+        print('\n' + title + ' for ' + self.name + ':\n')
 
     def build_full_summary(self, mod_results):
         """
@@ -93,9 +91,10 @@ class SummaryMod(object):
                 # drop original column, use protein_interaction_count from now on 
                 self.brief_summary.drop('num_protein_interactions',axis=1,inplace=True)  
         
-        ## Calculating total hits, number of modules
+        ## Calculating total hits, number of modules, number of input genes
         self.brief_summary['total_hits'] = self.brief_summary.filter(regex=('_count$')).sum(axis=1)
         self.brief_summary['num_modules'] = self.brief_summary.filter(regex=('_count$')).count(axis=1)
+        self.brief_summary['num_input_genes'] = [len(genelist) for genelist in self.brief_summary['input_symbol']]
     
         ## adding a column to mark whether output gene is input gene (disease associated) or not
         # first, find the set of input genes in the table
@@ -106,12 +105,12 @@ class SummaryMod(object):
         # make column comparing output_gene symbol to input_genes set
         self.brief_summary['is_input_gene'] = ['Y' if x in input_genes else 'N' for x in self.brief_summary['hit_symbol']]
 
-        # sort table by number of modules, then total hits, then hit_symbol 
-        self.brief_summary = self.brief_summary.sort_values(by=['num_modules','total_hits', 'hit_symbol'], ascending=[False, False, True])
+        # sort table by number of modules, then total hits, then number of input genes, then hit_symbol 
+        self.brief_summary = self.brief_summary.sort_values(by=['num_modules','total_hits', 'num_input_genes', 'hit_symbol'], ascending=[False, False, False, True])
  
         ## CX: next is reordering columns     
-        cols_to_order = ['hit_symbol', 'hit_id', 'input_symbol', 'input_id', 'is_input_gene', 'num_modules', 'total_hits', \
-                         'functional_sim_count', 'phenotype_sim_count', 'protein_interaction_count']
+        cols_to_order = ['hit_symbol', 'hit_id', 'input_symbol', 'input_id', 'is_input_gene', 'num_input_genes', 'num_modules', 'total_hits', \
+                         'gene-gene_bicluster_count', 'functional_sim_count', 'phenotype_sim_count', 'protein_interaction_count']
         ## puts columns I want to order in front/in order if they are in dataframe. Then puts everything else. 
         cols = [x for x in cols_to_order if x in self.brief_summary] + [x for x in self.brief_summary if x not in cols_to_order]
         self.brief_summary = self.brief_summary.reindex(columns=cols)
@@ -145,34 +144,32 @@ class SummaryMod(object):
         
         else:  ## run normally
             # drop irrelevant columns
-    #        processed_results = results.drop(columns=['shared_terms','shared_term_names', 'module'])
-            processed_results = processed_results.drop(columns=['shared_term_names', 'module'])
-        
+            processed_results = processed_results.drop(columns=['module'])
             
             # ADD ELIF statements for additional columns
             # rename columns according to module the results are from, create ranks
             # Smaller ranks = higher scores. This is easier: if larger scores = better, rank depends on how many entries are in table
             if module=='Mod1A':
-                processed_results = processed_results.drop(columns=['shared_terms'])
+                processed_results = processed_results.drop(columns=['shared_terms', 'shared_term_names'])
                 processed_results = processed_results.rename(index = str, columns = {'score':'functional_sim_score'})
                 processed_results['functional_sim_rank'] = processed_results['functional_sim_score'].rank(ascending=False, method='min')        
     
             elif module=='Mod1B':
                 ## ISSUE WITH EFO 'PHENOTYPE' TERMS
-                ## wait this code doesn't seem to be working for lafora disease because all results are filtered out by loc statement
-                ## ..but it's working for fanconi anemia...
                 processed_results = processed_results.loc[[False if "EFO" in str(x) else True for x in processed_results.shared_terms],:]
 
-                ## Like in Lafora Disease case, if processed_results is empty there's no need to go forward
+                ## if processed_results is empty there's no need to go forward
                 if processed_results.empty==True:
                     print(module + " returned no results and was not loaded into summary.")
                     return  ## exit function
                 
                 ## The following code continues for Mod1B output if processed_results wasn't empty
-                processed_results = processed_results.drop(columns=['shared_terms'])
+                processed_results = processed_results.drop(columns=['shared_terms', 'shared_term_names'])
                 processed_results = processed_results.rename(index = str, columns = {'score':'phenotype_sim_score'})            
                 processed_results['phenotype_sim_rank'] = processed_results['phenotype_sim_score'].rank(ascending=False, method='min')          
-            
+            elif module=="gene_gene_bicluster":
+                processed_results = processed_results.rename(index = str, columns = {'score':'gene-gene_bicluster_score'})
+                processed_results['gene-gene_bicluster_rank'] = processed_results['gene-gene_bicluster_score'].rank(ascending=False, method='min')              
             else:  ## what to do if module not recognized. placeholder code?
                 print("Module not recognized and not loaded into summary.")
                 return  ## exit function
@@ -203,7 +200,7 @@ class SummaryMod(object):
         # WIP: drop duplicate gene symbols. BUT maybe we want to keep these?
         processed_results = results.drop_duplicates(subset=['input_symbol','hit_symbol'])
 
-        if results.empty==True:          ## don't need to go forward 
+        if processed_results.empty==True:          ## don't need to go forward 
             print("Mod1E returned no results and was not loaded into summary.")
             return  ## exit function
         
@@ -246,7 +243,7 @@ class SummaryMod(object):
                 self.format_print(mod + ' results')
                 print(self.module_summaries[mod].to_string())
             else:
-                print('module query not found')
+                print(mod + ' not in summary.')
         return 
 
     # Method returns list of modules (based on individual summary tables)

@@ -50,6 +50,7 @@ class FunctionalSimilarity(GenericSimilarity):
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, input_gene_set):
         annotated_gene_set = []
+        record_inputs = []  ## CX: to avoid duplicates in next steps
         for gene in input_gene_set.to_dict(orient='records'):
             mg = self.mg
             gene_curie = ''
@@ -72,12 +73,14 @@ class FunctionalSimilarity(GenericSimilarity):
                     sim_input_curie = 'UniProtKB:{}'.format(mg_hit['hits'][0]['uniprot']['Swiss-Prot'])
                 except Exception as e:
                     print(gene, e)
-
-            annotated_gene_set.append({
-                'input_id': gene_curie,
-                'sim_input_curie': sim_input_curie,
-                'input_symbol': gene['hit_symbol']
-            })
+            
+            if gene_curie not in record_inputs: ## CX: to avoid duplicates in next steps
+                record_inputs.append(gene_curie)
+                annotated_gene_set.append({
+                    'input_id': gene_curie,
+                    'sim_input_curie': sim_input_curie,
+                    'input_symbol': gene['hit_symbol']
+                })
 
         return annotated_gene_set
 
@@ -85,7 +88,8 @@ class FunctionalSimilarity(GenericSimilarity):
     def compute_similarity(self, input_gene_set, threshold):
 
         annotated_input_gene_set = self.load_gene_set(input_gene_set)
-
+#        print(annotated_input_gene_set)
+        
         lower_bound = float(threshold)
 
         results = self.compute_jaccard(annotated_input_gene_set, lower_bound)
