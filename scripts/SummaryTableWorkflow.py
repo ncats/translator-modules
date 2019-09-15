@@ -30,7 +30,7 @@ import pandas as pd
 
 # Now we can import the remainder of the modules (some which call Ontobio)
 
-from translator_modules.disease.gene.disease_associated_genes import DiseaseNameLookup  ## CX: to look up name
+from translator_modules.disease.gene.disease_associated_genes import LookUp  ## CX: to look up name
 from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 from translator_modules.gene.gene.functional_similarity import FunctionalSimilarity
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
@@ -164,7 +164,7 @@ def main():
     # if file (list of input genes) is given instead
     if args.disease:
         mondo_id = args.disease
-        disease_name = DiseaseNameLookup(mondo_id).disease_name
+        disease_name = LookUp().disease_name_lookup(mondo_id)
         print("\nSingle disease specified:\t" + disease_name + "(" + mondo_id + "):\n")
         disease_list.append((disease_name, mondo_id))
     
@@ -174,7 +174,7 @@ def main():
         with open(disease_table_filename, "r") as diseases:
             for entry in diseases.readlines():
                 mondo_id = entry.strip()
-                disease_name = DiseaseNameLookup(mondo_id).disease_name
+                disease_name = LookUp().disease_name_lookup(mondo_id)
                 disease_list.append((disease_name, mondo_id))
     
     elif args.geneTable:
@@ -186,8 +186,8 @@ def main():
             input_gene_symbols = [line.strip() for line in gene_table_lines[1:]]
 
     
-    ## CX - it would be nice if we only initiated the models we were going to use. 
-    ## otherwise we have to comment out modules here! 
+    ## CX - it would be nice if we only initiated the modules we were going to use. 
+    ## if we want to omit modules, we have to comment out here! 
     
     # Ontology Catalogs only need to be initialized once!
     functional_threshold = args.functionalThreshold
@@ -203,7 +203,7 @@ def main():
     ## Phenotype similarity using OwlSim calculation threshold
     ## Called once, creating this object triggers
     ## its initialization with GO ontology and annotation
-    print("Loading phenotype ontology...\n")
+    print("Loading phenotype ontology (~1.5 minutes)...\n")
     pheno_sim_human = PhenotypeSimilarity('human')
     
     gene_interaction_threshold = args.geneInteractionThreshold
@@ -250,8 +250,11 @@ def main():
         # intialize summary module object
         summary_mod = SummaryMod(query_name)
 
+        ## CX - it would be nice if we only initiated the modules we were going to use. 
+        ## if we want to omit modules, we have to comment out here! 
+
         ## run modules based on whether argument was given in command prompt
-        print("\nRunning functional similarity module...")
+        print("\nRunning functional similarity module (Mod1A)...")
         mod1a_results = \
             similarity(
                 func_sim_human,
@@ -269,7 +272,7 @@ def main():
         else:
             print("Mod1A (Functional similarity) returned no results. Not included in summary.")
                 
-        print("\nRunning phenotypic similarity module...")            
+        print("\nRunning phenotypic similarity module (Mod1B)...")            
         print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
         mod1b_results = \
             similarity(
@@ -288,7 +291,7 @@ def main():
         else:
             print("Mod1B (phenotypic similarity) returned no results. Not included in summary module.")
                 
-        print("\nRunning gene interaction module...")            
+        print("\nRunning gene interaction module (Mod1E)...")            
         # Find Interacting Genes from Monarch data
         mod1e_results = \
             gene_interactions(
@@ -345,9 +348,7 @@ def main():
             print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
     
             disease_associated_gene_set = \
-                disease_gene_lookup(
-                    mondo_id
-                )
+                DiseaseAssociatedGeneSet(mondo_id, disease_name)
             """
             CX: disease_associated_gene_set inherits from Payload (abstract base class 'ABC')
             It has the class variables mod (I don't know what this is), results and the function get_data_frame
@@ -362,6 +363,9 @@ def main():
     
             # intialize summary module object
             summary_mod = SummaryMod(disease_name)
+
+            ## CX - it would be nice if we only initiated the modules we were going to use. 
+            ## if we want to omit modules, we have to comment out here! 
 
             print("\nRunning functional similarity module...")
             mod1a_results = \
