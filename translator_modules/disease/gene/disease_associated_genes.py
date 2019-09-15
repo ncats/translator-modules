@@ -69,12 +69,8 @@ class DiseaseAssociatedGeneSet(Payload):
             )
         )
 
-        ## CX: get disease name
-        self.disease_name = self.module.disease_name_lookup(disease_id)
-
         # get genes associated with disease from Biolink
-
-        self.results = self.mod.disease_geneset_lookup(disease_id, disease_name, query_biolink)
+        self.results = self.module.disease_geneset_lookup(disease_id, disease_name, query_biolink)
 
         if not self.results.empty:
             self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
