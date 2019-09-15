@@ -12,27 +12,14 @@ import requests
 from BioLink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
 
 from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 base_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list/'
 
 
 class BiclusterByDiseaseToPhenotype():
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': DiseaseToPhenotypicFeatureAssociation,
-            'input_type': {
-                'complexity': 'single',
-                'category': Disease,
-                'id_prefixes': 'MONDO',
-            },
-            'relationship': 'has_phenotype',
-            'output_type': {
-                'complexity': 'set',
-                'category': PhenotypicFeature,
-                'id_prefixes': 'HP',
-            },
-        }
+        pass
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -78,7 +65,17 @@ class DiseaseToPhenotypeBiclusters(Payload):
 
     def __init__(self, input_diseases):
 
-        super(DiseaseToPhenotypeBiclusters, self).__init__(BiclusterByDiseaseToPhenotype())
+        super(DiseaseToPhenotypeBiclusters, self).__init__(
+            module=BiclusterByDiseaseToPhenotype(),
+            metadata=ModuleMetaData(
+                name="Mod2.0 - Disease Associated Genes",
+                source='RNAseqDB Biclustering',
+                association=DiseaseToPhenotypicFeatureAssociation,
+                domain=ConceptSpace(Disease, ['MONDO']),
+                relationship='has_phenotype',
+                range=ConceptSpace(PhenotypicFeature, ['HP']),
+            )
+        )
 
         input_obj, extension = self.handle_input_or_input_location(input_diseases)
 

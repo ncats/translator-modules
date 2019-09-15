@@ -83,9 +83,7 @@ class GeneInteractionSet(Payload):
             )
         )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
-
-        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
+        input_gene_data_frame = get_input_gene_data_frame(input_genes)
 
         # TODO: add schema check
 

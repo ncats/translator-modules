@@ -210,9 +210,7 @@ class GeneToGeneBiclusters(Payload):
             )
         )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
-
-        input_gene_set = get_simple_input_gene_list(input_obj, extension)
+        input_gene_set = get_simple_input_gene_list(input_genes)
 
         asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 

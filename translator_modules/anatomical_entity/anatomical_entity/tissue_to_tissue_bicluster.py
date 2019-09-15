@@ -9,7 +9,10 @@ import pandas as pd
 import requests
 
 from BioLink.model import AnatomicalEntityToAnatomicalEntityAssociation, AnatomicalEntity
+
 from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
@@ -18,22 +21,9 @@ related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
 
 class BiclusterByTissueToTissue():
+
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': AnatomicalEntityToAnatomicalEntityAssociation,
-            'input_type': {
-                'complexity': 'set',
-                'category': AnatomicalEntity,
-                'id_prefixes': 'UBERON',
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'category': AnatomicalEntity,
-                'id_prefixes': 'UBERON',
-            },
-        }
+        pass
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -194,7 +184,19 @@ class BiclusterByTissueToTissue():
 class TissueToTissueBicluster(Payload):
 
     def __init__(self, input_tissues):
-        self.mod = BiclusterByTissueToTissue()
+
+        super(TissueToTissueBicluster, self).__init__(
+            module=BiclusterByTissueToTissue(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Tissue-to-Tissue Bicluster",
+                source='RNAseqDB Biclustering',
+                association=AnatomicalEntityToAnatomicalEntityAssociation,
+                domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
+                relationship='related_to',
+                range=ConceptSpace(AnatomicalEntity, ['UBERON']),
+            )
+        )
+
         input_obj, extension = self.handle_input_or_input_location(input_tissues)
 
         input_tissue_ids: list

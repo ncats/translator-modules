@@ -13,7 +13,7 @@ from typing import Dict, List, Set
 
 from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 
-from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
+from translator_modules.core.module_payload import Payload, fix_curies
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
@@ -59,6 +59,7 @@ class BiclusterByGeneToTissue:
 class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes):
+
         super(GeneToTissueBiclusters, self).__init__(
             module=BiclusterByGeneToTissue(),
             metadata=ModuleMetaData(
@@ -71,9 +72,7 @@ class GeneToTissueBiclusters(Payload):
             )
         )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
-
-        input_gene_set = get_simple_input_gene_list(input_obj, extension)
+        input_gene_set = self.get_simple_input_gene_list(input_genes)
 
         most_common_tissues = asyncio.run(self.module.gene_to_tissue_biclusters_async(input_gene_set))
 

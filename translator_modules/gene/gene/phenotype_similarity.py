@@ -104,9 +104,7 @@ class PhenotypicallySimilarGenes(Payload):
             )
         )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
-
-        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
+        input_gene_data_frame = get_input_gene_data_frame(input_genes)
 
         self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 

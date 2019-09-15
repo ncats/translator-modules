@@ -29,15 +29,15 @@ def fix_curies(object_id, prefix=''):
     if isinstance(object_id, dict):
         curie_dict = defaultdict(dict)
         for key in object_id.keys():
-            curie_dict[prefix+':'+key] = object_id[key]
+            curie_dict[prefix + ':' + key] = object_id[key]
         return curie_dict
 
     elif isinstance(object_id, str):
         # single string to convert
-        return prefix+':'+object_id
+        return prefix + ':' + object_id
 
     elif isinstance(object_id, Iterable):
-        return [prefix+':'+x for x in object_id]
+        return [prefix + ':' + x for x in object_id]
 
     else:
         raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(object_id))
@@ -119,7 +119,6 @@ class Payload(ABC):
                     """
                     Raw input from command line processed directly?
                     """
-                    print("else")
                     extension = None
                     return input_or_input_location, extension
 
@@ -128,7 +127,8 @@ class Payload(ABC):
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 
         if extension == "csv":
-            input_gene_data_frame = pd.read_csv(StringIO(input_obj))  #, encoding='utf8', sep=" ", index_col="id", dtype={"switch": np.int8})
+            input_gene_data_frame = pd.read_csv(StringIO(input_obj))
+            # , encoding='utf8', sep=" ", index_col="id", dtype={"switch": np.int8})
 
         elif extension == "json":
 
@@ -181,7 +181,7 @@ class Payload(ABC):
 
         return input_gene_data_frame
 
-    def get_simple_input_gene_list(self, input_genes) -> List[str]:
+    def get_simple_input_gene_list(self, input_genes) -> object:
         """
         This function returns a simple list of genes identifiers rather than a Pandas DataFrame
 

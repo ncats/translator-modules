@@ -63,8 +63,9 @@ class ConceptSpace(BaseModel):
 
     def __post_init__(self):
         # Can the id_prefixes and category values be validated here against the Biolink Model?
-        pass
-
+        if not issubclass(self.category, NamedThing):
+            raise TypeError("ConceptSpace() type error: category '" + str(self.category) +
+                            "' must be a subclass of the BioLink.NamedThing")
 
 @dataclass(frozen=True)
 class ModuleMetaData:
@@ -400,6 +401,7 @@ class ResultList(BaseModel):
         rl.results.extend(Result,...)
         rl.attributes.extend(Attributes...)
         """
+
         def parse_attribute(a_obj):
             return Attribute(
                 name=a_obj['name'],
@@ -479,8 +481,8 @@ class ResultList(BaseModel):
 
         # Load the resulting Python object into a ResultList instance
         result_list_name = \
-            metadata.source+' ' + \
-            str(module_domain.category)+' ' + \
+            metadata.source + ' ' + \
+            str(module_domain.category) + ' ' + \
             metadata.relationship.replace('_', ' ') + ' ' + \
             str(module_range.category)
 
@@ -523,7 +525,7 @@ class ResultList(BaseModel):
             # assume that input_symbol id_prefixes may be missing
             # in the output of some algorithms; record a blank input_id
             if not len(input_id_list):
-                input_id_list.append('') # provision for empty identifier
+                input_id_list.append('')  # provision for empty identifier
 
             output_id_list = []
             if 'hit_id' in entry:

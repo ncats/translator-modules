@@ -10,28 +10,16 @@ import pandas as pd
 import requests
 
 from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+
 from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_tissue_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_all_col_labels/'
 
 
 class BiclusterByTissueToGene():
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': GeneToExpressionSiteAssociation,
-            'input_type': {
-                'complexity': 'set',
-                'category': AnatomicalEntity,
-                'id_prefixes': 'UBERON',
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'ENSEMBL',
-            },
-        }
+        pass
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -76,7 +64,19 @@ class BiclusterByTissueToGene():
 class TissueToGeneBicluster(Payload):
 
     def __init__(self, input_tissues):
-        self.mod = BiclusterByTissueToGene()
+
+        super(TissueToGeneBicluster, self).__init__(
+            module=BiclusterByTissueToGene(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Tissue-to-Gene Bicluster",
+                source='RNAseqDB Biclustering',
+                association=GeneToExpressionSiteAssociation,
+                domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
+                relationship='related_to',
+                range=ConceptSpace(Gene, ['ENSEMBL'])
+            )
+        )
+
         input_obj, extension = self.handle_input_or_input_location(input_tissues)
 
         input_tissue_ids: list
@@ -100,7 +100,7 @@ class TissueToGeneBicluster(Payload):
                 # Assume that an iterable Tuple or equivalent is given here
                 input_tissue_ids = input_obj
 
-        most_common_tissues = asyncio.run(self.mod.tissue_to_gene_biclusters_async(input_tissue_ids))
+        most_common_tissues = asyncio.run(self.module.tissue_to_gene_biclusters_async(input_tissue_ids))
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
 
 
