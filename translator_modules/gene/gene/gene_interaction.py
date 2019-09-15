@@ -12,6 +12,7 @@ from BioLink.biolink_client import BioLinkWrapper
 from BioLink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
 
 
@@ -19,21 +20,6 @@ class GeneInteractions:
 
     def __init__(self):
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
-        self.meta = {
-            'source': 'Monarch Biolink',
-            'association': GeneToGeneAssociation,
-            'input_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'HGNC',
-            },
-            'relationship': 'interacts_with',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'HGNC',
-            },
-        }
 
     @staticmethod
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
@@ -85,7 +71,17 @@ class GeneInteractions:
 class GeneInteractionSet(Payload):
     def __init__(self, input_genes, threshold=12):
 
-        super(GeneInteractionSet, self).__init__(GeneInteractions())
+        super(GeneInteractionSet, self).__init__(
+            module=GeneInteractions(),
+            metadata=ModuleMetaData(
+                name="Module 1E - Gene Interaction",
+                source='Monarch Biolink',
+                association=GeneToGeneAssociation,
+                domain=ConceptSpace(Gene, ['HGNC']),
+                relationship='interacts_with',
+                range=ConceptSpace(Gene, ['HGNC']),
+            )
+        )
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 

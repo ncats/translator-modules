@@ -1,4 +1,6 @@
 import os.path
+from io import StringIO
+
 import json
 from pprint import pprint
 
@@ -41,76 +43,6 @@ def fix_curies(object_id, prefix=''):
         raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(object_id))
 
 
-def get_input_gene_data_frame(input_genes, extension) -> pd.DataFrame:
-
-    if extension == "csv":
-        input_gene_data_frame = pd.read_csv(input_genes, orient='records')
-
-    elif extension == "json":
-
-        # Load the json into a Python Object
-        input_genes_obj = json.loads(input_genes)
-
-        # check if the json object input has a
-        # characteristic high level ResultList key (i.e. 'result_list_name')
-        if 'result_list_name' in input_genes_obj:
-            # assuming it's NCATS ResultList compliant JSON
-            input_result_list = ResultList.load(input_genes_obj)
-
-            # I coerce the ResultList internally into a Pandas DataFrame
-            # Perhaps we'll remove this intermediate step sometime in the future
-            input_gene_data_frame = input_result_list.export_data_frame()
-        else:
-            # Assume that it's Pandas DataFrame compliant JSON
-            input_gene_data_frame = pd.DataFrame(input_genes_obj)
-
-    elif extension is None:
-        # TODO: this was written for the sharpener. maybe
-        # more generic if we get Biolink Model adherence
-        gene_ids = []
-        symbols = []
-        if isinstance(input_genes, str):
-            # simple list of curies?
-            input_genes = input_genes.split(',')
-            for gene in input_genes:
-                gene_ids.append(gene)
-                symbols.append('')  # symbol unknown for now?
-        elif isinstance(input_genes, tuple):
-            # another simple list of curies?
-            for gene in input_genes:
-                gene_ids.append(gene)
-                symbols.append('')  # symbol unknown for now?
-        else:  # assume iterable
-            for gene in input_genes:
-                symbol = None
-                for attribute in gene.attributes:
-                    if attribute.name == 'gene_symbol':
-                        symbol = attribute.value
-                if symbol is not None:
-                    gene_ids.append(gene.gene_id)
-                    symbols.append(symbol)
-
-        genes = {"hit_id": gene_ids, "hit_symbol": symbols}
-        input_gene_data_frame = pd.DataFrame(data=genes)
-    else:
-        raise RuntimeWarning("Unrecognized data file extension: '"+extension+"'?")
-
-    return input_gene_data_frame
-
-
-def get_simple_input_gene_list(input_genes, extension) -> List[str]:
-    """
-    This function returns a simple list of genes identifiers rather than a Pandas DataFrame
-
-    :param input_genes:
-    :param extension:
-    :return: List[str] of input gene identifiers
-    """
-    input_gene_data_frame = get_input_gene_data_frame(input_genes, extension)
-    simple_gene_list = [hit_id for hit_id in input_gene_data_frame['hit_id']]
-    return simple_gene_list
-
-
 class Payload(ABC):
 
     def __init__(self, module, metadata: ModuleMetaData):
@@ -136,7 +68,8 @@ class Payload(ABC):
         # not sure if or how  this will print properly?
         pprint(self.metadata)
 
-    def handle_input_or_input_location(self, input_or_input_location):
+    @staticmethod
+    def handle_input_or_input_location(input_or_input_location):
         """
         Figures out whether the input being opened is from a remote source or on the file-system;
         then returns the value of the input once it is extracted.
@@ -167,20 +100,21 @@ class Payload(ABC):
                 response = requests.get(input_url)
                 response.raise_for_status()  # exception handling
                 payload_input = response.text
+
+                # not sure if a CSV file will be properly read in..
                 return payload_input, extension
 
             else:
                 if os.path.isabs(input_or_input_location):
-                    absolute_input_or_input_location = input_or_input_location
+                    input_file = input_or_input_location
                 else:
-                    absolute_input_or_input_location = os.path.abspath(input_or_input_location)
+                    input_file = os.path.abspath(input_or_input_location)
 
-                if os.path.isfile(absolute_input_or_input_location):
-                    input_file = absolute_input_or_input_location
+                if os.path.isfile(input_file):
                     extension = os.path.splitext(input_file)[1][1:]  # first char is a `.`
                     with open(input_file) as stream:
                         payload_input = stream.read()
-                        return payload_input, extension
+                    return payload_input, extension
                 else:
                     """
                     Raw input from command line processed directly?
@@ -188,6 +122,76 @@ class Payload(ABC):
                     print("else")
                     extension = None
                     return input_or_input_location, extension
+
+    def get_input_gene_data_frame(self, input_genes) -> pd.DataFrame:
+
+        input_obj, extension = self.handle_input_or_input_location(input_genes)
+
+        if extension == "csv":
+            input_gene_data_frame = pd.read_csv(StringIO(input_obj))  #, encoding='utf8', sep=" ", index_col="id", dtype={"switch": np.int8})
+
+        elif extension == "json":
+
+            # Load the json text document into a Python Object
+            input_genes_obj = json.loads(input_obj)
+
+            # check if the json object input has a
+            # characteristic high level ResultList key (i.e. 'result_list_name')
+            if 'result_list_name' in input_genes_obj:
+                # assuming it's NCATS ResultList compliant JSON
+                input_result_list = ResultList.load(input_genes_obj)
+
+                # I coerce the ResultList internally into a Pandas DataFrame
+                # Perhaps we'll remove this intermediate step sometime in the future
+                input_gene_data_frame = input_result_list.export_data_frame()
+            else:
+                # Assume that it's Pandas DataFrame compliant JSON
+                input_gene_data_frame = pd.DataFrame(input_genes_obj)
+
+        elif extension is None:
+            # TODO: this was written for the sharpener. maybe
+            # more generic if we get Biolink Model adherence
+            gene_ids = []
+            symbols = []
+            if isinstance(input_obj, str):
+                # simple list of curies?
+                input_genes = input_obj.split(',')
+                for gene in input_obj:
+                    gene_ids.append(gene)
+                    symbols.append('')  # symbol unknown for now?
+            elif isinstance(input_obj, tuple):
+                # another simple list of curies?
+                for gene in input_obj:
+                    gene_ids.append(gene)
+                    symbols.append('')  # symbol unknown for now?
+            else:  # assume iterable
+                for gene in input_obj:
+                    symbol = None
+                    for attribute in gene.attributes:
+                        if attribute.name == 'gene_symbol':
+                            symbol = attribute.value
+                    if symbol is not None:
+                        gene_ids.append(gene.gene_id)
+                        symbols.append(symbol)
+
+            genes = {"hit_id": gene_ids, "hit_symbol": symbols}
+            input_gene_data_frame = pd.DataFrame(data=genes)
+        else:
+            raise RuntimeWarning("Unrecognized data file extension: '" + extension + "'?")
+
+        return input_gene_data_frame
+
+    def get_simple_input_gene_list(self, input_genes) -> List[str]:
+        """
+        This function returns a simple list of genes identifiers rather than a Pandas DataFrame
+
+        :param input_genes:
+        :param extension:
+        :return: List[str] of input gene identifiers
+        """
+        input_gene_data_frame = self.get_input_gene_data_frame(input_genes)
+        simple_gene_list = [hit_id for hit_id in input_gene_data_frame['hit_id']]
+        return simple_gene_list
 
     def get_data_frame(self) -> pd.DataFrame:
         return self.results

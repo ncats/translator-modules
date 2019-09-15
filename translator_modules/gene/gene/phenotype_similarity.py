@@ -9,6 +9,7 @@ from biothings_client import get_client
 
 from BioLink.model import GeneToPhenotypicFeatureAssociation, Gene
 
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity
 from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
 
@@ -23,29 +24,10 @@ class PhenotypeSimilarity(GenericSimilarity):
             self.ont = 'mp'
         if self.taxon == 'human':
             self.ont = 'hp'
-        self.meta = {
-            'source': 'Monarch Biolink',
-            'association': GeneToPhenotypicFeatureAssociation,
-            'input_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'HGNC',
-            },
-            'relationship': 'has_phenotype',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'HGNC',
-            },
-        }
 
         # Load the associated Biolink (Monarch)
         # phenotype ontology and annotation associations
         self.load_associations(taxon)
-
-    def metadata(self):
-        print("""Mod1B1 Phenotype Similarity metadata:""")
-        pprint(self.meta)
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, input_gene_set):
@@ -110,7 +92,17 @@ class PhenotypicallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold):
 
-        super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
+        super(PhenotypicallySimilarGenes, self).__init__(
+            module=PhenotypeSimilarity('human'),
+            metadata=ModuleMetaData(
+                name="Mod1B1 Phenotype Similarity",
+                source='Monarch Biolink',
+                association=GeneToPhenotypicFeatureAssociation,
+                domain=ConceptSpace(Gene, ['HGNC']),
+                relationship='has_phenotype',
+                range=ConceptSpace(Gene, ['HGNC']),
+            )
+        )
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 

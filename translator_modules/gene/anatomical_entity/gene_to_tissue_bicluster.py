@@ -9,31 +9,20 @@ import fire
 import pandas as pd
 import requests
 
-from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 from typing import Dict, List, Set
 
+from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+
 from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 
 
-class BiclusterByGeneToTissue():
+class BiclusterByGeneToTissue:
+
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': GeneToExpressionSiteAssociation,
-            'input_type': {
-                'complexity': 'set',
-                'id_prefixes': 'ENSEMBL',
-                'category': Gene,
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'id_prefixes': ['MONDO', 'DOID', 'UBERON'],
-                'category': AnatomicalEntity,
-            },
-        }
+        pass
 
     async def gene_to_tissue_biclusters_async(self, input_ID_list):
         bicluster_url_list = [bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in input_ID_list]
@@ -70,7 +59,17 @@ class BiclusterByGeneToTissue():
 class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes):
-        super(GeneToTissueBiclusters, self).__init__(BiclusterByGeneToTissue())
+        super(GeneToTissueBiclusters, self).__init__(
+            module=BiclusterByGeneToTissue(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Gene-to-Tissue Bicluster",
+                source='RNAseqDB Biclustering',
+                association=GeneToExpressionSiteAssociation,
+                domain=ConceptSpace(Gene, ['ENSEMBL']),
+                relationship='related_to',
+                range=ConceptSpace(AnatomicalEntity, ['MONDO', 'DOID', 'UBERON']),
+            )
+        )
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 

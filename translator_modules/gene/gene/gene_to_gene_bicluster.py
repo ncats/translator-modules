@@ -11,8 +11,10 @@ import pandas as pd
 import requests
 from typing import Dict, List
 
-from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
 from BioLink.model import GeneToGeneAssociation, Gene
+
+from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
@@ -20,21 +22,6 @@ bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_t
 
 class BiclusterByGeneToGene():
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': GeneToGeneAssociation,
-            'input_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'ENSEMBL',
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene,
-                'id_prefixes': 'ENSEMBL',
-            },
-        }
         self.related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
     @staticmethod
@@ -210,7 +197,18 @@ class BiclusterByGeneToGene():
 class GeneToGeneBiclusters(Payload):
 
     def __init__(self, input_genes):
-        super(GeneToGeneBiclusters, self).__init__(BiclusterByGeneToGene())
+
+        super(GeneToGeneBiclusters, self).__init__(
+            module=BiclusterByGeneToGene(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Gene-to-Gene Bicluster",
+                source='RNAseqDB Biclustering',
+                association=GeneToGeneAssociation,
+                domain=ConceptSpace(Gene, ['ENSEMBL']),
+                relationship='related_to',
+                range=ConceptSpace(Gene, ['ENSEMBL']),
+            )
+        )
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 

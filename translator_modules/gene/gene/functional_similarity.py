@@ -6,12 +6,11 @@ import fire
 
 from biothings_client import get_client
 
-from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
-
 from BioLink.model import FunctionalAssociation, Gene
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity
+from translator_modules.core.module_payload import Payload
 
 
 class FunctionalSimilarity(GenericSimilarity):
@@ -110,9 +109,7 @@ class FunctionallySimilarGenes(Payload):
             )
         )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
-
-        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
+        input_gene_data_frame = self.get_input_gene_data_frame(input_genes)
 
         self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
