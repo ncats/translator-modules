@@ -42,51 +42,74 @@ class GeneInteractions:
     @staticmethod
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(gene_records):
+        record_inputs = []  ## CX: to avoid duplicates in next steps
         annotated_gene_set = []
         for gene in gene_records.to_dict(orient='records'):
-            annotated_gene_set.append({
-                'input_id': gene['hit_id'],
-                'sim_input_curie': gene['hit_id'],
-                'input_symbol': gene['hit_symbol']
-            })
+            if gene['hit_id'] not in record_inputs: ## CX: to avoid duplicates in next steps
+                record_inputs.append(gene['hit_id'])
+                annotated_gene_set.append({
+                    'input_id': gene['hit_id'],
+                    'sim_input_curie': gene['hit_id'],
+                    'input_symbol': gene['hit_symbol']
+                })
         return annotated_gene_set
 
     def get_interactions(self, input_gene_set, threshold):
 
         annotated_input_gene_set = self.load_gene_set(input_gene_set)
-        lower_bound = int(threshold)
 
         results = []
         for gene in annotated_input_gene_set:
             interactions = self.blw.gene_interactions(gene_curie=gene['sim_input_curie'])
             ## debugging by looking into inputs
-            print(gene['input_symbol'], len(interactions['associations']))
+#            print(gene['input_symbol'], len(interactions['associations']))
             
-#            for assoc in interactions['associations']:
-#                interaction = \
-#                    self.blw.parse_association(
-#                        input_id=gene['sim_input_curie'],
-#                        input_label=gene['input_symbol'],
-#                        association=assoc
-#                    )
-#                results.append({
-#                    'input_id': interaction['input_id'],
-#                    'input_symbol': interaction['input_symbol'],
-#                    'hit_symbol': interaction['hit_symbol'],
-#                    'hit_id': interaction['hit_id'],
-#                    'score': 1,  # CX: changed score from 0 to 1
-#                })
-#
-#        # Process the results
-#        results = pd.DataFrame().from_records(results)
-#        counts = results['hit_symbol'].value_counts().rename_axis('unique_values').to_frame('counts').reset_index()
-#        high_counts = counts[counts['counts'] > lower_bound]['unique_values'].tolist()
-#        results = pd.DataFrame(results[results['hit_symbol'].isin(high_counts)])
-#
-#        # CX: remove results where input gene = output gene. Output gene can still be disease associated genes. 
-#        results = results[~(results['hit_symbol'] == results['input_symbol'])]
-#
-#        return results
+            for assoc in interactions['associations']:
+                interaction = \
+                    self.blw.parse_association(
+                        input_id=gene['sim_input_curie'],
+                        input_label=gene['input_symbol'],
+                        association=assoc
+                    )
+                results.append({
+                    'input_id': interaction['input_id'],
+                    'input_symbol': interaction['input_symbol'],
+                    'hit_symbol': interaction['hit_symbol'],
+                    'hit_id': interaction['hit_id'],
+                    'score': 1,  # CX: changed score from 0 to 1
+                })
+
+        results = pd.DataFrame().from_records(results)
+#        print("before anything", results.shape)
+        # CX: remove results where input gene = output gene. Output gene can still be disease associated genes. 
+        results = results[~(results['hit_symbol'] == results['input_symbol'])]
+#        print("after remove exact matches \n", results.shape)
+
+        ## maybe shouldn't do this? but we do it in the summary module and threshold differently if we don't have it
+        agg_threshold_results = results.drop_duplicates(subset=['input_symbol','hit_symbol'])
+
+        ## get list of hit genes with counts above threshold
+        if agg_threshold_results.empty==True:          ## don't need to go forward 
+            print("Mod1E returned no results.")
+            return  ## exit function
+        
+        else:        ## going forward normally
+            agg_threshold_results = agg_threshold_results.groupby(['hit_symbol']).agg(list).reset_index()
+            agg_threshold_results['count'] = [len(x) for x in agg_threshold_results['score']]
+                        
+            agg_threshold_results = agg_threshold_results.loc[[True if x > threshold else False for x in agg_threshold_results['count']],:]
+            high_count_hits = list(agg_threshold_results['hit_symbol'])
+#            print(high_count_hits)
+            
+#            # CX: this may be a pandas version issue. 
+#            # THIS CODE IS GIVING WONKY RESULTS WITH THRESHOLDING (including results at threshold or at threshold - 1)
+#            counts = results['hit_symbol'].value_counts().rename_axis('unique_values').to_frame('counts').reset_index()
+#            high_counts = counts[counts['counts'] > threshold]['unique_values'].tolist()
+#            print(high_counts)
+        
+            results = results[results['hit_symbol'].isin(high_count_hits)]
+            
+        return results
 
 
 class GeneInteractionSet(Payload):

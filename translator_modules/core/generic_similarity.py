@@ -45,7 +45,7 @@ class GenericSimilarity(object):
         self.ontology = ofactory.create(self.ont)
         p = GafParser()
         url = ''
-        if self.ont == 'go':
+        if self.ont == 'go':    # used for functional similarity
             # CX: GO:0008150 is biological_process, GO:0003674 is molecular_function. 
             # CX: These are 2 out of 3 top-level terms in GO ontology. 
             # CX: The excluded term is cellular_component (where gene carries out a molecular function)
@@ -60,7 +60,7 @@ class GenericSimilarity(object):
             assocs = [x for x in assocs if 'header' not in x.keys()]
             assocs = [x for x in assocs if x['object']['id'] in go_roots]
             self.associations = self.afactory.create_from_assocs(assocs, ontology=sub_ont)
-        else:
+        else:   ## used for phenotype similarity
             self.associations = \
                 self.afactory.create(
                         ontology=self.ontology,
@@ -82,8 +82,6 @@ class GenericSimilarity(object):
         a1 = aset.inferred_types(s1)
         a2 = aset.inferred_types(s2)
         num_union = len(a1.union(a2))
-#        print(s1, a1)
-#        print(s2, a2)
         if num_union == 0:
             return 0.0, list()
 
@@ -99,40 +97,45 @@ class GenericSimilarity(object):
         """
         Looking at annotations
         """
-        a1 = aset.inferred_types(s1)
-        print(s2, " (" +s1 + ") ", a1)
-        print(s2, " (" +s1 + ") ", len(a1))
+        print("annotations function\n{0}\t{1}\t\n{2}".format(s1, s2, aset.annotations(s1)))
+        print("length of annotations", len(aset.annotations(s1)))
+        
+        print("objects for subject function\n{0}\t{1}\t\n{2}".format(s1, s2, aset.objects_for_subject(s1)))
+
+        print("inferred_types\n{0}\t{1}\t\n{2}".format(s1, s2, aset.inferred_types(s1)))    
+        print("length of inferred types", len(aset.inferred_types(s1)))
+
         
     def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
-#        similarities = []
-        for gene in input_genes:
-            query = gene['sim_input_curie']
-            query_symbol = gene['input_symbol']
-            GenericSimilarity.seeing_annotation(self.associations, query, query_symbol)
+        similarities = []
+#        for gene in input_genes:
+#            query = gene['sim_input_curie']
+#            query_symbol = gene['input_symbol']
+#            GenericSimilarity.seeing_annotation(self.associations, query, query_symbol)
        
-#        for index, igene in enumerate(input_genes):
-#            for subject_curie in self.associations.subject_label_map.keys():
-#                input_gene = GenericSimilarity.trim_mgi_prefix(
-#                    input_gene=igene['sim_input_curie'],
-#                    subject_curie=subject_curie
-#                )
-#                if input_gene is not subject_curie:
-#                    score, shared_terms = \
-#                        GenericSimilarity.jaccard_similarity(self.associations, input_gene, subject_curie)
-#                    if float(score) > float(lower_bound):
-#                        subject_label = self.associations.label(subject_curie)
-#                        # CX: addition of human-readable labels aka "shared_term_names" 
-#                        shared_term_names = [self.associations.label(x) for x in shared_terms]
-#                        similarities.append({
-#                            'input_id': input_gene,
-#                            'input_symbol': igene['input_symbol'],
-#                            'hit_symbol': subject_label,
-#                            'hit_id': subject_curie,
-#                            'score': score,
-#                            'shared_terms': shared_terms,
-#                            'shared_term_names': shared_term_names
-#                        })
-#        return similarities
+        for index, igene in enumerate(input_genes):
+            for subject_curie in self.associations.subject_label_map.keys():
+                input_gene = GenericSimilarity.trim_mgi_prefix(
+                    input_gene=igene['sim_input_curie'],
+                    subject_curie=subject_curie
+                )
+                if input_gene is not subject_curie:
+                    score, shared_terms = \
+                        GenericSimilarity.jaccard_similarity(self.associations, input_gene, subject_curie)
+                    if float(score) > float(lower_bound):
+                        subject_label = self.associations.label(subject_curie)
+                        # CX: addition of human-readable labels aka "shared_term_names" 
+                        shared_term_names = [self.associations.label(x) for x in shared_terms]
+                        similarities.append({
+                            'input_id': input_gene,
+                            'input_symbol': igene['input_symbol'],
+                            'hit_symbol': subject_label,
+                            'hit_id': subject_curie,
+                            'score': score,
+                            'shared_terms': shared_terms,
+                            'shared_term_names': shared_term_names
+                        })
+        return similarities
 
     @staticmethod
     def trim_mgi_prefix(input_gene, subject_curie) -> str:
@@ -148,7 +151,7 @@ class GenericSimilarity(object):
     def sort_results(input_gene_set, results) -> pd.DataFrame:
 
         results = pd.DataFrame(results)
-        # CX: Some users need to know the scores that input genes have for each other. 
+        # CX: Some users may want to know the scores that input genes have for each other. 
         #     replacing code to remove GeneA input = GeneA output results
         results = \
             results[~(results.hit_id == results.input_id)]. \

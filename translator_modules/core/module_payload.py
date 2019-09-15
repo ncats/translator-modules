@@ -42,7 +42,9 @@ def fix_curies(object_id, prefix=''):
 def get_input_gene_data_frame(input_genes, extension) -> pd.DataFrame:
 
     if extension == "csv":
-        input_gene_data_frame = pd.read_csv(input_genes, orient='records')
+#        input_gene_data_frame = pd.read_csv(input_genes, orient='records')
+        ## CX: I don't think the orient='records' param exists for this function, only for df->dict functions
+        input_gene_data_frame = pd.read_csv(input_genes)
 
     elif extension == "json":
 

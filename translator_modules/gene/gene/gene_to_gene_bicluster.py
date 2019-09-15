@@ -226,9 +226,7 @@ class GeneToGeneBiclusters(Payload):
 #        trial_list = ['ENSG00000272603', 'ENSG00000263050', 'fjdsaklfjdkasl']
     
         # second, convert hgnc ids to ensembl
-        # file is downloaded from Biomart (with gene IDs for Ensembl, HGNC, NCBI (no NCBI: prefix), Uniprot (no prefix) 
         translation = "./translator_modules/core/ids/HUGO_geneids_download_v2.txt"
-        ## use headers of original file for now: "Gene stable ID" is Ensembl ID
     
         ## I'm writing out the list comprehension so I can add print statement 
         disease_associated_ensembl_ids = []
@@ -241,7 +239,8 @@ class GeneToGeneBiclusters(Payload):
             else:
                 print("Error: Matching Ensembl ID for "+input_id+" not found. Excluded from Module.")  
 
-        print(disease_associated_ensembl_ids)
+#        print(disease_associated_ensembl_ids)
+        
         asyncio.run(self.mod.gene_to_gene_biclusters_async(disease_associated_ensembl_ids))
 
         bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict()
@@ -282,9 +281,9 @@ class GeneToGeneBiclusters(Payload):
         ## Question: if the translation fails, do we want to keep the result (different id)?
         self.results['hit_id'] = hit_hgnc_ids
         self.results['input_id'] = input_hgnc_ids
-        self.results = self.results.dropna()
-    
-        ## getting the symbols (human-readable names)
+        self.results = self.results.dropna()   ### if you reset index here, drop the index
+        
+        ## getting the symbols (human-readable names): assuming there are symbols for all. 
         self.results['hit_symbol'] = [output_id \
                  for (input_id, output_id) in TranslateIDs(list(self.results['hit_id']), \
                       translation, out_id="Approved symbol", in_id="HGNC ID").results]
@@ -294,8 +293,8 @@ class GeneToGeneBiclusters(Payload):
         
         ## CX: Marcin agreed to use proportions as the best way to compare results across queries
         self.results['score'] = self.results['score'] / len(unique_biclusters)
-        self.results = self.results.loc[self.results['score'] > threshold]
 
+        self.results = self.results.loc[self.results['score'] > threshold]        
 
 if __name__ == '__main__':
     fire.Fire(GeneToGeneBiclusters)
