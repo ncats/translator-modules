@@ -67,10 +67,6 @@ def disease_gene_lookup(mondo_id, disease_name):
     # save the seed gene definition and gene list to a
     # file under the "Tidbit/<symbol>" subdirectory
 
-    output = output_file(disease_name, "Definition", "json")
-    gene_set.echo_input_object(output)
-    output.close()
-
     # save the gene list to a file under the "Tidbit" subdirectory
     df = gene_set.get_data_frame()
 

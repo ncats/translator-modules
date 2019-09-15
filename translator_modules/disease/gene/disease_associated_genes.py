@@ -19,7 +19,6 @@ class LookUp(object):
     def __init__(self):
         self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
         self.mg = get_client('gene')
-        self.input_object = ''
         self.meta = {
             'source': 'Monarch Biolink',
             'association': GeneToDiseaseAssociation.class_name,
@@ -43,9 +42,6 @@ class LookUp(object):
         pprint(self.meta)
 
     def disease_geneset_lookup(self, disease_id, disease_label, query_biolink=True):
-
-        # TODO: does this get faster if we specify the API type
-        #disease_label = self.blw.get_obj(disease_id)["label"]
 
         if not disease_label:
             disease_label = disease_id
