@@ -12,7 +12,6 @@ import argparse
 import pandas as pd
 from html3.html3 import XHTML
 
-
 from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 from translator_modules.gene.gene.functional_similarity import FunctionalSimilarity
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
@@ -61,15 +60,12 @@ def dump_html(output, body, columns=None):
     output.write(str(doc))
 
 
-def disease_gene_lookup(disease_name, mondo_id):
-    gene_set = DiseaseAssociatedGeneSet(mondo_id)
+def disease_gene_lookup(mondo_id, disease_name):
+
+    gene_set = DiseaseAssociatedGeneSet(mondo_id, disease_name)
 
     # save the seed gene definition and gene list to a
     # file under the "Tidbit/<symbol>" subdirectory
-
-    output = output_file(disease_name, "Definition", "json")
-    gene_set.echo_input_object(output)
-    output.close()
 
     # save the gene list to a file under the "Tidbit" subdirectory
     df = gene_set.get_data_frame()
@@ -126,6 +122,7 @@ def gene_interactions(model, disease_associated_gene_set, threshold, module, tit
 
     # Dump HTML representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
+
     dump_html(output, results)
     output.close()
 
@@ -258,25 +255,23 @@ and associated MONDO identifiers - in the second column"""
     # Gene interactions curated in the Biolink (Monarch) resource
     interactions_human = GeneInteractions()
 
-    # Initalizing list of summaries, for use with a file of diseases
-    disease_summaries = []
-
     # diseases.tsv is assumed to be a tab delimited
     # file of diseases named (column 0) with their MONDO identifiers (column 1)
     # The optional header should read 'Disease' in the first column
     for disease_name, mondo_id in disease_list:
 
-        print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
+        print("\nProcessing '" + disease_name + "(" + mondo_id + "):\n")
 
         disease_associated_gene_set = \
             disease_gene_lookup(
-                disease_name,
-                mondo_id
+                mondo_id,
+                disease_name
+
             )
 
         if _echo_to_console:
             print(
-                "\nDisease Associated Input Gene Set for " +
+                "\nDisease Associated Input Gene Set for '" +
                 disease_name + "(" + mondo_id + "):\n")
             print(disease_associated_gene_set.get_data_frame().to_string())
 
@@ -289,11 +284,10 @@ and associated MONDO identifiers - in the second column"""
                 'Functionally Similar Genes'
             )
 
-        ## This builds a brief summary for just this module and creates the across summary tables
-        if not mod1a_results.empty:  # will only work if Mod1A returned results
-            summary_mod.add_scorebased_module(mod1a_results)
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1A')
+        if _echo_to_console:
+            print("\nMod1A Results for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(mod1a_results.to_string(columns=STD_RESULT_COLUMNS))
 
         mod1b_results = \
             similarity(
@@ -304,11 +298,10 @@ and associated MONDO identifiers - in the second column"""
                 'Phenotypic Similar Genes'
             )
 
-        ## Add output to brief summary
-        if not mod1b_results.empty:
-            summary_mod.add_scorebased_module(mod1b_results)
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1B')
+        if _echo_to_console:
+            print("\nMod1B Results for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
 
         # Find Interacting Genes from Monarch data
         mod1e_results = \
@@ -320,25 +313,25 @@ and associated MONDO identifiers - in the second column"""
                 "Gene Interactions"
             )
 
-        ## JG: Add output into summary
-        if not mod1e_results.empty:
-            summary_mod.add1E(mod1e_results)
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1E')
+        if _echo_to_console:
+            print("\nMod1E Results for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
 
+        # Not sure how useful this step is: to be further reviewed
+        # (carried over from the Jupyter notebook)
+        std_api_response_json = \
+            aggregate_results(
+                mod1a_results,
+                mod1b_results,
+                disease_associated_gene_set.get_input_disease_id()
+            )
 
-            std_api_response_json = \
-                aggregate_results(
-                    mod1a_results,
-                    mod1b_results,
-                    disease_associated_gene_set.get_input_disease_id()
-                )
-
-            # Echo to console
-            if _echo_to_console:
-                print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
-                      disease_name + "(" + mondo_id + "):\n")
-                print(std_api_response_json)
+        # Echo to console
+        if _echo_to_console:
+            print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(std_api_response_json)
 
     print("\nWF2 Processing complete!")
 
