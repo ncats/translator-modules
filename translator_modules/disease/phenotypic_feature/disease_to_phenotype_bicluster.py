@@ -77,25 +77,10 @@ class DiseaseToPhenotypeBiclusters(Payload):
             )
         )
 
-        input_obj, extension = self.handle_input_or_input_location(input_diseases)
-
-        input_disease_ids: list
-        # NB: push this out to the handle_input_or_input_location function?
-        if extension == "csv":
-            import csv
-            with open(input_diseases) as genes:
-                input_reader = csv.DictReader(genes)
-                input_disease_ids = list([row['input_id'] for row in input_reader])
-        elif extension == "json":
-            import json
-            with open(input_diseases) as genes:
-                input_json = json.loads(genes)
-                # assume records format
-                input_disease_ids = [record["hit_id"] for record in input_json]
-        elif extension is None:
-            input_disease_ids = input_obj
+        input_disease_ids = self.get_simple_input_identifier_list(input_diseases)
 
         most_common_phenotype = asyncio.run(self.module.disease_to_phenotype_biclusters_async(input_disease_ids))
+
         self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
 
 

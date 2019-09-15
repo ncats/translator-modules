@@ -72,7 +72,7 @@ class GeneToTissueBiclusters(Payload):
             )
         )
 
-        input_gene_set = self.get_simple_input_gene_list(input_genes)
+        input_gene_set = self.get_simple_input_identifier_list(input_genes)
 
         most_common_tissues = asyncio.run(self.module.gene_to_tissue_biclusters_async(input_gene_set))
 

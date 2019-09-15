@@ -10,6 +10,7 @@ import pandas as pd
 import requests
 
 from BioLink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
+from typing import List
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.module_payload import Payload
@@ -89,31 +90,10 @@ class PhenotypeToDiseaseBiclusters(Payload):
             )
         )
 
-        input_obj, extension = self.handle_input_or_input_location(input_phenotypes)
-
-        input_phenotype_ids: list
-        # NB: push this out to the handle_input_or_input_location function?
-        if extension == "csv":
-            import csv
-            with open(input_phenotypes) as genes:
-                input_reader = csv.DictReader(genes)
-                input_phenotype_ids = list(set([row['input_id'] for row in input_reader]))
-        # TODO: handle JSON
-        elif extension == "json":
-            import json
-            with open(input_phenotypes) as genes:
-                input_json = json.loads(genes)
-                # assume records format
-                input_phenotype_ids = [record["hit_id"] for record in input_json]
-        elif extension is None:
-            if isinstance(input_obj, str):
-                # Assume a comma delimited list of input identifiers?
-                input_phenotype_ids = input_obj.split(',')
-            else:
-                # Assume that an iterable Tuple or equivalent is given here
-                input_phenotype_ids = input_obj
+        input_phenotype_ids: List[str] = self.get_simple_input_identifier_list(input_phenotypes)
 
         most_common_diseases = asyncio.run(self.module.phenotype_to_disease_biclusters_async(input_phenotype_ids))
+
         self.results = pd.DataFrame.from_records(most_common_diseases, columns=["hit_id", "score"])
 
 

@@ -133,7 +133,7 @@ class ChemicalGeneInteractionSet(Payload):
             )
         )
 
-        input_gene_set = self.get_input_gene_data_frame(input_genes)
+        input_gene_set = self.get_input_data_frame(input_genes)
 
         self.results = self.module.get_gene_chemical_interactions(input_gene_set, action, rows)
 

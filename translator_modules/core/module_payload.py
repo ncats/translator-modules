@@ -122,12 +122,12 @@ class Payload(ABC):
                     extension = None
                     return input_or_input_location, extension
 
-    def get_input_gene_data_frame(self, input_genes) -> pd.DataFrame:
+    def get_input_data_frame(self, input_spec) -> pd.DataFrame:
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
+        input_obj, extension = self.handle_input_or_input_location(input_spec)
 
         if extension == "csv":
-            input_gene_data_frame = pd.read_csv(StringIO(input_obj))
+            input_data_frame = pd.read_csv(StringIO(input_obj))
             # , encoding='utf8', sep=" ", index_col="id", dtype={"switch": np.int8})
 
         elif extension == "json":
@@ -143,55 +143,56 @@ class Payload(ABC):
 
                 # I coerce the ResultList internally into a Pandas DataFrame
                 # Perhaps we'll remove this intermediate step sometime in the future
-                input_gene_data_frame = input_result_list.export_data_frame()
+                input_data_frame = input_result_list.export_data_frame()
             else:
                 # Assume that it's Pandas DataFrame compliant JSON
-                input_gene_data_frame = pd.DataFrame(input_genes_obj)
+                input_data_frame = pd.DataFrame(input_genes_obj)
 
         elif extension is None:
             # TODO: this was written for the sharpener. maybe
             # more generic if we get Biolink Model adherence
-            gene_ids = []
-            symbols = []
+            input_ids = []
+            input_symbols = []
             if isinstance(input_obj, str):
                 # simple list of curies?
-                input_genes = input_obj.split(',')
-                for gene in input_obj:
-                    gene_ids.append(gene)
-                    symbols.append('')  # symbol unknown for now?
+                input_spec = input_obj.split(',')
+                for entry in input_obj:
+                    input_ids.append(entry)
+                    input_symbols.append('')  # symbol unknown for now?
             elif isinstance(input_obj, tuple):
                 # another simple list of curies?
-                for gene in input_obj:
-                    gene_ids.append(gene)
-                    symbols.append('')  # symbol unknown for now?
+                for entry in input_obj:
+                    input_ids.append(entry)
+                    input_symbols.append('')  # symbol unknown for now?
             else:  # assume iterable
-                for gene in input_obj:
+                #  This piece of code assumes inputs compliant with the
+                #  Translator Indigo Gene Sharpener Gene List data model
+                for entry in input_obj:
                     symbol = None
-                    for attribute in gene.attributes:
+                    for attribute in entry.attributes:
                         if attribute.name == 'gene_symbol':
                             symbol = attribute.value
                     if symbol is not None:
-                        gene_ids.append(gene.gene_id)
-                        symbols.append(symbol)
+                        input_ids.append(entry.gene_id)
+                        input_symbols.append(symbol)
 
-            genes = {"hit_id": gene_ids, "hit_symbol": symbols}
-            input_gene_data_frame = pd.DataFrame(data=genes)
+            input_data = {"hit_id": input_ids, "hit_symbol": input_symbols}
+            input_data_frame = pd.DataFrame(data=input_data)
         else:
             raise RuntimeWarning("Unrecognized data file extension: '" + extension + "'?")
 
-        return input_gene_data_frame
+        return input_data_frame
 
-    def get_simple_input_gene_list(self, input_genes) -> object:
+    def get_simple_input_identifier_list(self, input_spec) -> List[str]:
         """
-        This function returns a simple list of genes identifiers rather than a Pandas DataFrame
+        This function returns a simple list of identifiers rather than a Pandas DataFrame
 
-        :param input_genes:
-        :param extension:
-        :return: List[str] of input gene identifiers
+        :param input_spec:
+        :return: simple flat  List[str] of input identifiers
         """
-        input_gene_data_frame = self.get_input_gene_data_frame(input_genes)
-        simple_gene_list = [hit_id for hit_id in input_gene_data_frame['hit_id']]
-        return simple_gene_list
+        input_data_frame = self.get_input_data_frame(input_spec)
+        simple_identifier_list = [hit_id for hit_id in input_data_frame['hit_id']]
+        return simple_identifier_list
 
     def get_data_frame(self) -> pd.DataFrame:
         return self.results

@@ -109,7 +109,7 @@ class FunctionallySimilarGenes(Payload):
             )
         )
 
-        input_gene_data_frame = self.get_input_gene_data_frame(input_genes)
+        input_gene_data_frame = self.get_input_data_frame(input_genes)
 
         self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
