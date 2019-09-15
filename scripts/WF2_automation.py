@@ -12,21 +12,11 @@ import argparse
 import pandas as pd
 from html3.html3 import XHTML
 
-
 from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 from translator_modules.gene.gene.functional_similarity import FunctionalSimilarity
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
-<<<<<<< HEAD
-
-from translator_modules.core.ids.IDs import TranslateIDs
-from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
-#from translator_modules.core.standard_output import StandardOutput
-from scripts.summary_mod import SummaryMod
-
-=======
 from translator_modules.core.standard_output import StandardOutput
->>>>>>> 4fbfbb6... Colleen's custom version of WF2_automation.py renamed to SummaryTableWorkflow.py; older original WF2_automation.py script restored for 3rd party  scrutiny
 
 _SCRIPTNAME = 'WF2_automation.py'
 
@@ -70,8 +60,9 @@ def dump_html(output, body, columns=None):
     output.write(str(doc))
 
 
-def disease_gene_lookup(disease_name, mondo_id):
-    gene_set = DiseaseAssociatedGeneSet(mondo_id)
+def disease_gene_lookup(mondo_id, disease_name):
+
+    gene_set = DiseaseAssociatedGeneSet(mondo_id, disease_name)
 
     # save the seed gene definition and gene list to a
     # file under the "Tidbit/<symbol>" subdirectory
@@ -101,6 +92,7 @@ STD_RESULT_COLUMNS = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score
 
 
 def similarity(model, disease_associated_gene_set, threshold, module, title):
+
     input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
@@ -124,6 +116,7 @@ def similarity(model, disease_associated_gene_set, threshold, module, title):
 
 
 def gene_interactions(model, disease_associated_gene_set, threshold, module, title):
+
     input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
@@ -135,12 +128,11 @@ def gene_interactions(model, disease_associated_gene_set, threshold, module, tit
 
     # Dump HTML representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
-    dump_html(output, results)
+    dump_html(output, results.head())
     output.close()
 
     # Dump JSON representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
-
     # dumping the whole table in the JSON? or should I just dump the head?
     results.to_json(output)
     output.close()
@@ -267,166 +259,25 @@ and associated MONDO identifiers - in the second column"""
     # Gene interactions curated in the Biolink (Monarch) resource
     interactions_human = GeneInteractions()
 
-    # Initalizing list of summaries, for use with a file of diseases
-    disease_summaries = []
-
     # diseases.tsv is assumed to be a tab delimited
     # file of diseases named (column 0) with their MONDO identifiers (column 1)
     # The optional header should read 'Disease' in the first column
     for disease_name, mondo_id in disease_list:
 
-        print("\nProcessing " + disease_name + "(" + mondo_id + "):\n")
+        print("\nProcessing '" + disease_name + "(" + mondo_id + "):\n")
 
         disease_associated_gene_set = \
             disease_gene_lookup(
-                disease_name,
-                mondo_id
+                mondo_id,
+                disease_name
             )
 
         if _echo_to_console:
             print(
-                "\nDisease Associated Input Gene Set for " +
+                "\nDisease Associated Input Gene Set for '" +
                 disease_name + "(" + mondo_id + "):\n")
             print(disease_associated_gene_set.get_data_frame().to_string())
 
-<<<<<<< HEAD
-#        # intialize summary module object
-#        summary_mod = SummaryMod(disease_name, mondo_id)
-        
-        # WF9 GENE GENE BICLUSTER STUFF
-        # LATER PUT THIS STUFF IN A FUNCTION AT THE TOP?
-        
-        # first get a UNIQUE list of the disease associated gene IDs (these are HGNC).
-        hgnc_disease_gene_list = list(set(disease_associated_gene_set.get_data_frame()['hit_id']))
-#        trial_list = ['ENSG00000272603', 'ENSG00000263050', 'fjdsaklfjdkasl']
-        
-        # second, convert hgnc ids to ensembl
-        # file is downloaded from Biomart (with gene IDs for Ensembl, HGNC, NCBI (no NCBI: prefix), Uniprot (no prefix) 
-        translation = "../translator-modules/translator_modules/core/ids/HUGO_geneids_download_v2.txt"
-        ## use headers of original file for now: "Gene stable ID" is Ensembl ID
-        
-        ## I'm writing out the list comprehension so I can add print statement for error
-        ensembl_disease_gene_list = []
-        for (input_id, output_id) in TranslateIDs(hgnc_disease_gene_list, translation, \
-            in_id="HGNC ID", out_id="Ensembl gene ID").results:
-            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
-            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
-            if (output_id!='' and output_id!=None):
-                ensembl_disease_gene_list.append(output_id)
-            else:
-                print("Error: Matching Ensembl ID for "+input_id+" not found. Excluded from Module.")       
-
-        print(ensembl_disease_gene_list)
-
-        tryingThisOut = GeneToGeneBiclusters(ensembl_disease_gene_list).get_data_frame()
-        regexTry = re.compile(r'ENSEMBL:(.+)\.')
-        tryingRegex = [re.match(regexTry, x).group(1) for x in tryingThisOut['hit_id']]
-#        print(tryingRegex[:10])
-
-        ## next is replacing hit_id column with hgnc symbols, then removing any empty columns?
-        ## or do we want to leave Ensembl IDs in the results (if there aren't any hgnc symbols)...
-        hgnc_output_gene_list = []
-        for (input_id, output_id) in TranslateIDs(tryingRegex, translation, \
-            out_id="HGNC ID", in_id="Ensembl gene ID").results:
-            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
-            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
-            if (output_id!='' and output_id!=None):
-                hgnc_output_gene_list.append(output_id)
-            else:
-                hgnc_output_gene_list.append(np.nan)
-#                print("Error: Matching Ensembl ID for "+input_id+" not found.")       
-#        print(hgnc_output_gene_list[:10]) 
-        print("length of initial list is ", len(hgnc_output_gene_list))
-        tryingThisOut['hit_id'] = hgnc_output_gene_list
-        tryingThisOut = tryingThisOut.dropna()
-        print(tryingThisOut.shape)
-        print(tryingThisOut)
-        ## note that some of these are the input genes! Errr...how? weren't these filtered out?
-        
-        
-#        mod1a_results = \
-#            similarity(
-#                func_sim_human,
-#                disease_associated_gene_set,
-#                functional_threshold,
-#                'Mod1A',
-#                'Functionally Similar Genes'
-#            )
-#            
-#        ## This builds a brief summary for just this module and creates the across summary tables
-#        if not mod1a_results.empty:  # will only work if Mod1A returned results
-#            summary_mod.add_scorebased_module(mod1a_results) 
-#            if _echo_to_console:
-#                summary_mod.show_single_mod_summary('Mod1A')
-#
-#        mod1b_results = \
-#            similarity(
-#                pheno_sim_human,
-#                disease_associated_gene_set,
-#                phenotype_threshold,
-#                'Mod1B',
-#                'Phenotypic Similar Genes'
-#            )
-#        
-#        ## Add output to brief summary
-#        if not mod1b_results.empty:
-#            summary_mod.add_scorebased_module(mod1b_results)
-#            if _echo_to_console:
-#                summary_mod.show_single_mod_summary('Mod1B')
-#
-#        # Find Interacting Genes from Monarch data
-#        mod1e_results = \
-#            gene_interactions(
-#                interactions_human,
-#                disease_associated_gene_set,
-#                gene_interaction_threshold,
-#                'Mod1E',
-#                "Gene Interactions"
-#            )
-#            
-#        ## JG: Add output into summary 
-#        if not mod1e_results.empty:
-#            summary_mod.add1E(mod1e_results)
-#            if _echo_to_console:
-#                summary_mod.show_single_mod_summary('Mod1E')            
-
-        # CX: Summary module code here
-        # Put it in list (only used really used when multiple diseases in one file are queried at once)
-#        disease_summaries.append(summary_mod)
-#
-#        ## END OF MODULE QUERIES 
-#        if _echo_to_console:
-#            summary_mod.show_mods()  # CX: show the user what modules they ran in their analysis
-
-#        ## Write all out
-        
-#        summary_csv_filenames = [disease_name.replace(" ", "_") + '_brief_summary.csv', \
-#                                 disease_name.replace(" ", "_") + '_full_summary.csv']
-#        summary_json_filenames = [disease_name.replace(" ", "_") + '_brief_summary.json', \
-#                                  disease_name.replace(" ", "_") + '_full_summary.json']
-#        
-#        summary_mod.write_all_csv(summary_csv_filenames[0], summary_csv_filenames[1])
-#        summary_mod.write_all_json(summary_json_filenames[0], summary_json_filenames[1])
-
-        ## CX: not sure how much we need this code below...
-#        std_api_response_json = \
-#            aggregate_results(
-#                mod1a_results,
-#                mod1b_results,
-#                disease_associated_gene_set.get_input_disease_id()
-#            )
-#
-#        # Echo to console
-#        if _echo_to_console:
-#            print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
-#                  disease_name + "(" + mondo_id + "):\n")
-#            print(std_api_response_json)
-
-#    print("\nWF2 Processing complete!")
-#
-#    # Success!
-#    exit(0)
-=======
         mod1a_results = \
             similarity(
                 func_sim_human,
@@ -436,11 +287,10 @@ and associated MONDO identifiers - in the second column"""
                 'Functionally Similar Genes'
             )
 
-        ## This builds a brief summary for just this module and creates the across summary tables
-        if not mod1a_results.empty:  # will only work if Mod1A returned results
-            summary_mod.add_scorebased_module(mod1a_results)
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1A')
+        if _echo_to_console:
+            print("\nMod1A Results for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(mod1a_results.to_string(columns=STD_RESULT_COLUMNS))
 
         mod1b_results = \
             similarity(
@@ -451,11 +301,10 @@ and associated MONDO identifiers - in the second column"""
                 'Phenotypic Similar Genes'
             )
 
-        ## Add output to brief summary
-        if not mod1b_results.empty:
-            summary_mod.add_scorebased_module(mod1b_results)
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1B')
+        if _echo_to_console:
+            print("\nMod1B Results for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(mod1b_results.to_string(columns=STD_RESULT_COLUMNS))
 
         # Find Interacting Genes from Monarch data
         mod1e_results = \
@@ -467,31 +316,30 @@ and associated MONDO identifiers - in the second column"""
                 "Gene Interactions"
             )
 
-        ## JG: Add output into summary
-        if not mod1e_results.empty:
-            summary_mod.add1E(mod1e_results)
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1E')
+        if _echo_to_console:
+            print("\nMod1E Results for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(mod1e_results.head().to_string(columns=STD_RESULT_COLUMNS))
 
+        # Not sure how useful this step is: to be further reviewed
+        # (carried over from the Jupyter notebook)
+        std_api_response_json = \
+            aggregate_results(
+                mod1a_results,
+                mod1b_results,
+                disease_associated_gene_set.get_input_disease_id()
+            )
 
-            std_api_response_json = \
-                aggregate_results(
-                    mod1a_results,
-                    mod1b_results,
-                    disease_associated_gene_set.get_input_disease_id()
-                )
-
-            # Echo to console
-            if _echo_to_console:
-                print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
-                      disease_name + "(" + mondo_id + "):\n")
-                print(std_api_response_json)
+        # Echo to console
+        if _echo_to_console:
+            print("\nAggregate Mod1A and Mod1B Results as JSON for '" +
+                  disease_name + "(" + mondo_id + "):\n")
+            print(std_api_response_json)
 
     print("\nWF2 Processing complete!")
 
     # Success!
     exit(0)
->>>>>>> 4fbfbb6... Colleen's custom version of WF2_automation.py renamed to SummaryTableWorkflow.py; older original WF2_automation.py script restored for 3rd party  scrutiny
 
 
 if __name__ == '__main__':
