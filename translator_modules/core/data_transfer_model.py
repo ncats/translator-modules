@@ -13,7 +13,7 @@ from typing import Any, List, ClassVar
 import pandas as pd
 from json.encoder import JSONEncoder
 
-from BioLink.model import Association, NamedThing
+from biolink.model import Association, NamedThing
 
 # Also serves as the default "ResultList.version" tag
 __version__ = '0.0.2'

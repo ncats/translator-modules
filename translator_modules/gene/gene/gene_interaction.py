@@ -11,7 +11,7 @@ from BioLink.biolink_client import BioLinkWrapper
 from BioLink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
-from translator_modules.core.identifiers import Resolver, SYMBOL
+from translator_modules.core.identifier_resolver import Resolver, SYMBOL
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.module_payload import Payload
 

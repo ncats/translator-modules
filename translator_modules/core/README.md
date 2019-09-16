@@ -3,7 +3,7 @@
 ## From the command-line:
 ```bash
  translator_modules/core/identifiers.py \
---identifier-map ./HUGO_geneids_download_v2.txt --source "Ensembl Gene ID" --target "HGNC ID" \
+--identifier-map ./HUGO_geneids_download_v2.tsv --source "Ensembl Gene ID" --target "HGNC ID" \
 load-identifiers --identifiers ../../tests/data/bicluster/csv/gene_list.csv \
 translate
 ```
@@ -15,7 +15,7 @@ Inputting a list of IDs instead of a CSV file path should also work.
 
 ```bash
  translator_modules/core/identifiers.py \
---identifier-map ./HUGO_geneids_download_v2.txt --source "Ensembl Gene ID" --target "HGNC ID" \
+--identifier-map ./HUGO_geneids_download_v2.tsv --source "Ensembl Gene ID" --target "HGNC ID" \
 load-identifiers --identifiers \
 '["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]'  \
 translate
@@ -28,12 +28,12 @@ Speaking of which.
 ## In Python 3:
 
 ```python
-from translator_modules.core.identifiers import Resolver
+from translator_modules.core.identifier_resolver import Resolver
 
 ids = ["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]
     
 identifier_map = "absolute/path/to/HUGO_geneids_download_v2.csv"
-resolver = Resolver(identifier_map, source="Ensembl", target="HGNC")
+resolver = Resolver(identifier_map, domain="Ensembl", range="HGNC")
 converted_ids = resolver.translate(input_ids=ids)
 
 print(converted_ids)

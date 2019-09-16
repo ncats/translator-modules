@@ -11,9 +11,10 @@ import requests
 
 from typing import Dict, List, Set
 
-from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+from biolink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 
-from translator_modules.core.module_payload import Payload, fix_curies
+from translator_modules.core import fix_curies
+from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
