@@ -6,12 +6,12 @@ from pprint import pprint
 
 import fire
 import pandas as pd
-# Workflow 2, Module 1E: Gene interactions
-from BioLink.biolink_client import BioLinkWrapper
 
+from BioLink.biolink_client import BioLinkWrapper
 from BioLink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
+from translator_modules.core.identifiers import Resolver, SYMBOL
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.module_payload import Payload
 
@@ -26,6 +26,11 @@ class GeneInteractions:
     def load_gene_set(gene_records):
         annotated_gene_set = []
         for gene in gene_records.to_dict(orient='records'):
+            if not gene['hit_symbol']:
+                gene['hit_symbol'] = \
+                    Resolver.get_the_resolver(). \
+                        translate_one(source=gene['hit_id'], target=SYMBOL)
+
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
                 'sim_input_curie': gene['hit_id'],
@@ -70,7 +75,6 @@ class GeneInteractions:
 
 class GeneInteractionSet(Payload):
     def __init__(self, input_genes, threshold=12):
-
         super(GeneInteractionSet, self).__init__(
             module=GeneInteractions(),
             metadata=ModuleMetaData(

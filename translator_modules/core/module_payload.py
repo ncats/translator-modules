@@ -155,7 +155,7 @@ class Payload(ABC):
             input_symbols = []
             if isinstance(input_obj, str):
                 # simple list of curies?
-                input_spec = input_obj.split(',')
+                input_obj = input_obj.split(',')
                 for entry in input_obj:
                     input_ids.append(entry)
                     input_symbols.append('')  # symbol unknown for now?

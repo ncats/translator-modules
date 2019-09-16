@@ -10,6 +10,12 @@ from translator_modules.core.module_payload import Payload
 
 DEBUG = False
 
+GENE = 'gene'
+DISEASE = 'disease'
+CHEMICAL_SUBSTANCE = 'chemical substance'
+
+SYMBOL = 'approved symbol'
+
 
 class Resolver(Payload):
     """
@@ -17,13 +23,14 @@ class Resolver(Payload):
     need to have matching identifier formatting, in particular, with respect to xmlns (curie) prefixes.
     """
 
-    def _read_identifier_map_in_flatfile(self, identifier_map, delimiter='\t'):
-        if DEBUG: print("_read_identifier_map_in_flatfile")
-        with open(identifier_map) as identifier_map_file:
-            input_reader = csv.DictReader(identifier_map_file, delimiter=delimiter)
-            headers = next(input_reader)
-            print("Headers:\t"+', '.join(headers))
-            self.identifier_map = [(row[self.source], row[self.target]) for row in input_reader]
+    _the_resolver = None
+    _the_identifier_map ='./HUGO_geneids_download_v2.txt'
+
+    @classmethod
+    def get_the_resolver(cls):
+        if not cls._the_resolver:
+            cls._the_resolver = Resolver(cls._the_identifier_map)
+        return  cls._the_resolver
 
     def __init__(self, identifier_map, source, target):
         if DEBUG: print("__init__")
@@ -82,11 +89,13 @@ class Resolver(Payload):
             else:
                 raise RuntimeError("Resolver() ERROR: unrecognized 'identifier_map' specification?")
 
-    def _read_identifiers_in_flatfile(self, identifiers, delimiter=','):
-        if DEBUG: print("_read_identifiers_in_flatfile")
-        with open(identifiers) as id_file:
-            input_reader = csv.DictReader(id_file, delimiter=delimiter)
-            self.ids = [row[self.source] for row in input_reader]
+    def _read_identifier_map_in_flatfile(self, identifier_map, delimiter='\t'):
+        if DEBUG: print("_read_identifier_map_in_flatfile")
+        with open(identifier_map) as identifier_map_file:
+            input_reader = csv.DictReader(identifier_map_file, delimiter=delimiter)
+            headers = next(input_reader)
+            print("Headers:\t"+', '.join(headers))
+            self.identifier_map = [(row[self.source], row[self.target]) for row in input_reader]
 
     def load_identifiers(self, identifiers):
         if DEBUG: print("load identifiers")
@@ -127,17 +136,26 @@ class Resolver(Payload):
 
         return self
 
-    def translate_one(self, input_id):
-        if DEBUG: print("translate_one")
+    def _read_identifiers_in_flatfile(self, identifiers, delimiter=','):
+        if DEBUG: print("_read_identifiers_in_flatfile")
+        with open(identifiers) as id_file:
+            input_reader = csv.DictReader(id_file, delimiter=delimiter)
+            self.ids = [row[self.source] for row in input_reader]
+
+    def translate_one(self, source, target):
         """
         Lookup translation of a single input identifier in the (previously loaded) identifier map
-        :param input_id:
+        :param source: identifier to be  ranslated
+        :param target: target namespace from which identifier is to be obtained
         :return: mapping of input onto target namespace (empty string if no mapping available)
         """
-        return input_id, dict(self.identifier_map).get(input_id, '')
+        if DEBUG:
+            print("translate_one")
+        return source, dict(self.identifier_map[target]).get(source, '')
 
-    def translate(self):
-        if DEBUG: print("translate")
+    def translate(self, target):
+        if DEBUG:
+            print("translate")
         """
         Translate an iterable input list of identifiers.
         :param input_ids: iterable; If not specified, use a list previously loaded (using load_identifiers)
@@ -145,10 +163,9 @@ class Resolver(Payload):
         """
         # The second entry of the tuple will be an empty string ''
         # if output/converted_id isn't found in identifier_map dict
-        translated_ids = [self.translate_one(input_id) for input_id in self.ids]
+        translated_ids = [self.translate_one(input_id, target) for input_id in self.ids]
 
         return translated_ids
-
 
 if __name__ == '__main__':
     fire.Fire(Resolver)
