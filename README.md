@@ -111,7 +111,7 @@ of the input gene list with the other genes listed in the given row.
 
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
-A similar script is available for Translator workflow 9, i.e.
+A similar script is available for Translator [Workflow 9](https://www.lucidchart.com/invitations/accept/bd0b90df-45af-48a1-9777-7179a17f0b63), i.e.
 
 ``` 
 ./sn cripts/WF9_automation.py --help
