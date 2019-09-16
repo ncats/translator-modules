@@ -1,4 +1,4 @@
-2#!/usr/bin/env python3
+#!/usr/bin/env python3
 
 # Workflow 9, Gene-to-Gene Bicluster
 import asyncio
@@ -11,12 +11,14 @@ import pandas as pd
 import requests
 from typing import Dict, List
 
-from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
-from BioLink.model import GeneToGeneAssociation, Gene
+from translator_modules.core.data_transfer_model import ConceptSpace
+from translator_modules.core.module_payload import Payload
+from translator_modules.core import fix_curies, get_simple_input_gene_list, ModuleMetaData
+from biolink.model import GeneToGeneAssociation, Gene, CellLine
 
 
-bicluster_disease_url = 'https://smartbag-crispridepmap.ncats.io/gene_to_celline_depmap_bicluster/'
-base_cellline_url = 'https://smartbag-crispridepmap.ncats.io/gene_to_celline_depmap_cellline/'
+bicluster_depmap_gene_url = 'https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_celline_v1_gene/'
+bicluster_depmap_related_url = 'https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_celline_v1_bicluster/'
 
 class BiclusterByGeneToGene():
     def __init__(self):
@@ -65,7 +67,7 @@ class BiclusterByGeneToGene():
     def find_related_biclusters(self, curated_id_list):
         # this function is an artifact... a way to understand 'find_related_biclusters_async', below
         for gene in curated_id_list:
-            request_1_url = bicluster_gene_url + gene + '/'
+            request_1_url = bicluster_depmap_gene_url + gene + '/'
             response = requests.get(request_1_url)
             response_json = response.json()
             cooccurrence_dict_each_gene = defaultdict(dict)
@@ -75,7 +77,7 @@ class BiclusterByGeneToGene():
                 bicluster_dict = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'][x['bicluster']] = []
                 for related_bicluster in cooccurrence_dict_each_gene['related_biclusters']:
-                    request_2_url = bicluster_bicluster_url + related_bicluster + '/'
+                    request_2_url = bicluster_depmap_related_url + related_bicluster + '/'
                     response_2 = requests.get(request_2_url)
                     response_2_json = response_2.json()
                     gene_in_each_bicluster_list = [bicluster['gene'] for bicluster in response_2_json]
@@ -84,7 +86,7 @@ class BiclusterByGeneToGene():
 
     async def gene_to_gene_biclusters_async(self, curated_id_list):
 
-        bicluster_url_list = [bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in curated_id_list]
+        bicluster_url_list = [bicluster_depmap_gene_url + gene + '/' + '?include_similar=true' for gene in curated_id_list]
         with concurrent.futures.ThreadPoolExecutor(
                 max_workers=2) as executor_1:  # changing the # of workers does not change performance...
             loop_1 = asyncio.get_event_loop()
@@ -102,7 +104,7 @@ class BiclusterByGeneToGene():
                     for x in response_json:
                         cooccurrence_dict_each_gene['related_biclusters'][x['bicluster']] = defaultdict(dict)
                     related_biclusters = [x for x in cooccurrence_dict_each_gene['related_biclusters']]
-                    bicluster_bicluster_url_list = [bicluster_bicluster_url + related_bicluster + '/' for
+                    bicluster_bicluster_url_list = [bicluster_depmap_related_url + related_bicluster + '/' for
                                                     related_bicluster in related_biclusters]
                     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_2:
                         loop_2 = asyncio.get_event_loop()
@@ -210,27 +212,36 @@ class BiclusterByGeneToGene():
 class GeneToGeneBiclusters(Payload):
 
     def __init__(self, input_genes):
-        super(GeneToGeneBiclusters, self).__init__(BiclusterByGeneToGene())
-
+        super(GeneToGeneBiclusters, self).__init__(
+            module=BiclusterByGeneToGene(),
+            metadata=ModuleMetaData(
+                name="Mod9B - Gene-to-Gene Bicluster",
+                source='DepMap Biclustering',
+                association=GeneToGeneAssociation,
+                domain=ConceptSpace(Gene, ['ENSEMBL']),
+                relationship='related_to',
+                range=ConceptSpace(Gene, ['ENSEMBL']),
+            )
+        )
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 
         input_gene_set = get_simple_input_gene_list(input_obj, extension)
 
-        asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_set))
+        asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 
-        bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict()
-        unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
-        genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters)
+        bicluster_occurrences_dict = self.module.bicluster_occurrences_dict()
+        unique_biclusters = self.module.unique_biclusters(bicluster_occurrences_dict)
+        genes_in_unique_biclusters = self.module.genes_in_unique_biclusters(unique_biclusters)
 
         genes_in_unique_biclusters_not_in_input_gene_list = \
-            self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
+            self.module.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
 
         # need to convert the raw Ensembl ID's to CURIES
         genes_in_unique_biclusters_not_in_input_gene_list = \
             fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix='NCBI')
 
         sorted_list_of_output_genes = \
-            self.mod.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
+            self.module.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 

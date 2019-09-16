@@ -11,12 +11,13 @@ import pandas as pd
 import requests
 from typing import Dict, List
 
-from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
-from BioLink.model import GeneToGeneAssociation, Gene
+from translator_modules.core.data_transfer_model import ConceptSpace
+from translator_modules.core.module_payload import Payload
+from translator_modules.core import fix_curies, get_simple_input_gene_list, ModuleMetaData
+from biolink.model import GeneToGeneAssociation, Gene
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
-
 
 class BiclusterByGeneToGene():
     def __init__(self):
@@ -210,27 +211,37 @@ class BiclusterByGeneToGene():
 class GeneToGeneBiclusters(Payload):
 
     def __init__(self, input_genes):
-        super(GeneToGeneBiclusters, self).__init__(BiclusterByGeneToGene())
+        super(GeneToGeneBiclusters, self).__init__(
+            module=BiclusterByGeneToGene(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Gene-to-Gene Bicluster",
+                source='RNAseqDB Biclustering',
+                association=GeneToGeneAssociation,
+                domain=ConceptSpace(Gene, ['ENSEMBL']),
+                relationship='related_to',
+                range=ConceptSpace(Gene, ['ENSEMBL']),
+            )
+        )
 
         input_obj, extension = self.handle_input_or_input_location(input_genes)
 
         input_gene_set = get_simple_input_gene_list(input_obj, extension)
 
-        asyncio.run(self.mod.gene_to_gene_biclusters_async(input_gene_set))
+        asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 
-        bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict()
-        unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
-        genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters)
+        bicluster_occurrences_dict = self.module.bicluster_occurrences_dict()
+        unique_biclusters = self.module.unique_biclusters(bicluster_occurrences_dict)
+        genes_in_unique_biclusters = self.module.genes_in_unique_biclusters(unique_biclusters)
 
         genes_in_unique_biclusters_not_in_input_gene_list = \
-            self.mod.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
+            self.module.genes_in_unique_biclusters_not_in_input_gene_list(input_genes, genes_in_unique_biclusters)
 
         # need to convert the raw Ensembl ID's to CURIES
         genes_in_unique_biclusters_not_in_input_gene_list = \
             fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix='ENSEMBL')
 
         sorted_list_of_output_genes = \
-            self.mod.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
+            self.module.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 

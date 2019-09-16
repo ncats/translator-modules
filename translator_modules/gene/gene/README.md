@@ -49,8 +49,7 @@ other (possibly richer) format outputs are available (and perhaps more informati
 This module retrieves sets of genes clustered by similar gene expression in profiles extracted from RNAseqDB. To run:
 
 ``` 
-gene_to_gene_bicluster.py --input-genes "ENSG00000148584,ENSG00000070018,ENSG00000175899" \
-                       get-data-frame to-csv
+gene_to_gene_bicluster.py --input-genes "ENSG00000148584,ENSG00000070018,ENSG00000175899" get-data-frame to-csv
 ```
 
 will give a CSV formatted table of associated genes. Note that, as with all the modules,
