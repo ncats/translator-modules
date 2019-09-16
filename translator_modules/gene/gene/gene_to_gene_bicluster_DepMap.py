@@ -31,7 +31,7 @@ class BiclusterByGeneToGene():
             'relationship': 'related_to',
             'output_type': {
                 'complexity': 'set',
-                'category': Cell_Line.class_name,
+                'category': CellLine.class_name,
                 'mappings': 'DepMap',
             },
         }
