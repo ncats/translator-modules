@@ -6,7 +6,7 @@ import fire
 
 from biothings_client import get_client
 
-from BioLink.model import FunctionalAssociation, Gene
+from biolink.model import FunctionalAssociation, Gene
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity

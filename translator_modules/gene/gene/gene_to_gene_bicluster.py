@@ -11,7 +11,7 @@ import pandas as pd
 import requests
 from typing import Dict, List
 
-from biolink.model import GeneToGeneAssociation, Gene
+from BioLink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import fix_curies
 from translator_modules.core.module_payload import Payload

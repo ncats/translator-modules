@@ -7,7 +7,7 @@ import fire
 import pandas as pd
 from biothings_client import get_client
 
-from BioLink.model import GeneToPhenotypicFeatureAssociation, Gene
+from biolink.model import GeneToPhenotypicFeatureAssociation, Gene
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity

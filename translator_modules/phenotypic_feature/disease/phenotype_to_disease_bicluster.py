@@ -9,7 +9,7 @@ import fire
 import pandas as pd
 import requests
 
-from BioLink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
+from biolink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
 from typing import List
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace

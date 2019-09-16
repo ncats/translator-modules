@@ -11,7 +11,7 @@ import requests
 
 from typing import Dict, List, Set
 
-from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+from biolink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 
 from translator_modules.core import fix_curies
 from translator_modules.core.module_payload import Payload
