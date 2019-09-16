@@ -50,10 +50,12 @@ if parameter is not specified.
 
 ###Single diseases:
 **Fanconi anemia** (runs for ~10 minutes): python scripts/SummaryTableWorkflow.py -v -d MONDO:0019391 -f 0.5 -p 0.34 -g 9 -b 0.05
+
 **Lafora disease** (runs for ~6.5 minutes): python scripts/SummaryTableWorkflow.py -v -d MONDO:0009697 -f 0.3 -p 0.2 -g 0 -b 0.1
 
 ###Gene list queries: 
 **Fanconi anemia disease genes**: python scripts/SummaryTableWorkflow.py -v -j ./tests/CXtest_inputgenes.txt -f 0.5 -p 0.34 -g 9 -b 0.05
+
 **Lafora disease genes + erroneous entries**: 
 python scripts/SummaryTableWorkflow.py -v -j ./tests/CXtest_errorgenes.txt -f 0.3 -p 0.2 -g 0 -b 0.1 
 
