@@ -34,7 +34,7 @@ class Resolver:
     def handle_input_or_input_location(self, identifier_map):
         return handle_input_or_input_location(identifier_map)
 
-    def __init__(self, identifier_map):
+    def __init__(self, identifier_map, domain, range):
         if DEBUG: print("__init__")
         """
         Constructor of a Resolver map object for identifier translation across namespaces.
@@ -42,6 +42,9 @@ class Resolver:
         :param source: for record based inputs, the target 'source' namespace field or tag
         :param target: for record based inputs, the target 'source' namespace field or tag
         """
+
+        self.domain = domain
+        self.range = range
 
         if not identifier_map:
             raise RuntimeError("Resolver() ERROR: 'identifier_map' unspecified - don't know what to translate?")
@@ -95,7 +98,7 @@ class Resolver:
         with open(identifier_map) as identifier_map_file:
             input_reader = csv.DictReader(identifier_map_file, delimiter=delimiter)
             headers = list(next(input_reader))
-            print("Headers:\t"+', '.join(self.headers))
+            print("Headers:\t"+', '.join(headers))
             self.identifier_records = [tuple(map(lambda header: row[header], headers)) for row in input_reader]
 
             self.identifier_map = {}
