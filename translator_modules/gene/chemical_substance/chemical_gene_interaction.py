@@ -10,7 +10,7 @@ from biothings_client import get_client
 
 from CTD.CTD_wrapper import CTDWrapper
 
-from BioLink.model import ChemicalToGeneAssociation, ChemicalSubstance, Gene
+from biolink.model import ChemicalToGeneAssociation, ChemicalSubstance, Gene
 from typing import List
 
 from translator_modules.core.module_payload import Payload

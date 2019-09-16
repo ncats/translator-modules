@@ -8,7 +8,7 @@ import fire
 import pandas as pd
 import requests
 
-from BioLink.model import AnatomicalEntityToAnatomicalEntityAssociation, AnatomicalEntity
+from biolink.model import AnatomicalEntityToAnatomicalEntityAssociation, AnatomicalEntity
 
 from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace

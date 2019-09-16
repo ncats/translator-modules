@@ -9,7 +9,7 @@ import fire
 import pandas as pd
 import requests
 
-from BioLink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
+from biolink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
 
 from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
@@ -42,8 +42,8 @@ class BiclusterByDiseaseToPhenotype():
         curated_ID_list = self.curated_ID_list(ID_list)
         return curated_ID_list
 
-    async def disease_to_phenotype_biclusters_async(self, input_ID_list):
-        bicluster_url_list = [base_disease_url + disease + '/' + '?include_similar=true' for disease in input_ID_list]
+    async def disease_to_phenotype_biclusters_async(self, input_id_list):
+        bicluster_url_list = [base_disease_url + disease + '/' + '?include_similar=true' for disease in input_id_list]
         all_biclusters_dict = defaultdict(dict)
         with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor_1:
             all_phenotypes = []

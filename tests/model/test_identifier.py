@@ -14,6 +14,7 @@ mock_identifier_version_2= '2'
 mock_identifier_name_2 = 'Fanconi Anemia'
 mock_identifier_symbol_2 = 'FA'
 
+
 def mock_identifier():
     return Identifier(
         mock_identifier_xmlns,

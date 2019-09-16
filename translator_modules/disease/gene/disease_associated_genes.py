@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
+# Workflow 2, Module 0: Lookups
 from pprint import pprint
 
 import fire
 import pandas as pd
-# Workflow 2, Module 0: Lookups
-from BioLink.biolink_client import BioLinkWrapper
+
+from biolink.biolink_client import BioLinkWrapper
 from biothings_client import get_client
 
-from BioLink.model import GeneToDiseaseAssociation, Gene, Disease
+from biolink.model import GeneToDiseaseAssociation, Gene, Disease
 
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload

@@ -482,9 +482,9 @@ class ResultList(BaseModel):
         # Load the resulting Python object into a ResultList instance
         result_list_name = \
             metadata.source + ' ' + \
-            str(module_domain.category) + ' ' + \
+            module_domain.category.class_name + ' ' + \
             metadata.relationship.replace('_', ' ') + ' ' + \
-            str(module_range.category)
+            module_range.category.class_name
 
         rl = ResultList(
             result_list_name=result_list_name,

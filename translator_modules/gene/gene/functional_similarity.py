@@ -6,7 +6,7 @@ import fire
 
 from biothings_client import get_client
 
-from BioLink.model import FunctionalAssociation, Gene
+from biolink.model import FunctionalAssociation, Gene
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity
@@ -77,7 +77,7 @@ class FunctionalSimilarity(GenericSimilarity):
                     if gene['sim_input_curie'] != result['input_id']:
                         result['input_id'] = self.symbol2hgnc(result['input_symbol'])
 
-        results = GenericSimilarity.sort_results(input_gene_set, results)
+        results = GenericSimilarity.sort_results(results)
 
         return results
 

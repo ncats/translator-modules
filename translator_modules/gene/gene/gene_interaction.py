@@ -7,8 +7,8 @@ from pprint import pprint
 import fire
 import pandas as pd
 
-from BioLink.biolink_client import BioLinkWrapper
-from BioLink.model import GeneToGeneAssociation, Gene
+from biolink.biolink_client import BioLinkWrapper
+from biolink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
 from translator_modules.core.identifier_resolver import Resolver, SYMBOL

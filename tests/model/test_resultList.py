@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 
-from BioLink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
+from biolink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
 
 from tests.model.test_concept import mock_concept
 from tests.model.test_identifier import mock_identifier_2
