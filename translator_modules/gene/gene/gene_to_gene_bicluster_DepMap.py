@@ -1,4 +1,4 @@
-2222#!/usr/bin/env python3
+2#!/usr/bin/env python3
 
 # Workflow 9, Gene-to-Gene Bicluster
 import asyncio
@@ -15,8 +15,8 @@ from translator_modules.core.module_payload import Payload, fix_curies, get_simp
 from BioLink.model import GeneToGeneAssociation, Gene
 
 
-bicluster_disease_url = 'https://smartbag-crispridepmap.ncats.io/HPO_to_MONDO_bicluster/'
-base_phenotype_url = 'https://smartbag-crispridepmap.ncats.io/HPO_to_MONDO_hpo/'
+bicluster_disease_url = 'https://smartbag-crispridepmap.ncats.io/gene_to_celline_depmap_bicluster/'
+base_cellline_url = 'https://smartbag-crispridepmap.ncats.io/gene_to_celline_depmap_cellline/'
 
 class BiclusterByGeneToGene():
     def __init__(self):
