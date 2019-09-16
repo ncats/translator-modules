@@ -108,7 +108,7 @@ When the '--verbose' flag is used, the script also echos tabular results to the 
 A similar script is available for Translator workflow 9, i.e.
 
 ``` 
-./cripts/WF9_automation.py --help
+./sn cripts/WF9_automation.py --help
 ```
 
 The scripts (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
@@ -124,7 +124,7 @@ python scripts/WF2_automation.py --help
 Assuming that you have put the translator modules on your path (see section above), then they may be run 
 as individual programs from the command line terminal of your operation system.
 
-For example, a "gene to gene bicluster" algorithm implemented as a module in NCATS Translator Workflow 9 
+For example, a "gene to gene bicluster" algorithm (based on RNAseqDB data, module naming convention by data source is in progress) implemented as a module in NCATS Translator Workflow 9 
 may be run  as follows:
 
 ``` 
@@ -212,9 +212,9 @@ I. An _in memory_ copy of the relevant ontology and annotation catalogs plus oth
 triggered by instantiating the following three class objects (again, at the top of your file, 
 run once outside of any data loops):
 
-a) ```FunctionalSimilarity('human')``` for GO molecular function and biological process comparisons.
-b) ```PhenotypeSimilarity('human')``` for phenotype ontology comparisons.
-c) ```GeneInteractions()``` for accessing Monarch Biolink catalog of gene interactions
+a) ```FunctionalSimilarity('human')``` for molecular function and biological process comparisons (GO).
+b) ```PhenotypeSimilarity('human')``` for phenotype ontology comparisons (HPO).
+c) ```GeneInteractions()``` for accessing protein-protein interactions (Monarch via Biolink API)
 
 Note that the object handles returned by each of the three functions are then used to call associated computations on
 each kind of catalog. Such computations may be done repeatedly on the handle, since the ontology catalogs are only used 
