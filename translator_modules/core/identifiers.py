@@ -142,7 +142,7 @@ class Resolver(Payload):
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
             self.ids = [row[self.source] for row in input_reader]
 
-    def translate_one(self, source, target):
+    def translate_one(self, source, domain):
         """
         Lookup translation of a single input identifier in the (previously loaded) identifier map
         :param source: identifier to be  ranslated
@@ -151,9 +151,10 @@ class Resolver(Payload):
         """
         if DEBUG:
             print("translate_one")
-        return source, dict(self.identifier_map[target]).get(source, '')
+        target = dict(self.identifier_map[domain]).get(source, '')
+        return source, target
 
-    def translate(self, target):
+    def translate(self, domain):
         if DEBUG:
             print("translate")
         """
@@ -163,7 +164,7 @@ class Resolver(Payload):
         """
         # The second entry of the tuple will be an empty string ''
         # if output/converted_id isn't found in identifier_map dict
-        translated_ids = [self.translate_one(input_id, target) for input_id in self.ids]
+        translated_ids = [self.translate_one(input_id, domain) for input_id in self.ids]
 
         return translated_ids
 
