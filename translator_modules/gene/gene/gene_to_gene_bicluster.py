@@ -194,7 +194,7 @@ class BiclusterByGeneToGene():
                         dict_of_ids_in_unique_biclusters_not_in_inputs[ID] += 1
         return dict_of_ids_in_unique_biclusters_not_in_inputs
 
-    def summmarize(self, input_gene_set):
+    def summarize(self, input_gene_set):
 
         bicluster_occurrences_dict = self.bicluster_occurrences_dict()
 
