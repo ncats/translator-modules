@@ -44,7 +44,7 @@ if parameter is not specified.
 		output gene would need to be in every bicluster to be returned to the user).  
 	- Bicluster set is created using input genes. 
 	- score is number of biclusters an output gene is in / total number of unique biclusters.
-```
+
  
 ## Example prompts
 
