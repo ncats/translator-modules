@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from BioLink.model import Gene
+from biolink.model import Gene
 
 from translator_modules.core.data_transfer_model import ConceptSpace
 
