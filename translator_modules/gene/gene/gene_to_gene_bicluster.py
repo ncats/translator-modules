@@ -195,7 +195,7 @@ class BiclusterByGeneToGene():
                         dict_of_ids_in_unique_biclusters_not_in_inputs[ID] += 1
         return dict_of_ids_in_unique_biclusters_not_in_inputs
 
-    def summmarize(self, input_gene_set):
+    def summarize(self, input_gene_set):
 
         bicluster_occurrences_dict = self.bicluster_occurrences_dict()
 
@@ -232,7 +232,7 @@ class GeneToGeneBiclusters(Payload):
             )
         )
 
-        input_gene_set = get_simple_input_gene_list(input_genes)
+        input_gene_set = self.get_simple_input_identifier_list(input_genes)
 
         asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 
