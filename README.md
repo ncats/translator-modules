@@ -17,6 +17,13 @@ virtualenv -p python3.7 py37
 source py37/bin/activate
 ```
 
+or, alternately, use **python venv** to manage packages and the development environment:
+
+``` 
+python3.7 -m venv venv
+source venv/bin/activate
+```
+
 or, alternately, use **conda env** to manage packages and the development environment:
 
 ```
@@ -105,6 +112,13 @@ of the input gene list with the other genes listed in the given row.
 
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
+A similar script is under development for Translator 
+[Workflow 9](https://www.lucidchart.com/invitations/accept/bd0b90df-45af-48a1-9777-7179a17f0b63), i.e.
+
+``` 
+./scripts/WF9_automation.py --help
+```
+
 The script (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
 if marked as executable, may be run directly as above, but in some environments (e.g. Windows) you may need to 
 explicitly run them as a Python script, i.e.
@@ -118,8 +132,8 @@ python scripts/WF2_automation.py --help
 Assuming that you have put the translator modules on your path (see section above), then they may be run 
 as individual programs from the command line terminal of your operation system.
 
-For example, a "gene to gene bicluster" algorithm implemented as a module in NCATS Translator Workflow 9 
-may be run  as follows:
+For example, a "gene to gene bicluster" algorithm (based on RNAseqDB data, module naming convention by data source 
+is in progress) implemented as a module in NCATS Translator Workflow 9 and may be run  as follows:
 
 ``` 
 gene_to_gene_bicluster.py --input-genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-json --orient records
@@ -206,9 +220,9 @@ I. An _in memory_ copy of the relevant ontology and annotation catalogs plus oth
 triggered by instantiating the following three class objects (again, at the top of your file, 
 run once outside of any data loops):
 
-a) ```FunctionalSimilarity('human')``` for GO molecular function and biological process comparisons.
-b) ```PhenotypeSimilarity('human')``` for phenotype ontology comparisons.
-c) ```GeneInteractions()``` for accessing Monarch Biolink catalog of gene interactions
+a) ```FunctionalSimilarity('human')``` for molecular function and biological process comparisons (GO).
+b) ```PhenotypeSimilarity('human')``` for phenotype ontology comparisons (HPO).
+c) ```GeneInteractions()``` for accessing protein-protein interactions (Monarch via Biolink API)
 
 Note that the object handles returned by each of the three functions are then used to call associated computations on
 each kind of catalog. Such computations may be done repeatedly on the handle, since the ontology catalogs are only used 
