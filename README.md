@@ -17,6 +17,12 @@ virtualenv -p python3.7 py37
 source py37/bin/activate
 ```
 
+or, alternately, use **python venv** to manage packages and the development environment:
+
+``` 
+python3.7 -m venv venv
+source venv/bin/activate
+  
 or, alternately, use **conda env** to manage packages and the development environment:
 
 ```
