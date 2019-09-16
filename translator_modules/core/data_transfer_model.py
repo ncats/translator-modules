@@ -5,6 +5,7 @@ Partially inspired by the Indigo (Broad) team 'Gene Sharpener" data model for ge
 plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML=like notation)
 
 """
+from inspect import isclass
 import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
@@ -63,9 +64,14 @@ class ConceptSpace(BaseModel):
 
     def __post_init__(self):
         # Can the id_prefixes and category values be validated here against the Biolink Model?
-        if not issubclass(self.category, NamedThing):
+        if isclass(self.category):
+            if not issubclass(self.category, NamedThing):
+                raise TypeError("ConceptSpace() type error: category '" + str(self.category) +
+                                "' must be a subclass of "+str(NamedThing))
+        else:
             raise TypeError("ConceptSpace() type error: category '" + str(self.category) +
-                            "' must be a subclass of the BioLink.NamedThing")
+                            "' is not a class!?")
+
 
 @dataclass(frozen=True)
 class ModuleMetaData:
