@@ -22,7 +22,8 @@ or, alternately, use **python venv** to manage packages and the development envi
 ``` 
 python3.7 -m venv venv
 source venv/bin/activate
-  
+```
+
 or, alternately, use **conda env** to manage packages and the development environment:
 
 ```
