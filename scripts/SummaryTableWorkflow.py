@@ -116,6 +116,12 @@ def main():
 
     parser.add_argument('-v', '--verbose', help='echo script output verbosely to console', action='store_true')
 
+    parser.add_argument('-i', '--wantInputs', choices=['Y', 'N', 'E'], default='N', help="""values: Y to keep input genes in 
+                        summaries, N (DEFAULT) to exclude input genes from summaries, E for exclusively/only input genes 
+                        in summaries. E can be used for setting thresholds and verifying module calculations 
+                        (question it addresses: what are the scores for known inputs?)""")
+    ## note that the default N is set in parameters of SummaryMod() class
+
     disease_query = parser.add_mutually_exclusive_group(required=True)
 
     # single disease input specification as a 2-tuple
@@ -127,7 +133,8 @@ def main():
     # disease input as a list
     disease_query.add_argument('-l', '--diseaseTable',
                                help="""
-                               name of text file - each line of file has the MONDO identifier of a single disease."""
+                               (flag is a lowercase L). name of text file - each line of file has the MONDO identifier 
+                               of a single disease."""
                                )
 
     disease_query.add_argument('-j', '--geneTable',
@@ -156,6 +163,17 @@ def main():
         print("Echoing results verbosely to the console!\n")
         set_console_echo(True)
 
+    if args.wantInputs:
+        want_inputs = args.wantInputs
+        if want_inputs=='Y':
+            print('Input genes will be included in summaries.')
+        elif want_inputs=='N':
+            print('Input genes will NOT be included in summaries.')
+        else: ## equals 'E'
+            print('ONLY input genes will be included in summaries.')
+    ## keep this line until this issue is resolved or some decision is made regarding what to do with this issue
+    print("Known issue: gene-gene bicluster module automatically removes input genes, regardless of user-input.")
+       
     print("\nLoading source ontology and annotation...")
 
     
@@ -187,9 +205,9 @@ def main():
 
     
     ## CX - it would be nice if we only initiated the modules we were going to use. 
-    ## if we want to omit modules, we have to comment out here! 
+    ## if we want to omit modules, search for the word "omit" and comment out sections below it. 
     
-    # Ontology Catalogs only need to be initialized once!
+    ## Ontology Catalogs only need to be initialized once!
     functional_threshold = args.functionalThreshold
     print("Functional Similarity Threshold:\t" + str(functional_threshold))
     ## Functional similarity using Jaccard index threshold
@@ -248,10 +266,10 @@ def main():
             print(query_input_genes.to_string())
     
         # intialize summary module object
-        summary_mod = SummaryMod(query_name)
+        summary_mod = SummaryMod(query_name, want_inputs)
 
         ## CX - it would be nice if we only initiated the modules we were going to use. 
-        ## if we want to omit modules, we have to comment out here! 
+        ## if we want to omit modules, search for the word "omit" and comment out sections below it. 
 
         ## run modules based on whether argument was given in command prompt
         print("\nRunning functional similarity module (Mod1A)...")
@@ -362,10 +380,10 @@ def main():
                 print(disease_associated_gene_set.get_data_frame().to_string())
     
             # intialize summary module object
-            summary_mod = SummaryMod(disease_name)
+            summary_mod = SummaryMod(disease_name, want_inputs)
 
             ## CX - it would be nice if we only initiated the modules we were going to use. 
-            ## if we want to omit modules, we have to comment out here! 
+            ## if we want to omit modules, search for the word "omit" and comment out sections below it. 
 
             print("\nRunning functional similarity module...")
             mod1a_results = \

@@ -63,5 +63,6 @@ python scripts/SummaryTableWorkflow.py -v -j ./tests/CXtest_errorgenes.txt -f 0.
 
 ### Disease list (runs for 10.5 minutes):
 
-Fanconi anemia, Lafora disease, Angelman syndrome (test uses default parameters so no results returned by some modules. 
+Fanconi anemia, Lafora disease, Angelman syndrome (test uses default parameters so no results returned by some modules.)
+ 
 python scripts/SummaryTableWorkflow.py -l ./tests/CXtest_diseaselist.txt 

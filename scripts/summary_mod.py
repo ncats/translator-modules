@@ -11,9 +11,10 @@ import numpy as np
 # Main class
 class SummaryMod(object):
     # Initializing function
-    def __init__(self, name='query_result'):
+    def __init__(self, name='query_result', want_inputs='N'):
         # Store the query name
         self.name = name
+        self.want_inputs = want_inputs
         
 #        # Store a set of the input gene symbols
 #        self.input_gene_set = [x['hit_symbol'] for x in input_gene_set]
@@ -62,8 +63,42 @@ class SummaryMod(object):
         self.brief_summary = self.brief_summary.groupby(['hit_symbol', 'hit_id']).agg(list)
         self.brief_summary.reset_index(inplace=True)  # move output gene to its own column
 
+        ## adding a column to mark whether output gene is input gene (disease associated) or not
+        # first, find the set of input genes in the table
+        input_genes = set()
+        for x in self.brief_summary['input_symbol']:
+            if x!=list():
+                input_genes.update(x)
+        # set notation seems to work here...
+#        print("brief summary input genes sees: \n", input_genes)
+                
+        # make column comparing output_gene symbol to input_genes set
+        self.brief_summary['is_input_gene'] = ['Y' if x in input_genes else 'N' for x in self.brief_summary['hit_symbol']]
         
-        # now I have lists with NAs inside. Need to get NAs removed. 
+        ## remove rows with input genes inside, is_input_gene column if flag is 'N'
+        if self.want_inputs == 'N':
+            ## brief summary 
+#            self.brief_summary = self.brief_summary[~self.brief_summary['hit_symbol'].isin(input_genes)]
+            self.brief_summary = self.brief_summary[self.brief_summary['is_input_gene'] == 'N']
+            self.brief_summary.drop('is_input_gene', axis=1, inplace=True)
+            
+            ## full summary: remove rows where input_symbol is an input gene
+            self.full_summary = self.full_summary[~self.full_summary['hit_symbol'].isin(input_genes)]
+        ## keep only rows with input genes, remove is_input_gene column if flag is 'E'
+        elif self.want_inputs == 'E':
+            # brief summary 
+#            self.brief_summary = self.brief_summary[self.brief_summary['hit_symbol'].isin(input_genes)]
+            self.brief_summary = self.brief_summary[self.brief_summary['is_input_gene'] == 'Y']
+            self.brief_summary.drop('is_input_gene', axis=1, inplace=True)            
+            
+            ## full summary: keep only rows where input_symbol is an input gene
+            self.full_summary = self.full_summary[self.full_summary['hit_symbol'].isin(input_genes)]
+        
+        ## keep as-is if you want input genes in summary 
+        else:
+            pass
+            
+        # after aggregation I have columns with lists of NAs inside. Need to get NAs removed. 
         original_count_cols = ['num_protein_interactions']
         removing_NA_cols = [i for i in self.brief_summary.columns if (i.endswith('_score') or i.endswith('_rank') or \
                                                                       i in original_count_cols)]
@@ -73,7 +108,7 @@ class SummaryMod(object):
             ## remove empty lists, replace with empty cells
 #            self.brief_summary[col] = [np.nan if x==list() else x for x in self.brief_summary[col]]
             
-            # create new columns counting the number of scores for Mod1A, Mod1B
+            # create new columns counting the number of scores for score-based modules
             if col.endswith('_score'):
                 ## creating new col name by removing _score from the end
                 new_col_name = col[:-6] + '_count'
@@ -96,15 +131,6 @@ class SummaryMod(object):
         self.brief_summary['num_modules'] = self.brief_summary.filter(regex=('_count$')).count(axis=1)
         self.brief_summary['num_input_genes'] = [len(genelist) for genelist in self.brief_summary['input_symbol']]
     
-        ## adding a column to mark whether output gene is input gene (disease associated) or not
-        # first, find the set of input genes in the table
-        input_genes = set()
-        for x in self.brief_summary['input_symbol']:
-            if x!=list():
-                input_genes.update(x)
-        # make column comparing output_gene symbol to input_genes set
-        self.brief_summary['is_input_gene'] = ['Y' if x in input_genes else 'N' for x in self.brief_summary['hit_symbol']]
-
         # sort table by number of modules, then total hits, then number of input genes, then hit_symbol 
         self.brief_summary = self.brief_summary.sort_values(by=['num_modules','total_hits', 'num_input_genes', 'hit_symbol'], ascending=[False, False, False, True])
  
@@ -115,7 +141,6 @@ class SummaryMod(object):
         cols = [x for x in cols_to_order if x in self.brief_summary] + [x for x in self.brief_summary if x not in cols_to_order]
         self.brief_summary = self.brief_summary.reindex(columns=cols)
 
-        
         # Reordering full summary based on brief summary
         new_row_order = self.brief_summary['hit_symbol'].tolist() # get row names (output_genes)
         new_rows_idx = dict(zip(new_row_order,range(len(new_row_order)))) # make ordered dict of output_genes 
@@ -183,7 +208,33 @@ class SummaryMod(object):
             
             # Make individual module summary (counts number of input genes corresponding to a unique output gene for this module)
             individual_sum = pd.DataFrame.copy(processed_results)
-            individual_sum = individual_sum.groupby(['hit_symbol']).agg(list)  # grouping by unique output gene
+
+            ## issue: making input_genes a set from the beginning doesn't seem to work here 
+            ## first, find the set of input genes in the table            
+            ## remove rows with input genes inside, is_input_gene column if flag is 'N'
+            input_genes = list()
+            for x in individual_sum['input_symbol']:
+                input_genes.append(x)
+            input_genes = set(input_genes)
+#            print(module + " input gene set:")
+#            print(input_genes)
+            
+            if self.want_inputs == 'N':
+                individual_sum = individual_sum[~individual_sum['hit_symbol'].isin(input_genes)]
+            
+            ## keep only rows with input genes, remove is_input_gene column if flag is 'E'
+            elif self.want_inputs == 'E':
+                individual_sum = individual_sum[individual_sum['hit_symbol'].isin(input_genes)]
+
+            ## keep as-is if you want input genes in summary 
+            else:
+                pass            
+            
+            ## note: an empty dataframe at this point (after the want_input filtering) is a rare occurrence. 
+            ## when it happens...the columns will be in the summary and an empty dataframe (individual summary)
+            ## will be saved and printed to the screen. Maybe not ideal but still workable summaries/output
+            
+            individual_sum = individual_sum.groupby(['hit_symbol']).agg(list).reset_index()  # grouping by unique output gene
             individual_sum['sim_count'] = [len(x) for x in individual_sum.filter(regex='_score$', axis=1).squeeze()]
             ## WARNING: if other columns of lists were included, they would no longer correspond to input_symbols after this sorting
             ## columns: input_id, functional_sim_score, functional_sim_rank
@@ -217,6 +268,32 @@ class SummaryMod(object):
             ## NEED TO UPDATE THIS PART'S COLUMN NAMES IN ORDER TO EXPAND THIS FUNCTION TO OTHER MODULES
             # Make individual module summary (counts number of input genes corresponding to a unique output gene for this module)
             individual_sum = pd.DataFrame.copy(processed_results)
+
+            ## issue: making input_genes a set from the beginning doesn't seem to work here 
+            ## first, find the set of input genes in the table            
+            ## remove rows with input genes inside, is_input_gene column if flag is 'N'
+            input_genes = list()
+            for x in individual_sum['input_symbol']:
+                input_genes.append(x)
+            input_genes = set(input_genes)            
+#            print("Mod1E input gene set:")
+#            print(input_genes)
+            
+            if self.want_inputs == 'N':
+                individual_sum = individual_sum[~individual_sum['hit_symbol'].isin(input_genes)]
+            
+            ## keep only rows with input genes, remove is_input_gene column if flag is 'E'
+            elif self.want_inputs == 'E':
+                individual_sum = individual_sum[individual_sum['hit_symbol'].isin(input_genes)]
+
+            ## keep as-is if you want input genes in summary 
+            else:
+                pass  
+
+            ## note: an empty dataframe at this point (after the want_input filtering) is a rare occurrence. 
+            ## when it happens...the columns will be in the summary and an empty dataframe (individual summary)
+            ## will be saved and printed to the screen. Maybe not ideal but still workable summaries/output
+            
             individual_sum = individual_sum.groupby(['hit_symbol']).agg(list)
             # adjust the columns' values: number of hits found, sort input genes
             individual_sum['protein_interaction_count'] = [len(x) for x in individual_sum['num_protein_interactions']]
@@ -231,7 +308,6 @@ class SummaryMod(object):
 ## Possible NEXT STEP: condensing these functions? like get_brief/full, show_brief/full, write_brief/full
 
     # Method takes in a query or list of queries (module names) and returns their brief summary
-  
     def show_single_mod_summary(self,query):
         # check if single query and make into list if it is
         if isinstance(query, str):
