@@ -77,7 +77,7 @@ class FunctionalSimilarity(GenericSimilarity):
                     if gene['sim_input_curie'] != result['input_id']:
                         result['input_id'] = self.symbol2hgnc(result['input_symbol'])
 
-        results = GenericSimilarity.sort_results(input_gene_set, results)
+        results = GenericSimilarity.sort_results(results)
 
         return results
 

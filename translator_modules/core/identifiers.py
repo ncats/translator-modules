@@ -22,15 +22,14 @@ class Resolver(Payload):
     This class handles identifier conversions. Note that, for now, the 'identifier_map' catalog and the 'input_ids'
     need to have matching identifier formatting, in particular, with respect to xmlns (curie) prefixes.
     """
-
     _the_resolver = None
-    _the_identifier_map ='./HUGO_geneids_download_v2.txt'
+    _the_identifier_map = './HUGO_geneids_download_v2.txt'
 
     @classmethod
     def get_the_resolver(cls):
         if not cls._the_resolver:
             cls._the_resolver = Resolver(cls._the_identifier_map)
-        return  cls._the_resolver
+        return cls._the_resolver
 
     def __init__(self, identifier_map, source, target):
         if DEBUG: print("__init__")
@@ -90,7 +89,8 @@ class Resolver(Payload):
                 raise RuntimeError("Resolver() ERROR: unrecognized 'identifier_map' specification?")
 
     def _read_identifier_map_in_flatfile(self, identifier_map, delimiter='\t'):
-        if DEBUG: print("_read_identifier_map_in_flatfile")
+        if DEBUG:
+            print("_read_identifier_map_in_flatfile")
         with open(identifier_map) as identifier_map_file:
             input_reader = csv.DictReader(identifier_map_file, delimiter=delimiter)
             headers = next(input_reader)
@@ -166,6 +166,7 @@ class Resolver(Payload):
         translated_ids = [self.translate_one(input_id, target) for input_id in self.ids]
 
         return translated_ids
+
 
 if __name__ == '__main__':
     fire.Fire(Resolver)
