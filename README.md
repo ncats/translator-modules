@@ -115,10 +115,6 @@ When the '--verbose' flag is used, the script also echos tabular results to the 
 A similar script is under development for Translator 
 [Workflow 9](https://www.lucidchart.com/invitations/accept/bd0b90df-45af-48a1-9777-7179a17f0b63), i.e.
 
-``` 
-./scripts/WF9_automation.py --help
-```
-
 The script (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
 if marked as executable, may be run directly as above, but in some environments (e.g. Windows) you may need to 
 explicitly run them as a Python script, i.e.
