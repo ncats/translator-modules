@@ -7,6 +7,7 @@ import pandas as pd
 import json
 from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
 
+
 def fix_curies(object_id, prefix=''):
     """
     Adds a suitable XMLNS prefix to (an) identifier(s) known to
@@ -35,6 +36,17 @@ def fix_curies(object_id, prefix=''):
     else:
         raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(object_id))
 
+
+def object_id(curie) -> str:
+    """
+    Returns the object_id of a curie
+    :param curie:
+    :return:
+    """
+    if not curie:
+        return curie
+    part = curie.split(':')
+    return part[:-1]
 
 def handle_input_or_input_location(input_or_input_location):
     """

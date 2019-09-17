@@ -146,11 +146,10 @@ class BiclusterByGene:
                         dict_of_genes_in_unique_biclusters_not_in_inputs[gene]['score'] += 1
         return dict_of_genes_in_unique_biclusters_not_in_inputs
 
-    @staticmethod
-    def list_of_output_genes_sorted_high_to_low_count(dict_of_genes_in_unique_biclusters_not_in_inputs):
+    def list_of_output_genes_sorted_high_to_low_count(self, dict_of_genes_in_unique_biclusters_not_in_inputs):
         score_list = [
             {
-                'input_id': ','.join(fix_curies(tally['input_id'], prefix='ENSEMBL')),
+                'input_id': ','.join(fix_curies(tally['input_id'], prefix=self.target_prefix)),
                 'hit_id': gene,
                 'score': tally['score']
             } for (gene, tally) in dict_of_genes_in_unique_biclusters_not_in_inputs.items()

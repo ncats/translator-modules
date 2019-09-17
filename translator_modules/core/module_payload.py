@@ -13,7 +13,8 @@ import requests
 from typing import List, Iterable
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
-from translator_modules.core import handle_input_or_input_location
+from translator_modules.core import handle_input_or_input_location, object_id
+
 
 class Payload(ABC):
 
@@ -104,15 +105,16 @@ class Payload(ABC):
 
         return input_data_frame
 
-    def get_simple_input_identifier_list(self, input_spec) -> List[str]:
+    def get_simple_input_identifier_list(self, input_spec, object_id_only=False) -> List[str]:
         """
         This function returns a simple list of identifiers rather than a Pandas DataFrame
 
         :param input_spec:
-        :return: simple flat  List[str] of input identifiers
+        :param prefix:
+        :return:
         """
         input_data_frame = self.get_input_data_frame(input_spec)
-        simple_identifier_list = [hit_id for hit_id in input_data_frame['hit_id']]
+        simple_identifier_list = [object_id(hit_id) if object_id_only else hit_id for hit_id in input_data_frame['hit_id']]
         return simple_identifier_list
 
     def get_data_frame(self) -> pd.DataFrame:
