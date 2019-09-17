@@ -4,7 +4,7 @@
 from pprint import pprint
 
 import fire
-import pandas as pd
+
 from biothings_client import get_client
 
 from biolink.model import GeneToPhenotypicFeatureAssociation, Gene

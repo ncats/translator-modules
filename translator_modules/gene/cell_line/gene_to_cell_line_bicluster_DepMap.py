@@ -3,21 +3,21 @@
 # Workflow 9, Gene-to-CellLine Bicluster
 import asyncio
 import fire
+import pandas as pd
 
-from biolink.model import GeneToGeneAssociation, Gene
+from biolink.model import GeneToGeneAssociation, Gene, CellLine
 
 from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from translator_modules.gene.gene_bicluster_shared import BiclusterByGene
 
-from .bicluster_gene_to_gene_bicluster_shared import BiclusterByGeneToGene
 
-
-class GeneToGeneBiclusters(Payload):
+class DepMapBiclusters(Payload):
 
     def __init__(self, input_genes):
-        super(GeneToGeneBiclusters, self).__init__(
-            module=BiclusterByGeneToGene(
-                bicluster_gene_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_celline_v1_gene/',
+        super(DepMapBiclusters, self).__init__(
+            module=BiclusterByGene(
+                bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_celline_v1_gene/',
                 bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_celline_v1_bicluster/',
                 target_prefix='NCBI'
             ),
@@ -27,7 +27,7 @@ class GeneToGeneBiclusters(Payload):
                 association=GeneToGeneAssociation,
                 domain=ConceptSpace(Gene, ['NCBI']),
                 relationship='related_to',
-                range=ConceptSpace(CellLine, ['DepMap']),
+                range=ConceptSpace(CellLine, ['DepMap'])
             )
         )
 
@@ -41,4 +41,4 @@ class GeneToGeneBiclusters(Payload):
 
 
 if __name__ == '__main__':
-    fire.Fire(GeneToGeneBiclusters)
+    fire.Fire(DepMapBiclusters)

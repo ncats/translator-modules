@@ -11,11 +11,11 @@ from typing import Dict, List
 from translator_modules.core import fix_curies
 
 
-class BiclusterByGeneToGene:
+class BiclusterByGene:
 
-    def __init__(self, bicluster_gene_url=None, bicluster_bicluster_url=None, target_prefix=''):
+    def __init__(self, bicluster_url=None, bicluster_bicluster_url=None, target_prefix=''):
 
-        self.bicluster_gene_url = bicluster_gene_url
+        self.bicluster_url = bicluster_url
         self.bicluster_bicluster_url = bicluster_bicluster_url
         self.target_prefix=target_prefix
         self.related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
@@ -48,7 +48,7 @@ class BiclusterByGeneToGene:
     def find_related_biclusters(self, curated_id_list):
         # this function is an artifact... a way to understand 'find_related_biclusters_async', below
         for gene in curated_id_list:
-            request_1_url = self.bicluster_gene_url + gene + '/'
+            request_1_url = self.bicluster_url + gene + '/'
             response = requests.get(request_1_url)
             response_json = response.json()
             cooccurrence_dict_each_gene = defaultdict(dict)
@@ -66,7 +66,7 @@ class BiclusterByGeneToGene:
             self.related_biclusters_and_genes_for_each_input_gene[gene] = dict(cooccurrence_dict_each_gene)
 
     async def gene_to_gene_biclusters_async(self, curated_id_list):
-            bicluster_url_list = [self.bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in curated_id_list]
+            bicluster_url_list = [self.bicluster_url + gene + '/' + '?include_similar=true' for gene in curated_id_list]
             with concurrent.futures.ThreadPoolExecutor() as executor_1:
                 loop_1 = asyncio.get_event_loop()
                 futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
@@ -207,5 +207,3 @@ class BiclusterByGeneToGene:
 
         return sorted_list_of_output_genes
 
-if __name__ == '__main__':
-    raise RuntimeError("I am a Python library, not a program?")

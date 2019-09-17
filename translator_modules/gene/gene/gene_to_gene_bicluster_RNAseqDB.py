@@ -3,21 +3,22 @@
 # Workflow 9, Gene-to-CellLine Bicluster
 import asyncio
 import fire
+import pandas as pd
 
 from biolink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
-from .bicluster_gene_to_gene_bicluster_shared import BiclusterByGeneToGene
+from translator_modules.gene.gene_bicluster_shared import BiclusterByGene
 
 
 class GeneToGeneBiclusters(Payload):
 
     def __init__(self, input_genes):
         super(GeneToGeneBiclusters, self).__init__(
-            module=BiclusterByGeneToGene(
-                bicluster_gene_url='https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
+            module=BiclusterByGene(
+                bicluster_url='https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
                 bicluster_bicluster_url='https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/',
                 target_prefix='NCBI'
             ),
