@@ -31,7 +31,7 @@ class GeneToGeneDepMapBiclusters(Payload):
             )
         )
 
-        input_gene_set = self.get_simple_input_identifier_list(input_genes, object_id_only=True)
+        input_gene_set = self.get_simple_input_identifier_list(input_genes)
 
         asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 
