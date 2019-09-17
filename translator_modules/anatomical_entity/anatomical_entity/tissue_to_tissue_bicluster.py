@@ -204,5 +204,9 @@ class TissueToTissueBicluster(Payload):
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(TissueToTissueBicluster)
+
+
+if __name__ == '__main__':
+    main()

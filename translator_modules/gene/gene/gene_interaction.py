@@ -94,5 +94,9 @@ class GeneInteractionSet(Payload):
         self.results = self.module.get_interactions(input_gene_data_frame, threshold)
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(GeneInteractionSet)
+
+
+if __name__ == '__main__':
+    main()

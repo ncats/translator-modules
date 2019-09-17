@@ -80,5 +80,9 @@ class GeneToTissueBiclusters(Payload):
         self.results = pd.DataFrame.from_records(most_common_tissues)
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(GeneToTissueBiclusters)
+
+
+if __name__ == '__main__':
+    main()
