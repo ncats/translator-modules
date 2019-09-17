@@ -46,7 +46,7 @@ def object_id(curie) -> str:
     if not curie:
         return curie
     part = curie.split(':')
-    return part[:-1]
+    return part[-1]
 
 def handle_input_or_input_location(input_or_input_location):
     """
