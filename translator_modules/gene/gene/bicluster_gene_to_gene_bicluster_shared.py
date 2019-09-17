@@ -6,24 +6,18 @@ import concurrent.futures
 import urllib.request
 from collections import defaultdict
 
-import fire
-import pandas as pd
 import requests
 from typing import Dict, List
-
-from biolink.model import GeneToGeneAssociation, Gene
-
 from translator_modules.core import fix_curies
-from translator_modules.core.module_payload import Payload
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
-
-bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
-bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
 
 
-class BiclusterByGeneToGene():
+class BiclusterByGeneToGene:
 
-    def __init__(self):
+    def __init__(self, bicluster_gene_url=None, bicluster_bicluster_url=None, target_prefix=''):
+
+        self.bicluster_gene_url = bicluster_gene_url
+        self.bicluster_bicluster_url = bicluster_bicluster_url
+        self.target_prefix=target_prefix
         self.related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
     @staticmethod
@@ -54,7 +48,7 @@ class BiclusterByGeneToGene():
     def find_related_biclusters(self, curated_id_list):
         # this function is an artifact... a way to understand 'find_related_biclusters_async', below
         for gene in curated_id_list:
-            request_1_url = bicluster_gene_url + gene + '/'
+            request_1_url = self.bicluster_gene_url + gene + '/'
             response = requests.get(request_1_url)
             response_json = response.json()
             cooccurrence_dict_each_gene = defaultdict(dict)
@@ -64,7 +58,7 @@ class BiclusterByGeneToGene():
                 bicluster_dict = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'][x['bicluster']] = []
                 for related_bicluster in cooccurrence_dict_each_gene['related_biclusters']:
-                    request_2_url = bicluster_bicluster_url + related_bicluster + '/'
+                    request_2_url = self.bicluster_bicluster_url + related_bicluster + '/'
                     response_2 = requests.get(request_2_url)
                     response_2_json = response_2.json()
                     gene_in_each_bicluster_list = [bicluster['gene'] for bicluster in response_2_json]
@@ -72,13 +66,11 @@ class BiclusterByGeneToGene():
             self.related_biclusters_and_genes_for_each_input_gene[gene] = dict(cooccurrence_dict_each_gene)
 
     async def gene_to_gene_biclusters_async(self, curated_id_list):
-
-        bicluster_url_list = [bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in curated_id_list]
-        with concurrent.futures.ThreadPoolExecutor(
-                max_workers=2) as executor_1:  # changing the # of workers does not change performance...
-            loop_1 = asyncio.get_event_loop()
-            futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
-                         bicluster_url_list]
+            bicluster_url_list = [self.bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in curated_id_list]
+            with concurrent.futures.ThreadPoolExecutor() as executor_1:
+                loop_1 = asyncio.get_event_loop()
+                futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
+                             bicluster_url_list]
             for response in await asyncio.gather(*futures_1):
                 cooccurrence_dict_each_gene = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'] = defaultdict(dict)
@@ -91,7 +83,7 @@ class BiclusterByGeneToGene():
                     for x in response_json:
                         cooccurrence_dict_each_gene['related_biclusters'][x['bicluster']] = defaultdict(dict)
                     related_biclusters = [x for x in cooccurrence_dict_each_gene['related_biclusters']]
-                    bicluster_bicluster_url_list = [bicluster_bicluster_url + related_bicluster + '/' for
+                    bicluster_bicluster_url_list = [self.bicluster_bicluster_url + related_bicluster + '/' for
                                                     related_bicluster in related_biclusters]
                     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor_2:
                         loop_2 = asyncio.get_event_loop()
@@ -208,38 +200,12 @@ class BiclusterByGeneToGene():
 
         # need to convert the raw Ensembl ID's to CURIES
         genes_in_unique_biclusters_not_in_input_gene_list = \
-            fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix='ENSEMBL')
+            fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix=self.target_prefix)
 
         sorted_list_of_output_genes = \
             self.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
 
         return sorted_list_of_output_genes
 
-
-class GeneToGeneBiclusters(Payload):
-
-    def __init__(self, input_genes):
-
-        super(GeneToGeneBiclusters, self).__init__(
-            module=BiclusterByGeneToGene(),
-            metadata=ModuleMetaData(
-                name="Mod9A - Gene-to-Gene Bicluster",
-                source='RNAseqDB Biclustering',
-                association=GeneToGeneAssociation,
-                domain=ConceptSpace(Gene, ['ENSEMBL']),
-                relationship='related_to',
-                range=ConceptSpace(Gene, ['ENSEMBL']),
-            )
-        )
-
-        input_gene_set = self.get_simple_input_identifier_list(input_genes)
-
-        asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
-
-        sorted_list_of_output_genes = self.module.gene_to_gene_bicluster_summarize(input_gene_set)
-
-        self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
-
-
 if __name__ == '__main__':
-    fire.Fire(GeneToGeneBiclusters)
+    raise RuntimeError("I am a Python library, not a program?")

@@ -37,11 +37,8 @@ from translator_modules.gene.gene.functional_similarity import FunctionalSimilar
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
 
-from translator_modules.core.identifier import Resolver
-from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
-#from translator_modules.core.standard_output import StandardOutput
-from scripts.summary_mod import SummaryMod
-
+from translator_modules.core.identifier_resolver import Resolver
+from translator_modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneBiclusters
 
 _SCRIPTNAME = 'SummaryTableWorkflow.py'
 
