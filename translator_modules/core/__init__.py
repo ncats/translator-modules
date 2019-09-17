@@ -16,7 +16,8 @@ def fix_curies(object_id, prefix=''):
     :return:
     """
     if not prefix:
-        raise RuntimeWarning('fix_curies(): empty prefix argument?')
+        # return object_id - invoker may already consider it a curie?
+        return object_id
 
     if isinstance(object_id, dict):
         curie_dict = defaultdict(dict)
