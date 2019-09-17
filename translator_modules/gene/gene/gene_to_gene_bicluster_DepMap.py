@@ -5,7 +5,7 @@ import asyncio
 import fire
 import pandas as pd
 
-from biolink.model import GeneToGeneAssociation, Gene, CellLine
+from biolink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
