@@ -55,4 +55,16 @@ gene_to_gene_bicluster_RNAseqDB.py --input-genes "ENSG00000148584,ENSG0000007001
 will give a CSV formatted table of associated genes. Note that, as with all the modules,
 other (possibly richer) format outputs are available (and perhaps more informative)
 
+## gene_to_gene_bicluster_DepMap.py
+
+This module retrieves sets of gene clustered by similar gene expression in profiles extracted from DepMap. To run:
+
+``` 
+gene_to_gene_bicluster_DepMap.py --input-genes "NCBI:152065,NCBI:25841" get-data-frame to-csv
+```
+
+will give a CSV formatted table of cell lines associated with genes. Note that, as with all the modules,
+other (possibly richer) format outputs are available (and perhaps more informative)
+
+
 
