@@ -12,10 +12,10 @@ from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptS
 from translator_modules.gene.gene_bicluster_shared import BiclusterByGene
 
 
-class DepMapBiclusters(Payload):
+class GeneToGeneDepMapBiclusters(Payload):
 
     def __init__(self, input_genes):
-        super(DepMapBiclusters, self).__init__(
+        super(GeneToGeneDepMapBiclusters, self).__init__(
             module=BiclusterByGene(
                 bicluster_url='http://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
                 bicluster_bicluster_url='http://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_bicluster/',
@@ -41,4 +41,4 @@ class DepMapBiclusters(Payload):
 
 
 if __name__ == '__main__':
-    fire.Fire(DepMapBiclusters)
+    fire.Fire(GeneToGeneDepMapBiclusters)
