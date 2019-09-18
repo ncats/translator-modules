@@ -8,7 +8,7 @@ from collections import defaultdict
 
 import requests
 from typing import Dict, List
-from translator_modules.core import fix_curies, object_id
+from translator_modules.core.identifier_resolver import fix_curies, object_id
 
 
 class BiclusterByGene:

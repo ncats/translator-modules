@@ -13,7 +13,7 @@ from typing import Dict, List, Set
 
 from biolink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 
-from translator_modules.core import fix_curies
+from translator_modules.core.identifier_resolver import fix_curies
 from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 

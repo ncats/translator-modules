@@ -13,7 +13,8 @@ import requests
 from typing import List
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
-from translator_modules.core import handle_input_or_input_location, object_id
+from translator_modules.core import handle_input_or_input_location
+from translator_modules.core.identifier_resolver import object_id
 
 
 class Payload(ABC):
@@ -36,9 +37,6 @@ class Payload(ABC):
         self.metadata: ModuleMetaData = metadata
         self.results = None
 
-    def handle_input_or_input_location(self, input_spec):
-        return handle_input_or_input_location(input_spec)
-
     def metadata(self):
         # metadata is now a complex DataClass...
         # not sure if or how  this will print properly?
@@ -46,7 +44,7 @@ class Payload(ABC):
 
     def get_input_data_frame(self, input_spec) -> pd.DataFrame:
 
-        input_obj, extension = self.handle_input_or_input_location(input_spec)
+        input_obj, extension = handle_input_or_input_location(input_spec)
 
         if extension == "csv":
             input_data_frame = pd.read_csv(StringIO(input_obj))

@@ -32,6 +32,9 @@ class ResultListJSONEncoder(JSONEncoder):
             return list(iterable)
 
         if issubclass(o, NamedThing) or issubclass(o, Association):
+            # should we instead be using something like
+            # from biolinkml.utils.yamlutils import as_json_object
+            # return biolinkml.utils.yamlutils.as_json_object(o)
             return o.class_name
 
         # Let the base class default method raise the TypeError
