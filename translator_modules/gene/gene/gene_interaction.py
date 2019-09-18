@@ -7,7 +7,7 @@ from pprint import pprint
 import fire
 import pandas as pd
 
-from biolink.biolink_client import BioLinkWrapper
+from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
@@ -19,7 +19,7 @@ from translator_modules.core.module_payload import Payload
 class GeneInteractions:
 
     def __init__(self):
-        self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
+        self.blw = BioLinkApiWrapper(Config().get_biolink_api_endpoint())
 
     @staticmethod
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
