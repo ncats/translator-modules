@@ -10,7 +10,7 @@ from collections import defaultdict
 
 import pandas as pd
 import requests
-from typing import List, Iterable
+from typing import List
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
 from translator_modules.core import handle_input_or_input_location, object_id
@@ -115,7 +115,7 @@ class Payload(ABC):
         """
         input_data_frame = self.get_input_data_frame(input_spec)
         simple_identifier_list = [object_id(hit_id) if object_id_only else hit_id for hit_id in input_data_frame['hit_id']]
-        return simple_identifier_list
+        return sorted(simple_identifier_list, key=object_id)
 
     def get_data_frame(self) -> pd.DataFrame:
         return self.results

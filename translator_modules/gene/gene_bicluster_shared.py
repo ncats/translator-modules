@@ -8,7 +8,7 @@ from collections import defaultdict
 
 import requests
 from typing import Dict, List
-from translator_modules.core import fix_curies
+from translator_modules.core import fix_curies, object_id
 
 
 class BiclusterByGene:
@@ -113,7 +113,7 @@ class BiclusterByGene:
         for key, value in bicluster_occurrences_dict.items():
             if value == 1:
                 list_of_unique_biclusters.append(key)
-        return list_of_unique_biclusters
+        return sorted(list_of_unique_biclusters)
 
     # the method below lends itself to async ... reprogram it
     def genes_in_unique_biclusters(self, list_of_unique_biclusters):
@@ -122,29 +122,34 @@ class BiclusterByGene:
             for bicluster_id, genes in related_biclusters['related_biclusters'].items():
                 if bicluster_id in list_of_unique_biclusters and \
                         bicluster_id not in dict_of_genes_in_unique_biclusters:
-                    dict_of_genes_in_unique_biclusters[bicluster_id] = list(genes)
+                    dict_of_genes_in_unique_biclusters[bicluster_id] = sorted(list(genes), key=object_id)
         return dict_of_genes_in_unique_biclusters
 
     @staticmethod
     def genes_in_unique_biclusters_not_in_input_gene_list(curated_id_list, dict_of_genes_in_unique_biclusters):
-        dict_of_genes_in_unique_biclusters_not_in_inputs = defaultdict(dict)
-        for gene_list in dict_of_genes_in_unique_biclusters.values():
+        dict_of_genes_in_unique_biclusters_not_in_input_gene_list = defaultdict(dict)
+        for bicluster_id, gene_list in dict_of_genes_in_unique_biclusters.items():
             if gene_list:
-                # using an array here in case a unique
-                # bicluster shares more than one input gene
+                # using an array here in case a unique bicluster shares more than one input gene
                 input_ids = [
                     # curated input id's may be not have versions therefore need
                     # to only compare the object_id part with the curated input list
                     gene for gene in gene_list if gene.split('.')[0] in curated_id_list or gene in curated_id_list
                 ]
                 if not input_ids:
-                    continue # not sure what is going on here...  no input id mappings?
+                    # not sure what is going on here...
+                    # no input id mappings onto the current bicluster?
+                    # thus, do I need to ignore this bicluster list?
+                    print("BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?")
+                    continue
                 for gene in gene_list:
-                    if gene not in dict_of_genes_in_unique_biclusters_not_in_inputs:
-                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene] = {'input_id': input_ids, 'score': 1}
+                    if gene.split('.')[0] in curated_id_list or gene in curated_id_list:
+                        continue  # ignore genes found in the input list
+                    if gene not in dict_of_genes_in_unique_biclusters_not_in_input_gene_list:
+                        dict_of_genes_in_unique_biclusters_not_in_input_gene_list[gene] = {'input_id': input_ids, 'score': 1}
                     else:
-                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene]['score'] += 1
-        return dict_of_genes_in_unique_biclusters_not_in_inputs
+                        dict_of_genes_in_unique_biclusters_not_in_input_gene_list[gene]['score'] += 1
+        return dict_of_genes_in_unique_biclusters_not_in_input_gene_list
 
     def list_of_output_genes_sorted_high_to_low_count(self, dict_of_genes_in_unique_biclusters_not_in_inputs):
         unique_novel_genes = dict_of_genes_in_unique_biclusters_not_in_inputs.items()
