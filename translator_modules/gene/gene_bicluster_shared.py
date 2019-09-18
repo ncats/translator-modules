@@ -132,27 +132,28 @@ class BiclusterByGene:
             if gene_list:
                 # using an array here in case a unique
                 # bicluster shares more than one input gene
-                input_id = []
-                for gene in gene_list:
+                input_ids = [
                     # curated input id's may be not have versions therefore need
                     # to only compare the object_id part with the curated input list
-                    id_part = gene.split('.')
-                    if id_part[0] in curated_id_list or gene in curated_id_list:
-                        input_id.append(gene)
-                        continue
+                    gene for gene in gene_list if gene.split('.')[0] in curated_id_list or gene in curated_id_list
+                ]
+                if not input_ids:
+                    continue # not sure what is going on here...  no input id mappings?
+                for gene in gene_list:
                     if gene not in dict_of_genes_in_unique_biclusters_not_in_inputs:
-                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene] = {'input_id': input_id, 'score': 1}
+                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene] = {'input_id': input_ids, 'score': 1}
                     else:
                         dict_of_genes_in_unique_biclusters_not_in_inputs[gene]['score'] += 1
         return dict_of_genes_in_unique_biclusters_not_in_inputs
 
     def list_of_output_genes_sorted_high_to_low_count(self, dict_of_genes_in_unique_biclusters_not_in_inputs):
+        unique_novel_genes = dict_of_genes_in_unique_biclusters_not_in_inputs.items()
         score_list = [
-            {
+            {   # inputs may also need to be transformed into curies?
                 'input_id': ','.join(fix_curies(tally['input_id'], prefix=self.target_prefix)),
                 'hit_id': gene,
                 'score': tally['score']
-            } for (gene, tally) in dict_of_genes_in_unique_biclusters_not_in_inputs.items()
+            } for (gene, tally) in unique_novel_genes
         ]
         sorted_list_of_output_genes = sorted(score_list, key=lambda item: item['score'], reverse=True)
         return sorted_list_of_output_genes
@@ -197,7 +198,7 @@ class BiclusterByGene:
         genes_in_unique_biclusters_not_in_input_gene_list = \
             self.genes_in_unique_biclusters_not_in_input_gene_list(input_gene_set, genes_in_unique_biclusters)
 
-        # need to convert the raw Ensembl ID's to CURIES
+        # maybe need to convert the raw identifiers to CURIES
         genes_in_unique_biclusters_not_in_input_gene_list = \
             fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix=self.target_prefix)
 

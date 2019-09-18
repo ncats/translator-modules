@@ -8,33 +8,35 @@ import json
 from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
 
 
-def fix_curies(object_id, prefix=''):
+def fix_curies(identifiers, prefix=''):
     """
     Adds a suitable XMLNS prefix to (an) identifier(s) known to
     be "raw" IDs as keys in a dictionary or elements in a list (or a simple string)
-    :param object_id:
+    :param identifiers:
     :param prefix:
     :return:
     """
     if not prefix:
-        # return object_id - invoker may already consider it a curie?
-        return object_id
+        # return identifiers without modification
+        # Caller may already consider them in curie format
+        return identifiers
 
-    if isinstance(object_id, dict):
+    if isinstance(identifiers, dict):
         curie_dict = defaultdict(dict)
-        for key in object_id.keys():
-            curie_dict[prefix + ':' + key] = object_id[key]
+        for key in identifiers.keys():
+            curie_dict[prefix + ':' + key] = identifiers[key]
         return curie_dict
 
-    elif isinstance(object_id, str):
+    # identifiers assumed to be just a single object identifier
+    elif isinstance(identifiers, str):
         # single string to convert
-        return prefix + ':' + object_id
+        return prefix + ':' + identifiers
 
-    elif isinstance(object_id, Iterable):
-        return [prefix + ':' + x for x in object_id]
+    elif isinstance(identifiers, Iterable):
+        return [prefix + ':' + x for x in identifiers]
 
     else:
-        raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(object_id))
+        raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(identifiers))
 
 
 def object_id(curie) -> str:
