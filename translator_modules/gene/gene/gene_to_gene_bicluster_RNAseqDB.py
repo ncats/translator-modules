@@ -18,8 +18,8 @@ class GeneToGeneBiclusters(Payload):
     def __init__(self, input_genes, keep_input_id=True):
         super(GeneToGeneBiclusters, self).__init__(
             module=BiclusterByGene(
-                bicluster_url='https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
-                bicluster_bicluster_url='https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/',
+                bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
+                bicluster_bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/',
                 target_prefix='NCBI'
             ),
             metadata=ModuleMetaData(
