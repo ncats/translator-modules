@@ -1,6 +1,6 @@
 # Contents
 
-- [Translator Modules](#Translator_Modules)
+- [Translator Modules](#Translator%20Modules)
     - [Installation](#Installation)
     - [Installation of Dependencies](#Installation_of_Dependencies)
 - [Running the Translator Workflows](#Running_the_Translator_Workflows)
