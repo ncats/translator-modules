@@ -3,14 +3,14 @@
 - [Translator Modules](#Translator_Modules)
     - [Installation](#Installation)
     - [Installation of Dependencies](#Installation_of_Dependencies)
-- [Running the Translator Workflows](#Running the Translator Workflows)
-    - [1. Workflows in Jupyter Notebooks](#1. Workflows in Jupyter Notebooks)
-    - [2. Running Complete Workflows as Python Scripts](#2. Running Complete Workflows as Python Scripts)
-    - [3. Running Workflow Modules individually from the Command line](#3. Running Workflow Modules individually from the Command line)
-        - [How the Modules are Indexed](#How the Modules are Indexed)
-    - [4. Common Workflow Language Running of Translator Workflows](#4. Common Workflow Language Running of Translator Workflows)
-    - [5. Calling the Code Directly in your own Python Clients](#5. Calling the Code Directly in your own Python Clients)
-        - [Workflow 2 Gene Similarities and Interactions](#Workflow 2 Gene Similarities and Interactions)
+- [Running the Translator Workflows](#Running_the_Translator_Workflows)
+    - [1. Workflows in Jupyter Notebooks](#1._Workflows_in_Jupyter_Notebooks)
+    - [2. Running Complete Workflows as Python Scripts](#2._Running_Complete_Workflows_as_Python_Scripts)
+    - [3. Running Workflow Modules individually from the Command line](#3._Running_Workflow_Modules_individually_from_the_Command_line)
+        - [How the Modules are Indexed](#How_the_Modules_are_Indexed)
+    - [4. Common Workflow Language Running of Translator Workflows](#4._Common_Workflow_Language_Running_of_Translator_Workflows)
+    - [5. Calling the Code Directly in your own Python Clients](#5._Calling_the_Code_Directly_in_your_own_Python_Clients)
+        - [Workflow 2 Gene Similarities and Interactions](#Workflow_2_Gene_Similarities_and_Interactions)
 
 # Translator Modules
 
