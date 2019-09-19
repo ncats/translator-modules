@@ -24,6 +24,7 @@ setup(
     name='translator-modules',
     description='NCATS Translator Reasoner modules',
     packages=find_packages(),
+    package_data={'translator_modules': ['core/*.txt']},
     url='https://github.com/ncats/translator-modules',
     download_url='https://github.com/ncats/translator-modules',
     entry_points={
@@ -49,7 +50,7 @@ setup(
     tests_require=['pytest', 'pytest-cov', 'mock'],
     license='Apache 2.0',
     zip_safe=False,
-    author='James Eddy',
-    author_email='james.a.eddy@gmail.com',
-    version='0.2.0'
+    author='James Eddy;Richard Bruskiewich',
+    author_email='james.a.eddy@gmail.com; richard@starinformatics.com',
+    version='0.3.0'
 )
