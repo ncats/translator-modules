@@ -2,17 +2,15 @@
 
 # Workflow 2, Module 1A: Functional similarity
 
-from pprint import pprint
-
 import fire
 
 from biothings_client import get_client
 
-from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
+from biolink.model import FunctionalAssociation, Gene
 
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity
-
-from BioLink.model import FunctionalAssociation, Gene
+from translator_modules.core.module_payload import Payload
 
 
 class FunctionalSimilarity(GenericSimilarity):
@@ -23,29 +21,10 @@ class FunctionalSimilarity(GenericSimilarity):
         self.input_object = ''
         self.taxon = taxon
         self.ont = 'go'
-        self.meta = {
-            'source': 'Monarch Biolink',
-            'association': FunctionalAssociation.class_name,
-            'input_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC',
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC',
-            },
-        }
 
         # Load the functional catalog of
         # GO ontology and annotation associations
         self.load_associations(taxon)
-
-    def metadata(self):
-        print("""Mod1A Functional Similarity metadata:""")
-        pprint(self.meta)
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, input_gene_set):
@@ -98,7 +77,7 @@ class FunctionalSimilarity(GenericSimilarity):
                     if gene['sim_input_curie'] != result['input_id']:
                         result['input_id'] = self.symbol2hgnc(result['input_symbol'])
 
-        results = GenericSimilarity.sort_results(input_gene_set, results)
+        results = GenericSimilarity.sort_results(results)
 
         return results
 
@@ -118,13 +97,21 @@ class FunctionallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold):
 
-        super(FunctionallySimilarGenes, self).__init__(FunctionalSimilarity('human'))
+        super(FunctionallySimilarGenes, self).__init__(
+            module=FunctionalSimilarity('human'),
+            metadata=ModuleMetaData(
+                name="Mod1A Functional Similarity",
+                source='Monarch Biolink',
+                association=FunctionalAssociation,
+                domain=ConceptSpace(Gene, ['HGNC']),
+                relationship='related_to',
+                range=ConceptSpace(Gene, ['HGNC']),
+            )
+        )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
+        input_gene_data_frame = self.get_input_data_frame(input_genes)
 
-        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
-
-        self.results = self.mod.compute_similarity(input_gene_data_frame, threshold)
+        self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
 
 if __name__ == '__main__':

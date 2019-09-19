@@ -5,20 +5,41 @@ Partially inspired by the Indigo (Broad) team 'Gene Sharpener" data model for ge
 plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML=like notation)
 
 """
+from inspect import isclass, getmembers
 import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
-from typing import List, ClassVar
+from typing import Any, List, ClassVar
 
 import pandas as pd
 from json.encoder import JSONEncoder
 
-from BioLink.model import Association, NamedThing
+from biolinkml.utils.yamlutils import YAMLRoot
+from biolink import model as blm
+from biolink.model import Association, NamedThing
 
-__version__ = '0.0.1'
+# Also serves as the default "ResultList.version" tag
+__version__ = '0.0.2'
 
 
-class ResultListEncoder(JSONEncoder):
+# Temporary patch to Biolink Model integration in this  data  model
+def lookupModel(name: str, blm_type: YAMLRoot):
+    blm_class = getmembers(blm, lambda v: isclass(v) and v.__name__ == name)
+    if blm_class and isinstance(blm_class, blm_type):
+        return blm_class[0][1]()
+    else:
+        return None
+
+
+def lookupCategory(category_name: str):
+    return lookupModel(category_name, NamedThing)
+
+
+def lookupAssociation(association_name: str):
+    return lookupModel(association_name, Association)
+
+
+class ResultListJSONEncoder(JSONEncoder):
 
     # Need to override the JSONEncoder.default() to handle 'set'
     def default(self, o):
@@ -28,12 +49,16 @@ class ResultListEncoder(JSONEncoder):
             pass
         else:
             return list(iterable)
+
+        if issubclass(o, NamedThing) or issubclass(o, Association):
+            return o.class_name
+
         # Let the base class default method raise the TypeError
         return JSONEncoder.default(self, o)
 
 
 @dataclass(frozen=True)
-class BaseModel():
+class BaseModel:
 
     def to_json(self) -> str:
         """
@@ -42,7 +67,61 @@ class BaseModel():
         return: String representation of the model
         """
         result_obj = asdict(self)
-        return json.dumps(result_obj, cls=ResultListEncoder)
+        return json.dumps(result_obj, cls=ResultListJSONEncoder)
+
+
+@dataclass(frozen=True)
+class ConceptSpace(BaseModel):
+    """
+    A ConceptSpace tracks namespace id_prefixes (xmlns prefixes) and associated concept category of
+    about a given set of Concept identifiers and types
+    """
+    category: Any  # but should be Biolink Model registered concept 'category' inheriting from NamedType
+
+    # list of xmlns prefixes drawn from Biolink Model context.jsonld
+    id_prefixes: List[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        # Can the id_prefixes and category values be validated here against the Biolink Model?
+        if isclass(self.category):
+            if not issubclass(self.category, NamedThing):
+                raise TypeError("ConceptSpace() type error: category '" + str(self.category) +
+                                "' must be a subclass of "+str(NamedThing))
+        else:
+            raise TypeError("ConceptSpace() type error: category '" + str(self.category) +
+                            "' is not a class!?")
+
+
+@dataclass(frozen=True)
+class ModuleMetaData:
+    """
+     # ModuleMetaData is meant to wrap the module self.meta
+     # This is an example from the FunctionalSimilarity module
+
+     # We're going to ignore the 'complexity' argument for now
+
+     self.meta = {
+        'source': 'Monarch Biolink',
+        'association': FunctionalAssociation,
+        'input_type': {
+            'complexity': 'set',
+            'category': Gene,
+            'id_prefixes': 'HGNC',
+        },
+        'relationship': 'related_to',
+        'output_type': {
+            'complexity': 'set',
+            'category': Gene,
+            'id_prefixes': 'HGNC',
+        },
+    }
+    """
+    name: str  # name of the module
+    source: str  # knowledge source authority of the module
+    association: Any  # but should be BioLink Model class inheriting from Association
+    domain: ConceptSpace  # Input domain - category, id_prefixes - of the input data to the module
+    relationship: str  # BioLink Model minimal predicate defined the relationship of inputs to output
+    range: ConceptSpace  # Output Range - category, id_prefixes - of the results of the module
 
 
 @dataclass(frozen=True)
@@ -141,20 +220,6 @@ class Identifier(BaseModel):
 
 
 @dataclass(frozen=True)
-class ConceptSpace(BaseModel):
-    """
-    A ConceptSpace tracks namespace mappings (xmlns prefixes) and associated concept category of
-    about a given set of Concept identifiers and types
-    """
-    category: str  # should be Biolink Model registered category
-    mappings: List[str] = field(default_factory=list)  # list of xmlns prefixes drawn from Biolink Model context.jsonld
-
-    def __post_init__(self):
-        # Can the mappings and category be validated here as Biolink Model compliant?
-        pass
-
-
-@dataclass(frozen=True)
 class Concept(BaseModel):
     """
     # A 'Concept' is a single data record about a single conceptual entity
@@ -186,6 +251,14 @@ class Concept(BaseModel):
     primary_id: Identifier
     identifiers: List[Identifier] = field(default_factory=list)
     attributes: List[Attribute] = field(default_factory=list)
+
+    def __post_init__(self):
+        """
+        Here we'll add 'value added' identifier resolution
+        :return:
+        """
+
+        pass
 
 
 @dataclass(frozen=True)
@@ -292,17 +365,22 @@ class ResultList(BaseModel):
           - results
     """
     result_list_name: str = None
+    result_list_version: str = __version__
+    module_name: str = ''
     source: str = ''
-    association: str = Association.class_name
-    domain: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
+    association: str = str(Association)
+    domain: ConceptSpace = ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB'])
     relationship: str = "related_to"  # should correspond with a Biolink Model minimal predicate ("relationship type")
-    range: ConceptSpace = ConceptSpace('SEMMEDDB', NamedThing.class_name)
+    range: ConceptSpace = ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB'])
     identifiers: List[Identifier] = field(default_factory=list)
     attributes: List[Attribute] = field(default_factory=list)
     concepts: List[Concept] = field(default_factory=list)
     results: List[Result] = field(default_factory=list)
 
     list_number: ClassVar[List[int]] = [0]
+
+    def size(self) -> int:
+        return self.results.count()
 
     def __post_init__(self):
 
@@ -318,6 +396,7 @@ class ResultList(BaseModel):
             )
         )
 
+        # Not sure how essential to do this validation here since the dataclass has typed its attributes?
         if self.domain is None or not isinstance(self.domain, ConceptSpace):
             raise RuntimeError("Value of Domain '" +
                                str(self.domain) + "' of Result List '" + self.identifiers[0].curie() +
@@ -338,34 +417,40 @@ class ResultList(BaseModel):
         rl = ResultList(
             result_list_name='Stub Resultlist',
             source='ncats',
-            association=Association.class_name,
-            domain=ConceptSpace('SEMMEDDB', NamedThing.class_name),
+            association=str(Association),
+            domain=ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB']),
             relationship='related_to',
-            range=ConceptSpace('SEMMEDDB', NamedThing.class_name)
+            range=ConceptSpace(category=NamedThing, id_prefixes=['SEMMEDDB']),
         )
         rl.concepts.extend(Concept,...)
         rl.results.extend(Result,...)
         rl.attributes.extend(Attributes...)
         """
+
         def parse_attribute(a_obj):
             return Attribute(
                 name=a_obj['name'],
                 value=a_obj['value'],
                 source=a_obj['source']
             )
+        def parse_association(association_name):
+            association = lookupAssociation(association_name)
+            return association if association else Association
 
         def parse_concept_space(cs_obj):
+            category = lookupCategory(cs_obj['category'])
             return ConceptSpace(
-                mappings=cs_obj['mappings'],
-                category=cs_obj['category'],
+                id_prefixes=cs_obj['id_prefixes'],
+                category=category if category else NamedThing
             )
 
         # Load the resulting Python object into a ResultList instance
         rl = ResultList(
             result_list_name=result_list_obj['result_list_name'],
+            result_list_version=result_list_obj['result_list_version'],
             source=result_list_obj['source'],
             domain=parse_concept_space(result_list_obj['domain']),
-            association=result_list_obj['association'],
+            association=parse_association(result_list_obj['association']),
             relationship=result_list_obj['relationship'],
             range=parse_concept_space(result_list_obj['range'])
         )
@@ -408,7 +493,7 @@ class ResultList(BaseModel):
         return rl
 
     @classmethod
-    def import_data_frame(cls, data_frame: pd.DataFrame, payload):
+    def import_data_frame(cls, data_frame: pd.DataFrame, metadata: ModuleMetaData):
         """
         Convert standard Pandas DataFrame "results" into Results of an NCATS ResultList instance.
 
@@ -416,49 +501,32 @@ class ResultList(BaseModel):
         into a list of Results, combined with Payload metadata provided alongside.
 
         :param data_frame: a Pandas DataFrame with results
+        :param metadata:
         :return: ResultList data instance
         """
-        # Grab Payload 'model' metadata dictionary
-        # Assumed defined as such. If not, let this method trigger a RuntimeError!
-        meta = payload.meta
 
-        input_type = meta['input_type']
-        input_type['mappings'] = \
-            input_type['mappings'] \
-                if isinstance(input_type['mappings'], list) \
-                else [input_type['mappings']]
-
-        domain = ConceptSpace(
-            category=input_type['category'],
-            mappings=input_type['mappings']
-        )
-
-        output_type = meta['output_type']
-        output_type['mappings'] = \
-            output_type['mappings'] \
-            if isinstance(output_type['mappings'], list) \
-            else [output_type['mappings']]
-
-        range = ConceptSpace(
-            category=output_type['category'],
-            mappings=output_type['mappings']
-        )
+        module_domain = metadata.domain
+        module_range = metadata.range
 
         # Load the resulting Python object into a ResultList instance
         result_list_name = \
-            meta['source']+' '+\
-            input_type['category']+' '+\
-            str(meta['relationship']).replace('_',' ')+' '+\
-            output_type['category']
+            metadata.source + ' ' + \
+            module_domain.category.class_name + ' ' + \
+            metadata.relationship.replace('_', ' ') + ' ' + \
+            module_range.category.class_name
 
         rl = ResultList(
             result_list_name=result_list_name,
-            source=meta['source'],
-            association=meta['association'],
-            domain=domain,
-            relationship=meta['relationship'],
-            range=range
+            module_name=metadata.name,
+            source=metadata.source,
+            association=metadata.association,
+            domain=module_domain,
+            relationship=metadata.relationship,
+            range=module_range
         )
+
+        if data_frame.empty:
+            return rl  # sends back an empty ResultList
 
         # Convert all the records from the DataFrame into ResultList recorded data
         concepts = {}
@@ -483,10 +551,10 @@ class ResultList(BaseModel):
                 # maybe only one identifier but accommodates multiple hits as well
                 input_id_list.extend(entry['input_id'].split(','))
 
-            # assume that input_symbol mappings may be missing
+            # assume that input_symbol id_prefixes may be missing
             # in the output of some algorithms; record a blank input_id
             if not len(input_id_list):
-                input_id_list.append('') # provision for empty identifier
+                input_id_list.append('')  # provision for empty identifier
 
             output_id_list = []
             if 'hit_id' in entry:

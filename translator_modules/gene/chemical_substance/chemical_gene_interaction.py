@@ -10,10 +10,11 @@ from biothings_client import get_client
 
 from CTD.CTD_wrapper import CTDWrapper
 
-from BioLink.model import ChemicalToGeneAssociation, ChemicalSubstance, Gene
+from biolink.model import ChemicalToGeneAssociation, ChemicalSubstance, Gene
 from typing import List
 
-from translator_modules.core.module_payload import Payload, get_input_gene_set
+from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
 # TODO: Refactor towards methods being functional
@@ -21,21 +22,6 @@ class ChemicalGeneInteractions(object):
     def __init__(self):
         self.mg = get_client('gene')
         self.ctd = CTDWrapper()
-        self.meta = {
-            'source': 'RENCI ChemoInformatics',
-            'association': ChemicalToGeneAssociation.class_name,
-            'input_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC',
-            },
-            'relationship': 'interacts_with',
-            'output_type': {
-                'complexity': 'set',
-                'category': ChemicalSubstance.class_name,
-                'mappings': 'ChemicalID',
-            },
-        }
 
     def load_gene_set(self, input_gene_set) -> List[str]:
         annotated_gene_set = []
@@ -135,13 +121,21 @@ class ChemicalGeneInteractionSet(Payload):
 
     def __init__(self, input_genes, action='InteractionActions', rows=50):
 
-        super(ChemicalGeneInteractionSet, self).__init__(ChemicalGeneInteractions())
+        super(ChemicalGeneInteractionSet, self).__init__(
+            module=ChemicalGeneInteractions(),
+            metadata=ModuleMetaData(
+                name="Module 1B: Chemical Gene Interaction",
+                source='Chemical Toxicology Database (CTD)',
+                association=ChemicalToGeneAssociation,
+                domain=ConceptSpace(Gene, ['HGNC']),
+                relationship='interacts_with',
+                range=ConceptSpace(ChemicalSubstance, ['ChemicalID'])
+            )
+        )
 
-        input_genes, extension = self.handle_input_or_input_location(input_genes)
+        input_gene_set = self.get_input_data_frame(input_genes)
 
-        input_gene_set = get_input_gene_set(input_genes, extension)
-
-        self.results = self.mod.get_gene_chemical_interactions(input_gene_set, action, rows)
+        self.results = self.module.get_gene_chemical_interactions(input_gene_set, action, rows)
 
 
 if __name__ == '__main__':

@@ -88,7 +88,6 @@ STD_RESULT_COLUMNS = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score
 
 
 def similarity(model, disease_associated_gene_set, threshold, module, title):
-
     input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
@@ -112,7 +111,6 @@ def similarity(model, disease_associated_gene_set, threshold, module, title):
 
 
 def gene_interactions(model, disease_associated_gene_set, threshold, module, title):
-
     input_gene_set = disease_associated_gene_set.get_data_frame()
 
     # Perform the comparison on specified gene set
@@ -124,11 +122,13 @@ def gene_interactions(model, disease_associated_gene_set, threshold, module, tit
 
     # Dump HTML representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "html")
-    dump_html(output, results.head())
+
+    dump_html(output, results)
     output.close()
 
     # Dump JSON representation
     output = output_file(disease_associated_gene_set.get_input_disease_name(), title, "json")
+
     # dumping the whole table in the JSON? or should I just dump the head?
     results.to_json(output)
     output.close()
@@ -266,6 +266,7 @@ and associated MONDO identifiers - in the second column"""
             disease_gene_lookup(
                 mondo_id,
                 disease_name
+
             )
 
         if _echo_to_console:

@@ -4,13 +4,14 @@
 from pprint import pprint
 
 import fire
-import pandas as pd
+
 from biothings_client import get_client
 
-from BioLink.model import GeneToPhenotypicFeatureAssociation, Gene
+from biolink.model import GeneToPhenotypicFeatureAssociation, Gene
 
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 from translator_modules.core.generic_similarity import GenericSimilarity
-from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
+from translator_modules.core.module_payload import Payload
 
 
 class PhenotypeSimilarity(GenericSimilarity):
@@ -23,29 +24,10 @@ class PhenotypeSimilarity(GenericSimilarity):
             self.ont = 'mp'
         if self.taxon == 'human':
             self.ont = 'hp'
-        self.meta = {
-            'source': 'Monarch Biolink',
-            'association': GeneToPhenotypicFeatureAssociation.class_name,
-            'input_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC',
-            },
-            'relationship': 'has_phenotype',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC',
-            },
-        }
 
         # Load the associated Biolink (Monarch)
         # phenotype ontology and annotation associations
         self.load_associations(taxon)
-
-    def metadata(self):
-        print("""Mod1B1 Phenotype Similarity metadata:""")
-        pprint(self.meta)
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, input_gene_set):
@@ -100,8 +82,7 @@ class PhenotypeSimilarity(GenericSimilarity):
                 if gene['sim_input_curie'] == result['input_id']:
                     result['input_symbol'] = gene['input_symbol']
 
-        if len(results) > 0:
-            results = GenericSimilarity.sort_results(input_gene_set, results)
+        results = GenericSimilarity.sort_results(results)
 
         return results
 
@@ -110,13 +91,21 @@ class PhenotypicallySimilarGenes(Payload):
 
     def __init__(self, input_genes, threshold):
 
-        super(PhenotypicallySimilarGenes, self).__init__(PhenotypeSimilarity('human'))
+        super(PhenotypicallySimilarGenes, self).__init__(
+            module=PhenotypeSimilarity('human'),
+            metadata=ModuleMetaData(
+                name="Mod1B1 Phenotype Similarity",
+                source='Monarch Biolink',
+                association=GeneToPhenotypicFeatureAssociation,
+                domain=ConceptSpace(Gene, ['HGNC']),
+                relationship='has_phenotype',
+                range=ConceptSpace(Gene, ['HGNC']),
+            )
+        )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
+        input_gene_data_frame = self.get_input_data_frame(input_genes)
 
-        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
-
-        self.results = self.mod.compute_similarity(input_gene_data_frame, threshold)
+        self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
 
 if __name__ == '__main__':

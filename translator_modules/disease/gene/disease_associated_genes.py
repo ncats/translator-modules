@@ -1,38 +1,27 @@
 #!/usr/bin/env python3
 
+# Workflow 2, Module 0: Lookups
 from pprint import pprint
 
 import fire
 import pandas as pd
-# Workflow 2, Module 0: Lookups
-from BioLink.biolink_client import BioLinkWrapper
+
+from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biothings_client import get_client
 
-from BioLink.model import GeneToDiseaseAssociation, Gene, Disease
+from biolink.model import GeneToDiseaseAssociation, Gene, Disease
 
 from translator_modules.core import Config
 from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
 class LookUp(object):
 
     def __init__(self):
-        self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
+        self.blw = BioLinkApiWrapper(Config().get_biolink_api_endpoint())
         self.mg = get_client('gene')
         self.meta = {
-            'source': 'Monarch Biolink',
-            'association': GeneToDiseaseAssociation.class_name,
-            'input_type': {
-                'complexity': 'single',
-                'category': Disease.class_name,
-                'mappings': 'MONDO',
-            },
-            'relationship': 'gene_associated_with_condition',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC'
-            },
             'taxon': 'human',
             'limit': None,
         }
@@ -57,7 +46,7 @@ class LookUp(object):
                 input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
         input_genes_df = pd.DataFrame(data=input_gene_set)
         if not input_genes_df.empty:
-            # group duplicate ids and gather sources
+            # group duplicate identifier and gather sources
             input_genes_df['sources'] = input_genes_df['sources'].str.join(', ')
             input_genes_df = input_genes_df.groupby(
                 ['input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'relation'])['sources'].apply(
@@ -69,10 +58,20 @@ class DiseaseAssociatedGeneSet(Payload):
 
     def __init__(self, disease_id, disease_name='', query_biolink=True):
 
-        super(DiseaseAssociatedGeneSet, self).__init__(LookUp())
+        super(DiseaseAssociatedGeneSet, self).__init__(
+            module=LookUp(),
+            metadata=ModuleMetaData(
+                name="Mod2.0 - Disease Associated Genes",
+                source='Monarch Biolink',
+                association=GeneToDiseaseAssociation,
+                domain=ConceptSpace(Disease, ['MONDO']),
+                relationship='gene_associated_with_condition',
+                range=ConceptSpace(Gene, ['HGNC']),
+            )
+        )
 
         # get genes associated with disease from Biolink
-        self.results = self.mod.disease_geneset_lookup(disease_id, disease_name, query_biolink)
+        self.results = self.module.disease_geneset_lookup(disease_id, disease_name, query_biolink)
 
         if not self.results.empty:
             self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')

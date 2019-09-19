@@ -296,7 +296,7 @@ class FunctionallySimilarGenes(Payload):
             genes = {"hit_id": gene_ids, "hit_symbol": symbols}
             input_gene_set = pd.DataFrame(data=genes)
 
-        self.results = self.mod.compute_similarity(input_gene_set, threshold)
+        self.results = self.module.compute_similarity(input_gene_set, threshold)
 
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)
