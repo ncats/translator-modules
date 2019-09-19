@@ -1,8 +1,8 @@
 # Contents
 
-- [Translator Modules](#Translator Modules)
+- [Translator Modules](#Translator_Modules)
     - [Installation](#Installation)
-    - [Installation of Dependencies](#Installation of Dependencies)
+    - [Installation of Dependencies](#Installation_of_Dependencies)
 - [Running the Translator Workflows](#Running the Translator Workflows)
     - [1. Workflows in Jupyter Notebooks](#1. Workflows in Jupyter Notebooks)
     - [2. Running Complete Workflows as Python Scripts](#2. Running Complete Workflows as Python Scripts)
