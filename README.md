@@ -174,7 +174,7 @@ as the source of module input, as long as those files comply with the expected t
 text output file from another module, previously run!). 
 
 ``` 
-gene_to_gene_bicluster.py --input-genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json       
+gene_interaction.py --input-genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json       
 ```
 
 For the JSON inputs (which may either
