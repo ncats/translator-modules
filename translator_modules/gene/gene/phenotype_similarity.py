@@ -108,5 +108,9 @@ class PhenotypicallySimilarGenes(Payload):
         self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(PhenotypicallySimilarGenes)
+
+
+if __name__ == '__main__':
+    main()

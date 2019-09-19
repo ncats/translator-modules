@@ -138,5 +138,9 @@ class ChemicalGeneInteractionSet(Payload):
         self.results = self.module.get_gene_chemical_interactions(input_gene_set, action, rows)
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(ChemicalGeneInteractionSet)
+
+
+if __name__ == '__main__':
+    main()

@@ -40,5 +40,8 @@ class DepMapBiclusters(Payload):
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(DepMapBiclusters)
+
+if __name__ == '__main__':
+    main()
