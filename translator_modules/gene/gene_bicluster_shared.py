@@ -5,10 +5,11 @@ import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict
+from json import JSONDecodeError
 
 import requests
 from typing import Dict, List
-from translator_modules.core import fix_curies
+from translator_modules.core.identifier_resolver import fix_curies, object_id
 
 
 class BiclusterByGene:
@@ -72,9 +73,14 @@ class BiclusterByGene:
                 futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                              bicluster_url_list]
             for response in await asyncio.gather(*futures_1):
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 cooccurrence_dict_each_gene = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'] = defaultdict(dict)
-                response_json = response.json()
                 length_response_json = len(response_json)
                 cooccurrence_dict_each_gene['number_of_related_biclusters'] = length_response_json
 
@@ -113,7 +119,7 @@ class BiclusterByGene:
         for key, value in bicluster_occurrences_dict.items():
             if value == 1:
                 list_of_unique_biclusters.append(key)
-        return list_of_unique_biclusters
+        return sorted(list_of_unique_biclusters)
 
     # the method below lends itself to async ... reprogram it
     def genes_in_unique_biclusters(self, list_of_unique_biclusters):
@@ -122,38 +128,43 @@ class BiclusterByGene:
             for bicluster_id, genes in related_biclusters['related_biclusters'].items():
                 if bicluster_id in list_of_unique_biclusters and \
                         bicluster_id not in dict_of_genes_in_unique_biclusters:
-                    dict_of_genes_in_unique_biclusters[bicluster_id] = list(genes)
+                    dict_of_genes_in_unique_biclusters[bicluster_id] = sorted(list(genes), key=object_id)
         return dict_of_genes_in_unique_biclusters
 
     @staticmethod
     def genes_in_unique_biclusters_not_in_input_gene_list(curated_id_list, dict_of_genes_in_unique_biclusters):
-        dict_of_genes_in_unique_biclusters_not_in_inputs = defaultdict(dict)
-        for gene_list in dict_of_genes_in_unique_biclusters.values():
+        dict_of_genes_in_unique_biclusters_not_in_input_gene_list = defaultdict(dict)
+        for bicluster_id, gene_list in dict_of_genes_in_unique_biclusters.items():
             if gene_list:
-                # using an array here in case a unique
-                # bicluster shares more than one input gene
-                input_id = []
-                for gene in gene_list:
+                # using an array here in case a unique bicluster shares more than one input gene
+                input_ids = [
                     # curated input id's may be not have versions therefore need
                     # to only compare the object_id part with the curated input list
-                    id_part = gene.split('.')
-                    if id_part[0] in curated_id_list or gene in curated_id_list:
-                        input_id.append(gene)
-                        continue
-                    if gene not in dict_of_genes_in_unique_biclusters_not_in_inputs:
-                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene] = {'input_id': input_id, 'score': 1}
+                    gene for gene in gene_list if gene.split('.')[0] in curated_id_list or gene in curated_id_list
+                ]
+                if not input_ids:
+                    # not sure what is going on here...
+                    # no input id mappings onto the current bicluster?
+                    # thus, do I need to ignore this bicluster list?
+                    print("BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?")
+                    continue
+                for gene in gene_list:
+                    if gene.split('.')[0] in curated_id_list or gene in curated_id_list:
+                        continue  # ignore genes found in the input list
+                    if gene not in dict_of_genes_in_unique_biclusters_not_in_input_gene_list:
+                        dict_of_genes_in_unique_biclusters_not_in_input_gene_list[gene] = {'input_id': input_ids, 'score': 1}
                     else:
-                        dict_of_genes_in_unique_biclusters_not_in_inputs[gene]['score'] += 1
-        return dict_of_genes_in_unique_biclusters_not_in_inputs
+                        dict_of_genes_in_unique_biclusters_not_in_input_gene_list[gene]['score'] += 1
+        return dict_of_genes_in_unique_biclusters_not_in_input_gene_list
 
-    @staticmethod
-    def list_of_output_genes_sorted_high_to_low_count(dict_of_genes_in_unique_biclusters_not_in_inputs):
+    def list_of_output_genes_sorted_high_to_low_count(self, dict_of_genes_in_unique_biclusters_not_in_inputs):
+        unique_novel_genes = dict_of_genes_in_unique_biclusters_not_in_inputs.items()
         score_list = [
-            {
-                'input_id': ','.join(fix_curies(tally['input_id'], prefix='ENSEMBL')),
+            {   # inputs may also need to be transformed into curies?
+                'input_id': ','.join(fix_curies(tally['input_id'], prefix=self.target_prefix)),
                 'hit_id': gene,
                 'score': tally['score']
-            } for (gene, tally) in dict_of_genes_in_unique_biclusters_not_in_inputs.items()
+            } for (gene, tally) in unique_novel_genes
         ]
         sorted_list_of_output_genes = sorted(score_list, key=lambda item: item['score'], reverse=True)
         return sorted_list_of_output_genes
@@ -198,7 +209,7 @@ class BiclusterByGene:
         genes_in_unique_biclusters_not_in_input_gene_list = \
             self.genes_in_unique_biclusters_not_in_input_gene_list(input_gene_set, genes_in_unique_biclusters)
 
-        # need to convert the raw Ensembl ID's to CURIES
+        # maybe need to convert the raw identifiers to CURIES
         genes_in_unique_biclusters_not_in_input_gene_list = \
             fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix=self.target_prefix)
 

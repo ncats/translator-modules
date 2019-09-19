@@ -5,7 +5,7 @@ Partially inspired by the Indigo (Broad) team 'Gene Sharpener" data model for ge
 plus a small bit of the ReasonerAPI nomenclature (here expressed in OpenAPI YAML=like notation)
 
 """
-from inspect import isclass
+from inspect import isclass, getmembers
 import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
@@ -14,10 +14,29 @@ from typing import Any, List, ClassVar
 import pandas as pd
 from json.encoder import JSONEncoder
 
+from biolinkml.utils.yamlutils import YAMLRoot
+from biolink import model as blm
 from biolink.model import Association, NamedThing
 
 # Also serves as the default "ResultList.version" tag
 __version__ = '0.0.2'
+
+
+# Temporary patch to Biolink Model integration in this  data  model
+def lookupModel(name: str, blm_type: YAMLRoot):
+    blm_class = getmembers(blm, lambda v: isclass(v) and v.__name__ == name)
+    if blm_class and isinstance(blm_class, blm_type):
+        return blm_class[0][1]()
+    else:
+        return None
+
+
+def lookupCategory(category_name: str):
+    return lookupModel(category_name, NamedThing)
+
+
+def lookupAssociation(association_name: str):
+    return lookupModel(association_name, Association)
 
 
 class ResultListJSONEncoder(JSONEncoder):
@@ -414,11 +433,15 @@ class ResultList(BaseModel):
                 value=a_obj['value'],
                 source=a_obj['source']
             )
+        def parse_association(association_name):
+            association = lookupAssociation(association_name)
+            return association if association else Association
 
         def parse_concept_space(cs_obj):
+            category = lookupCategory(cs_obj['category'])
             return ConceptSpace(
                 id_prefixes=cs_obj['id_prefixes'],
-                category=cs_obj['category'],
+                category=category if category else NamedThing
             )
 
         # Load the resulting Python object into a ResultList instance
@@ -427,7 +450,7 @@ class ResultList(BaseModel):
             result_list_version=result_list_obj['result_list_version'],
             source=result_list_obj['source'],
             domain=parse_concept_space(result_list_obj['domain']),
-            association=result_list_obj['association'],
+            association=parse_association(result_list_obj['association']),
             relationship=result_list_obj['relationship'],
             range=parse_concept_space(result_list_obj['range'])
         )

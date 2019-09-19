@@ -76,11 +76,8 @@ an extra column called "shared_terms" which is the list of the intersection set 
 
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
-A similar script is under development for Translator [Workflow 9](https://www.lucidchart.com/invitations/accept/bd0b90df-45af-48a1-9777-7179a17f0b63), i.e.
+A similar script is in the works for Translator [Workflow 9] (https://www.lucidchart.com/documents/edit/22689882-2099-4acb-961a-fa6202f2cfd8/0_0).
 
-```
-python scripts/WF9_automation.py --help
-```
 
 The script (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
 if marked as executable, may be run directly as above, but in some environments (e.g. Windows) you may need to explicitly run them as a Python script, i.e.
@@ -95,14 +92,16 @@ Assuming that you have put the translator modules on your path (see section abov
 
 For example, a "gene to gene bicluster" algorithm (based on RNAseqDB data, module naming convention by data source is in progress) implemented as a module in NCATS Translator Workflow 9 and may be run  as follows:
 
-```
-gene_to_gene_bicluster --input-genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-json --orient records
+
+``` 
+gene_interaction --input-genes "HGNC:1100,HGNC:12829" get-data-frame to-json --orient records
+
 ```
 
 This outputs the results as a JSON formatted dump of a Pandas DataFrame.  If a CSV version of the results is desired, then a simple change to the command line will generate it:
 
-```
-gene_to_gene_bicluster --input-genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-data-frame to-csv
+``` 
+gene_interaction --input-genes "HGNC:1100,HGNC:12829" get-data-frame to-csv
 ```
 
 
@@ -112,8 +111,8 @@ Just substitute the 'to-json' and 'to-csv' method command keywords with your cho
 
 An alternate "ResultList" JSON output forma, which is more complete with additional annotation and the Biolink model metadata, may be generated as follows:
 
-```
-gene_to_gene_bicluster --input-genes "ENSG00000121410,ENSG00000268895,ENSG00000148584" get-result-list to-json
+``` 
+gene_interaction --input-genes "HGNC:1100,HGNC:12829" get-result-list to-json       
 ```
 
 This Translators-specific JSON format is mainly to empower interoperability of the modules with one another and with other Translator tools. A sample version of it (from a  'functional similarity' run) may be found [here](https://github.com/ncats/translator-modules/blob/master/docs/functional_similarity.json) (Hint: use the FireFox web browser for a convenient view of this JSON). The Python code defining and manipulating the "ResultList" module data model is in the module [data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py).
@@ -122,8 +121,8 @@ In both cases above, a relatively short list of genes is provided using a string
 
 That said, these modules can also take CSV, tab delimited text and JSON files or URL-resolvable web (REST) resources as the source of module input, as long as those files comply with the expected text format (which can be, in fact, the text output file from another module, previously run!).
 
-```
-gene_to_gene_bicluster --input-genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json
+``` 
+gene_interaction --input-genes /relative/or/absolute/path/to/your/gene_list.csv get-result-list to-json       
 ```
 
 For the JSON inputs (which may either

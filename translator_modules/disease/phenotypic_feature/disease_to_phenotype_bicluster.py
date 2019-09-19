@@ -52,12 +52,18 @@ class BiclusterByDiseaseToPhenotype():
             futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                          bicluster_url_list]
             for response in await asyncio.gather(*futures_1):
-                response_json = response.json()
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 for x in response_json:
                     phenotype = x['hpo']
                     all_phenotypes.append(phenotype)
 
             phenotypes_counted = Counter(all_phenotypes)
+
         return phenotypes_counted.most_common()
 
 

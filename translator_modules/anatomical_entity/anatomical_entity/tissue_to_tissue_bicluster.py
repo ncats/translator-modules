@@ -1,8 +1,12 @@
+#!/usr/bin/env python3
+
+# Workflow 9, Tissue-to-Tissue Bicluster
+
 import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict
-
+from json import JSONDecodeError
 
 import fire
 import pandas as pd
@@ -79,7 +83,12 @@ class BiclusterByTissueToTissue():
             for response in await asyncio.gather(*futures_1):
                 cooccurrence_dict_each_gene = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'] = defaultdict(dict)
-                response_json = response.json()
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 length_response_json = len(response_json)
                 cooccurrence_dict_each_gene['number_of_related_biclusters'] = length_response_json
                 if length_response_json > 0:

@@ -5,7 +5,7 @@ from biolink.model import Gene
 from translator_modules.core.data_transfer_model import ConceptSpace
 
 mock_concept_space_id_prefixes = 'HGNC'
-mock_concept_space_category = Gene.class_name
+mock_concept_space_category = Gene
 
 
 def mock_concept_space():

@@ -10,10 +10,12 @@ from collections import defaultdict
 
 import pandas as pd
 import requests
-from typing import List, Iterable
+from typing import List
 
 from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
 from translator_modules.core import handle_input_or_input_location
+from translator_modules.core.identifier_resolver import object_id
+
 
 class Payload(ABC):
 
@@ -35,9 +37,6 @@ class Payload(ABC):
         self.metadata: ModuleMetaData = metadata
         self.results = None
 
-    def handle_input_or_input_location(self, input_spec):
-        return handle_input_or_input_location(input_spec)
-
     def metadata(self):
         # metadata is now a complex DataClass...
         # not sure if or how  this will print properly?
@@ -45,7 +44,7 @@ class Payload(ABC):
 
     def get_input_data_frame(self, input_spec) -> pd.DataFrame:
 
-        input_obj, extension = self.handle_input_or_input_location(input_spec)
+        input_obj, extension = handle_input_or_input_location(input_spec)
 
         if extension == "csv":
             input_data_frame = pd.read_csv(StringIO(input_obj))
@@ -104,16 +103,17 @@ class Payload(ABC):
 
         return input_data_frame
 
-    def get_simple_input_identifier_list(self, input_spec) -> List[str]:
+    def get_simple_input_identifier_list(self, input_spec, object_id_only=False) -> List[str]:
         """
         This function returns a simple list of identifiers rather than a Pandas DataFrame
 
         :param input_spec:
-        :return: simple flat  List[str] of input identifiers
+        :param prefix:
+        :return:
         """
         input_data_frame = self.get_input_data_frame(input_spec)
-        simple_identifier_list = [hit_id for hit_id in input_data_frame['hit_id']]
-        return simple_identifier_list
+        simple_identifier_list = [object_id(hit_id) if object_id_only else hit_id for hit_id in input_data_frame['hit_id']]
+        return sorted(simple_identifier_list, key=object_id)
 
     def get_data_frame(self) -> pd.DataFrame:
         return self.results

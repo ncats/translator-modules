@@ -7,7 +7,7 @@ from pprint import pprint
 import fire
 import pandas as pd
 
-from biolink.biolink_client import BioLinkWrapper
+from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
@@ -19,7 +19,7 @@ from translator_modules.core.module_payload import Payload
 class GeneInteractions:
 
     def __init__(self):
-        self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
+        self.blw = BioLinkApiWrapper(Config().get_biolink_api_endpoint())
 
     @staticmethod
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
@@ -29,7 +29,7 @@ class GeneInteractions:
             if not gene['hit_symbol']:
                 gene['hit_symbol'] = \
                     Resolver.get_the_resolver(). \
-                        translate_one(source=gene['hit_id'], target=SYMBOL)
+                        translate_one(source=gene['hit_id'], identifier_range=SYMBOL)
 
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
@@ -74,7 +74,9 @@ class GeneInteractions:
 
 
 class GeneInteractionSet(Payload):
-    def __init__(self, input_genes, threshold=12):
+
+    # RMB: we set the threshold to default to "return all"
+    def __init__(self, input_genes, threshold=0):
         super(GeneInteractionSet, self).__init__(
             module=GeneInteractions(),
             metadata=ModuleMetaData(

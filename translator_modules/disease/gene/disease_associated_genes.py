@@ -6,7 +6,7 @@ from pprint import pprint
 import fire
 import pandas as pd
 
-from biolink.biolink_client import BioLinkWrapper
+from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biothings_client import get_client
 
 from biolink.model import GeneToDiseaseAssociation, Gene, Disease
@@ -19,7 +19,7 @@ from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptS
 class LookUp(object):
 
     def __init__(self):
-        self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
+        self.blw = BioLinkApiWrapper(Config().get_biolink_api_endpoint())
         self.mg = get_client('gene')
         self.meta = {
             'taxon': 'human',

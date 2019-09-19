@@ -14,5 +14,3 @@ gene_to_cell_line_bicluster_DepMap --input-genes "NCBI:152065,NCBI:25841" get-da
 
 will give a CSV formatted table of cell lines associated with genes. Note that, as with all the modules,
 other (possibly richer) format outputs are available (and perhaps more informative)
-
-
