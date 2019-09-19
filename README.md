@@ -1,3 +1,5 @@
+- [Installation](#Installation)
+
 # Translator Modules
 
 This package provides a Python-based implementation of the NCATS Translator workflow modules.
