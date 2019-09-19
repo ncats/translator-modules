@@ -90,5 +90,9 @@ class DiseaseToPhenotypeBiclusters(Payload):
         self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(DiseaseToPhenotypeBiclusters)
+
+
+if __name__ == '__main__':
+    main()

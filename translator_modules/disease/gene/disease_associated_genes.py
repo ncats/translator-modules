@@ -79,5 +79,9 @@ class DiseaseAssociatedGeneSet(Payload):
             self.disease_associated_genes = []
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(DiseaseAssociatedGeneSet)
+
+
+if __name__ == '__main__':
+    main()
