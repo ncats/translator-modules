@@ -1,4 +1,16 @@
-- [Installation](#Installation)
+# Contents
+
+- [Translator Modules](#Translator Modules)
+    - [Installation](#Installation)
+    - [Installation of Dependencies](#Installation of Dependencies)
+- [Running the Translator Workflows](#Running the Translator Workflows)
+    - [1. Workflows in Jupyter Notebooks](#1. Workflows in Jupyter Notebooks)
+    - [2. Running Complete Workflows as Python Scripts](#2. Running Complete Workflows as Python Scripts)
+    - [3. Running Workflow Modules individually from the Command line](#3. Running Workflow Modules individually from the Command line)
+        - [How the Modules are Indexed](#How the Modules are Indexed)
+    - [4. Common Workflow Language Running of Translator Workflows](#4. Common Workflow Language Running of Translator Workflows)
+    - [5. Calling the Code Directly in your own Python Clients](#5. Calling the Code Directly in your own Python Clients)
+        - [Workflow 2 Gene Similarities and Interactions](#Workflow 2 Gene Similarities and Interactions)
 
 # Translator Modules
 
@@ -61,7 +73,7 @@ The modules in this repository may be composed into larger scientific workflows,
 4. Using the Common Workflow Language (CWL) standard
 5. Roll your own: call workflow modules from your own clients
 
-##  1. Workflows in Jupyter Notebooks
+## 1. Workflows in Jupyter Notebooks
 
 See https://github.com/ncats/translator-workflows for numerous examples.
 
