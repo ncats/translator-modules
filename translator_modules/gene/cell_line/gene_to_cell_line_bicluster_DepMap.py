@@ -17,8 +17,8 @@ class DepMapBiclusters(Payload):
     def __init__(self, input_genes):
         super(DepMapBiclusters, self).__init__(
             module=BiclusterByGene(
-                bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_celline_v1_gene/',
-                bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_celline_v1_bicluster/',
+                bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
+                bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_bicluster/',
                 target_prefix='NCBI'
             ),
             metadata=ModuleMetaData(
@@ -27,7 +27,7 @@ class DepMapBiclusters(Payload):
                 association=GeneToGeneAssociation,
                 domain=ConceptSpace(Gene, ['NCBI']),
                 relationship='related_to',
-                range=ConceptSpace(CellLine, ['DepMap'])
+                range=ConceptSpace(CellLine, ['ACH'])
             )
         )
 
