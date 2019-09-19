@@ -1,8 +1,8 @@
 # Contents
 
-- [Translator Modules](#Translator%20Modules)
-    - [Installation](#Installation)
-    - [Installation of Dependencies](#Installation_of_Dependencies)
+- [Translator Modules](#translator-modules)
+    - [Installation](#installation)
+    - [Installation of Dependencies](#installation-of-dependencies)
 - [Running the Translator Workflows](#Running_the_Translator_Workflows)
     - [1. Workflows in Jupyter Notebooks](#1._Workflows_in_Jupyter_Notebooks)
     - [2. Running Complete Workflows as Python Scripts](#2._Running_Complete_Workflows_as_Python_Scripts)
@@ -10,7 +10,7 @@
         - [How the Modules are Indexed](#How_the_Modules_are_Indexed)
     - [4. Common Workflow Language Running of Translator Workflows](#4._Common_Workflow_Language_Running_of_Translator_Workflows)
     - [5. Calling the Code Directly in your own Python Clients](#5._Calling_the_Code_Directly_in_your_own_Python_Clients)
-        - [Workflow 2 Gene Similarities and Interactions](#Workflow_2_Gene_Similarities_and_Interactions)
+        - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
 
 # Translator Modules
 
