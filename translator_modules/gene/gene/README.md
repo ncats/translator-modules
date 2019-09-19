@@ -57,7 +57,7 @@ gene_to_gene_bicluster_RNAseqDB.py --input_genes "ENSG00000148584,ENSG0000007001
 will give a CSV formatted table of associated genes. Note that, as with all the modules,
 other (possibly richer) format outputs are available (and perhaps more informative)
 
-## gene_gene_bicluster.py
+## gene_to_gene_bicluster_DepMap.py
 
 This module retrieves sets of co-occuring genes from DepMap gene knockout fitness data biclusters. To run:
 
