@@ -132,8 +132,8 @@ class BiclusterByGene:
         return dict_of_genes_in_unique_biclusters
 
     @staticmethod
-    def genes_in_unique_biclusters_not_in_input_gene_list(curated_id_list, dict_of_genes_in_unique_biclusters):
-        dict_of_genes_in_unique_biclusters_not_in_input_gene_list = defaultdict(dict)
+    def catalog_of_scored_genes_in_unique_biclusters(curated_id_list, dict_of_genes_in_unique_biclusters, keep_input_ids):
+        dict_of_scored_genes_in_unique_biclusters = defaultdict(dict)
         for bicluster_id, gene_list in dict_of_genes_in_unique_biclusters.items():
             if gene_list:
                 # using an array here in case a unique bicluster shares more than one input gene
@@ -149,13 +149,13 @@ class BiclusterByGene:
                     print("BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?")
                     continue
                 for gene in gene_list:
-                    if gene.split('.')[0] in curated_id_list or gene in curated_id_list:
+                    if not keep_input_ids and (gene.split('.')[0] in curated_id_list or gene in curated_id_list):
                         continue  # ignore genes found in the input list
-                    if gene not in dict_of_genes_in_unique_biclusters_not_in_input_gene_list:
-                        dict_of_genes_in_unique_biclusters_not_in_input_gene_list[gene] = {'input_id': input_ids, 'score': 1}
+                    if gene not in dict_of_scored_genes_in_unique_biclusters:
+                        dict_of_scored_genes_in_unique_biclusters[gene] = {'input_id': input_ids, 'score': 1}
                     else:
-                        dict_of_genes_in_unique_biclusters_not_in_input_gene_list[gene]['score'] += 1
-        return dict_of_genes_in_unique_biclusters_not_in_input_gene_list
+                        dict_of_scored_genes_in_unique_biclusters[gene]['score'] += 1
+        return dict_of_scored_genes_in_unique_biclusters
 
     def list_of_output_genes_sorted_high_to_low_count(self, dict_of_genes_in_unique_biclusters_not_in_inputs):
         unique_novel_genes = dict_of_genes_in_unique_biclusters_not_in_inputs.items()
@@ -198,7 +198,7 @@ class BiclusterByGene:
                         dict_of_ids_in_unique_biclusters_not_in_inputs[ID] += 1
         return dict_of_ids_in_unique_biclusters_not_in_inputs
 
-    def gene_to_gene_bicluster_summarize(self, input_gene_set):
+    def gene_to_gene_bicluster_summarize(self, input_gene_set, keep_input_ids):
 
         bicluster_occurrences_dict = self.bicluster_occurrences_dict()
 
@@ -206,15 +206,15 @@ class BiclusterByGene:
 
         genes_in_unique_biclusters = self.genes_in_unique_biclusters(unique_biclusters)
 
-        genes_in_unique_biclusters_not_in_input_gene_list = \
-            self.genes_in_unique_biclusters_not_in_input_gene_list(input_gene_set, genes_in_unique_biclusters)
+        catalog_of_scored_genes_in_unique_biclusters = \
+            self.catalog_of_scored_genes_in_unique_biclusters(input_gene_set, genes_in_unique_biclusters, keep_input_ids)
 
         # maybe need to convert the raw identifiers to CURIES
-        genes_in_unique_biclusters_not_in_input_gene_list = \
-            fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix=self.target_prefix)
+        catalog_of_scored_genes_in_unique_biclusters = \
+            fix_curies(catalog_of_scored_genes_in_unique_biclusters, prefix=self.target_prefix)
 
         sorted_list_of_output_genes = \
-            self.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
+            self.list_of_output_genes_sorted_high_to_low_count(catalog_of_scored_genes_in_unique_biclusters)
 
         return sorted_list_of_output_genes
 

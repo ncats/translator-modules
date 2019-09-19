@@ -15,7 +15,7 @@ from translator_modules.gene.gene_bicluster_shared import BiclusterByGene
 
 class GeneToGeneBiclusters(Payload):
 
-    def __init__(self, input_genes):
+    def __init__(self, input_genes, keep_input_id=True):
         super(GeneToGeneBiclusters, self).__init__(
             module=BiclusterByGene(
                 bicluster_url='https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
@@ -36,7 +36,7 @@ class GeneToGeneBiclusters(Payload):
 
         asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 
-        sorted_list_of_output_genes = self.module.gene_to_gene_bicluster_summarize(input_gene_set)
+        sorted_list_of_output_genes = self.module.gene_to_gene_bicluster_summarize(input_gene_set, keep_input_id)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 

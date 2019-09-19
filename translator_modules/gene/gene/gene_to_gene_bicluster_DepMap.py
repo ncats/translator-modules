@@ -14,7 +14,7 @@ from translator_modules.gene.gene_bicluster_shared import BiclusterByGene
 
 class GeneToGeneDepMapBiclusters(Payload):
 
-    def __init__(self, input_genes):
+    def __init__(self, input_genes, keep_input_id=True):
         super(GeneToGeneDepMapBiclusters, self).__init__(
             module=BiclusterByGene(
                 bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
@@ -35,7 +35,7 @@ class GeneToGeneDepMapBiclusters(Payload):
 
         asyncio.run(self.module.gene_to_gene_biclusters_async(input_gene_set))
 
-        sorted_list_of_output_genes = self.module.gene_to_gene_bicluster_summarize(input_gene_set)
+        sorted_list_of_output_genes = self.module.gene_to_gene_bicluster_summarize(input_gene_set, keep_input_id)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 
