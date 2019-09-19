@@ -16,4 +16,6 @@ chemical_gene_interaction --input-genes "ENSG00000148584,ENSG00000070018,ENSG000
 
 will give a CSV formatted chemical substances interacting with the list of input genes.
 
+THe identifiers which this module accepts may be inferred from [the CTD data dictionary here](http://ctdbase.org/downloads/).
+
 Note that, as with all the modules, other (possibly richer) format outputs are available (and perhaps more informative)
