@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ gene_to_gene_bicluster.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ gene_to_gene_bicluster_DepMap.py, get-result-list, to-json ]
 inputs:
   input_genes:
     type: string
@@ -10,6 +10,6 @@ inputs:
       position: 0
       prefix: --input_genes
 outputs:
-  gene_to_gene_bicluster_list:
+  gene_to_gene_bicluster_DepMap_list:
     type: stdout
-stdout: gene_to_gene_bicluster.records.json
+stdout: gene_to_gene_bicluster_DepMap.json
