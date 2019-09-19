@@ -11,11 +11,12 @@ This module retrieves a functionally similar genes as measured by Jaccard simila
 
 ```
 functional_similarity --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
-                            get-data-frame to-csv
+                            --threshold 0.75 get-data-frame to-csv
 ```
 
-will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" (specified as GO identifiers). Note that, as with all the modules,
-other (possibly richer) format outputs are available (and perhaps more informative)
+will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" 
+(specified as GO identifiers). Note that, as with all the modules, other (possibly richer) format outputs 
+are available (and perhaps more informative). Note that the  --threshold flag is mandatory.
 
 ## phenotype_similarity
 
@@ -23,11 +24,12 @@ This module retrieves a phenotypically similar genes  as measured by Jaccard sim
 
 ```
 phenotype_similarity --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
-                            get-data-frame to-csv
+                            --threshold 0.75 get-data-frame to-csv
 ```
 
-will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" (specified as HP ontology identifiers). Note that, as with all the modules,
-other (possibly richer) format outputs are available (and perhaps more informative)
+will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" 
+(specified as HP ontology identifiers). Note that, as with all the modules, other (possibly richer) 
+format outputs are available (and perhaps more informative).  Note that the  --threshold flag is mandatory.
 
 ## gene_interaction
 
