@@ -4,6 +4,7 @@ import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict, Counter
+from json import JSONDecodeError
 
 import fire
 import pandas as pd
@@ -33,8 +34,14 @@ class BiclusterByGeneToTissue:
             loop_1 = asyncio.get_event_loop()
             futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                          bicluster_url_list]
+
             for response in await asyncio.gather(*futures_1):
-                response_json = response.json()
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 for x in response_json:
                     gene = x['gene']
                     tissues = x['all_col_labels'].split('__')

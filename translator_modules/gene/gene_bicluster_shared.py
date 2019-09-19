@@ -5,6 +5,7 @@ import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict
+from json import JSONDecodeError
 
 import requests
 from typing import Dict, List
@@ -72,9 +73,14 @@ class BiclusterByGene:
                 futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                              bicluster_url_list]
             for response in await asyncio.gather(*futures_1):
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 cooccurrence_dict_each_gene = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'] = defaultdict(dict)
-                response_json = response.json()
                 length_response_json = len(response_json)
                 cooccurrence_dict_each_gene['number_of_related_biclusters'] = length_response_json
 
