@@ -46,14 +46,25 @@ other (possibly richer) format outputs are available (and perhaps more informati
 
 ## gene_gene_bicluster.py
 
-This module retrieves sets of genes clustered by similar gene expression in profiles extracted from RNAseqDB. To run:
+This module retrieves sets of co-occuring genes from RNaseqDB gene expression data biclusters. To run:
 
 ``` 
-gene_to_gene_bicluster.py --input_genes "ENSG00000148584,ENSG00000070018,ENSG00000175899" \
+gene_to_gene_bicluster_RNAseqDB.py --input_genes "ENSG00000148584,ENSG00000070018,ENSG00000175899" \
                        get-data-frame to-csv
 ```
 
 will give a CSV formatted table of associated genes. Note that, as with all the modules,
 other (possibly richer) format outputs are available (and perhaps more informative)
 
+## gene_gene_bicluster.py
+
+This module retrieves sets of co-occuring genes from DepMap gene knockout fitness data biclusters. To run:
+
+``` 
+gene_to_gene_bicluster_DepMap.py --input_genes "NCBI:214,NCBI:84896,NCBI:55299,NCBI:9184,NCBI:144608" \
+                       get-data-frame to-csv
+```
+
+will give a CSV formatted table of associated genes. Note that, as with all the modules,
+other (possibly richer) format outputs are available (and perhaps more informative)
 
