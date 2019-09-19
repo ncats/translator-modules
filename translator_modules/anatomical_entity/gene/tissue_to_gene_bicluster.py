@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
+# Workflow 9, Tissue-to-Gene Bicluster
+
 import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict, Counter
+from json import JSONDecodeError
 
 import fire
 import pandas as pd
@@ -53,7 +56,12 @@ class BiclusterByTissueToGene():
             futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                          bicluster_url_list]
             for response in await asyncio.gather(*futures_1):
-                response_json = response.json()
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 for x in response_json:
                     gene = x['gene']
                     all_genes.append(gene)
