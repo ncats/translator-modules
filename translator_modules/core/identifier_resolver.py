@@ -97,7 +97,7 @@ class Resolver:
                 for i in range(0, len(self.identifier_records)):
                     self.identifier_map[headers[h]].append(self.identifier_records[i][h])
 
-    def load_identifiers(self, identifiers, domain=None):
+    def load_identifiers(self, identifiers, source=None):
         if DEBUG:
             print("load identifiers")
         """
@@ -112,20 +112,20 @@ class Resolver:
         # NB: push this out to the handle_input_or_input_location function?
 
         if extension == "csv":
-            self._read_identifiers_in_flatfile(identifiers, domain=domain)
+            self._read_identifiers_in_flatfile(identifiers, source=source)
 
         elif extension == "txt":
-            self._read_identifiers_in_flatfile(identifiers, delimiter='\t', domain=domain)
+            self._read_identifiers_in_flatfile(identifiers, delimiter='\t', source=source)
 
         elif extension == "json":
 
-            if not domain:
+            if not source:
                 raise RuntimeError("Resolver.load_identifiers ERROR: json file 'domain' tag unspecified?")
 
             with open(identifiers) as id_file:
                 input_json = json.loads(id_file)
                 # assume records format
-                self.input_identifiers = [record[domain] for record in input_json]
+                self.input_identifiers = [record[source] for record in input_json]
 
         elif extension is None:
             if type(identifiers) is Iterable:
@@ -133,54 +133,55 @@ class Resolver:
 
         return self
 
-    def _read_identifiers_in_flatfile(self, identifiers, delimiter=',', domain=None):
+    def _read_identifiers_in_flatfile(self, identifiers, delimiter=',', source=None):
         if DEBUG:
             print("_read_identifiers_in_flatfile")
 
-        if not domain:
-            raise RuntimeError("Resolver._read_identifiers_in_flatfile ERROR: json file 'domain' tag unspecified?")
+        if not source:
+            raise RuntimeError("Resolver._read_identifiers_in_flatfile ERROR: json file 'namespece' tag unspecified?")
 
         with open(identifiers) as id_file:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
-            self.input_identifiers = [row[domain] for row in input_reader]
+            self.input_identifiers = [row[source] for row in input_reader]
 
-    def translate_one(self, source, identifier_range):
+    def translate_one(self, source, target):
         """
         Lookup translation of a single input identifier in the (previously loaded) identifier map
         :param source: identifier to be translated
-        :param identifier_range: target namespace from which identifier is to be obtained
+        :param target: target namespace from which identifier is to be obtained
         :return: mapping of input onto target namespace (empty string if no mapping available)
         """
         if DEBUG:
             print("translate_one")
 
-        if not identifier_range:
+        if not target:
             raise RuntimeError("Resolver.translate_one() ERROR: json file 'identifier_range' tag unspecified?")
 
         # find index of source
         for index, idr in enumerate(self.identifier_records):
             if source in idr:
-                target = self.identifier_map[identifier_range][index]
+                target = self.identifier_map[target][index]
                 return source, target
         return source, ""
 
-    def translate(self,identifier_range=None):
+    def translate(self, target=None):
         """
         Translate an iterable input list of identifiers previously loaded (using load_identifiers)
-        :param identifier_range:
+        :param target:
         :return: tuple mappings of input source identifiers onto target namespace
         """
         if DEBUG:
             print("translate")
 
-        if not identifier_range:
-            raise RuntimeError("Resolver.translate ERROR: json file 'identifier_range' tag unspecified?")
+        if not target:
+            raise RuntimeError("Resolver.translate ERROR: json file 'target' tag unspecified?")
 
         # The second entry of the tuple will be an empty string ''
         # if output/converted_id isn't found in identifier_map dict
-        translated_ids = [self.translate_one(input_id, identifier_range) for input_id in self.input_identifiers]
+        translated_ids = [self.translate_one(input_id, target) for input_id in self.input_identifiers]
 
         return translated_ids
+
 
 def fix_curies(identifiers, prefix=''):
     """

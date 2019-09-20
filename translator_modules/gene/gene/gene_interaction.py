@@ -29,7 +29,7 @@ class GeneInteractions:
             if not gene['hit_symbol']:
                 gene['hit_symbol'] = \
                     Resolver.get_the_resolver(). \
-                        translate_one(source=gene['hit_id'], identifier_range=SYMBOL)
+                        translate_one(source=gene['hit_id'], target=SYMBOL)
 
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
