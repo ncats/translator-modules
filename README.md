@@ -2,7 +2,7 @@
 
 - [Translator Modules](#translator-modules)
     - [Installation](#installation)
-    - [Installation of Dependencies](#installation-of-dependencies)
+    - [Installation of Dependencies and Make Modules Visible as Command Line Programs](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs)
 - [Running the Translator Workflows](#running-the-translator-workflows)
     - [1. Workflows in Jupyter Notebooks](#1.-Workflows-in-jupyter-notebooks)
     - [2. Running Complete Workflows as Python Scripts](#2.-running-completes-workflows-as-python-scripts)
