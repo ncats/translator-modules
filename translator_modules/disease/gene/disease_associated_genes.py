@@ -43,7 +43,8 @@ class LookUp(object):
             if query_biolink:
                 igene_mg = self.mg.query(input_gene['hit_id'].replace('HGNC', 'hgnc'), species='human', entrezonly=True,
                                          fields='entrez,HGNC,symbol')
-                input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
+                if igene_mg['hits']:
+                    input_gene.update({'input_ncbi': 'NCBIGene:{}'.format(igene_mg['hits'][0]['_id'])})
         input_genes_df = pd.DataFrame(data=input_gene_set)
         if not input_genes_df.empty:
             # group duplicate identifier and gather sources
