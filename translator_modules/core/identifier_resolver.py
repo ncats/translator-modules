@@ -82,6 +82,9 @@ class Resolver:
 
         self.input_identifiers = None
 
+    def list_identifier_keys(self):
+        return list(self.identifier_map.keys())
+
     def _read_identifier_map_in_flatfile(self, identifier_map, delimiter='\t'):
         if DEBUG:
             print("_read_identifier_map_in_flatfile")
