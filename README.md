@@ -1,3 +1,17 @@
+# Contents
+
+- [Translator Modules](#translator-modules)
+    - [Installation](#installation)
+    - [Installation of Dependencies](#installation-of-dependencies)
+- [Running the Translator Workflows](#running-the-translator-workflows)
+    - [1. Workflows in Jupyter Notebooks](#1.-Workflows-in-jupyter-notebooks)
+    - [2. Running Complete Workflows as Python Scripts](#2.-running-completes-workflows-as-python-scripts)
+    - [3. Running Workflow Modules individually from the Command line](#3.-running-workflow-modules-individually-from-the-command-line)
+        - [How the Modules are Indexed](#how-the-modules-are-indexed)
+    - [4. Common Workflow Language Running of Translator Workflows](#4.-common-workflow-language-running-of-translator-workflows)
+    - [5. Calling the Code Directly in your own Python Clients](#5.-calling-the-code-directly-in-your-own-python-clients)
+        - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
+
 # Translator Modules
 
 This package provides a Python-based implementation of the NCATS Translator workflow modules.
@@ -66,7 +80,7 @@ frameworks. A number of execution frameworks for doing this have been explored t
 4. Using the Common Workflow Language (CWL) standard
 5. Roll your own: call workflow modules from your own clients
 
-##  1. Workflows in Jupyter Notebooks
+## 1. Workflows in Jupyter Notebooks
 
 See https://github.com/ncats/translator-workflows for numerous examples.
 

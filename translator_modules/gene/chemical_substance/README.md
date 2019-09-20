@@ -14,4 +14,6 @@ chemical_to_gene_interaction --input-chemicals "D000082,D006632" get-data-frame 
 will give a CSV formatted gene hits interacting with the list of input chemicals 
 (in this case, acetaminophen and histamine, in human beings)
 
+THe identifiers which this module accepts may be inferred from [the CTD data dictionary here](http://ctdbase.org/downloads/).
+
 Note that, as with all the modules, other (possibly richer) format outputs are available (and perhaps more informative)

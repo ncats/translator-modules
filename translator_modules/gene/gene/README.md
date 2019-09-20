@@ -11,11 +11,12 @@ This module retrieves a functionally similar genes as measured by Jaccard simila
 
 ```
 functional_similarity --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
-                            get-data-frame to-csv
+                            --threshold 0.75 get-data-frame to-csv
 ```
 
-will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" (specified as GO identifiers). Note that, as with all the modules,
-other (possibly richer) format outputs are available (and perhaps more informative)
+will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" 
+(specified as GO identifiers). Note that, as with all the modules, other (possibly richer) format outputs 
+are available (and perhaps more informative). Note that the  --threshold flag is mandatory.
 
 ## phenotype_similarity
 
@@ -23,11 +24,12 @@ This module retrieves a phenotypically similar genes  as measured by Jaccard sim
 
 ```
 phenotype_similarity --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
-                            get-data-frame to-csv
+                            --threshold 0.75 get-data-frame to-csv
 ```
 
-will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" (specified as HP ontology identifiers). Note that, as with all the modules,
-other (possibly richer) format outputs are available (and perhaps more informative)
+will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" 
+(specified as HP ontology identifiers). Note that, as with all the modules, other (possibly richer) 
+format outputs are available (and perhaps more informative).  Note that the  --threshold flag is mandatory.
 
 ## gene_interaction
 
@@ -46,8 +48,7 @@ other (possibly richer) format outputs are available (and perhaps more informati
 This module retrieves sets of co-occuring genes from RNaseqDB gene expression data biclusters. To run:
 
 ```
-gene_to_gene_bicluster_RNAseqDB--input_genes "ENSG00000148584,ENSG00000070018,ENSG00000175899" \
-                       get-data-frame to-csv
+gene_to_gene_bicluster_RNAseqDB --input-genes "ENSG00000069431.6"  get-data-frame to-csv
 ```
 
 will give a CSV formatted table of associated genes. Note that, as with all the modules,
@@ -58,7 +59,7 @@ other (possibly richer) format outputs are available (and perhaps more informati
 This module retrieves sets of co-occuring genes from DepMap gene knockout fitness data biclusters. To run:
 
 ``` 
-gene_to_gene_bicluster_DepMap --input_genes "NCBI:214,NCBI:84896,NCBI:55299,NCBI:9184,NCBI:144608" \
+gene_to_gene_bicluster_DepMap --input-genes "NCBI:214,NCBI:84896,NCBI:55299,NCBI:9184,NCBI:144608" \
                        get-data-frame to-csv
 ```
 
