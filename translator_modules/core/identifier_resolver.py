@@ -182,11 +182,6 @@ class Resolver:
 
         return translated_ids
 
-
-if __name__ == '__main__':
-    fire.Fire(Resolver)
-
-
 def fix_curies(identifiers, prefix=''):
     """
     Adds a suitable XMLNS prefix to (an) identifier(s) known to
@@ -228,3 +223,11 @@ def object_id(curie) -> str:
         return curie
     part = curie.split(':')
     return part[-1]
+
+
+def main():
+    fire.Fire(Resolver)
+
+
+if __name__ == '__main__':
+    main()
