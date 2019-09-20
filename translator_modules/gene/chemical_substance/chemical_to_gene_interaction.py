@@ -19,7 +19,9 @@ from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptS
 
 # TODO: Refactor towards methods being functional
 class ChemicalGeneInteractions(object):
-    def __init__(self):
+    def __init__(self, action, taxon):
+        self.action=action
+        self.taxon=taxon
         self.mg = get_client('gene')
         self.ctd = CTDWrapper()
 
@@ -48,36 +50,35 @@ class ChemicalGeneInteractions(object):
 
         return annotated_gene_set
 
-    def get_chemicals(self, input_gene_set, action) -> List[dict]:
+    def get_chemicals_interacting_with_genes(self, input_gene_set) -> List[dict]:
 
-        target_gene_symbols = self.load_gene_set(input_gene_set)
-
-        chemicals = list()
-        for symbol in target_gene_symbols:
-            # The 'gene_id' is assumed to be a curie to be parsed here for
-            # its object identifier which is a valid gene query to the CTD wrapper
+        chemicals: List[dict] = list()
+        for input_id in input_gene_set:
+            # The 'gene_id' is assumed to be a raw NCBIGene object identifier
+            # which is a valid gene query to the CTD wrapper
             try:
-                all_gene_chemicals = self.ctd.gene2chem(symbol)
+                all_gene_chemicals = self.ctd.gene2chem(input_id)
             except JSONDecodeError as e:
-                print("Error: gene2chem target_id '"+symbol+"':"+e.msg, file=stderr)
+                print("Error: gene2chem target_id 'NCBIGene:"+input_id+"':"+e.msg, file=stderr)
                 continue
 
             gene_chemicals = [
                 x for x in all_gene_chemicals
-                if action in x['InteractionActions'] and '9606' in x['OrganismID']
+                if (not self.action or self.action in x['InteractionActions']) and self.taxon in x['OrganismID']
             ]
-            chemicals = chemicals + gene_chemicals
+            # Each chemical record also contains its 'input_id' as GeneID from the input_gene_set
+            chemicals += gene_chemicals
 
         return chemicals
 
-    def get_genes(self, chemical_id, action) -> List[dict]:
+    def get_genes_by_chemical_id(self, chemical_id) -> List[dict]:
         ctd_hits = self.ctd.chem2gene(chem_curie=chemical_id)
         chemical_genes = [
             x for x in ctd_hits
-            if action in x['InteractionActions'] and '9606' in x['OrganismID']]
+            if (not self.action or self.action in x['InteractionActions']) and self.taxon in x['OrganismID']]
         return chemical_genes
 
-    def load_gene_hits(self, chemicals, action, rows) -> pd.DataFrame:
+    def get_genes_interacting_with_chemicals(self, chemicals, rows) -> pd.DataFrame:
 
         # Empty dataset?
         if len(chemicals) == 0:
@@ -87,12 +88,12 @@ class ChemicalGeneInteractions(object):
             groupby(['GeneSymbol', 'GeneID'])['ChemicalID'].\
             apply(', '.join).reset_index().to_dict(orient='records')
 
-        gene_hits = List[dict]
+        gene_hits: List[dict] = list()
         for chem in chem_df:
             for index, cid in enumerate(chem['ChemicalID'].split(',')):
                 if index < rows:
                     cid = cid.lstrip().rstrip()
-                    cid_hit = self.get_genes(chemical_id=cid, action=action)
+                    cid_hits = self.get_genes_by_chemical_id(chemical_id=cid)
 
                     # Not sure if the gene hits from CTD are in
                     # the expected data format for the results(?)
@@ -105,37 +106,45 @@ class ChemicalGeneInteractions(object):
                     #     'hit_id': ...,
                     #     'score': ...,
                     # })
-                    gene_hits = gene_hits + cid_hit
+                    for cid_hit in cid_hits:
+                        gene_hits.append({
+                            'input_id': 'NCBIGene:'+chem['GeneID'],
+                            'input_symbol': chem['GeneSymbol'],
+                            'hit_symbol': '',  # subject_label,
+                            'hit_id': '',  # subject_curie,
+                            'score': '',  # score,
+                        })
 
         gene_hits_df = pd.DataFrame({'hit_id': gene_hits})
         return gene_hits_df
 
-    def get_gene_chemical_interactions(self, input_gene_set, action, rows) -> pd.DataFrame:
-        chemicals = self.get_chemicals(input_gene_set, action)
-        gene_hits_df = self.load_gene_hits(chemicals, action, rows)
+    def get_gene_chemical_interactions(self, input_gene_set, rows) -> pd.DataFrame:
+        chemicals = self.get_chemicals_interacting_with_genes(input_gene_set)
+        gene_hits_df = self.get_genes_interacting_with_chemicals(chemicals, rows)
         return gene_hits_df
 
 
 # TODO: Test the module separately to observe baseline behavior
 class ChemicalGeneInteractionSet(Payload):
 
-    def __init__(self, input_genes, action='InteractionActions', rows=50):
+    # I set default for action filter to 'None' for now; could be action='InteractionActions'
+    def __init__(self, input_genes, action=None, taxon='9606', rows=50):
 
         super(ChemicalGeneInteractionSet, self).__init__(
-            module=ChemicalGeneInteractions(),
+            module=ChemicalGeneInteractions(action, taxon),
             metadata=ModuleMetaData(
                 name="Module 1B: Chemical Gene Interaction",
                 source='Chemical Toxicology Database (CTD)',
                 association=ChemicalToGeneAssociation,
-                domain=ConceptSpace(Gene, ['HGNC']),
+                domain=ConceptSpace(Gene, ['NCBIGene']),
                 relationship='interacts_with',
                 range=ConceptSpace(ChemicalSubstance, ['ChemicalID'])
             )
         )
 
-        input_gene_set = self.get_input_data_frame(input_genes)
+        input_gene_set = self.get_simple_input_identifier_list(input_genes, object_id_only=True)
 
-        self.results = self.module.get_gene_chemical_interactions(input_gene_set, action, rows)
+        self.results = self.module.get_gene_to_chemical_interactions(input_gene_set, rows)
 
 
 def main():

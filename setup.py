@@ -31,11 +31,12 @@ setup(
         'console_scripts': [
             'tissue_to_tissue_bicluster = translator_modules.anatomical_entity.anatomical_entity.tissue_to_tissue_bicluster:main',
             'tissue_to_gene_bicluster = translator_modules.anatomical_entity.gene.tissue_to_gene_bicluster:main',
+            'chemical_to_gene_interaction = translator_modules.chemical_substance.gene.chemical_to_gene_interaction:main',
             'disease_associated_genes = translator_modules.disease.gene.disease_associated_genes:main',
             'disease_to_phenotype_bicluster = translator_modules.disease.phenotypic_feature.disease_to_phenotype_bicluster:main',
             'gene_to_tissue_bicluster = translator_modules.gene.anatomical_entity.gene_to_tissue_bicluster:main',
             'gene_to_cell_line_bicluster_DepMap = translator_modules.gene.cell_line.gene_to_cell_line_bicluster_DepMap:main',
-            'chemical_gene_interaction = translator_modules.gene.chemical_substance.chemical_gene_interaction:main',
+            'gene_to_chemical_interaction = translator_modules.gene.chemical_substance.gene_to_chemical_interaction:main',
             'functional_similarity = translator_modules.gene.gene.functional_similarity:main',
             'phenotype_similarity = translator_modules.gene.gene.phenotype_similarity:main',
             'gene_interaction=translator_modules.gene.gene.gene_interaction:main',
