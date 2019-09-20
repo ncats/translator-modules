@@ -18,8 +18,7 @@ from translator_modules.core.module_payload import Payload
 from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
-# TODO: Refactor towards methods being functional
-class ChemicalGeneInteractions(object):
+class GeneToChemicalInteractions(object):
     def __init__(self, action, taxon):
         self.action=action
         self.taxon=taxon
@@ -49,22 +48,21 @@ class ChemicalGeneInteractions(object):
                 chemical_hits.append({
                     'input_id': 'NCBIGene:' + chem['GeneID'],
                     'input_symbol': chem['GeneSymbol'],
-                    'hit_symbol': chem['ChemicalName'],
                     'hit_id': chem['ChemicalID'],
+                    'hit_symbol': chem['ChemicalName'],
                     'score': 1,  # score here is simply a 'hit' of one
                 })
 
         return pd.DataFrame(chemical_hits)
 
 
-# TODO: Test the module separately to observe baseline behavior
-class ChemicalGeneInteractionSet(Payload):
+class GeneToChemicalInteractionPayload(Payload):
 
     # I set default for action filter to 'None' for now; could be action='InteractionActions'
     def __init__(self, input_genes, action=None, taxon='9606', rows=50):
 
-        super(ChemicalGeneInteractionSet, self).__init__(
-            module=ChemicalGeneInteractions(action, taxon),
+        super(GeneToChemicalInteractionPayload, self).__init__(
+            module=GeneToChemicalInteractions(action, taxon),
             metadata=ModuleMetaData(
                 name="Module 1B: Gene to Chemical Interactions",
                 source='Chemical Toxicology Database (CTD)',
@@ -81,7 +79,7 @@ class ChemicalGeneInteractionSet(Payload):
 
 
 def main():
-    fire.Fire(ChemicalGeneInteractionSet)
+    fire.Fire(GeneToChemicalInteractionPayload)
 
 
 if __name__ == '__main__':
