@@ -11,7 +11,7 @@ from typing import List
 from core import handle_input_or_input_location
 from core.data_transfer_model import ModuleMetaData, ResultList
 
-from identifiers.identifier_resolver import object_id
+from identifiers.server.identifier_resolver import object_id
 
 
 class Payload(ABC):

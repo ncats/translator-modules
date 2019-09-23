@@ -28,7 +28,7 @@ Speaking of which.
 ## In Python 3:
 
 ```python
-from identifiers.identifier_resolver import Resolver
+from identifiers.server.identifier_resolver import Resolver
 
 ids = ["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]
     

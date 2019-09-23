@@ -29,7 +29,7 @@ import re
 
 from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 
-from identifiers.identifier_resolver import Resolver
+from identifiers.server.identifier_resolver import Resolver
 from translator_modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneBiclusters
 
 _SCRIPTNAME = 'SummaryTableWorkflow.py'

@@ -8,7 +8,8 @@ import pandas as pd
 from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
-from identifiers.identifier_resolver import Resolver, SYMBOL
+from identifiers import SYMBOL
+from identifiers.client.resolver import Resolver
 
 from core import Config
 from core.module_payload import Payload

@@ -1,16 +1,8 @@
-# Shared core similarity functions
-from typing import List, Tuple
+# Shared core Ontobio ontology services
 
-import pandas as pd
 from ontobio.assoc_factory import AssociationSetFactory
-from ontobio.assocmodel import AssociationSet
 from ontobio.io.gafparser import GafParser
 from ontobio.ontol_factory import OntologyFactory
-
-# We override the Ontobio version of the jaccard_similarity
-# function below, to return shared ontology term annotation
-#
-# from ontobio.analysis.semsim import jaccard_similarity
 
 
 class Ontology(object):

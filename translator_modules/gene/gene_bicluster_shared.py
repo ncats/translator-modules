@@ -10,7 +10,7 @@ from json import JSONDecodeError
 import requests
 
 from typing import Dict, List
-from identifiers.identifier_resolver import fix_curies, object_id
+from identifiers import fix_curies, object_id
 
 
 class BiclusterByGene:
