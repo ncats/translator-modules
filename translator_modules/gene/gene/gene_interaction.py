@@ -8,10 +8,11 @@ import pandas as pd
 from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
-from core import Config
 from identifiers.identifier_resolver import Resolver, SYMBOL
-from core import ModuleMetaData, ConceptSpace
-from core import Payload
+
+from core import Config
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
 class GeneInteractions:

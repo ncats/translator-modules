@@ -9,9 +9,9 @@ from biothings_client import get_client
 
 from biolink.model import GeneToPhenotypicFeatureAssociation, Gene
 
-from core import ModuleMetaData, ConceptSpace
-from core import GenericSimilarity
-from core import Payload
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
+from core.generic_similarity import GenericSimilarity
 
 
 class PhenotypeSimilarity(GenericSimilarity):

@@ -7,9 +7,10 @@ import pandas as pd
 
 from biolink.model import GeneToGeneAssociation, Gene
 
-from core import Payload
-from core import ModuleMetaData, ConceptSpace
 from translator_modules.gene.gene_bicluster_shared import BiclusterByGene
+
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
 class GeneToGeneDepMapBiclusters(Payload):
