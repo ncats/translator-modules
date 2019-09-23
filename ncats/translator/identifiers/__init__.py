@@ -1,3 +1,6 @@
+from collections import defaultdict
+from typing import Iterable
+
 GENE = 'gene'
 DISEASE = 'disease'
 CHEMICAL_SUBSTANCE = 'chemical substance'

@@ -5,7 +5,7 @@ import csv
 import json
 
 import fire
-from typing import Iterable
+from typing import Iterable, List
 from ...core import handle_input_or_input_location
 
 DEBUG = False
@@ -74,7 +74,7 @@ class Resolver:
 
         self.input_identifiers = None
 
-    def list_identifier_keys(self):
+    def list_identifier_keys(self) -> List[str]:
         return list(self.identifier_map.keys())
 
     def _read_identifier_map_in_flatfile(self, identifier_map, delimiter='\t'):

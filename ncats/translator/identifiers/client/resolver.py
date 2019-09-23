@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+from typing import List
+
+import fire
+
 class Resolver:
     """
     This class handles identifier conversions. Note that, for now, the 'identifier_map' catalog and the 'input_ids'
@@ -15,9 +21,9 @@ class Resolver:
         """
         This is a constructor for a client to an actual server Resolver
         """
-        raise RuntimeError("Not yet implemented!")
+        self.input_identifiers = None
 
-    def list_identifier_keys(self):
+    def list_identifier_keys(self) -> List[str]:
         raise RuntimeError("Not yet implemented!")
 
     def load_identifiers(self, identifiers, source=None):
@@ -28,3 +34,11 @@ class Resolver:
 
     def translate(self, target=None):
         raise RuntimeError("Not yet implemented!")
+
+
+def main():
+    fire.Fire(Resolver)
+
+
+if __name__ == '__main__':
+    main()
