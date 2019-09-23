@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from io.ncats.translator.core.data_transfer_model import Identifier
+from ncats.translator.core.data_transfer_model import Identifier
 
 
 mock_identifier_xmlns = "HGNC"

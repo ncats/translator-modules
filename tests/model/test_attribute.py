@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from io.ncats.translator.core.data_transfer_model import Attribute
+from ncats.translator.core.data_transfer_model import Attribute
 
 mock_attribute_name = 'some attribute name'
 mock_value = 'some attribute value'

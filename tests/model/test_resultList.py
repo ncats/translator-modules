@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from biolink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
 
-from io.ncats.translator.core.data_transfer_model import ResultList, ConceptSpace
+from ncats.translator.core.data_transfer_model import ResultList, ConceptSpace
 
 from .test_attribute import mock_attribute
 from .test_result import mock_result

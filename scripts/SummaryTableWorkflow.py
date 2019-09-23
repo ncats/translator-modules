@@ -9,28 +9,13 @@ import argparse
 import numpy as np
 import re
 
-#############################################################
-# First, before loading all our analysis modules, we need
-# to tweak OntoBio to disable its @cachier cache. Our
-# patched Ontobio has an 'ignore_cache' flag which may be
-# overridden here before the rest of the system is loaded.
-# We do this because cachier seems to introduce an odd system
-# instability resulting in deep recursion on one method,
-# creating new threads and consuming stack memory to the point
-# of system resource exhaustion!  We conjecture that cachier
-# caching is unnecessary since we read the pertinent ontology
-# catalogs in just once into memory, for readonly reuse.
-##############################################################
-# 9 July 2019 - this snippet of configuration buried into the core.generic_similarity.py module
-#from ontobio.config import get_config
-#get_config().ignore_cache = True
 
 # Now we can import the remainder of the modules (some which call Ontobio)
 
-from io.ncats.translator.modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
+from ncats.translator.modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 
-from io.ncats.translator.identifiers.server import Resolver
-from io.ncats.translator.modules.gene.gene import GeneToGeneBiclusters
+from ncats.translator.identifiers.client.resolver import Resolver
+from ncats.translator.modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneBiclusters
 
 _SCRIPTNAME = 'SummaryTableWorkflow.py'
 

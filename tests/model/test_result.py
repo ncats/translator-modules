@@ -4,7 +4,7 @@ from tests.model.test_identifier \
     import mock_identifier_xmlns, mock_identifier_object_id, mock_identifier_version, \
     mock_identifier_xmlns_2, mock_identifier_object_id_2, mock_identifier_version_2
 
-from io.ncats.translator.core.data_transfer_model import Result
+from ncats.translator.core.data_transfer_model import Result
 from .test_attribute import mock_attribute
 
 mock_result_input_id = mock_identifier_xmlns+":"+mock_identifier_object_id+'.'+mock_identifier_version

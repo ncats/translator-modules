@@ -8,6 +8,7 @@
 import pandas as pd
 import numpy as np
 
+
 # Main class
 class SummaryMod(object):
     # Initializing function

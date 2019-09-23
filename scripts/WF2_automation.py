@@ -11,11 +11,12 @@ import argparse
 import pandas as pd
 from html3.html3 import XHTML
 
-from io.ncats.translator.modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
-from io.ncats.translator.modules.gene.gene import FunctionalSimilarity
-from io.ncats.translator.modules.gene.gene import PhenotypeSimilarity
-from io.ncats.translator.modules.gene.gene import GeneInteractions
-from io.ncats.translator.core import StandardOutput
+from ncats.translator.core.standard_output import StandardOutput
+
+from ncats.translator.modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
+from ncats.translator.modules.gene.gene.functional_similarity import FunctionalSimilarity
+from ncats.translator.modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
+from ncats.translator.modules.gene.gene.gene_interaction import GeneInteractions
 
 _SCRIPTNAME = 'WF2_automation.py'
 
