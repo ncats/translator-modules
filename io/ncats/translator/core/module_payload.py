@@ -8,10 +8,10 @@ from abc import ABC
 import pandas as pd
 from typing import List
 
-from io.ncats.translator.core import handle_input_or_input_location
-from io.ncats.translator.core.data_transfer_model import ModuleMetaData, ResultList
+from . import handle_input_or_input_location
+from .data_transfer_model import ModuleMetaData, ResultList
 
-from io.ncats.translator.identifiers.server import object_id
+from io.ncats.translator.identifiers import object_id
 
 
 class Payload(ABC):

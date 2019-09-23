@@ -2,7 +2,6 @@
 from typing import List, Tuple
 
 import pandas as pd
-from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.assocmodel import AssociationSet
 
 # We override the Ontobio version of the jaccard_similarity

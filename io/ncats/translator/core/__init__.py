@@ -3,6 +3,19 @@ from urllib.parse import urlparse
 import requests
 
 
+class Config():
+
+    def __init__(self):
+        # Production endpoint
+        self.biolink_api_endpoint = "http://api.monarchinitiative.org/api/"
+
+        # Development endpoint - sometimes temporarily used
+        #self.biolink_api_endpoint = "http://api-dev.monarchinitiative.org/api/"
+
+    def get_biolink_api_endpoint(self):
+        return self.biolink_api_endpoint
+
+
 def handle_input_or_input_location(input_or_input_location):
     """
     Figures out whether the input being opened is from a remote source or on the file-system;
@@ -55,15 +68,3 @@ def handle_input_or_input_location(input_or_input_location):
                 """
                 extension = None
                 return input_or_input_location, extension
-
-class Config():
-
-    def __init__(self):
-        # Production endpoint
-        self.biolink_api_endpoint = "http://api.monarchinitiative.org/api/"
-
-        # Development endpoint - sometimes temporarily used
-        #self.biolink_api_endpoint = "http://api-dev.monarchinitiative.org/api/"
-
-    def get_biolink_api_endpoint(self):
-        return self.biolink_api_endpoint

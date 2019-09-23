@@ -6,10 +6,9 @@ import json
 
 import fire
 from typing import Iterable
-from io.ncats.translator.core import handle_input_or_input_location
+from ...core import handle_input_or_input_location
 
 DEBUG = False
-
 
 path = os.path.abspath(__file__)
 dir_path = os.path.dirname(path)

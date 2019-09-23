@@ -1,6 +1,6 @@
 from biolink.biolink_client import BioLinkWrapper
 
-from ..core import Config
+from . import Config
 
 
 class OrthologTraversal(object):
