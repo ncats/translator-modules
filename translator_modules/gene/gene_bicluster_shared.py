@@ -8,8 +8,9 @@ from collections import defaultdict
 from json import JSONDecodeError
 
 import requests
+
 from typing import Dict, List
-from translator_modules.core.identifier_resolver import fix_curies, object_id
+from identifiers.identifier_resolver import fix_curies, object_id
 
 
 class BiclusterByGene:

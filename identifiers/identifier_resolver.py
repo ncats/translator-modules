@@ -7,7 +7,7 @@ from collections import defaultdict
 
 import fire
 from typing import Iterable
-from translator_modules.core import handle_input_or_input_location
+from core import handle_input_or_input_location
 
 DEBUG = False
 

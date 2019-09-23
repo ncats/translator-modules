@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 # Workflow 2, Module 1B: Chemical Gene Interaction
-from json import JSONDecodeError
-from sys import stderr
 import fire
 import pandas as pd
 
@@ -13,8 +11,8 @@ from CTD.CTD_wrapper import CTDWrapper
 from biolink.model import ChemicalToGeneAssociation, ChemicalSubstance, Gene
 from typing import List
 
-from translator_modules.core.module_payload import Payload
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
 class ChemicalToGeneInteractions(object):

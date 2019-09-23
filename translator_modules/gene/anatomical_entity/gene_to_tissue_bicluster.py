@@ -2,7 +2,6 @@
 
 import asyncio
 import concurrent.futures
-import urllib.request
 from collections import defaultdict, Counter
 from json import JSONDecodeError
 
@@ -10,13 +9,14 @@ import fire
 import pandas as pd
 import requests
 
-from typing import Dict, List, Set
+from typing import Dict, Set
 
 from biolink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 
-from translator_modules.core.identifier_resolver import fix_curies
-from translator_modules.core.module_payload import Payload
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from identifiers.identifier_resolver import fix_curies
+
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 

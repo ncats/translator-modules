@@ -1,20 +1,17 @@
-import os.path
 from io import StringIO
 
 import json
 from pprint import pprint
 
 from abc import ABC
-from urllib.parse import urlparse
-from collections import defaultdict
 
 import pandas as pd
-import requests
 from typing import List
 
-from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
-from translator_modules.core import handle_input_or_input_location
-from translator_modules.core.identifier_resolver import object_id
+from core import handle_input_or_input_location
+from core.data_transfer_model import ModuleMetaData, ResultList
+
+from identifiers.identifier_resolver import object_id
 
 
 class Payload(ABC):

@@ -11,8 +11,8 @@ import requests
 
 from biolink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
 
-from translator_modules.core.module_payload import Payload
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 base_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_mondo_list/'
 

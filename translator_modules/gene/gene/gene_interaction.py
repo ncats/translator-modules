@@ -2,18 +2,16 @@
 
 # Workflow 2, Module 1E: Gene Interaction
 
-from pprint import pprint
-
 import fire
 import pandas as pd
 
 from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
-from translator_modules.core import Config
-from translator_modules.core.identifier_resolver import Resolver, SYMBOL
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
-from translator_modules.core.module_payload import Payload
+from core import Config
+from identifiers.identifier_resolver import Resolver, SYMBOL
+from core import ModuleMetaData, ConceptSpace
+from core import Payload
 
 
 class GeneInteractions:

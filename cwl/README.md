@@ -278,7 +278,7 @@ The most important accessor is just `get_data_frame`, returning the `Payload`'s 
 Here is an example of these modifications in `translator_modules/module1/module1a.py`. This class, `FunctionallySimilarGenes`, is defined at the bottom of the file, underneath `FunctionalSimilarity`.
 
 ```python
-from translator_modules.core.module_payload import Payload
+from core import Payload
 import fire
 
 class FunctionallySimilarGenes(Payload):
@@ -317,7 +317,7 @@ Let's say you want to do this for your own module. If exposing your own module t
 After you've ensured that your module is executable, add the following to the bottom of its script:
 
 ```python
-from translator_modules.core.module_payload import Payload
+from core import Payload
 import fire
 import pandas as pd
 

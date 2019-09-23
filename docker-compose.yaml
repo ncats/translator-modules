@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  ontology:
+    build: ontology
+    ports:
+      - "8081:5000"
+    networks:
+        - default
+
+  identifiers:
+    build: identifiers
+    ports:
+      - "8081:5000"
+    networks:
+        - default
+
+  workflow:
+    build: .
+    ports:
+      - "8081:5000"
+    networks:
+        - default
+
+networks:
+    default:
+        driver: bridge

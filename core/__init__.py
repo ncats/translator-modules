@@ -1,7 +1,6 @@
 import os.path
 from urllib.parse import urlparse
 import requests
-from translator_modules.core.data_transfer_model import ModuleMetaData, ResultList
 
 
 def handle_input_or_input_location(input_or_input_location):

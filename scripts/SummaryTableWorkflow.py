@@ -4,15 +4,10 @@
 # import logging
 # logging.basicConfig(level=logging.INFO)
 
-import requests
-from os import makedirs
-from pathlib import Path
 import argparse
 
-import pandas as pd
 import numpy as np
-import re 
-from html3.html3 import XHTML
+import re
 
 #############################################################
 # First, before loading all our analysis modules, we need
@@ -33,11 +28,8 @@ from html3.html3 import XHTML
 # Now we can import the remainder of the modules (some which call Ontobio)
 
 from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
-from translator_modules.gene.gene.functional_similarity import FunctionalSimilarity
-from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
-from translator_modules.gene.gene.gene_interaction import GeneInteractions
 
-from translator_modules.core.identifier_resolver import Resolver
+from identifiers.identifier_resolver import Resolver
 from translator_modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneBiclusters
 
 _SCRIPTNAME = 'SummaryTableWorkflow.py'

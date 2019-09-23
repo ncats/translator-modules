@@ -16,7 +16,7 @@ from translator_modules.disease.gene.disease_associated_genes import DiseaseAsso
 from translator_modules.gene.gene.functional_similarity import FunctionalSimilarity
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
-from translator_modules.core.standard_output import StandardOutput
+from core import StandardOutput
 
 _SCRIPTNAME = 'WF2_automation.py'
 

@@ -14,8 +14,8 @@ import requests
 
 from biolink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 
-from translator_modules.core.module_payload import Payload
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_tissue_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_all_col_labels/'
 

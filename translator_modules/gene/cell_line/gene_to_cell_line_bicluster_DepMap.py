@@ -7,8 +7,9 @@ import pandas as pd
 
 from biolink.model import GeneToGeneAssociation, Gene, CellLine
 
-from translator_modules.core.module_payload import Payload
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
+
 from translator_modules.gene.gene_bicluster_shared import BiclusterByGene
 
 

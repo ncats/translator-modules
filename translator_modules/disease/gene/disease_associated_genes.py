@@ -11,9 +11,9 @@ from biothings_client import get_client
 
 from biolink.model import GeneToDiseaseAssociation, Gene, Disease
 
-from translator_modules.core import Config
-from translator_modules.core.module_payload import Payload
-from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from core import Config
+from core.module_payload import Payload
+from core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
 class LookUp(object):

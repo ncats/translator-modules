@@ -3,11 +3,12 @@ from unittest import TestCase
 
 from biolink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
 
-from tests.model.test_concept import mock_concept
-from tests.model.test_identifier import mock_identifier_2
-from translator_modules.core.data_transfer_model import ResultList, ConceptSpace
+from core.data_transfer_model import ResultList, ConceptSpace
+
 from .test_attribute import mock_attribute
 from .test_result import mock_result
+from .test_concept import mock_concept
+from .test_identifier import mock_identifier_2
 
 _r = mock_result()
 _a = mock_attribute()
