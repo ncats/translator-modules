@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from biolink.model import Gene
 
-from core.data_transfer_model import ConceptSpace
+from io.ncats.translator.core.data_transfer_model import ConceptSpace
 
 mock_concept_space_id_prefixes = 'HGNC'
 mock_concept_space_category = Gene

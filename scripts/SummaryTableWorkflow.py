@@ -27,10 +27,10 @@ import re
 
 # Now we can import the remainder of the modules (some which call Ontobio)
 
-from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
+from io.ncats.translator.modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 
-from identifiers.server.identifier_resolver import Resolver
-from translator_modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneBiclusters
+from io.ncats.translator.identifiers.server import Resolver
+from io.ncats.translator.modules.gene.gene import GeneToGeneBiclusters
 
 _SCRIPTNAME = 'SummaryTableWorkflow.py'
 
@@ -320,7 +320,7 @@ def main():
         
         # second, convert hgnc identifier to ensembl
         # file is downloaded from Biomart (with gene IDs for Ensembl, HGNC, NCBI (no NCBI: prefix), Uniprot (no prefix) 
-        translation = "../translator-modules/translator_modules/core/identifier/HUGO_geneids_download_v2.txt"
+        translation = "../translator-modules/modules/core/identifier/HUGO_geneids_download_v2.txt"
         ## use headers of original file for now: "Gene stable ID" is Ensembl ID
         
         ## I'm writing out the list comprehension so I can add print statement for error

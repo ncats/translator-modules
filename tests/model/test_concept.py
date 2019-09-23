@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from core.data_transfer_model import Concept
+from io.ncats.translator.core.data_transfer_model import Concept
 from .test_attribute import mock_attribute
 from .test_identifier import mock_identifier, mock_identifier_xmlns, mock_identifier_object_id
 

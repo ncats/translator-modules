@@ -4,7 +4,6 @@
 # import logging
 # logging.basicConfig(level=logging.INFO)
 
-import requests
 from os import makedirs
 from pathlib import Path
 import argparse
@@ -12,11 +11,11 @@ import argparse
 import pandas as pd
 from html3.html3 import XHTML
 
-from translator_modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
-from translator_modules.gene.gene.functional_similarity import FunctionalSimilarity
-from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
-from translator_modules.gene.gene.gene_interaction import GeneInteractions
-from core import StandardOutput
+from io.ncats.translator.modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
+from io.ncats.translator.modules.gene.gene import FunctionalSimilarity
+from io.ncats.translator.modules.gene.gene import PhenotypeSimilarity
+from io.ncats.translator.modules.gene.gene import GeneInteractions
+from io.ncats.translator.core import StandardOutput
 
 _SCRIPTNAME = 'WF2_automation.py'
 

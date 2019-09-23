@@ -3,14 +3,14 @@ version: '3'
 services:
 
   ontology:
-    build: ontology
+    build: io/ncats/translator/ontology
     ports:
       - "8081:5000"
     networks:
         - default
 
   identifiers:
-    build: identifiers
+    build: io/ncats/translator/identifiers
     ports:
       - "8081:5000"
     networks:
