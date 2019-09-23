@@ -116,5 +116,6 @@ class FunctionallySimilarGenes(Payload):
 def main():
     fire.Fire(FunctionallySimilarGenes)
 
+
 if __name__ == '__main__':
     main()

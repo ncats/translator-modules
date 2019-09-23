@@ -32,9 +32,6 @@ class LookUp(object):
 
     def disease_geneset_lookup(self, disease_id, disease_label, query_biolink=True):
 
-        if not disease_label:
-            disease_label = disease_id
-
         disease_gene_association_results = self.blw.disease2genes(disease_id)
         input_gene_set = [self.blw.parse_association(disease_id, disease_label, association) for association in
                           disease_gene_association_results['associations']]
@@ -57,7 +54,7 @@ class LookUp(object):
 
 class DiseaseAssociatedGeneSet(Payload):
 
-    def __init__(self, disease_id, disease_name='', query_biolink=True):
+    def __init__(self, disease_identifier, disease_label='', query_biolink=True):
 
         super(DiseaseAssociatedGeneSet, self).__init__(
             module=LookUp(),
@@ -71,8 +68,14 @@ class DiseaseAssociatedGeneSet(Payload):
             )
         )
 
+        self.input_disease_identifier = disease_identifier
+        if disease_label:
+            self.input_disease_label = disease_label
+        else:
+            self.input_disease_label = disease_identifier
+
         # get genes associated with disease from Biolink
-        self.results = self.module.disease_geneset_lookup(disease_id, disease_name, query_biolink)
+        self.results = self.module.disease_geneset_lookup(disease_identifier, disease_label, query_biolink)
 
         if not self.results.empty:
             self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
