@@ -225,3 +225,28 @@ III.  Finally, call the model-associated method - similarity() (for the Function
 or gene_interactions() (for GeneInteractions()) - with the gene list from III with any other applicable parameters.
 
 Repeat steps II and III above for each disease you wish to analyze.
+
+# Running the Translator Module System with Docker (Compose)
+
+Use [Docker Compose](https://docs.docker.com/compose/) to build and run the application. 
+Before using compose in the project, you should first copy the configuration file:
+
+```
+cp docker-compose.yaml-template docker-compose.yaml
+```
+
+Then type the following into the terminal::
+
+```
+cd translator-modules
+docker-compose build
+docker-compose up
+```
+
+**Note:** If the docker-compose commands are is giving you trouble, try running them as the system administrator with 
+the `sudo` command. Remember, though, that if you are running  your commands as 'sudo', then depending on how your 
+OS instance configures sudo, in some cases, $HOME may actually be '/root' or it may otherwise still be in your 
+normal user home.
+
+The REST API should now be running at http://localhost: on ports 8081 and 8082, the OpenAPI web interface at 
+http://localhost:<port#>>/api/ui. You can open your browser with these addresses to see these applications in action.
