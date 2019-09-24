@@ -12,14 +12,12 @@ services:
   identifiers:
     build: ncats/translator/identifiers
     ports:
-      - "8081:5000"
+      - "8082:5000"
     networks:
         - default
 
   workflow:
     build: .
-    ports:
-      - "8081:5000"
     networks:
         - default
 
