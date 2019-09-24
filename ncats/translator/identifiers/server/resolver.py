@@ -130,10 +130,10 @@ class Resolver:
 
     def _read_identifiers_in_flatfile(self, identifiers, delimiter=',', source=None):
         if DEBUG:
-            print("_read_identifiers_in_flatfile")
+            print("identifiers.client._read_identifiers_in_flatfile()")
 
         if not source:
-            raise RuntimeError("Resolver._read_identifiers_in_flatfile ERROR: json file 'namespece' tag unspecified?")
+            raise RuntimeError("Resolver._read_identifiers_in_flatfile ERROR: json file 'source' tag unspecified?")
 
         with open(identifiers) as id_file:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
@@ -150,7 +150,7 @@ class Resolver:
             print("translate_one")
 
         if not target:
-            raise RuntimeError("Resolver.translate_one() ERROR: json file 'identifier_range' tag unspecified?")
+            raise RuntimeError("Resolver.translate_one() ERROR: json file 'target' tag unspecified?")
 
         # find index of source
         for index, idr in enumerate(self.identifier_records):

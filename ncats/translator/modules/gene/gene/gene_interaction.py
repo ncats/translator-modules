@@ -9,7 +9,7 @@ from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
 from ncats.translator.identifiers import SYMBOL
-from ncats.translator.identifiers import Resolver
+from ncats.translator.identifiers.client.resolver import Resolver as cr
 
 from ncats.translator.core import Config
 from ncats.translator.core.module_payload import Payload
@@ -27,15 +27,16 @@ class GeneInteractions:
         annotated_gene_set = []
         for gene in gene_records.to_dict(orient='records'):
             if not gene['hit_symbol']:
-                gene['hit_symbol'] = \
-                    Resolver.get_the_resolver(). \
-                        translate_one(source=gene['hit_id'], target=SYMBOL)
+                hit_id, hit_symbol = \
+                    cr.get_the_resolver(). \
+                    translate_one(source=gene['hit_id'], target=SYMBOL)
+                gene['hit_symbol'] = hit_symbol
 
             annotated_gene_set.append({
-                'input_id': gene['hit_id'],
-                'sim_input_curie': gene['hit_id'],
-                'input_symbol': gene['hit_symbol']
-            })
+                    'input_id': gene['hit_id'],
+                    'sim_input_curie': gene['hit_id'],
+                    'input_symbol': gene['hit_symbol']
+                })
         return annotated_gene_set
 
     def get_interactions(self, input_gene_set, threshold):
@@ -90,8 +91,6 @@ class GeneInteractionSet(Payload):
         )
 
         input_gene_data_frame = self.get_input_data_frame(input_genes)
-
-        # TODO: add schema check
 
         self.results = self.module.get_interactions(input_gene_data_frame, threshold)
 
