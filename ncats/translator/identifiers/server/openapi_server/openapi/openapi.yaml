@@ -1,0 +1,317 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: richard@starinformatics.com
+  description: NCATS Translator Modules Identifier Resolution Server
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: NCATS Translator Modules Identifier Resolution Server
+  version: 0.0.1
+servers:
+- description: NCATS Translator Modules Identifier Resolution Server running in a
+    local Docker container
+  url: http://identifiers
+tags:
+- description: Secured Admin-only calls to configure resolution service
+  name: admins
+- description: |
+    Operations available to public module users of identifier resolution
+  name: public
+paths:
+  /identifier_list:
+    post:
+      description: |
+        Post a list of source identifiers for subsequent translation
+      operationId: identifier_list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+              - HGNC:11168
+              - HGNC:11368
+              - HGNC:11821
+              - HGNC:1482
+              items:
+                type: string
+              type: array
+        description: |
+          Identifier list to post on server (for translation)
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+          description: |
+            Identification of identifier list created on server
+      summary: post a list of identifiers
+      tags:
+      - public
+      x-openapi-router-controller: openapi_server.controllers.public_controller
+  /identifier_map:
+    post:
+      description: |
+        Adds an identifier map to the Identifier Resolver
+      operationId: load_identifier_map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierMap'
+        description: Identifier map to be uploaded
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: |
+            Identification of identifier map uploaded to server
+        400:
+          description: invalid input, object invalid
+        409:
+          description: Identifier map already exists
+      summary: Identifier Resolver map initial creation
+      tags:
+      - admins
+      x-openapi-router-controller: openapi_server.controllers.admins_controller
+    put:
+      description: |
+        Updates identifier map in the Identifier Resolver
+      operationId: update_identifier_map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierMap'
+        description: Identifier map to be updated
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: |
+            Identification of identifier map updated on server
+        400:
+          description: invalid input, object invalid
+      summary: Identifier Resolver map update
+      tags:
+      - admins
+      x-openapi-router-controller: openapi_server.controllers.admins_controller
+  /list_identifier_keys:
+    get:
+      description: |
+        Returns list of valid key strings for source and target parameters in other API calls
+      operationId: list_identifier_keys
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierMapKeys'
+          description: |
+            list of valid key strings for identifier sources and targets
+      summary: list of valid key strings for identifier sources and targets
+      tags:
+      - public
+      x-openapi-router-controller: openapi_server.controllers.public_controller
+  /translate:
+    get:
+      description: |
+        Translates a previously posted list of identifiers from source namespace to a specified target namespace
+      operationId: translate
+      parameters:
+      - description: |
+          UUID from identifier_list post of source identifiers
+        explode: true
+        in: query
+        name: list_identifier
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: |
+          Target namespace for mapping of source identifiers
+        explode: true
+        in: query
+        name: target_namespace
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/IdentifierMapping'
+                type: array
+          description: translation successful
+        400:
+          description: bad input target parameter
+      summary: |
+        Translates list of identifiers from source to target namespace
+      tags:
+      - public
+      x-openapi-router-controller: openapi_server.controllers.public_controller
+  /translate_one:
+    get:
+      description: |
+        Returns mapping of identifier source to its equivalent identifier in the specified target namespace
+      operationId: translate_one
+      parameters:
+      - description: |
+          single source identifier to be mapped onto the target
+        explode: true
+        in: query
+        name: source_identifier
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: |
+          target namespace for the mapping of the source
+        explode: true
+        in: query
+        name: target_namespace
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierMapping'
+          description: translation successful
+        400:
+          description: bad input target parameter
+      summary: translates one identifier source to target namespace
+      tags:
+      - public
+      x-openapi-router-controller: openapi_server.controllers.public_controller
+components:
+  schemas:
+    IdentifierMapping:
+      example:
+        target_identifier: A1CF
+        source_identifier: HGNC:24086
+        target_namespace: Approved_Symbol
+      properties:
+        source_identifier:
+          example: HGNC:24086
+          type: string
+        target_namespace:
+          example: Approved_Symbol
+          type: string
+        target_identifier:
+          example: A1CF
+          type: string
+      required:
+      - source_identifier
+      - target_identifier
+      - target_namespace
+      type: object
+    IdentifierMapKeys:
+      description: ordered list of identifier map (header/column) keys
+      example:
+      - HGNC_ID
+      - Approved_Symbol
+      - Approved_Name
+      - Refseq_ID
+      - Ensembl_Gene_ID
+      - NCBI_Gene_ID
+      items:
+        type: string
+      type: array
+    IdentifierMapEntry:
+      description: |
+        Identifier mappings for a given identifier, corresponding to each key in the associated (header/column) keys
+      example:
+      - HGNC:24086
+      - A1CF
+      - APOBEC1 complementation factor
+      - NM_014576
+      - ENSG00000148584
+      - "29974"
+      items:
+        type: string
+      type: array
+    QueryId:
+      example:
+        uuid: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        uuid:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+      type: object
+    IdentifierMap:
+      example:
+        records:
+        - - HGNC:24086
+          - A1CF
+          - APOBEC1 complementation factor
+          - NM_014576
+          - ENSG00000148584
+          - "29974"
+        - - HGNC:24086
+          - A1CF
+          - APOBEC1 complementation factor
+          - NM_014576
+          - ENSG00000148584
+          - "29974"
+        keys:
+        - HGNC_ID
+        - Approved_Symbol
+        - Approved_Name
+        - Refseq_ID
+        - Ensembl_Gene_ID
+        - NCBI_Gene_ID
+        map_identifier:
+          uuid: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        map_identifier:
+          $ref: '#/components/schemas/QueryId'
+        keys:
+          description: ordered list of identifier map (header/column) keys
+          example:
+          - HGNC_ID
+          - Approved_Symbol
+          - Approved_Name
+          - Refseq_ID
+          - Ensembl_Gene_ID
+          - NCBI_Gene_ID
+          items:
+            type: string
+          type: array
+        records:
+          description: |
+            list of identifier map entries for every identifier registered in the map
+          items:
+            $ref: '#/components/schemas/IdentifierMapEntry'
+          type: array
+      required:
+      - keys
+      - map_identifier
+      - records
+      type: object
+    inline_response_201:
+      example:
+        list_identifier:
+          uuid: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        list_identifier:
+          $ref: '#/components/schemas/QueryId'
+    inline_response_200:
+      example:
+        map_identifier:
+          uuid: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        map_identifier:
+          $ref: '#/components/schemas/QueryId'

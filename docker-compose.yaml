@@ -2,19 +2,19 @@ version: '3'
 
 services:
 
-  ontology:
-    build: ncats/translator/ontology
+  identifiers:
+    build: ncats/translator/identifiers/server/openapi_server
     ports:
-      - "8081:5000"
+      - "8081:8081"
     networks:
         - default
 
-  identifiers:
-    build: ncats/translator/identifiers
-    ports:
-      - "8082:5000"
-    networks:
-        - default
+#  ontology:
+#    build: ncats/translator/ontology/server/openapi_server
+#    ports:
+#      - "8081:5000"
+#    networks:
+#        - default
 
   workflow:
     build: .

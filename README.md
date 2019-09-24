@@ -285,32 +285,36 @@ openapi-generator validate (-i | --input-spec) <spec file>
 ```
 
 If it passes muster, then  to recreate the Python Flask *server* stubs, type the following 
-(from the root project directory):
+(run from the root project directory):
 
 ```bash
-openapi-generator   --generator-name python-flask \
-                    --input-spec ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
-                    --packageName ncats.translator.identifiers.server \
-                    --projectName identifier-resolver-server \
-                    —-packageVersion 0.0.1 \
-                    --packageUrl https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers \
-                    --model-package ncats.translator.identifiers.model.server \
-                    --serverPort 8081 \
-                    --output ncats/translator/identifiers/server
+cd translator-modules
+openapi-generator generate --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
+                    --model-package=model \
+                    --output=ncats/translator/identifiers/server \
+                    --generator-name=python-flask \
+                    --additional-properties=\
+--packageName=ncats.translator.identifiers.server,\
+--projectName=identifier-resolver-server,\
+—-packageVersion=0.0.1,\
+--packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers,\
+--serverPort=8081
 ```
 
 To recreate the matching *client* Python access stubs, type something the following 
 (from the root project directory):
 
 ```bash
-openapi-generator   --generator-name python \
-                    --input-spec ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
-                    --packageName ncats.translator.identifiers.client \
-                    --projectName identifier-resolver-client \
-                    —-packageVersion 0.0.1 \
-                    --packageUrl https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers \
-                    --model-package ncats.translator.identifiers.model.client \
-                    --output ncats/translator/identifiers/client
+cd translator-modules
+openapi-generator generate  --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
+                    --model-package=model \
+                    --output=ncats/translator/identifiers/client \
+                    --generator-name=python \
+                    --additional-properties=\
+--packageName=ncats.translator.identifiers.client \
+--projectName=identifier-resolver-client \
+—-packageVersion=0.0.1 \
+--packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers
 ```
 
 Consult the [OpenAPI 3.0 'generate' command usage](https://openapi-generator.tech/docs/usage#generate) 
