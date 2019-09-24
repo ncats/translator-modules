@@ -46,7 +46,7 @@ class GeneToChemicalInteractions(object):
                 chemical_hits.append({
                     'input_id': 'NCBIGene:' + chem['GeneID'],
                     'input_symbol': chem['GeneSymbol'],
-                    'hit_id': chem['ChemicalID'],
+                    'hit_id': "CTD:"+chem['ChemicalID'],
                     'hit_symbol': chem['ChemicalName'],
                     'score': 1,  # score here is simply a 'hit' of one
                 })

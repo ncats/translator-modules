@@ -7,7 +7,7 @@ import pandas as pd
 
 from biolink.model import GeneToGeneAssociation, Gene
 
-from ncats import Payload
+from ncats.translator.core.module_payload import Payload
 from ncats.translator.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 from ncats.translator.modules.gene.gene_bicluster_shared import BiclusterByGene

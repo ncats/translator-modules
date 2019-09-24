@@ -36,7 +36,7 @@ class ChemicalToGeneInteractions(object):
             chemical_gene_interactions = self.get_genes_by_chemical_id(chemical_id=chem_id)
             for chemical_gene_hit in chemical_gene_interactions:
                 gene_list.append({
-                    'input_id': chemical_gene_hit['ChemicalID'],
+                    'input_id': "CTD:"+chemical_gene_hit['ChemicalID'],
                     'input_symbol': chemical_gene_hit['ChemicalName'],
                     'hit_id': 'NCBIGene:'+chemical_gene_hit['GeneID'],
                     'hit_symbol': chemical_gene_hit['GeneSymbol'],
