@@ -289,13 +289,13 @@ If it passes muster, then  to recreate the Python Flask *server* stubs, type the
 
 ```bash
 openapi-generator   --generator-name python-flask \
-                    --input-spec ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml)
+                    --input-spec ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
                     --packageName ncats.translator.identifiers.server \
                     --projectName identifier-resolver-server \
                     —-packageVersion 0.0.1 \
                     --packageUrl https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers \
-                    --model-package ncats.translator.identifiers.model.server
-                    --serverPort 8081
+                    --model-package ncats.translator.identifiers.model.server \
+                    --serverPort 8081 \
                     --output ncats/translator/identifiers/server
 ```
 
@@ -304,12 +304,12 @@ To recreate the matching *client* Python access stubs, type something the follow
 
 ```bash
 openapi-generator   --generator-name python \
-                    --input-spec ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml)
+                    --input-spec ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
                     --packageName ncats.translator.identifiers.client \
                     --projectName identifier-resolver-client \
                     —-packageVersion 0.0.1 \
                     --packageUrl https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers \
-                    --model-package ncats.translator.identifiers.model.client
+                    --model-package ncats.translator.identifiers.model.client \
                     --output ncats/translator/identifiers/client
 ```
 
