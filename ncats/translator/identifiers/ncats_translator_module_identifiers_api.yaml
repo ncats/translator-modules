@@ -1,0 +1,263 @@
+openapi: 3.0.0
+servers:
+  - description: NCATS Translator Modules Identifier Resolution Server running in a local Docker container
+    url: http://identifiers
+info:
+  description: NCATS Translator Modules Identifier Resolution Server
+  version: "0.0.1"
+  title: NCATS Translator Modules Identifier Resolution Server
+  contact:
+    email: richard@starinformatics.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls to configure resolution service
+  - name: public
+    description: >
+      Operations available to public module users of identifier resolution
+paths:
+  /list_identifier_keys:
+    get:
+      tags:
+        - public
+      summary: list of valid key strings for identifier sources and targets
+      operationId: list_identifier_keys
+      description: >
+        Returns list of valid key strings for source and target
+        parameters in other API calls
+      responses:
+        '200':
+          description: >
+            list of valid key strings for identifier sources and targets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierMapKeys'
+  /translate_one:
+    get:
+      tags:
+        - public
+      summary: translates one identifier source to target namespace
+      operationId: translate_one
+      description: >
+        Returns mapping of identifier source to its equivalent identifier
+        in the specified target namespace
+      parameters:
+        - in: query
+          name: source_identifier
+          description: >
+            single source identifier to be mapped onto the target
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: target_namespace
+          description: >
+            target namespace for the mapping of the source
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: translation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierMapping'
+        '400':
+          description: bad input target parameter
+  /identifier_list:
+    post:
+      tags:
+        - public
+      summary: post a list of identifiers
+      operationId: identifier_list
+      description: >
+        Post a list of source identifiers for subsequent translation
+      responses:
+        '201':
+          description: >
+            Identification of identifier list created on server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list_identifier:
+                    $ref: '#/components/schemas/QueryId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example:
+                - "HGNC:11168"
+                - "HGNC:11368"
+                - "HGNC:11821"
+                - "HGNC:1482"
+        description: >
+          Identifier list to post on server (for translation)
+  /translate:
+    get:
+      tags:
+        - public
+      summary: >
+        Translates list of identifiers from source to target namespace
+      operationId: translate
+      description: >
+        Translates a previously posted list of identifiers from
+        source namespace to a specified target namespace
+      parameters:
+        - in: query
+          name: list_identifier
+          description: >
+            UUID from identifier_list post of source identifiers
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: target_namespace
+          description: >
+            Target namespace for mapping of source identifiers
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: translation successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentifierMapping'
+        '400':
+          description: bad input target parameter
+  /identifier_map:
+    post:
+      tags:
+        - admins
+      summary: Identifier Resolver map initial creation
+      operationId: load_identifier_map
+      description: >
+        Adds an identifier map to the Identifier Resolver
+      responses:
+        '201':
+          description: >
+            Identification of identifier map uploaded to server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  map_identifier:
+                    $ref: '#/components/schemas/QueryId'
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: Identifier map already exists
+      requestBody:
+        description: Identifier map to be uploaded
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierMap'
+    put:
+      tags:
+        - admins
+      summary: Identifier Resolver map update
+      operationId: update_identifier_map
+      description: >
+        Updates identifier map in the Identifier Resolver
+      responses:
+        '200':
+          description: >
+            Identification of identifier map updated on server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  map_identifier:
+                    $ref: '#/components/schemas/QueryId'
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        description: Identifier map to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierMap'
+components:
+  schemas:
+    IdentifierMapping:
+      type: object
+      required:
+        - source_identifier
+        - target_namespace
+        - target_identifier
+      properties:
+        source_identifier:
+          type: string
+          example: "HGNC:24086"
+        target_namespace:
+          type: string
+          example: "Approved_Symbol"
+        target_identifier:
+          type: string
+          example: "A1CF"
+    IdentifierMapKeys:
+      type: array
+      description: ordered list of identifier map (header/column) keys
+      items:
+        type: string
+      example:
+        - "HGNC_ID"
+        - "Approved_Symbol"
+        - "Approved_Name"
+        - "Refseq_ID"
+        - "Ensembl_Gene_ID"
+        - "NCBI_Gene_ID"
+    IdentifierMapEntry:
+      type: array
+      description: >
+        Identifier mappings for a given identifier, corresponding
+        to each key in the associated (header/column) keys
+      items:
+        type: string
+      example:
+        - "HGNC:24086"
+        - "A1CF"
+        - "APOBEC1 complementation factor"
+        - "NM_014576"
+        - "ENSG00000148584"
+        - "29974"
+    QueryId:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example:  "123e4567-e89b-12d3-a456-426655440000"
+    IdentifierMap:
+      type: object
+      required:
+        - map_identifier
+        - keys
+        - records
+      properties:
+        map_identifier:
+          $ref: '#/components/schemas/QueryId'
+        keys:
+          $ref: '#/components/schemas/IdentifierMapKeys'
+        records:
+          type: array
+          description: >
+            list of identifier map entries for every
+            identifier registered in the map
+          items:
+            $ref: '#/components/schemas/IdentifierMapEntry'

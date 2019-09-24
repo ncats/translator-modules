@@ -72,7 +72,7 @@ class Resolver:
             else:
                 raise RuntimeError("Resolver() ERROR: unrecognized 'identifier_map' specification?")
 
-        self.input_identifiers = None
+        self.input_identifiers: List[str] = None
 
     def list_identifier_keys(self) -> List[str]:
         return list(self.identifier_map.keys())
@@ -102,9 +102,6 @@ class Resolver:
         :return:
         """
         input_str, extension = handle_input_or_input_location(identifiers)
-
-        self.input_identifiers: list
-        # NB: push this out to the handle_input_or_input_location function?
 
         if extension == "csv":
             self._read_identifiers_in_flatfile(identifiers, source=source)
@@ -143,7 +140,7 @@ class Resolver:
         """
         Lookup translation of a single input identifier in the (previously loaded) identifier map
         :param source: identifier to be translated
-        :param target: target namespace from which identifier is to be obtained
+        :param target: target namespace key from which identifier is to be obtained
         :return: mapping of input onto target namespace (empty string if no mapping available)
         """
         if DEBUG:

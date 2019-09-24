@@ -88,7 +88,7 @@ class Resolver:
         return self.client.translate_one(source, target)
 
     def translate(self, target=None):
-        self.client.input_identifiers =  self.input_identifiers
+        self.client.input_identifiers = self.input_identifiers
         return self.client.translate(target)
 
 
