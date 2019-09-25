@@ -15,16 +15,16 @@ from __future__ import absolute_import
 
 import unittest
 
-import openapi_client
-from openapi_client.api.public_api import PublicApi  # noqa: E501
-from openapi_client.rest import ApiException
+import ncats.translator.identifiers.client.openapi_client
+from ncats.translator.identifiers.client.openapi_client.api.public_api import PublicApi  # noqa: E501
+from ncats.translator.identifiers.client.openapi_client.rest import ApiException
 
 
 class TestPublicApi(unittest.TestCase):
     """PublicApi unit test stubs"""
 
     def setUp(self):
-        self.api = openapi_client.api.public_api.PublicApi()  # noqa: E501
+        self.api = PublicApi()  # noqa: E501
 
     def tearDown(self):
         pass

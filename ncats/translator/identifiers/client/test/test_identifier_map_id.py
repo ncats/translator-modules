@@ -15,9 +15,9 @@ from __future__ import absolute_import
 
 import unittest
 
-import openapi_client
-from openapi_client.model.identifier_map_id import IdentifierMapId  # noqa: E501
-from openapi_client.rest import ApiException
+import ncats.translator.identifiers.client.openapi_client
+from ncats.translator.identifiers.client.openapi_client.model.identifier_map_id import IdentifierMapId  # noqa: E501
+from ncats.translator.identifiers.client.openapi_client.rest import ApiException
 
 
 class TestIdentifierMapId(unittest.TestCase):

@@ -18,8 +18,8 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from openapi_client.api_client import ApiClient
-from openapi_client.exceptions import (
+from ncats.translator.identifiers.client.openapi_client.api_client import ApiClient
+from ncats.translator.identifiers.client.openapi_client.exceptions import (
     ApiTypeError,
     ApiValueError
 )
