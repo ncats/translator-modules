@@ -15,7 +15,7 @@
     - [For Docker Compose System Services](#docker-compose-system-services)
         - [Identifiers Resolution Service](#identifiers-resolution-service)
         - [Ontology Lookup Service](#ontology-lookup-service)
-    - [Modification of System Service APIs or Addition of New Services](#modification-of-system-service-apis-or-addition-of-new-services)
+    - [Developer Modification of System Service APIs or Addition of New Services](#developer-modification-of-system-service-apis-or-addition-of-new-services)
 
 # Translator Modules
 
@@ -274,13 +274,13 @@ quick local web service access for the module to needed (meta-)data promises to 
 
 More details about these client/server subsystems, as they are developed, will be mentioned here.
 
-### Identifiers Resolution Service
+#### Identifiers Resolution Service
 
 The [Identifiers Resolution Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers) 
 provides an API for translating concept identifiers from one namespace to another.
 The initial implementation focuses on gene identifiers (e.g. HGNC identifiers to gene symbols, Ensembl, NCBIGene, etc.)
 
-### Ontology Lookup Service
+#### Ontology Lookup Service
 
 This [Ontology Lookup Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/ontology) 
 is still under development.

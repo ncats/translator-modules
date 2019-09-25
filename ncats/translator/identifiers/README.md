@@ -66,7 +66,7 @@ Which you can now manipulate in other programs.
 The Identifiers Resolution is also run as a REST Web Service, either standalone or within a Docker Container.
 
 Refer to the Identifiers Resolution
- [Pythone Flask server](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/server)
+ [Python Flask server](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/server)
  implementation documentation and the corresponding
 [Python client](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/client) is
  documentation.  Note that the service is based on code generation from a common 
