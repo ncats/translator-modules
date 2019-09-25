@@ -11,6 +11,7 @@ from ncats.translator.identifiers.server.openapi_server.test import BaseTestCase
 class TestAdminsController(BaseTestCase):
     """AdminsController integration test stubs"""
 
+    @unittest.skip("Admin interfaces not yet implemented")
     def test_load_identifier_map(self):
         """Test case for load_identifier_map
 
@@ -36,6 +37,7 @@ class TestAdminsController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    @unittest.skip("Admin interfaces not yet implemented")
     def test_update_identifier_map(self):
         """Test case for update_identifier_map
 

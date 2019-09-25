@@ -36,6 +36,7 @@ paths:
               items:
                 type: string
               type: array
+              x-body-name: request_body
         description: |
           Identifier list to post on server (for translation)
       responses:
@@ -49,7 +50,7 @@ paths:
       summary: post a list of identifiers
       tags:
       - public
-      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
+      x-openapi-router-controller: openapi_server.controllers.public_controller
   /identifier_map:
     post:
       description: |
@@ -76,7 +77,7 @@ paths:
       summary: Identifier Resolver map initial creation
       tags:
       - admins
-      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.admins_controller
+      x-openapi-router-controller: openapi_server.controllers.admins_controller
     put:
       description: |
         Updates identifier map in the Identifier Resolver
@@ -100,7 +101,7 @@ paths:
       summary: Identifier Resolver map update
       tags:
       - admins
-      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.admins_controller
+      x-openapi-router-controller: openapi_server.controllers.admins_controller
   /list_identifier_keys:
     get:
       description: |
@@ -117,7 +118,7 @@ paths:
       summary: list of valid key strings for identifier sources and targets
       tags:
       - public
-      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
+      x-openapi-router-controller: openapi_server.controllers.public_controller
   /translate:
     get:
       description: |
@@ -157,7 +158,7 @@ paths:
         Translates list of identifiers from source to target namespace
       tags:
       - public
-      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
+      x-openapi-router-controller: openapi_server.controllers.public_controller
   /translate_one:
     get:
       description: |
@@ -194,7 +195,7 @@ paths:
       summary: translates one identifier source to target namespace
       tags:
       - public
-      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
+      x-openapi-router-controller: openapi_server.controllers.public_controller
 components:
   schemas:
     IdentifierMapping:

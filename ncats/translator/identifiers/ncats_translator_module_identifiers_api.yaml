@@ -92,6 +92,7 @@ paths:
         content:
           application/json:
             schema:
+              x-body-name: request_body
               type: array
               items:
                 type: string
@@ -167,6 +168,7 @@ paths:
         content:
           application/json:
             schema:
+              x-body-name: request_body
               $ref: '#/components/schemas/IdentifierMap'
     put:
       tags:
@@ -194,6 +196,7 @@ paths:
         content:
           application/json:
             schema:
+              x-body-name: request_body
               $ref: '#/components/schemas/IdentifierMap'
 components:
   schemas:

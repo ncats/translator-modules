@@ -21,7 +21,7 @@ from .controller_impl import (
 _identifier_list_cache = {}
 
 
-def handle_identifier_list(request_body) -> IdentifierListId:
+def handle_identifier_list(request_body: List[str]) -> IdentifierListId:
     """post a list of identifiers
 
     Post a list of source identifiers for subsequent translation  # noqa: E501
@@ -67,7 +67,7 @@ def handle_list_identifier_keys() -> List[str]:
     return keys
 
 
-def handle_translate(list_identifier, target_namespace) -> List[IdentifierMapping]:
+def handle_translate(list_identifier: str, target_namespace:  str) -> List[IdentifierMapping]:
     """Translates list of identifiers from source to target namespace
 
     Translates a previously posted list of identifiers from source namespace to a specified target namespace  # noqa: E501
@@ -113,7 +113,7 @@ def handle_translate(list_identifier, target_namespace) -> List[IdentifierMappin
     return identifier_mappings
 
 
-def handle_translate_one(source_identifier, target_namespace) -> IdentifierMapping:
+def handle_translate_one(source_identifier: str, target_namespace: str) -> IdentifierMapping:
     """translates one identifier source to target namespace
 
     Returns mapping of identifier source to its equivalent identifier in the specified target namespace  # noqa: E501
