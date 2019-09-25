@@ -296,7 +296,7 @@ openapi-generator generate --input-spec=ncats/translator/identifiers/ncats_trans
                     --additional-properties=\
 --packageName=ncats.translator.identifiers.server,\
 --projectName=identifier-resolver-server,\
-—-packageVersion=0.0.1,\
+—-packageVersion="0.0.1",\
 --packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers,\
 --serverPort=8081
 ```
@@ -311,9 +311,9 @@ openapi-generator generate  --input-spec=ncats/translator/identifiers/ncats_tran
                     --output=ncats/translator/identifiers/client \
                     --generator-name=python \
                     --additional-properties=\
---packageName=ncats.translator.identifiers.client \
---projectName=identifier-resolver-client \
-—-packageVersion=0.0.1 \
+--packageName=ncats.translator.identifiers.client,\
+--projectName=identifier-resolver-client,\
+—-packageVersion="0.0.1",\
 --packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers
 ```
 

@@ -84,6 +84,7 @@ paths:
             application/json:
               schema:
                 type: object
+                title: IdentifierListId
                 properties:
                   list_identifier:
                     $ref: '#/components/schemas/QueryId'
@@ -153,6 +154,7 @@ paths:
             application/json:
               schema:
                 type: object
+                title: IdentifierMapId
                 properties:
                   map_identifier:
                     $ref: '#/components/schemas/QueryId'
@@ -181,6 +183,7 @@ paths:
             application/json:
               schema:
                 type: object
+                title: IdentifierMapId
                 properties:
                   map_identifier:
                     $ref: '#/components/schemas/QueryId'

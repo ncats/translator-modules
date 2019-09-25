@@ -43,13 +43,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_201'
+                $ref: '#/components/schemas/IdentifierListId'
           description: |
             Identification of identifier list created on server
       summary: post a list of identifiers
       tags:
       - public
-      x-openapi-router-controller: openapi_server.controllers.public_controller
+      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
   /identifier_map:
     post:
       description: |
@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                $ref: '#/components/schemas/IdentifierMapId'
           description: |
             Identification of identifier map uploaded to server
         400:
@@ -76,7 +76,7 @@ paths:
       summary: Identifier Resolver map initial creation
       tags:
       - admins
-      x-openapi-router-controller: openapi_server.controllers.admins_controller
+      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.admins_controller
     put:
       description: |
         Updates identifier map in the Identifier Resolver
@@ -92,7 +92,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                $ref: '#/components/schemas/IdentifierMapId'
           description: |
             Identification of identifier map updated on server
         400:
@@ -100,7 +100,7 @@ paths:
       summary: Identifier Resolver map update
       tags:
       - admins
-      x-openapi-router-controller: openapi_server.controllers.admins_controller
+      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.admins_controller
   /list_identifier_keys:
     get:
       description: |
@@ -117,7 +117,7 @@ paths:
       summary: list of valid key strings for identifier sources and targets
       tags:
       - public
-      x-openapi-router-controller: openapi_server.controllers.public_controller
+      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
   /translate:
     get:
       description: |
@@ -157,7 +157,7 @@ paths:
         Translates list of identifiers from source to target namespace
       tags:
       - public
-      x-openapi-router-controller: openapi_server.controllers.public_controller
+      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
   /translate_one:
     get:
       description: |
@@ -194,7 +194,7 @@ paths:
       summary: translates one identifier source to target namespace
       tags:
       - public
-      x-openapi-router-controller: openapi_server.controllers.public_controller
+      x-openapi-router-controller: ncats.translator.identifiers.server.openapi_server.controllers.public_controller
 components:
   schemas:
     IdentifierMapping:
@@ -301,14 +301,14 @@ components:
       - map_identifier
       - records
       type: object
-    inline_response_201:
+    IdentifierListId:
       example:
         list_identifier:
           uuid: 123e4567-e89b-12d3-a456-426655440000
       properties:
         list_identifier:
           $ref: '#/components/schemas/QueryId'
-    inline_response_200:
+    IdentifierMapId:
       example:
         map_identifier:
           uuid: 123e4567-e89b-12d3-a456-426655440000

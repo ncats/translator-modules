@@ -6,6 +6,9 @@ import json
 
 import fire
 from typing import Iterable, List
+
+from ncats.translator.identifiers import IdentifierResolverException
+
 from ...core import handle_input_or_input_location
 
 DEBUG = False
@@ -37,7 +40,9 @@ class Resolver:
         """
 
         if not identifier_map:
-            raise RuntimeError("Resolver() ERROR: 'identifier_map' unspecified - don't know what to translate?")
+            raise IdentifierResolverException(
+                "Resolver() ERROR: 'identifier_map' unspecified - don't know what to translate?"
+            )
 
         identifier_map_str, extension = handle_input_or_input_location(identifier_map)
 
@@ -61,7 +66,9 @@ class Resolver:
 
             # Not yet sure how to interpret a single string identifier map?
             if type(identifier_map) is str:
-                raise RuntimeError("Resolver() ERROR: unrecognized 'identifier_map' specification: "+identifier_map+"?")
+                raise IdentifierResolverException(
+                    "Resolver() ERROR: unrecognized 'identifier_map' specification: "+identifier_map+"?"
+                )
                 # self.identifier_map = identifier_map_str
 
             elif type(identifier_map) is Iterable:
@@ -70,7 +77,7 @@ class Resolver:
                 self.identifier_records = [entry for entry in identifier_map]
 
             else:
-                raise RuntimeError("Resolver() ERROR: unrecognized 'identifier_map' specification?")
+                raise IdentifierResolverException("Resolver() ERROR: unrecognized 'identifier_map' specification?")
 
         self.input_identifiers: List[str] = None
 
@@ -112,7 +119,9 @@ class Resolver:
         elif extension == "json":
 
             if not source:
-                raise RuntimeError("Resolver.load_identifiers ERROR: json file 'domain' tag unspecified?")
+                raise IdentifierResolverException(
+                    "Resolver.load_identifiers ERROR: json file 'domain' tag unspecified?"
+                )
 
             with open(identifiers) as id_file:
                 input_json = json.loads(id_file)
@@ -125,12 +134,17 @@ class Resolver:
 
         return self
 
+    def directly_load_identifiers(self, identifiers):
+        self.input_identifiers = [entry for entry in identifiers]
+
     def _read_identifiers_in_flatfile(self, identifiers, delimiter=',', source=None):
         if DEBUG:
             print("identifiers.client._read_identifiers_in_flatfile()")
 
         if not source:
-            raise RuntimeError("Resolver._read_identifiers_in_flatfile ERROR: json file 'source' tag unspecified?")
+            raise IdentifierResolverException(
+                "Resolver._read_identifiers_in_flatfile ERROR: json file 'source' tag unspecified?"
+            )
 
         with open(identifiers) as id_file:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
@@ -147,7 +161,7 @@ class Resolver:
             print("translate_one")
 
         if not target:
-            raise RuntimeError("Resolver.translate_one() ERROR: json file 'target' tag unspecified?")
+            raise IdentifierResolverException("Resolver.translate_one() ERROR: json file 'target' tag unspecified?")
 
         # find index of source
         for index, idr in enumerate(self.identifier_records):
@@ -166,7 +180,7 @@ class Resolver:
             print("translate")
 
         if not target:
-            raise RuntimeError("Resolver.translate ERROR: json file 'target' tag unspecified?")
+            raise IdentifierResolverException("Resolver.translate ERROR: json file 'target' tag unspecified?")
 
         # The second entry of the tuple will be an empty string ''
         # if output/converted_id isn't found in identifier_map dict

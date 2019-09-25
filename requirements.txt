@@ -24,4 +24,4 @@ ontobio
 biolink-model
 biolinkml
 biothings_client
-fire
+fire==0.2.1

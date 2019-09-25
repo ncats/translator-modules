@@ -8,6 +8,10 @@ CHEMICAL_SUBSTANCE = 'chemical substance'
 SYMBOL = 'Approved symbol'
 
 
+class IdentifierResolverException(RuntimeError):
+    pass
+
+
 def fix_curies(identifiers, prefix=''):
     """
     Adds a suitable XMLNS prefix to (an) identifier(s) known to
