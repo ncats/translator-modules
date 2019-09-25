@@ -8,14 +8,17 @@ is an example of building a OpenAPI-enabled Flask server.
 This example uses the [Connexion](https://github.com/zalando/connexion) library on top of Flask.
 
 ## Requirements
-Python 3.5.2+
+
+Python 3.7:  the binary for python is assumed to be Python 3.7 or better. 
+Running the system within a Virtual Environment may be advantageous.
 
 ## Usage
+
 To run the server, please execute the following from the root directory:
 
 ```
-pip3 install -r requirements.txt
-python3 -m openapi_server
+python -m install -r requirements.txt
+python -m openapi_server
 ```
 
 and open your browser to here:
@@ -32,7 +35,7 @@ http://localhost:8080/openapi.json
 
 To launch the integration tests, use tox:
 ```
-sudo pip install tox
+sudo python -m pip install tox
 tox
 ```
 

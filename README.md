@@ -11,6 +11,9 @@
     - [4. Common Workflow Language Running of Translator Workflows](#4.-common-workflow-language-running-of-translator-workflows)
     - [5. Calling the Code Directly in your own Python Clients](#5.-calling-the-code-directly-in-your-own-python-clients)
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
+- [Running the Translator Module System with Docker (Compose)](running-the-translator-module-system-with-docker-compose)
+    - [For Developers of the Docker Compose System](for-developers-of-the-docker-compose-system)
+    - [Modification of System Service API's or Addition of New Services](modification-of-system-service-apis-or-addition-of-new-services])
 
 # Translator Modules
 
