@@ -13,7 +13,7 @@
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
 - [Running the Translator Module System with Docker (Compose)](#running-the-translator-module-system-with-docker-compose)
     - [For Developers of the Docker Compose System](#for-developers-of-the-docker-compose-system)
-    - [Modification of System Service APIs or Addition of New Services](#modification-of-system-service-apis-or-addition-of-new-services])
+    - [Modification of System Service APIs or Addition of New Services](#modification-of-system-service-apis-or-addition-of-new-services)
 
 # Translator Modules
 
