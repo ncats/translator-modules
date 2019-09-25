@@ -36,11 +36,15 @@ def handle_identifier_list(request_body) -> IdentifierListId:
     uuid = str(uuid4())
 
     # Make a copy of the identifier string list, just be safe
-    _identifier_list_cache[uuid] = [identifier for identifier in request_body]
+    if request_body:
+        _identifier_list_cache[uuid] = [identifier for identifier in request_body]
 
-    list_id = IdentifierListId(uuid)
+        list_id = IdentifierListId(uuid)
 
-    return list_id
+        return list_id
+
+    else:
+        raise RuntimeError("handle_identifier_list() ERROR: Empty request body?")
 
 
 def handle_list_identifier_keys() -> List[str]:
