@@ -1,14 +1,23 @@
 # Identifier Resolution Module v0.2.0
 
-## Configuration
+## Command Line Usage
 
-From within the project root directory, you need to configure the environment:
+To use the resolution service easily from the command line, you need to configure the environment. From within the 
+Translator Modules project root directory (or just from the server subdirectory), type the following:
 
 ```  
 python -m pip install .
 ```
 
-## From the command-line:
+The usage of the  system as a script may be seen by:
+
+```bash
+resolver --help
+```
+
+
+For a batch translation of identifiers, for example, run the  script From the command line as follows:
+
 ```bash
 resolver --identifier-map "absolute_or_relative/path/to/HUGO_geneids_download_v2.txt" \
 --source "Ensembl Gene ID" --target "HGNC ID" \
@@ -18,7 +27,7 @@ load-identifiers --identifiers ../../tests/data/bicluster/csv/gene_list.csv   tr
 Note: when being given `--identifiers`, it looks for a column equivalent to the name of the ID namespace 
 (like "Ensembl Gene ID" or "HGNC ID").
 
-Inputting a list of IDs instead of a CSV file path should also work.
+Inputting a simple list of identifiers, instead of a CSV file path should also work.
 
 ```bash
 resolver --identifier-map "absolute_or_relative/path/to/HUGO_geneids_download_v2.txt" \
@@ -61,7 +70,7 @@ In either case, you should get something like this:
 
 Which you can now manipulate in other programs.
 
-## Identifiers Resolution run as a REST Web Service
+## Identifiers Resolution run as a REST Web Service (Perhaps using Docker)
 
 The Identifiers Resolution is also run as a REST Web Service, either standalone or within a Docker Container.
 
@@ -69,6 +78,8 @@ Refer to the Identifiers Resolution
  [Python Flask server](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/server)
  implementation documentation and the corresponding
 [Python client](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/client) is
- documentation.  Note that the service is based on code generation from a common 
+ documentation for details about such usage of the system.  Note that the implementation uses code generation from an 
  [OpenAPI 3.* Identifiers Resolution API specification](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml), 
- which may be directly used to create other kinds of implementations.
+ which may be directly used to create other kinds of implementations 
+ (see the [OpenAPI Benerator Project](https://openapi-generator.tech) for inforamtion  about how to do this.
+ 
