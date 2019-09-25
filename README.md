@@ -278,13 +278,7 @@ More details about these client/server subsystems, as they are developed, will b
 
 The [Identifiers Resolution Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers) 
 provides an API for translating concept identifiers from one namespace to another.
-The initial implementation focuses on gene identifiers (e.g. HGNC identifiers to gene symbols, Ensembl,NCBIGene, etc.)
-
-The Identifiers Resolution
- [server](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/server)
- is documented further here.  The corresponding 
-[client](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/client) is
-also documented.
+The initial implementation focuses on gene identifiers (e.g. HGNC identifiers to gene symbols, Ensembl, NCBIGene, etc.)
 
 ### Ontology Lookup Service
 
