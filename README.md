@@ -13,8 +13,8 @@
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
 - [Running the Translator Module System with Docker (Compose)](#running-the-translator-module-system-with-docker-compose)
     - [For Docker Compose System Services](#docker-compose-system-services)
-        - [Identifiers Resolution Service](identifiers-resolution-service)
-        - [Ontology Lookup Service](ontology-lookup-service)
+        - [Identifiers Resolution Service](#identifiers-resolution-service)
+        - [Ontology Lookup Service](#ontology-lookup-service)
     - [Modification of System Service APIs or Addition of New Services](#modification-of-system-service-apis-or-addition-of-new-services)
 
 # Translator Modules
