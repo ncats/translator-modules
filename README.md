@@ -12,7 +12,9 @@
     - [5. Calling the Code Directly in your own Python Clients](#5.-calling-the-code-directly-in-your-own-python-clients)
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
 - [Running the Translator Module System with Docker (Compose)](#running-the-translator-module-system-with-docker-compose)
-    - [For Developers of the Docker Compose System](#for-developers-of-the-docker-compose-system)
+    - [For Docker Compose System Services](#docker-compose-system-services)
+        - [Identifiers Resolution Service](identifiers-resolution-service)
+        - [Ontology Lookup Service](ontology-lookup-service)
     - [Modification of System Service APIs or Addition of New Services](#modification-of-system-service-apis-or-addition-of-new-services)
 
 # Translator Modules
@@ -254,7 +256,7 @@ normal user home.
 The REST API should now be running at http://localhost: on ports 8081 and 8082, the OpenAPI web interface at 
 http://localhost:<port#>>/api/ui. You can open your browser with these addresses to see these applications in action.
 
-## For Developers of the Docker Compose System
+## Docker Compose System Services
 
 This form of running the Translator Modules ecosystem involved conversion of some components of the system to 
 persistently running Docker container managed microservices. Initially (as of September 2019) this consists of two
@@ -270,7 +272,26 @@ resulted in a hugely wasteful overhead.
 The new Docker based services only perform this (meta-) data loading once, after which point, module start-up and 
 quick local web service access for the module to needed (meta-)data promises to become orders of magnitude more rapid.
 
-### Modification of System Service APIs or Addition of New Services
+More details about these client/server subsystems, as they are developed, will be mentioned here.
+
+### Identifiers Resolution Service
+
+The [Identifiers Resolution Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers) 
+provides an API for translating concept identifiers from one namespace to another.
+The initial implementation focuses on gene identifiers (e.g. HGNC identifiers to gene symbols, Ensembl,NCBIGene, etc.)
+
+The Identifiers Resolution
+ [server](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/server)
+ is documented further here.  The corresponding 
+[client](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/client) is
+also documented.
+
+### Ontology Lookup Service
+
+This [Ontology Lookup Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/ontology) 
+is still under development.
+
+### Developer Modification of System Service APIs or Addition of New Services
 
 We have specified the web services in OpenAPI 3.0 YAML specification files are found in each subdirectory 
 - i.e. _identifiers_ and _ontology_ - related to each microservice. These subdirectories also have the corresponding 
