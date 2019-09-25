@@ -13,7 +13,7 @@
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
 - [Running the Translator Module System with Docker (Compose)](#running-the-translator-module-system-with-docker-compose)
     - [For Developers of the Docker Compose System](#for-developers-of-the-docker-compose-system)
-    - [Modification of System Service API's or Addition of New Services](#modification-of-system-service-apis-or-addition-of-new-services])
+    - [Modification of System Service APIs or Addition of New Services](#modification-of-system-service-apis-or-addition-of-new-services])
 
 # Translator Modules
 
@@ -270,7 +270,7 @@ resulted in a hugely wasteful overhead.
 The new Docker based services only perform this (meta-) data loading once, after which point, module start-up and 
 quick local web service access for the module to needed (meta-)data promises to become orders of magnitude more rapid.
 
-### Modification of System Service API's or Addition of New Services
+### Modification of System Service APIs or Addition of New Services
 
 We have specified the web services in OpenAPI 3.0 YAML specification files are found in each subdirectory 
 - i.e. _identifiers_ and _ontology_ - related to each microservice. These subdirectories also have the corresponding 
