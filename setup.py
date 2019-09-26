@@ -29,7 +29,7 @@ setup(
     download_url='https://github.com/ncats/translator-modules',
     entry_points={
         'console_scripts': [
-            'resolver = ncats.translator.identifiers.server.resolver:main',
+            'identifier_resolver = ncats.translator.identifiers.server.resolver:main',
             'tissue_to_tissue_bicluster = ncats.translator.modules.anatomical_entity.anatomical_entity.tissue_to_tissue_bicluster:main',
             'tissue_to_gene_bicluster = ncats.translator.modules.anatomical_entity.gene.tissue_to_gene_bicluster:main',
             'chemical_to_gene_interaction = ncats.translator.modules.chemical_substance.gene.chemical_to_gene_interaction:main',
@@ -54,5 +54,5 @@ setup(
     zip_safe=False,
     author='James Eddy;Richard Bruskiewich',
     author_email='james.a.eddy@gmail.com; richard@starinformatics.com',
-    version='0.3.3'
+    version='0.3.4'
 )

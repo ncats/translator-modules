@@ -3,23 +3,23 @@
 ## Command Line Usage
 
 To use the resolution service easily from the command line, you need to configure the environment, From within the 
-Translator Modules project root directory (or just from the server subdirectory), type the following:
+Translator Modules project root directory, type the following:
 
 ```  
-python -m pip install .
+python -m pip install -e .
 ```
 
 The usage of the  system as a script may be seen by:
 
 ```bash
-resolver --help
+identifier_resolver --help
 ```
 
 
 For a batch translation of identifiers, for example, run the  script From the command line as follows:
 
 ```bash
-resolver --identifier-map "absolute_or_relative/path/to/HUGO_geneids_download_v2.txt" \
+identifier_resolver --identifier-map "absolute_or_relative/path/to/HUGO_geneids_download_v2.txt" \
 --source "Ensembl Gene ID" --target "HGNC ID" \
 load-identifiers --identifiers ../../tests/data/bicluster/csv/gene_list.csv   translate
 ```
@@ -30,16 +30,16 @@ Note: when being given `--identifiers`, it looks for a column equivalent to the 
 Inputting a simple list of identifiers, instead of a CSV file path should also work.
 
 ```bash
-resolver --identifier-map "absolute_or_relative/path/to/HUGO_geneids_download_v2.txt" \
+identifier_resolver --identifier-map "absolute_or_relative/path/to/HUGO_geneids_download_v2.txt" \
 --source "Ensembl Gene ID" --target "HGNC ID" \
 load-identifiers --identifiers \
 "ENSG00000121410,ENSG00000268895,ENSG00000148584,ENSG00000070018,ENSG00000175899,ENSG00000245105" translate
 ```
 
-## Calling Identifier Resolution from Python Code
+## Calling Identifier Resolution Directly from a Python Script
 
 ```python
-from ncats.translator.identifiers.client.resolver import Resolver
+from ncats.translator.identifiers.server.resolver import Resolver
 
 ids = ["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]
     

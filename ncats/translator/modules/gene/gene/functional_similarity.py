@@ -8,8 +8,8 @@ from biothings_client import get_client
 
 from biolink.model import FunctionalAssociation, Gene
 
-from ncats import Payload
-from ncats import GenericSimilarity
+from ncats.translator.core.module_payload import Payload
+from ncats.translator.core.generic_similarity import GenericSimilarity
 from ncats.translator.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 
