@@ -4,12 +4,11 @@
     - [Installation](#installation)
     - [Installation of Dependencies and Make Modules Visible as Command Line Programs](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs)
 - [Running the Translator Workflows](#running-the-translator-workflows)
-    - [1. Workflows in Jupyter Notebooks](#1.-Workflows-in-jupyter-notebooks)
-    - [2. Running Complete Workflows as Python Scripts](#2.-running-completes-workflows-as-python-scripts)
-    - [3. Running Workflow Modules individually from the Command line](#3.-running-workflow-modules-individually-from-the-command-line)
-        - [How the Modules are Indexed](#how-the-modules-are-indexed)
-    - [4. Common Workflow Language Running of Translator Workflows](#4.-common-workflow-language-running-of-translator-workflows)
-    - [5. Calling the Code Directly in your own Python Clients](#5.-calling-the-code-directly-in-your-own-python-clients)
+    - [1. Workflows in Jupyter Notebooks](#1-workflows-in-jupyter-notebooks)
+    - [2. Running Complete Workflows as Python Scripts](#2-running-completes-workflows-as-python-scripts)
+    - [3. Running Workflow Modules individually from the Command line](#3-running-workflow-modules-individually-from-the-command-line)
+    - [4. Running Translator Workflows using Common Workflow Language Specifications](#4-running-translator-workflows-using-common-workflow-language-specifications)
+    - [5. Calling the Code Directly in your own Python Clients](#5-calling-the-code-directly-in-your-own-python-clients)
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
 - [Running the Translator Module System with Docker (Compose)](#running-the-translator-module-system-with-docker-compose)
     - [For Docker Compose System Services](#docker-compose-system-services)
@@ -171,7 +170,7 @@ called 'result_list_name' to discriminate (the Pandas DataFrame JSON doesn't con
 
 More information about the modules are found [here]().
 
-## 4. Common Workflow Language Running of Translator Workflows
+## 4. Running Translator Workflows using Common Workflow Language Specifications
 
 See the [Translator CWL workflow scripts and documentation](./cwl)
 
