@@ -1,0 +1,29 @@
+#
+#  NCATS Translator Modules System
+#
+# This Dockerfile builds the Docker image to run as a
+# Translator Modules Identifiers Resolution Service
+#
+# To build the image, from the Translator Modules project root directory, type:
+#
+#    docker build -f Dockerfile_Shared -t translator_modules_shared .
+#    docker build -f Dockerfile_Identifiers_Server -t openapi_server .
+#
+# To start up the dockerized REST web service container, type:
+#
+#    docker run -p 8081:8081 openapi_server
+#
+FROM translator_modules_shared
+
+WORKDIR /usr/src/app/ncats/translator/identifiers/server
+
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Alternate pip install if Conda base image used?
+#RUN pip install  --no-cache-dir -r requirements.txt
+
+EXPOSE 8081
+
+ENTRYPOINT ["python3"]
+
+CMD ["-m", "openapi_server"]

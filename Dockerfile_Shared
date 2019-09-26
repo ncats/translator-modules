@@ -1,0 +1,29 @@
+#
+#  NCATS Translator Modules System
+#
+# This Dockerfile builds a shared base image with the
+# NCATS Translator Modules Code already copied over but
+# NO dependencies applied yet (due to slight differences
+# and possible conflicts in the various component services
+# of the complete (Docker Compose) built system
+
+FROM continuumio/miniconda3:4.7.10
+
+RUN conda update -n base -c defaults conda
+
+RUN conda create -n translator-modules python=3.7
+
+RUN conda init bash
+
+RUN conda activate translator-modules
+
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
+
+COPY . ./
+
+# Delegate installment of specific service
+# dependencies to applicable child images
+
+CMD ["/bin/bash"]

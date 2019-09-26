@@ -33,6 +33,10 @@ and opening your browser to here:
 http://localhost:8081/ui/
 ```
 
+Note that the OpenAPI definition assumes a hostname of http://identifiers for the web form to work. However, 
+substituting "localhost:8081" for "identifiers" hostname in the synthesized endpoint calls shown, will allow
+you to see the results.
+
 Your OpenAPI definition lives here:
 
 ```
@@ -48,15 +52,24 @@ tox
 
 ## Running with Docker
 
-To run the server on a Docker container, please execute the following from the root directory:
+To run the server on a Docker container, from the root directory of the Translator Modules project, type the following:
 
 ```bash
 # building the image
-docker build -t openapi_server .
+docker build -f Dockerfile_Shared -t translator_modules_shared .
+docker build -f Dockerfile_Identifiers_Server -t openapi_server .
 
 # starting up a container
 docker run -p 8081:8081 openapi_server
 ```
+
+Once again, opening your browser to here:
+
+```
+http://localhost:8081/ui/
+```
+
+should show the interface (same caveats as above).
 
 ## Running as an Integral Part of the Translator Module Workflow System (using Docker Compose)
 
