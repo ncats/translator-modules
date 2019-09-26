@@ -5,7 +5,7 @@ GENE = 'gene'
 DISEASE = 'disease'
 CHEMICAL_SUBSTANCE = 'chemical substance'
 
-SYMBOL = 'Approved symbol'
+SYMBOL = 'Approved_Symbol'
 
 
 class IdentifierResolverException(RuntimeError):
