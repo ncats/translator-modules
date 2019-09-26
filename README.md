@@ -238,6 +238,6 @@ The REST API should now be running at http://localhost: on ports 8081 and 8082, 
 http://localhost:<port#>>/api/ui. You can open your browser with these addresses to see these applications in action.
 
 More details about the architecture of the system is available on the 
-[modules documentation overview page](https://github.com/ncats/translator-modules/tree/master/ncats/translator).
+[modules documentation overview page](./ncats/translator).
 
 [Back to top](#ncats-translator-modules)
