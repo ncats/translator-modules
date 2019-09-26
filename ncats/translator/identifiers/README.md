@@ -2,7 +2,7 @@
 
 ## Command Line Usage
 
-To use the resolution service easily from the command line, you need to configure the environment. From within the 
+To use the resolution service easily from the command line, you need to configure the environment, From within the 
 Translator Modules project root directory (or just from the server subdirectory), type the following:
 
 ```  
@@ -81,5 +81,5 @@ Refer to the Identifiers Resolution
  documentation for details about such usage of the system.  Note that the implementation uses code generation from an 
  [OpenAPI 3.* Identifiers Resolution API specification](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml), 
  which may be directly used to create other kinds of implementations 
- (see the [OpenAPI Benerator Project](https://openapi-generator.tech) for inforamtion  about how to do this.
+ (see the [OpenAPI Benerator Project](https://openapi-generator.tech) for information  about how to do this.
  
