@@ -1,26 +1,20 @@
-# Contents
+# NCATS Translator Modules
 
-- [Translator Modules](#translator-modules)
-    - [Installation](#installation)
+This package provides a Python-based implementation of the NCATS Translator workflow modules.
+
+- [Getting Started](#getting-started)
     - [Installation of Dependencies and Make Modules Visible as Command Line Programs](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs)
-- [Running the Translator Workflows](#running-the-translator-workflows)
+- [Using the Translator Modules and Building Workflows](#using-the-translator-modules-and-building-workflows)
     - [1. Workflows in Jupyter Notebooks](#1-workflows-in-jupyter-notebooks)
-    - [2. Running Complete Workflows as Python Scripts](#2-running-completes-workflows-as-python-scripts)
+    - [2. Running Complete Workflows as Python Scripts](#2-running-complete-workflows-as-python-scripts)
     - [3. Running Workflow Modules individually from the Command line](#3-running-workflow-modules-individually-from-the-command-line)
     - [4. Running Translator Workflows using Common Workflow Language Specifications](#4-running-translator-workflows-using-common-workflow-language-specifications)
     - [5. Calling the Code Directly in your own Python Clients](#5-calling-the-code-directly-in-your-own-python-clients)
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
 - [Running the Translator Module System with Docker (Compose)](#running-the-translator-module-system-with-docker-compose)
-    - [For Docker Compose System Services](#docker-compose-system-services)
-        - [Identifiers Resolution Service](#identifiers-resolution-service)
-        - [Ontology Lookup Service](#ontology-lookup-service)
-    - [Developer Modification of System Service APIs or Addition of New Services](#developer-modification-of-system-service-apis-or-addition-of-new-services)
 
-# Translator Modules
 
-This package provides a Python-based implementation of the NCATS Translator workflow modules.
-
-## Installation
+# Getting Started
 
 The **translator-modules** package is not yet available through PyPI, thus, to install, clone this repo using git.
 
@@ -73,7 +67,9 @@ include the `-e` flag with the `pip` command, namely:
 python -m pip install -r requirements.txt -e .
 ```
 
-# Running the Translator Workflows
+[Back to top](#ncats-translator-modules)
+
+# Using the Translator Modules and Building Workflows
 
 The modules in this repository may be composed into larger scientific workflows, managed by suitable software 
 frameworks. A number of execution frameworks for doing this have been explored to date within NCATS:
@@ -84,14 +80,18 @@ frameworks. A number of execution frameworks for doing this have been explored t
 4. Using the Common Workflow Language (CWL) standard
 5. Roll your own: call workflow modules from your own clients
 
+[Back to top](#ncats-translator-modules)
+
 ## 1. Workflows in Jupyter Notebooks
 
 See https://github.com/ncats/translator-workflows for numerous examples.
 
+[Back to top](#ncats-translator-modules)
+
 ## 2. Running Complete Workflows as Python Scripts
 
-A Python 3 command line script [WF2_automation.py script](direct-command-line-workflow2-script-usage) is currently 
-provided that will directly execute the relevant modules and commands for the *NCATS Translator Workflow 2*.  
+A Python 3 command line script [WF2_automation.py script](./scripts) is currently provided that will directly 
+execute the relevant modules and commands for the *NCATS Translator Workflow 2*.  
 To display the full parameters of the script, type:
 
 ```
@@ -115,6 +115,8 @@ explicitly run them as a Python script, i.e.
 ```
 python scripts/WF2_automation.py --help
 ```
+
+[Back to top](#ncats-translator-modules)
 
 ## 3. Running Workflow Modules individually from the Command line
 
@@ -174,10 +176,14 @@ More information about the modules are found [here]().
 
 See the [Translator CWL workflow scripts and documentation](./cwl)
 
+[Back to top](#ncats-translator-modules)
+
 ## 5. Calling the Code Directly in your own Python Clients
 
 Review of the available workflow scripts (e.g. for workflow  2 and  9) provides some guidance on how to use the modules
 directly. You can also directly review the modules themselves.  As an example, we discuss here the Workflow 2 modules.
+
+[Back to top](#ncats-translator-modules)
 
 ### Workflow 2 Gene Similarities and Interactions
 
@@ -204,6 +210,8 @@ or gene_interactions() (for GeneInteractions()) - with the gene list from III wi
 
 Repeat steps II and III above for each disease you wish to analyze.
 
+[Back to top](#ncats-translator-modules)
+
 # Running the Translator Module System with Docker (Compose)
 
 Use [Docker Compose](https://docs.docker.com/compose/) to build and run the application. 
@@ -229,89 +237,7 @@ normal user home.
 The REST API should now be running at http://localhost: on ports 8081 and 8082, the OpenAPI web interface at 
 http://localhost:<port#>>/api/ui. You can open your browser with these addresses to see these applications in action.
 
-## Docker Compose System Services
+More details about the architecture of the system is available on the 
+[modules documentation overview page](https://github.com/ncats/translator-modules/tree/master/ncats/translator).
 
-This form of running the Translator Modules ecosystem involved conversion of some components of the system to 
-persistently running Docker container managed microservices. Initially (as of September 2019) this consists of two
-services: the *Identifier Resolution* service and the *Ontology* service.  Basically, these services operate as 
-_client/server_ implementations of libraries which load their associated (meta-)data catalogs just once upon startup
-of the container, then provide a local OpenAPI compliant web service REST API to perform the various supported queries.
-
-Previously, each of these components were (repetitively) initialized each time a module was started. In the case of 
-the Identifier Resolver, a local mapping file was loaded. In the case of the Ontology service, a remote ontology 
-database was queries to pull over the entire ontology required (e.g. parts of Gene Ontology). In both cases, this 
-resulted in a hugely wasteful overhead. 
-
-The new Docker based services only perform this (meta-) data loading once, after which point, module start-up and 
-quick local web service access for the module to needed (meta-)data promises to become orders of magnitude more rapid.
-
-More details about these client/server subsystems, as they are developed, will be mentioned here.
-
-#### Identifiers Resolution Service
-
-The [Identifiers Resolution Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers) 
-provides an API for translating concept identifiers from one namespace to another.
-The initial implementation focuses on gene identifiers (e.g. HGNC identifiers to gene symbols, Ensembl, NCBIGene, etc.)
-
-#### Ontology Lookup Service
-
-This [Ontology Lookup Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/ontology) 
-is still under development.
-
-### Developer Modification of System Service APIs or Addition of New Services
-
-We have specified the web services in OpenAPI 3.0 YAML specification files are found in each subdirectory 
-- i.e. _identifiers_ and _ontology_ - related to each microservice. These subdirectories also have the corresponding 
-client/server code in *client* and  *server* subfolders.
-
-The *client* is a direct Python web service client and the *server* is a simple Python Flask server implementation.
-
-By [installing a local copy of the OpenAPI Code Generator](https://openapi-generator.tech/docs/installation), 
-modified OpenAPI 3.0 YAML specifications can be processed to recreate the Python client and Python Flask server stubs.
-
-First, you may first wish to check your modified OpenAPI YAML specification, using the _validate_ command:
-
-```bash
-openapi-generator validate (-i | --input-spec) <spec file>
-```
-
-If it passes muster, then  to recreate the Python Flask *server* stubs, type the following 
-(run from the root project directory):
-
-```bash
-cd translator-modules
-openapi-generator generate --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
-                    --model-package=model \
-                    --output=ncats/translator/identifiers/server \
-                    --generator-name=python-flask \
-                    --additional-properties=\
---packageName=ncats.translator.identifiers.server.openapi_server,\
---projectName=identifier-resolver-server,\
-—-packageVersion="0.0.1",\
---packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers/server,\
---serverPort=8081
-```
-
-To recreate the matching *client* Python access stubs, type something the following 
-(from the root project directory):
-
-```bash
-cd translator-modules
-openapi-generator generate  --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
-                    --model-package=model \
-                    --output=ncats/translator/identifiers/client \
-                    --generator-name=python \
-                    --additional-properties=\
---packageName=ncats.translator.identifiers.client.openapi_client,\
---projectName=identifier-resolver-client,\
-—-packageVersion="0.0.1",\
---packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers/client
-```
-
-Consult the [OpenAPI 3.0 'generate' command usage](https://openapi-generator.tech/docs/usage#generate) 
-for more specific details on available code generation options and for acceptable program flag abbreviations (here we
-used the long form of the flags)
-
-In  both cases, after generating the code stubs,  a developer needs to reconnect the (delegated) business logic to 
-the REST processing front end as required to get the system working again.  Developers can scrutinize recent working 
-releases of the code to best understand how the code stubs need to be reconnected or how to add new business logic.
+[Back to top](#ncats-translator-modules)
