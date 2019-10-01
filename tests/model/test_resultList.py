@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 
-from BioLink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
+from biolink.model import Disease, Gene, GeneToDiseaseAssociation, PhenotypicFeature
 
 from tests.model.test_concept import mock_concept
 from tests.model.test_identifier import mock_identifier_2
@@ -28,15 +28,15 @@ def default_mock_result_list():
 
 def overridden_mock_result_list(
         result_list_name="overridden_mock_result_list",
-        association=GeneToDiseaseAssociation.class_name,
+        association=GeneToDiseaseAssociation,
         domain=ConceptSpace(
-            category=Disease.class_name,
-            mappings=['MONDO']
+            category=Disease,
+            id_prefixes=['MONDO']
         ),
         relationship='related_to',
         range=ConceptSpace(
-            category=Gene.class_name,
-            mappings=['HGNC']
+            category=Gene,
+            id_prefixes=['HGNC']
         )
 ):
 
@@ -59,23 +59,23 @@ def overridden_mock_result_list(
 _json_test_file = "result_list_test.json"
 
 _mock_uberon_concept_space = ConceptSpace(
-    category=Disease.class_name,
-    mappings=['UBERON']
+    category=Disease,
+    id_prefixes=['UBERON']
 )
 
 _mock_upheno_concept_space = ConceptSpace(
-    category=PhenotypicFeature.class_name,
-    mappings=['UPHENO']
+    category=PhenotypicFeature,
+    id_prefixes=['UPHENO']
 )
 
 _mock_hgnc_concept_space = ConceptSpace(
-    category=Gene.class_name,
-    mappings=['HGNC']
+    category=Gene,
+    id_prefixes=['HGNC']
 )
 
 _mock_mondo_concept_space = ConceptSpace(
-    category=Disease.class_name,
-    mappings=['MONDO']
+    category=Disease,
+    id_prefixes=['MONDO']
 )
 
 

@@ -1,38 +1,33 @@
+#!/usr/bin/env python3
+
+# Workflow 9, Tissue-to-Tissue Bicluster
+
 import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict
-
+from json import JSONDecodeError
 
 import fire
 import pandas as pd
 import requests
 
-from BioLink.model import AnatomicalEntityToAnatomicalEntityAssociation, AnatomicalEntity
+from biolink.model import AnatomicalEntityToAnatomicalEntityAssociation, AnatomicalEntity
+
 from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
+
 related_biclusters_and_genes_for_each_input_gene = defaultdict(dict)
 
 
 class BiclusterByTissueToTissue():
+
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': AnatomicalEntityToAnatomicalEntityAssociation.class_name,
-            'input_type': {
-                'complexity': 'set',
-                'category': AnatomicalEntity.class_name,
-                'mappings': 'UBERON',
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'category': AnatomicalEntity.class_name,
-                'mappings': 'UBERON',
-            },
-        }
+        pass
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -88,7 +83,12 @@ class BiclusterByTissueToTissue():
             for response in await asyncio.gather(*futures_1):
                 cooccurrence_dict_each_gene = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'] = defaultdict(dict)
-                response_json = response.json()
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 length_response_json = len(response_json)
                 cooccurrence_dict_each_gene['number_of_related_biclusters'] = length_response_json
                 if length_response_json > 0:
@@ -189,36 +189,33 @@ class BiclusterByTissueToTissue():
                         dict_of_ids_in_unique_biclusters_not_in_inputs[ID] += 1
         return dict_of_ids_in_unique_biclusters_not_in_inputs
 
+
 class TissueToTissueBicluster(Payload):
 
     def __init__(self, input_tissues):
-        self.mod = BiclusterByTissueToTissue()
-        input_obj, extension = self.handle_input_or_input_location(input_tissues)
 
-        input_tissue_ids: list
-        # NB: push this out to the handle_input_or_input_location function?
-        if extension == "csv":
-            import csv
-            with open(input_tissues) as genes:
-                input_reader = csv.DictReader(genes)
-                input_tissue_ids = list(set([row['input_id'] for row in input_reader]))
-        elif extension == "json":
-            import json
-            with open(input_tissues) as genes:
-                input_json = json.loads(genes)
-                # assume records format
-                input_tissue_ids = [record["hit_id"] for record in input_json]
-        elif extension is None:
-            if isinstance(input_obj, str):
-                # Assume a comma delimited list of input identifiers?
-                input_tissue_ids = input_obj.split(',')
-            else:
-                # Assume that an iterable Tuple or equivalent is given here
-                input_tissue_ids = input_obj
+        super(TissueToTissueBicluster, self).__init__(
+            module=BiclusterByTissueToTissue(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Tissue-to-Tissue Bicluster",
+                source='RNAseqDB Biclustering',
+                association=AnatomicalEntityToAnatomicalEntityAssociation,
+                domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
+                relationship='related_to',
+                range=ConceptSpace(AnatomicalEntity, ['UBERON']),
+            )
+        )
 
-        most_common_tissues = asyncio.run(self.mod.tissue_to_tissue_biclusters_async(input_tissue_ids))
+        input_tissue_ids = self.get_simple_input_identifier_list(input_tissues)
+
+        most_common_tissues = asyncio.run(self.module.tissue_to_tissue_biclusters_async(input_tissue_ids))
+
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(TissueToTissueBicluster)
+
+
+if __name__ == '__main__':
+    main()

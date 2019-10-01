@@ -114,7 +114,7 @@ Tidbit
 py*/
 
 # ignore JSON workflow output files
+tests/output/*
 *.json
-*.ncats
 
 translator-modules/

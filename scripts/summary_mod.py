@@ -120,7 +120,7 @@ class SummaryMod(object):
         # Reordering full summary based on brief summary
         new_row_order = self.brief_summary['hit_symbol'].tolist() # get row names (output_genes)
         new_rows_idx = dict(zip(new_row_order,range(len(new_row_order)))) # make ordered dict of output_genes 
-        self.full_summary['output_rank'] = self.full_summary['hit_symbol'].map(new_rows_idx) # map the full summary to this order
+        self.full_summary['output_rank'] = self.full_summary['hit_symbol'].translate(new_rows_idx) # map the full summary to this order
         self.full_summary = self.full_summary.sort_values('output_rank') # Sort based on new mapping
         self.full_summary = self.full_summary.drop('output_rank',axis=1) # Remove the sorting column
 

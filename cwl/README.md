@@ -2,7 +2,7 @@
 
 Get started immediately by **[using TranslatorCWL](#using-translatorcwl).**
 
-For the justification of this project, find out **[how TranslatorCWL works](#how-translatorcwl-works).**
+For the justification of this project, find out **[How TranslatorCWL works](#how-translatorcwl-works).**
 
 If you want to take Translator Modules and bring them into CWL, see **[Writing a CWL tool for an existing module](#writing-a-cwl-tool-for-an-existing-module).** *(Requires an intermediate understanding of Python 3, including how the class system works.)*
 
@@ -296,7 +296,7 @@ class FunctionallySimilarGenes(Payload):
             genes = {"hit_id": gene_ids, "hit_symbol": symbols}
             input_gene_set = pd.DataFrame(data=genes)
 
-        self.results = self.mod.compute_similarity(input_gene_set, threshold)
+        self.results = self.module.compute_similarity(input_gene_set, threshold)
 
 if __name__ == '__main__':
     fire.Fire(FunctionallySimilarGenes)
@@ -509,7 +509,7 @@ all the modules, you would need to either comment them all out then comment them
 This is cumbersome. With the approach in TranslatorCWL, files are much smaller and chaining modules is simpler, so it is at least
 less cumbersome to construct workflows of different orders and sizes.
 
-### Parralelism
+### Paralellism
 
 *Untested*
 

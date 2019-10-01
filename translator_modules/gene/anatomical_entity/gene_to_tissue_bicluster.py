@@ -4,36 +4,27 @@ import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict, Counter
+from json import JSONDecodeError
 
 import fire
 import pandas as pd
 import requests
 
-from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
 from typing import Dict, List, Set
 
-from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
+from biolink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+
+from translator_modules.core.identifier_resolver import fix_curies
+from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
 
 
-class BiclusterByGeneToTissue():
+class BiclusterByGeneToTissue:
+
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': GeneToExpressionSiteAssociation.class_name,
-            'input_type': {
-                'complexity': 'set',
-                'mappings': 'ENSEMBL',
-                'category': Gene.class_name,
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'mappings': ['MONDO', 'DOID', 'UBERON'],
-                'category': AnatomicalEntity.class_name,
-            },
-        }
+        pass
 
     async def gene_to_tissue_biclusters_async(self, input_ID_list):
         bicluster_url_list = [bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in input_ID_list]
@@ -43,8 +34,14 @@ class BiclusterByGeneToTissue():
             loop_1 = asyncio.get_event_loop()
             futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                          bicluster_url_list]
+
             for response in await asyncio.gather(*futures_1):
-                response_json = response.json()
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 for x in response_json:
                     gene = x['gene']
                     tissues = x['all_col_labels'].split('__')
@@ -70,16 +67,29 @@ class BiclusterByGeneToTissue():
 class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes):
-        super(GeneToTissueBiclusters, self).__init__(BiclusterByGeneToTissue())
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
+        super(GeneToTissueBiclusters, self).__init__(
+            module=BiclusterByGeneToTissue(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Gene-to-Tissue Bicluster",
+                source='RNAseqDB Biclustering',
+                association=GeneToExpressionSiteAssociation,
+                domain=ConceptSpace(Gene, ['ENSEMBL']),
+                relationship='related_to',
+                range=ConceptSpace(AnatomicalEntity, ['MONDO', 'DOID', 'UBERON']),
+            )
+        )
 
-        input_gene_set = get_simple_input_gene_list(input_obj, extension)
+        input_gene_set = self.get_simple_input_identifier_list(input_genes)
 
-        most_common_tissues = asyncio.run(self.mod.gene_to_tissue_biclusters_async(input_gene_set))
+        most_common_tissues = asyncio.run(self.module.gene_to_tissue_biclusters_async(input_gene_set))
 
         self.results = pd.DataFrame.from_records(most_common_tissues)
 
 
-if __name__ == '__main__':
+def main():
     fire.Fire(GeneToTissueBiclusters)
+
+
+if __name__ == '__main__':
+    main()

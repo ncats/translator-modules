@@ -6,44 +6,31 @@ from pprint import pprint
 
 import fire
 import pandas as pd
-# Workflow 2, Module 1E: Gene interactions
-from BioLink.biolink_client import BioLinkWrapper
 
-from BioLink.model import GeneToGeneAssociation, Gene
+from biolink_api.biolink_api_client import BioLinkApiWrapper
+from biolink.model import GeneToGeneAssociation, Gene
 
 from translator_modules.core import Config
-from translator_modules.core.module_payload import Payload, get_input_gene_data_frame
+from translator_modules.core.identifier_resolver import Resolver, SYMBOL
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
+from translator_modules.core.module_payload import Payload
 
 
 class GeneInteractions:
 
     def __init__(self):
-        self.blw = BioLinkWrapper(Config().get_biolink_api_endpoint())
-        self.meta = {
-            'source': 'Monarch Biolink',
-            'association': GeneToGeneAssociation.class_name,
-            'input_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC',
-            },
-            'relationship': 'interacts_with',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'HGNC',
-            },
-        }
-
-    def metadata(self):
-        print("""Mod1E Interaction Network metadata:""")
-        pprint(self.meta)
+        self.blw = BioLinkApiWrapper(Config().get_biolink_api_endpoint())
 
     @staticmethod
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(gene_records):
         annotated_gene_set = []
         for gene in gene_records.to_dict(orient='records'):
+            if not gene['hit_symbol']:
+                gene['hit_symbol'] = \
+                    Resolver.get_the_resolver(). \
+                        translate_one(source=gene['hit_id'], target=SYMBOL)
+
             annotated_gene_set.append({
                 'input_id': gene['hit_id'],
                 'sim_input_curie': gene['hit_id'],
@@ -87,18 +74,31 @@ class GeneInteractions:
 
 
 class GeneInteractionSet(Payload):
-    def __init__(self, input_genes, threshold=12):
 
-        super(GeneInteractionSet, self).__init__(GeneInteractions())
+    # RMB: we set the threshold to default to "return all"
+    def __init__(self, input_genes, threshold=0):
+        super(GeneInteractionSet, self).__init__(
+            module=GeneInteractions(),
+            metadata=ModuleMetaData(
+                name="Module 1E - Gene Interaction",
+                source='Monarch Biolink',
+                association=GeneToGeneAssociation,
+                domain=ConceptSpace(Gene, ['HGNC']),
+                relationship='interacts_with',
+                range=ConceptSpace(Gene, ['HGNC']),
+            )
+        )
 
-        input_obj, extension = self.handle_input_or_input_location(input_genes)
-
-        input_gene_data_frame = get_input_gene_data_frame(input_obj, extension)
+        input_gene_data_frame = self.get_input_data_frame(input_genes)
 
         # TODO: add schema check
 
-        self.results = self.mod.get_interactions(input_gene_data_frame, threshold)
+        self.results = self.module.get_interactions(input_gene_data_frame, threshold)
+
+
+def main():
+    fire.Fire(GeneInteractionSet)
 
 
 if __name__ == '__main__':
-    fire.Fire(GeneInteractionSet)
+    main()

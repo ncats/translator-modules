@@ -1,37 +1,28 @@
 #!/usr/bin/env python3
 
+# Workflow 9, Tissue-to-Gene Bicluster
+
 import asyncio
 import concurrent.futures
 import urllib.request
 from collections import defaultdict, Counter
+from json import JSONDecodeError
 
 import fire
 import pandas as pd
 import requests
 
-from BioLink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+from biolink.model import GeneToExpressionSiteAssociation, AnatomicalEntity, Gene
+
 from translator_modules.core.module_payload import Payload
+from translator_modules.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_tissue_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_all_col_labels/'
 
 
 class BiclusterByTissueToGene():
     def __init__(self):
-        self.meta = {
-            'source': 'RNAseqDB Biclustering',
-            'association': GeneToExpressionSiteAssociation.class_name,
-            'input_type': {
-                'complexity': 'set',
-                'category': AnatomicalEntity.class_name,
-                'mappings': 'UBERON',
-            },
-            'relationship': 'related_to',
-            'output_type': {
-                'complexity': 'set',
-                'category': Gene.class_name,
-                'mappings': 'ENSEMBL',
-            },
-        }
+        pass
 
     def get_ID_list(self, ID_list_url):
         with urllib.request.urlopen(ID_list_url) as url:
@@ -65,7 +56,12 @@ class BiclusterByTissueToGene():
             futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                          bicluster_url_list]
             for response in await asyncio.gather(*futures_1):
-                response_json = response.json()
+
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+
                 for x in response_json:
                     gene = x['gene']
                     all_genes.append(gene)
@@ -76,31 +72,23 @@ class BiclusterByTissueToGene():
 class TissueToGeneBicluster(Payload):
 
     def __init__(self, input_tissues):
-        self.mod = BiclusterByTissueToGene()
-        input_obj, extension = self.handle_input_or_input_location(input_tissues)
 
-        input_tissue_ids: list
-        # NB: push this out to the handle_input_or_input_location function?
-        if extension == "csv":
-            import csv
-            with open(input_tissues) as genes:
-                input_reader = csv.DictReader(genes)
-                input_tissue_ids = list(set([row['input_id'] for row in input_reader]))
-        elif extension == "json":
-            import json
-            with open(input_tissues) as genes:
-                input_json = json.loads(genes)
-                # assume records format
-                input_tissue_ids = [record["hit_id"] for record in input_json]
-        elif extension is None:
-            if isinstance(input_obj, str):
-                # Assume a comma delimited list of input identifiers?
-                input_tissue_ids = input_obj.split(',')
-            else:
-                # Assume that an iterable Tuple or equivalent is given here
-                input_tissue_ids = input_obj
+        super(TissueToGeneBicluster, self).__init__(
+            module=BiclusterByTissueToGene(),
+            metadata=ModuleMetaData(
+                name="Mod9A - Tissue-to-Gene Bicluster",
+                source='RNAseqDB Biclustering',
+                association=GeneToExpressionSiteAssociation,
+                domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
+                relationship='related_to',
+                range=ConceptSpace(Gene, ['ENSEMBL'])
+            )
+        )
 
-        most_common_tissues = asyncio.run(self.mod.tissue_to_gene_biclusters_async(input_tissue_ids))
+        input_tissue_ids = self.get_simple_input_identifier_list(input_tissues)
+
+        most_common_tissues = asyncio.run(self.module.tissue_to_gene_biclusters_async(input_tissue_ids))
+
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
 
 
