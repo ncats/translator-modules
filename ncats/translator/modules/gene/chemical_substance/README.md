@@ -14,4 +14,3 @@ gene_to_chemical_interaction --input-genes "NCBIGene:4149,NCBIGene:4609,NCBIGene
 will give a CSV formatted chemical substances interacting with the list of input genes.
 
 Note that, as with all the modules, other (possibly richer) format outputs are available (and perhaps more informative)
-
