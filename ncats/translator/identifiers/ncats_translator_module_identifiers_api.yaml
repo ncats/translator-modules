@@ -1,7 +1,7 @@
 openapi: 3.0.0
 servers:
-  - description: NCATS Translator Modules Identifier Resolution Server running in a local Docker container
-    url: http://identifiers
+  - description: NCATS Translator Modules Identifier Resolution Server
+    url: http://0.0.0.0:8081
 info:
   description: NCATS Translator Modules Identifier Resolution Server
   version: "0.0.1"

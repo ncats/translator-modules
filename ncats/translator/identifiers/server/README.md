@@ -14,7 +14,19 @@ Python 3.7+
 ## Usage
 
 To run the server, it is recommended that you create a fresh Python virtual environment using Python 3.7, then
-install the following dependencies for the *~/identifiers/server* directory:
+install the following dependencies.
+ 
+First, the system generally needs to see the Python packages of the *ncats/translator* module tree. The (latest) 
+package may not yet be in pypi, thus you will need to install the system locally as a pip installed library:
+
+```bash
+# The 'python' binary is assumed to be 3.7 or better
+cd /path/to/translator-modules
+python -m pip install -e .
+```
+
+Then,  you will specifically need the *identifier* project dependencies. From within the *~/identifiers/server* 
+directory, type the following:
 
 ```bash
 # The 'python' binary is assumed to be 3.7 or better
@@ -31,12 +43,8 @@ python -m openapi_server
 and opening your browser to here:
 
 ```
-http://localhost:8081/ui/
+http://0.0.0.0:8081/ui/
 ```
-
-Note that the OpenAPI definition assumes a hostname of http://identifiers for the web form to work. However, 
-substituting "localhost:8081" for "identifiers" hostname in the synthesized endpoint calls shown, will allow
-you to see the results.
 
 Your OpenAPI definition lives here:
 

@@ -11,7 +11,7 @@ info:
 servers:
 - description: NCATS Translator Modules Identifier Resolution Server running in a
     local Docker container
-  url: http://identifiers
+  url: http://0.0.0.0:8081
 tags:
 - description: Secured Admin-only calls to configure resolution service
   name: admins
