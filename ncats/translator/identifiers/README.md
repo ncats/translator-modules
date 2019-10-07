@@ -42,33 +42,51 @@ load-identifiers --identifiers \
 from ncats.translator.identifiers.server.resolver import Resolver
 
 ids = ["ENSG00000121410", "ENSG00000268895", "ENSG00000148584", "ENSG00000070018", "ENSG00000175899", "ENSG00000245105"]
-    
-identifier_map = "absolute/path/to/HUGO_geneids_download_v2.txt"
-resolver = Resolver(identifier_map, domain="Ensembl", range="HGNC")
-converted_ids = resolver.translate(input_ids=ids)
+
+resolver = Resolver.get_the_resolver()
+resolver.directly_load_identifiers(ids)
+converted_ids = resolver.translate(target="HGNC_ID")
 
 print(converted_ids)
 ```
 
-In either case, you should get something like this:
+You should get something like this:
 
 ```
-["ENSG00000121410", ""]
-["ENSG00000268895", "HGNC:37133"]
-["ENSG00000148584", "HGNC:24086"]
-["ENSG00000070018", "HGNC:6698"]
-["ENSG00000175899", "HGNC:7"]
-["ENSG00000245105", "HGNC:27057"]
-["ENSG00000166535", "HGNC:23336"]
-["ENSG00000256661", "HGNC:41022"]
-["ENSG00000256904", "HGNC:41523"]
-["ENSG00000256069", "HGNC:8"]
-["ENSG00000234906", "HGNC:609"]
-["ENSG00000068305", "HGNC:6993"]
-["ENSG00000070018", "HGNC:6698"]
+['ENSG00000121410', '']
+['ENSG00000268895', 'HGNC:37133']
+['ENSG00000148584', 'HGNC:24086']
+['ENSG00000070018', 'HGNC:6698']
+['ENSG00000175899', 'HGNC:7']
+['ENSG00000245105', 'HGNC:27057']
+['ENSG00000166535', 'HGNC:23336']
+['ENSG00000256661', 'HGNC:41022']
+['ENSG00000256904', 'HGNC:41523']
+['ENSG00000256069', 'HGNC:8']
+['ENSG00000234906', 'HGNC:609']
+['ENSG00000068305', 'HGNC:6993']
+['ENSG00000070018', 'HGNC:6698']
 ```
 
 Which you can now manipulate in other programs.
+
+Note that the available conversion 'target' keys may be listed using the Resolver call:
+
+```python
+from ncats.translator.identifiers.server.resolver import Resolver
+resolver.list_identifier_keys()
+```
+
+The above example uses a default identifier map. Another identifier map may be substituted in the resolver (see the 
+Python module code for details; in essence, your JSON tags or text/csv column  headers will be the conversion keys)
+
+```python
+from ncats.translator.identifiers.server.resolver import Resolver
+..
+identifier_map = "absolute/path/to/your/identifier_map.txt"
+resolver = Resolver(identifier_map)
+..
+```
 
 ## Identifiers Resolution run as a REST Web Service (Perhaps using Docker)
 
