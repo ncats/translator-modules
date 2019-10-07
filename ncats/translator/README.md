@@ -62,7 +62,7 @@ is still under development.
 
 [Back to top](#ncats-translator-module-project-components)
 
-## Developer Modification of System Service APIs or Addition of New Services
+## Developer Addition or Modification of a System Service
 
 We have specified the web services in OpenAPI 3.0 YAML specification files are found in each subdirectory 
 - i.e. _identifiers_ and _ontology_ - related to each microservice. These subdirectories also have the corresponding 
@@ -73,17 +73,25 @@ The *client* is a direct Python web service client and the *server* is a simple 
 By [installing a local copy of the OpenAPI Code Generator](https://openapi-generator.tech/docs/installation), 
 modified OpenAPI 3.0 YAML specifications can be processed to recreate the Python client and Python Flask server stubs.
 
+Here, we use the *identifiers* service as an exemplar (substitute the YAML and other parameters as needed for other
+services being created or modified).
+
+You can run all of these commands from the *translator-modules* directory:
+
+```bash
+cd translator-modules
+```
+
 First, you may first wish to check your modified OpenAPI YAML specification, using the _validate_ command:
 
 ```bash
-openapi-generator validate (-i | --input-spec) <spec file>
+openapi-generator validate (-i | --input-spec) ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml
 ```
 
 If it passes muster, then  to recreate the Python Flask *server* stubs, type the following 
 (run from the root project directory):
 
 ```bash
-cd translator-modules
 openapi-generator generate --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
                     --model-package=model \
                     --output=ncats/translator/identifiers/server \
@@ -100,7 +108,6 @@ To recreate the matching *client* Python access stubs, type something the follow
 (from the root project directory):
 
 ```bash
-cd translator-modules
 openapi-generator generate  --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
                     --model-package=model \
                     --output=ncats/translator/identifiers/client \

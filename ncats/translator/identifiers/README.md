@@ -75,11 +75,15 @@ Which you can now manipulate in other programs.
 The Identifiers Resolution is also run as a REST Web Service, either standalone or within a Docker Container.
 
 Refer to the Identifiers Resolution
- [Python Flask server](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/server)
+ [Python Flask server](./server)
  implementation documentation and the corresponding
-[Python client](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/client) is
- documentation for details about such usage of the system.  Note that the implementation uses code generation from an 
- [OpenAPI 3.* Identifiers Resolution API specification](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml), 
- which may be directly used to create other kinds of implementations 
- (see the [OpenAPI Benerator Project](https://openapi-generator.tech) for information  about how to do this.
+[Python client](./client) is
+ documentation for details about such usage of the system.  
+ 
+ Note that the implementation uses code generation from an 
+ [OpenAPI 3.* Identifiers Resolution API specification](./ncats_translator_module_identifiers_api.yaml), 
+ which may be directly used to create other kinds of implementations as described in the 
+ [the code generation example](../../README.md#developer-addition-or-modification-of-a-system-service).
+ 
+ 
  

@@ -50,7 +50,7 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
     :param password: Password for HTTP basic authentication
     """
 
-    def __init__(self, host="http://identifiers",
+    def __init__(self, host="http://0.0.0.0:8081",
                  api_key={}, api_key_prefix={},
                  username="", password=""):
         """Constructor
@@ -274,8 +274,8 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         """
         return [
             {
-                'url': "http://identifiers",
-                'description': "NCATS Translator Modules Identifier Resolution Server running in a local Docker container",
+                'url': "http://0.0.0.0:8081",
+                'description': "NCATS Translator Modules Identifier Resolution Server",
             }
         ]
 

@@ -1,6 +1,6 @@
 # openapi_client.PublicApi
 
-All URIs are relative to *http://identifiers*
+All URIs are relative to *http://0.0.0.0:8081*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
