@@ -18,6 +18,7 @@ install the following dependencies for the *~/identifiers/server* directory:
 
 ```bash
 # The 'python' binary is assumed to be 3.7 or better
+cd /path/to/translator-modules/ncats/translator/identifiers/server
 python -m pip install -r requirements.txt
 ```
 
