@@ -12,82 +12,30 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
-  - name: admins
-    description: Secured Admin-only calls to configure lookup service
   - name: public
     description: >
       Operations available to public module users of ontology lookup
 paths:
-  /list_identifier_keys:
-    get:
-      tags:
-        - public
-      summary: list of valid key strings for identifier sources and targets
-      operationId: list_identifier_keys
-      description: >
-        Returns list of valid key strings for source and target
-        parameters in other API calls
-      responses:
-        '200':
-          description: >
-            list of valid key strings for identifier sources and targets
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IdentifierMapKeys'
-  /translate_one:
-    get:
-      tags:
-        - public
-      summary: translates one identifier source to target namespace
-      operationId: translate_one
-      description: >
-        Returns mapping of identifier source to its equivalent identifier
-        in the specified target namespace
-      parameters:
-        - in: query
-          name: source_identifier
-          description: >
-            single source identifier to be mapped onto the target
-          required: true
-          schema:
-            type: string
-        - in: query
-          name: target_namespace
-          description: >
-            target namespace for the mapping of the source
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: translation successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IdentifierMapping'
-        '400':
-          description: bad input target parameter
-  /identifier_list:
+  /compute_jaccard:
     post:
       tags:
         - public
-      summary: post a list of identifiers
-      operationId: identifier_list
+      summary: post a list of input genes and initiate a Jaccard similarity computation
+      operationId: compute_jaccard
       description: >
-        Post a list of source identifiers for subsequent translation
+        Post a list of input genes and initiate a Jaccard similarity computation
       responses:
         '201':
           description: >
-            Identification of identifier list created on server
+            Jaccard similarity computation initiated on the server
           content:
             application/json:
               schema:
                 type: object
-                title: IdentifierListId
+                title: ComputationIdentifier
                 properties:
                   list_identifier:
-                    $ref: '#/components/schemas/QueryId'
+                    $ref: '#/components/schemas/ComputationId'
       requestBody:
         content:
           application/json:
@@ -95,175 +43,94 @@ paths:
               x-body-name: request_body
               type: array
               items:
-                type: string
-              example:
-                - "HGNC:11168"
-                - "HGNC:11368"
-                - "HGNC:11821"
-                - "HGNC:1482"
+                $ref: '#/components/schemas/GeneEntry'
         description: >
-          Identifier list to post on server (for translation)
-  /translate:
+          List of input genes upon which to compute Jaccard similarity
+  /results:
     get:
       tags:
         - public
       summary: >
-        Translates list of identifiers from source to target namespace
-      operationId: translate
+        Retrieves a list of similarity results when ready
+      operationId: results
       description: >
-        Translates a previously posted list of identifiers from
-        source namespace to a specified target namespace
+        Retrieves a list of similarity results when obtained by a
+        Jaccard similarity of a posted list of input genes
       parameters:
         - in: query
-          name: list_identifier
+          name: compute_id
           description: >
-            UUID from identifier_list post of source identifiers
-          required: true
-          schema:
-            type: string
-        - in: query
-          name: target_namespace
-          description: >
-            Target namespace for mapping of source identifiers
+            Computational Identifier UUID from a Jaccard similarity computation
+            upon a posted list of input genes
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: translation successful
+          description: computation successful, results returned
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/IdentifierMapping'
+                $ref: '#/components/schemas/Results'
         '400':
           description: bad input target parameter
-  /identifier_map:
-    post:
-      tags:
-        - admins
-      summary: Identifier Resolver map initial creation
-      operationId: load_identifier_map
-      description: >
-        Adds an identifier map to the Identifier Resolver
-      responses:
-        '201':
-          description: >
-            Identification of identifier map uploaded to server
-          content:
-            application/json:
-              schema:
-                type: object
-                title: IdentifierMapId
-                properties:
-                  map_identifier:
-                    $ref: '#/components/schemas/QueryId'
-        '400':
-          description: 'invalid input, object invalid'
-        '409':
-          description: Identifier map already exists
-      requestBody:
-        description: Identifier map to be uploaded
-        content:
-          application/json:
-            schema:
-              x-body-name: request_body
-              $ref: '#/components/schemas/IdentifierMap'
-    put:
-      tags:
-        - admins
-      summary: Identifier Resolver map update
-      operationId: update_identifier_map
-      description: >
-        Updates identifier map in the Identifier Resolver
-      responses:
-        '200':
-          description: >
-            Identification of identifier map updated on server
-          content:
-            application/json:
-              schema:
-                type: object
-                title: IdentifierMapId
-                properties:
-                  map_identifier:
-                    $ref: '#/components/schemas/QueryId'
-        '400':
-          description: 'invalid input, object invalid'
-      requestBody:
-        description: Identifier map to be updated
-        content:
-          application/json:
-            schema:
-              x-body-name: request_body
-              $ref: '#/components/schemas/IdentifierMap'
 components:
   schemas:
-    IdentifierMapping:
-      type: object
-      required:
-        - source_identifier
-        - target_namespace
-        - target_identifier
-      properties:
-        source_identifier:
-          type: string
-          example: "HGNC:24086"
-        target_namespace:
-          type: string
-          example: "Approved_Symbol"
-        target_identifier:
-          type: string
-          example: "A1CF"
-    IdentifierMapKeys:
-      type: array
-      description: ordered list of identifier map (header/column) keys
-      items:
-        type: string
-      example:
-        - "HGNC_ID"
-        - "Approved_Symbol"
-        - "Approved_Name"
-        - "Refseq_ID"
-        - "Ensembl_Gene_ID"
-        - "NCBI_Gene_ID"
-    IdentifierMapEntry:
-      type: array
-      description: >
-        Identifier mappings for a given identifier, corresponding
-        to each key in the associated (header/column) keys
-      items:
-        type: string
-      example:
-        - "HGNC:24086"
-        - "A1CF"
-        - "APOBEC1 complementation factor"
-        - "NM_014576"
-        - "ENSG00000148584"
-        - "29974"
-    QueryId:
+    ComputationId:
       type: object
       properties:
         uuid:
           type: string
           format: uuid
           example:  "123e4567-e89b-12d3-a456-426655440000"
-    IdentifierMap:
+    GeneEntry:
       type: object
       required:
-        - map_identifier
-        - keys
+        - gene_id
+      properties:
+        input_id: gene_curie,
+          type: string
+          example: "HGNC:1100"
+        sim_input_curie: sim_input_curie,
+          type: string
+          example: "HGNC:1100"
+        input_symbol': gene['hit_symbol']
+          type: string
+          example: "HGNC:1100"
+    Results:
+      type: object
+      required:
+        - computation_id
         - records
       properties:
-        map_identifier:
-          $ref: '#/components/schemas/QueryId'
-        keys:
-          $ref: '#/components/schemas/IdentifierMapKeys'
+        computation_id:
+          $ref: '#/components/schemas/ComputationId'
         records:
           type: array
           description: >
             list of identifier map entries for every
             identifier registered in the map
           items:
-            $ref: '#/components/schemas/IdentifierMapEntry'
+            $ref: '#/components/schemas/Similarity'
+    Similarity:
+      type: object
+      required:
+        - 'input_id': input_gene,
+          'input_symbol': igene['input_symbol'],
+          'hit_symbol': subject_label,
+          'hit_id': subject_curie,
+          'score': score,
+          'shared_terms': shared_terms,
+          'shared_term_names': shared_term_names
+      properties:
+        - 'input_id': input_gene,
+          'input_symbol': igene['input_symbol'],
+          'hit_symbol': subject_label,
+          'hit_id': subject_curie,
+          'score': score,
+          'shared_terms': shared_terms,
+          'shared_term_names': shared_term_names
+    Terms:
+      type: array
+      items:
+        type: string
