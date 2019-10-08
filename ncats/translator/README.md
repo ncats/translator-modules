@@ -55,7 +55,7 @@ The initial implementation focuses on gene identifiers (e.g. HGNC identifiers to
 
 [Back to top](#ncats-translator-module-project-components)
 
-## Ontology Lookup Service
+## Ontology Jaccard Similarity Computational Service
 
 This [Ontology Lookup Service](https://github.com/ncats/translator-modules/tree/docker-compose-system/ncats/translator/ontology) 
 is still under development.
@@ -65,7 +65,7 @@ is still under development.
  ## Developer Addition or Modification of a System Service
 
 We have specified the web services in OpenAPI 3.0 YAML specification files are found in each subdirectory 
-- i.e. _identifiers_ and _ontology_ - related to each microservice. These subdirectories also have the corresponding 
+(i.e. _identifiers_ and _ontology) related to each microservice. These subdirectories also have the corresponding 
 client/server code in *client* and  *server* subfolders. For modifying one of the existing services, see the
 relevant section in the corresponding READMEs, e.g. for  [the Identifier Resolution Service](./identifiers/README.md) 
 and [the Ontology Jaccard Similarity service](./ontology/README.md).

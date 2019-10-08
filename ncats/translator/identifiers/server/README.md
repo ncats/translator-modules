@@ -25,7 +25,7 @@ cd /path/to/translator-modules
 python -m pip install -e .
 ```
 
-Then,  you will specifically need the *identifier* project dependencies. From within the *~/identifiers/server* 
+Then,  you will specifically need the *identifiers* project dependencies. From within the *~/identifiers/server* 
 directory, type the following:
 
 ```bash
@@ -49,7 +49,7 @@ http://0.0.0.0:8081/ui/
 Your OpenAPI definition lives here:
 
 ```
-http://localhost:8081/openapi.json
+http://0.0.0.0:8081/openapi.json
 ```
 
 To launch the integration tests, use tox:
@@ -66,10 +66,10 @@ To run the server on a Docker container, from the root directory of the Translat
 ```bash
 # building the image
 docker build -f Dockerfile_Shared -t translator_modules_shared .
-docker build -f Dockerfile_Identifiers_Server -t openapi_server .
+docker build -f Dockerfile_Identifiers_Server -t identifier_resolution_server .
 
 # starting up a container
-docker run -p 8081:8081 openapi_server
+docker run -p 8081:8081 identifier_resolution_server
 ```
 
 Once again, opening your browser to here:
@@ -82,5 +82,5 @@ should show the interface (same caveats as above).
 
 ## Running as an Integral Part of the Translator Module Workflow System (using Docker Compose)
 
-See the [Translator Modules documentation](https://github.com/ncats/translator-modules/blob/master/README.md) 
+See the [Translator Modules documentation](../../../../README.md) 
 about how this service is run as a Docker Compose managed service within the Translator Modules Workflow system.
