@@ -11,7 +11,7 @@ def main():
     app.add_api('openapi.yaml',
                 arguments={'title': 'NCATS Translator Modules Ontology Jaccard Similarity Server'},
                 pythonic_params=True)
-    app.run(port=8080)
+    app.run(port=8082)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-# The Ontology Jaccard Similarity Server
+# The Jaccard Similarity Server
 
 ## Overview
 
@@ -66,10 +66,10 @@ To run the server on a Docker container, from the root directory of the Translat
 ```bash
 # building the image
 docker build -f Dockerfile_Shared -t translator_modules_shared .
-docker build -f Dockerfile_Ontology_Server -t jaccard_similarity_server .
+docker build -f Dockerfile_Identifiers_Server -t identifier_resolution_server .
 
 # starting up a container
-docker run -p 8082:8082 jaccard_similarity_server
+docker run -p 8082:8082 identifier_resolution_server
 ```
 
 Once again, opening your browser to here:

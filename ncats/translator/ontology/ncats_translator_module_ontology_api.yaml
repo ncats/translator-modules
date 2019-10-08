@@ -34,7 +34,7 @@ paths:
                 type: object
                 title: ComputationIdentifier
                 properties:
-                  list_identifier:
+                  computation_id:
                     $ref: '#/components/schemas/ComputationId'
       requestBody:
         content:
@@ -56,7 +56,7 @@ paths:
         Jaccard similarity of a posted list of input genes
       parameters:
         - in: query
-          name: compute_id
+          name: computation_id
           description: >
             Computational Identifier UUID returned from a submitted Jaccard similarity
             computation request upon a posted list of input genes
@@ -80,7 +80,9 @@ components:
     GeneEntry:
       type: object
       required:
-        - gene_id
+        - input_id
+        - sim_input_curie
+        - input_symbol
       properties:
         input_id: # gene_curie,
           type: string
@@ -88,7 +90,7 @@ components:
         sim_input_curie: # sim_input_curie - not really a curie but seems to be an UniProdKB identifier
           type: string
           example: "P38398"
-        input_symbol': # gene['hit_symbol']
+        input_symbol: # gene['hit_symbol']
           type: string
           example: "BRCA1"
     ComputationInput:
@@ -101,6 +103,7 @@ components:
           type: string
           description: >
             Ontology catalog to be queried to compute the Jaccard similarity of input genes
+          example: 'go'
         taxon:
           type: string
           description: >

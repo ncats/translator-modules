@@ -22,13 +22,13 @@ def compute_jaccard(computation_input=None):  # noqa: E501
     return 'do some magic!'
 
 
-def get_results(compute_id):  # noqa: E501
+def get_results(computation_id):  # noqa: E501
     """Retrieves a list of similarity results when ready 
 
     Retrieves a list of similarity results when obtained by a Jaccard similarity of a posted list of input genes  # noqa: E501
 
-    :param compute_id: Computational Identifier UUID returned from a submitted Jaccard similarity computation request upon a posted list of input genes 
-    :type compute_id: str
+    :param computation_id: Computational Identifier UUID returned from a submitted Jaccard similarity computation request upon a posted list of input genes 
+    :type computation_id: str
 
     :rtype: Results
     """

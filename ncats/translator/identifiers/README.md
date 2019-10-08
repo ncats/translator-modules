@@ -129,12 +129,12 @@ openapi-generator generate --input-spec=ncats/translator/identifiers/ncats_trans
                     --model-package=model \
                     --output=ncats/translator/identifiers/server \
                     --generator-name=python-flask \
-                    --additional-properties=\
+                    --additional-properties="\
 --packageName=ncats.translator.identifiers.server.openapi_server,\
 --projectName=identifier-resolver-server,\
-—-packageVersion="0.0.1",\
+—-packageVersion=\"0.0.1\",\
 --packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers/server,\
---serverPort=8081
+--serverPort=8081"
 ```
 
 To recreate the matching *client* Python access stubs, something along the lines of the following command is typed:
@@ -144,11 +144,11 @@ openapi-generator generate  --input-spec=ncats/translator/identifiers/ncats_tran
                     --model-package=model \
                     --output=ncats/translator/identifiers/client \
                     --generator-name=python \
-                    --additional-properties=\
+                    --additional-properties="\
 --packageName=ncats.translator.identifiers.client.openapi_client,\
 --projectName=identifier-resolver-client,\
-—-packageVersion="0.0.1",\
---packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers/client
+—-packageVersion=\"0.0.1\",\
+--packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers/client"
 ```
 
 The [OpenAPI 3.0 'generate' command usage](https://openapi-generator.tech/docs/usage#generate) may be consulted

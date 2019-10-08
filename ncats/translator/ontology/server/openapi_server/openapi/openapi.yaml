@@ -50,7 +50,7 @@ paths:
           Computational Identifier UUID returned from a submitted Jaccard similarity computation request upon a posted list of input genes
         explode: true
         in: query
-        name: compute_id
+        name: computation_id
         required: true
         schema:
           type: string
@@ -77,7 +77,7 @@ components:
     GeneEntry:
       example:
         sim_input_curie: P38398
-        input_symbol': BRCA1
+        input_symbol: BRCA1
         input_id: HGNC:1100
       properties:
         input_id:
@@ -86,27 +86,30 @@ components:
         sim_input_curie:
           example: P38398
           type: string
-        input_symbol':
+        input_symbol:
           example: BRCA1
           type: string
       required:
-      - gene_id
+      - input_id
+      - input_symbol
+      - sim_input_curie
       type: object
     ComputationInput:
       example:
         input_genes:
         - sim_input_curie: P38398
-          input_symbol': BRCA1
+          input_symbol: BRCA1
           input_id: HGNC:1100
         - sim_input_curie: P38398
-          input_symbol': BRCA1
+          input_symbol: BRCA1
           input_id: HGNC:1100
         taxon: human
-        ontology: ontology
+        ontology: go
       properties:
         ontology:
           description: |
             Ontology catalog to be queried to compute the Jaccard similarity of input genes
+          example: go
           type: string
         taxon:
           description: |
@@ -225,8 +228,8 @@ components:
       type: object
     ComputationIdentifier:
       example:
-        list_identifier:
+        computation_id:
           uuid: 123e4567-e89b-12d3-a456-426655440000
       properties:
-        list_identifier:
+        computation_id:
           $ref: '#/components/schemas/ComputationId'

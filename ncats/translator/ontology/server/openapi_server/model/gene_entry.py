@@ -34,7 +34,7 @@ class GeneEntry(Model):
         self.attribute_map = {
             'input_id': 'input_id',
             'sim_input_curie': 'sim_input_curie',
-            'input_symbol': 'input_symbol&#39;'
+            'input_symbol': 'input_symbol'
         }
 
         self._input_id = input_id
@@ -70,6 +70,8 @@ class GeneEntry(Model):
         :param input_id: The input_id of this GeneEntry.
         :type input_id: str
         """
+        if input_id is None:
+            raise ValueError("Invalid value for `input_id`, must not be `None`")  # noqa: E501
 
         self._input_id = input_id
 
@@ -91,6 +93,8 @@ class GeneEntry(Model):
         :param sim_input_curie: The sim_input_curie of this GeneEntry.
         :type sim_input_curie: str
         """
+        if sim_input_curie is None:
+            raise ValueError("Invalid value for `sim_input_curie`, must not be `None`")  # noqa: E501
 
         self._sim_input_curie = sim_input_curie
 
@@ -112,5 +116,7 @@ class GeneEntry(Model):
         :param input_symbol: The input_symbol of this GeneEntry.
         :type input_symbol: str
         """
+        if input_symbol is None:
+            raise ValueError("Invalid value for `input_symbol`, must not be `None`")  # noqa: E501
 
         self._input_symbol = input_symbol

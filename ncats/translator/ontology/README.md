@@ -40,12 +40,12 @@ openapi-generator generate --input-spec=ncats/translator/ontology/ncats_translat
                     --model-package=model \
                     --output=ncats/translator/ontology/server \
                     --generator-name=python-flask \
-                    --additional-properties=\
+                    --additional-properties="\
 --packageName=ncats.translator.ontology.server.openapi_server,\
 --projectName=jaccard-similarity-server,\
-—-packageVersion="0.0.1",\
+—-packageVersion=\"0.0.1\",\
 --packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/ontology/server,\
---serverPort=8082
+--serverPort=8082"
 ```
 
 To recreate the matching *client* Python access stubs, something along the lines of the following command is typed:
@@ -55,11 +55,11 @@ openapi-generator generate  --input-spec=ncats/translator/ontology/ncats_transla
                     --model-package=model \
                     --output=ncats/translator/ontology/client \
                     --generator-name=python \
-                    --additional-properties=\
+                    --additional-properties="\
 --packageName=ncats.translator.ontology.client.openapi_client,\
 --projectName=jaccard-similarity-client,\
-—-packageVersion="0.0.1",\
---packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/ontology/client
+—-packageVersion=\"0.0.1\",\
+--packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/ontology/client"
 ```
 
 The [OpenAPI 3.0 'generate' command usage](https://openapi-generator.tech/docs/usage#generate) may be consulted

@@ -17,21 +17,21 @@ class ComputationIdentifier(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, list_identifier=None):  # noqa: E501
+    def __init__(self, computation_id=None):  # noqa: E501
         """ComputationIdentifier - a model defined in OpenAPI
 
-        :param list_identifier: The list_identifier of this ComputationIdentifier.  # noqa: E501
-        :type list_identifier: ComputationId
+        :param computation_id: The computation_id of this ComputationIdentifier.  # noqa: E501
+        :type computation_id: ComputationId
         """
         self.openapi_types = {
-            'list_identifier': ComputationId
+            'computation_id': ComputationId
         }
 
         self.attribute_map = {
-            'list_identifier': 'list_identifier'
+            'computation_id': 'computation_id'
         }
 
-        self._list_identifier = list_identifier
+        self._computation_id = computation_id
 
     @classmethod
     def from_dict(cls, dikt) -> 'ComputationIdentifier':
@@ -45,22 +45,22 @@ class ComputationIdentifier(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def list_identifier(self):
-        """Gets the list_identifier of this ComputationIdentifier.
+    def computation_id(self):
+        """Gets the computation_id of this ComputationIdentifier.
 
 
-        :return: The list_identifier of this ComputationIdentifier.
+        :return: The computation_id of this ComputationIdentifier.
         :rtype: ComputationId
         """
-        return self._list_identifier
+        return self._computation_id
 
-    @list_identifier.setter
-    def list_identifier(self, list_identifier):
-        """Sets the list_identifier of this ComputationIdentifier.
+    @computation_id.setter
+    def computation_id(self, computation_id):
+        """Sets the computation_id of this ComputationIdentifier.
 
 
-        :param list_identifier: The list_identifier of this ComputationIdentifier.
-        :type list_identifier: ComputationId
+        :param computation_id: The computation_id of this ComputationIdentifier.
+        :type computation_id: ComputationId
         """
 
-        self._list_identifier = list_identifier
+        self._computation_id = computation_id
