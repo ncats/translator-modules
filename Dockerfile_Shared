@@ -10,6 +10,7 @@
 FROM continuumio/miniconda3:4.7.10
 
 # Setting up Docker Conda environment
+# Followed advice at https://medium.com/@chadlagore/conda-environments-with-docker-82cdc9d25754
 RUN conda update -n base -c defaults conda
 RUN conda create -n translator-modules python=3.7
 RUN echo "source activate translator-modules" > ~/.bashrc
@@ -19,6 +20,9 @@ ENV PATH /opt/conda/envs/translator-modules/bin:$PATH
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . ./
+
+# Need to install a local copy of the NCATS translator/modules
+RUN pip install -e .
 
 # Delegating installment of specific service
 # dependencies to the applicable child images

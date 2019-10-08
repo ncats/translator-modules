@@ -2,24 +2,24 @@
 #  NCATS Translator Modules System
 #
 # This Dockerfile builds the Docker image to run as a
-# Translator Modules Identifiers Resolution Service
+# Translator Modules Ontology Lookup Service
 #
 # To build the image, from the Translator Modules project root directory, type:
 #
 #    docker build -f Dockerfile_Shared -t translator_modules_shared .
-#    docker build -f Dockerfile_Identifiers_Server -t identifiers_server .
+#    docker build -f Dockerfile_Ontology_Lookup_Server -t ontology_server .
 #
 # To start up the dockerized REST web service container, type:
 #
-#    docker run -p 8081:8081 identifiers_server
+#    docker run -p 8082:8082 ontology_server
 #
 FROM translator_modules_shared
 
-WORKDIR /usr/src/app/ncats/translator/identifiers/server
+WORKDIR /usr/src/app/ncats/translator/ontology/server
 
 RUN pip install  --no-cache-dir -r requirements.txt
 
-EXPOSE 8081
+EXPOSE 8082
 
 ENTRYPOINT ["python3"]
 
