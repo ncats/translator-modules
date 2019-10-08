@@ -24,7 +24,7 @@ class FunctionalSimilarity(GenericSimilarity):
 
         # Load the functional catalog of
         # GO ontology and annotation associations
-        self.load_associations(taxon)
+        # self.load_associations(taxon)
 
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, input_gene_set):

@@ -15,10 +15,11 @@ class GenericSimilarity(object):
 
     def __init__(self) -> None:
         self.ont = ''
+        self.taxon = ''
 
     def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
         similarities = []
-        # need to call the remote service here
+        # need to call the remote service here, tagged  with self.taxon and self.ont to be used
         return similarities
 
     @staticmethod

@@ -50,7 +50,7 @@ paths:
         - public
       summary: >
         Retrieves a list of similarity results when ready
-      operationId: results
+      operationId: get_results
       description: >
         Retrieves a list of similarity results when obtained by a
         Jaccard similarity of a posted list of input genes
@@ -58,8 +58,8 @@ paths:
         - in: query
           name: compute_id
           description: >
-            Computational Identifier UUID from a Jaccard similarity computation
-            upon a posted list of input genes
+            Computational Identifier UUID returned from a submitted Jaccard similarity
+            computation request upon a posted list of input genes
           required: true
           schema:
             type: string
@@ -70,10 +70,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Results'
+        '102':
+          description: >
+            The requested computation is still in process without error, but no results are yet available.
         '400':
           description: bad input target parameter
 components:
   schemas:
+    GeneEntry:
+      type: object
+      required:
+        - gene_id
+      properties:
+        input_id: # gene_curie,
+          type: string
+          example: "HGNC:1100"
+        sim_input_curie: # sim_input_curie - not really a curie but seems to be an UniProdKB identifier
+          type: string
+          example: "P38398"
+        input_symbol': # gene['hit_symbol']
+          type: string
+          example: "BRCA1"
     ComputationInput:
       type: object
       required:
@@ -84,27 +101,17 @@ components:
           type: string
           description: >
             Ontology catalog to be queried to compute the Jaccard similarity of input genes
-          example: 'go'
+        taxon:
+          type: string
+          description: >
+            Taxonomic class of ontology to be used (i.e. human, mouse)
+          example: 'human'
         input_genes:
           type: array
           description: >
             List of input genes upon which the Jaccard similarity computation will be applied
           items:
             $ref: '#/components/schemas/GeneEntry'
-    GeneEntry:
-      type: object
-      required:
-        - gene_id
-      properties:
-        input_id: # gene_curie,
-          type: string
-          example: "HGNC:1100"
-        sim_input_curie: # sim_input_curie,
-          type: string
-          example: "HGNC:1100"
-        input_symbol': # gene['hit_symbol']
-          type: string
-          example: "HGNC:1100"
     ComputationId:
       type: object
       properties:
@@ -112,20 +119,13 @@ components:
           type: string
           format: uuid
           example:  "123e4567-e89b-12d3-a456-426655440000"
-    Results:
-      type: object
-      required:
-        - computation_id
-        - records
-      properties:
-        computation_id:
-          $ref: '#/components/schemas/ComputationId'
-        similarities:
-          type: array
-          description: >
-            List of annotated Jaccard similarity results
-          items:
-            $ref: '#/components/schemas/Similarity'
+    Terms:
+      type: array
+      description: >
+        Ordered list of term strings (identifiers or names). There should be a one-to-one ordered
+        correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.
+      items:
+        type: string
     Similarity:
       type: object
       required:
@@ -145,7 +145,7 @@ components:
           type: string
         hit_id: # subject_curie
           type: string
-        score: # score - should this be numeric?
+        score: # score - should this be a numeric data type?
           type: string
         shared_terms:
           type: array
@@ -159,11 +159,17 @@ components:
             List of shared term human readable names
           items:
             $ref: '#/components/schemas/Terms'
-    Terms:
-      type: array
-      description: >
-        Ordered list of term descriptors (identifiers or names).
-        There should be a one-to-one ordered correspondence between
-        the shared_terms and shared_term_names arrays in a given Similarity result entry
-      items:
-        type: string
+    Results:
+      type: object
+      required:
+        - computation_id
+        - similarities
+      properties:
+        computation_id:
+          $ref: '#/components/schemas/ComputationId'
+        similarities:
+          type: array
+          description: >
+            List of annotated Jaccard similarity results
+          items:
+            $ref: '#/components/schemas/Similarity'
