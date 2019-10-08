@@ -62,69 +62,16 @@ is still under development.
 
 [Back to top](#ncats-translator-module-project-components)
 
-## Developer Addition or Modification of a System Service
+ ## Developer Addition or Modification of a System Service
 
 We have specified the web services in OpenAPI 3.0 YAML specification files are found in each subdirectory 
 - i.e. _identifiers_ and _ontology_ - related to each microservice. These subdirectories also have the corresponding 
-client/server code in *client* and  *server* subfolders.
+client/server code in *client* and  *server* subfolders. For modifying one of the existing services, see the
+relevant section in the corresponding READMEs, e.g. for  [the Identifier Resolution Service](./identifiers/README.md) 
+and [the Ontology Jaccard Similarity service](./ontology/README.md).
 
-The *client* is a direct Python web service client and the *server* is a simple Python Flask server implementation.
-
-By [installing a local copy of the OpenAPI Code Generator](https://openapi-generator.tech/docs/installation), 
-modified OpenAPI 3.0 YAML specifications can be processed to recreate the Python client and Python Flask server stubs.
-
-Here, we use the *identifiers* service as an exemplar (substitute the YAML and other parameters as needed for other
-services being created or modified).
-
-You can run all of these commands from the *translator-modules* directory:
-
-```bash
-cd translator-modules
-```
-
-First, you may first wish to check your modified OpenAPI YAML specification, using the _validate_ command:
-
-```bash
-openapi-generator validate (-i | --input-spec) ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml
-```
-
-If it passes muster, then  to recreate the Python Flask *server* stubs, type the following 
-(run from the root project directory):
-
-```bash
-openapi-generator generate --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
-                    --model-package=model \
-                    --output=ncats/translator/identifiers/server \
-                    --generator-name=python-flask \
-                    --additional-properties=\
---packageName=ncats.translator.identifiers.server.openapi_server,\
---projectName=identifier-resolver-server,\
-—-packageVersion="0.0.1",\
---packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers/server,\
---serverPort=8081
-```
-
-To recreate the matching *client* Python access stubs, type something the following 
-(from the root project directory):
-
-```bash
-openapi-generator generate  --input-spec=ncats/translator/identifiers/ncats_translator_module_identifiers_api.yaml \
-                    --model-package=model \
-                    --output=ncats/translator/identifiers/client \
-                    --generator-name=python \
-                    --additional-properties=\
---packageName=ncats.translator.identifiers.client.openapi_client,\
---projectName=identifier-resolver-client,\
-—-packageVersion="0.0.1",\
---packageUrl=https://github.com/ncats/translator-modules/tree/master/ncats/translator/identifiers/client
-```
-
-Consult the [OpenAPI 3.0 'generate' command usage](https://openapi-generator.tech/docs/usage#generate) 
-for more specific details on available code generation options and for acceptable program flag abbreviations (here we
-used the long form of the flags)
-
-In  both cases, after generating the code stubs,  a developer needs to reconnect the (delegated) business logic to 
-the REST processing front end as required to get the system working again.  Developers can scrutinize recent working 
-releases of the code to best understand how the code stubs need to be reconnected or how to add new business logic.
+If a novel service is required, use one of the existing services - including corresponding root project level
+Dockerfile - to guide service development and inclusion of the new service into the Docker Compose deployment of the
+Translator Module system.
 
 [Back to top](#ncats-translator-module-project-components)
