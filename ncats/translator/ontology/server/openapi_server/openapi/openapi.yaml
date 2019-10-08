@@ -1,0 +1,232 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: richard@starinformatics.com
+  description: NCATS Translator Modules Ontology Jaccard Similarity Server
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: NCATS Translator Modules Ontology Jaccard Similarity Server
+  version: 0.0.1
+servers:
+- description: NCATS Translator Modules Ontology Jaccard Similarity Server
+  url: http://0.0.0.0:8082
+tags:
+- description: |
+    Operations available to public module users of Ontology Jaccard Similarity computations
+  name: public
+paths:
+  /compute_jaccard:
+    post:
+      description: |
+        Post a list of input genes and initiate a Jaccard similarity computation
+      operationId: compute_jaccard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComputationInput'
+        description: |
+          List of input genes upon which to compute Jaccard similarity
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComputationIdentifier'
+          description: |
+            Jaccard similarity computation initiated on the server
+      summary: post a list of input genes and initiate a Jaccard similarity computation
+      tags:
+      - public
+      x-openapi-router-controller: openapi_server.controllers.public_controller
+  /results:
+    get:
+      description: |
+        Retrieves a list of similarity results when obtained by a Jaccard similarity of a posted list of input genes
+      operationId: get_results
+      parameters:
+      - description: |
+          Computational Identifier UUID returned from a submitted Jaccard similarity computation request upon a posted list of input genes
+        explode: true
+        in: query
+        name: compute_id
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Results'
+          description: computation successful, results returned
+        102:
+          description: |
+            The requested computation is still in process without error, but no results are yet available.
+        400:
+          description: bad input target parameter
+      summary: |
+        Retrieves a list of similarity results when ready
+      tags:
+      - public
+      x-openapi-router-controller: openapi_server.controllers.public_controller
+components:
+  schemas:
+    GeneEntry:
+      example:
+        sim_input_curie: P38398
+        input_symbol': BRCA1
+        input_id: HGNC:1100
+      properties:
+        input_id:
+          example: HGNC:1100
+          type: string
+        sim_input_curie:
+          example: P38398
+          type: string
+        input_symbol':
+          example: BRCA1
+          type: string
+      required:
+      - gene_id
+      type: object
+    ComputationInput:
+      example:
+        input_genes:
+        - sim_input_curie: P38398
+          input_symbol': BRCA1
+          input_id: HGNC:1100
+        - sim_input_curie: P38398
+          input_symbol': BRCA1
+          input_id: HGNC:1100
+        taxon: human
+        ontology: ontology
+      properties:
+        ontology:
+          description: |
+            Ontology catalog to be queried to compute the Jaccard similarity of input genes
+          type: string
+        taxon:
+          description: |
+            Taxonomic class of ontology to be used (i.e. human, mouse)
+          example: human
+          type: string
+        input_genes:
+          description: |
+            List of input genes upon which the Jaccard similarity computation will be applied
+          items:
+            $ref: '#/components/schemas/GeneEntry'
+          type: array
+      required:
+      - input_genes
+      - ontology
+      type: object
+    ComputationId:
+      example:
+        uuid: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        uuid:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+      type: object
+    Terms:
+      description: |
+        Ordered list of term strings (identifiers or names). There should be a one-to-one ordered correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.
+      items:
+        type: string
+      type: array
+    Similarity:
+      example:
+        score: score
+        hit_id: hit_id
+        input_symbol: input_symbol
+        shared_term_names:
+        - null
+        - null
+        shared_terms:
+        - null
+        - null
+        hit_symbol: hit_symbol
+        input_id: input_id
+      properties:
+        input_id:
+          type: string
+        input_symbol:
+          type: string
+        hit_symbol:
+          type: string
+        hit_id:
+          type: string
+        score:
+          type: string
+        shared_terms:
+          description: |
+            List of shared term identifiers
+          items:
+            $ref: '#/components/schemas/Terms'
+          type: array
+        shared_term_names:
+          description: |
+            List of shared term human readable names
+          items:
+            $ref: '#/components/schemas/Terms'
+          type: array
+      required:
+      - hit_id
+      - hit_symbol
+      - input_id
+      - input_symbol
+      - score
+      - shared_term_names
+      - shared_terms
+      type: object
+    Results:
+      example:
+        similarities:
+        - score: score
+          hit_id: hit_id
+          input_symbol: input_symbol
+          shared_term_names:
+          - null
+          - null
+          shared_terms:
+          - null
+          - null
+          hit_symbol: hit_symbol
+          input_id: input_id
+        - score: score
+          hit_id: hit_id
+          input_symbol: input_symbol
+          shared_term_names:
+          - null
+          - null
+          shared_terms:
+          - null
+          - null
+          hit_symbol: hit_symbol
+          input_id: input_id
+        computation_id:
+          uuid: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        computation_id:
+          $ref: '#/components/schemas/ComputationId'
+        similarities:
+          description: |
+            List of annotated Jaccard similarity results
+          items:
+            $ref: '#/components/schemas/Similarity'
+          type: array
+      required:
+      - computation_id
+      - similarities
+      type: object
+    ComputationIdentifier:
+      example:
+        list_identifier:
+          uuid: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        list_identifier:
+          $ref: '#/components/schemas/ComputationId'
