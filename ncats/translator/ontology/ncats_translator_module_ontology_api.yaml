@@ -1,11 +1,11 @@
 openapi: 3.0.0
 servers:
-  - description: NCATS Translator Modules Ontology Lookup Server
+  - description: NCATS Translator Modules Ontology Jaccard Similarity Server
     url: http://0.0.0.0:8082
 info:
-  description: NCATS Translator Modules Ontology Lookup Server
+  description: NCATS Translator Modules Ontology Jaccard Similarity Server
   version: "0.0.1"
-  title: NCATS Translator Modules Ontology Lookup Server
+  title: NCATS Translator Modules Ontology Jaccard Similarity Server
   contact:
     email: richard@starinformatics.com
   license:
@@ -14,7 +14,7 @@ info:
 tags:
   - name: public
     description: >
-      Operations available to public module users of ontology lookup
+      Operations available to public module users of Ontology Jaccard Similarity computations
 paths:
   /compute_jaccard:
     post:
@@ -41,9 +41,7 @@ paths:
           application/json:
             schema:
               x-body-name: request_body
-              type: array
-              items:
-                $ref: '#/components/schemas/GeneEntry'
+              $ref: '#/components/schemas/ComputationInput'
         description: >
           List of input genes upon which to compute Jaccard similarity
   /results:
@@ -76,6 +74,37 @@ paths:
           description: bad input target parameter
 components:
   schemas:
+    ComputationInput:
+      type: object
+      required:
+        - ontology
+        - input_genes
+      properties:
+        ontology:
+          type: string
+          description: >
+            Ontology catalog to be queried to compute the Jaccard similarity of input genes
+          example: 'go'
+        input_genes:
+          type: array
+          description: >
+            List of input genes upon which the Jaccard similarity computation will be applied
+          items:
+            $ref: '#/components/schemas/GeneEntry'
+    GeneEntry:
+      type: object
+      required:
+        - gene_id
+      properties:
+        input_id: # gene_curie,
+          type: string
+          example: "HGNC:1100"
+        sim_input_curie: # sim_input_curie,
+          type: string
+          example: "HGNC:1100"
+        input_symbol': # gene['hit_symbol']
+          type: string
+          example: "HGNC:1100"
     ComputationId:
       type: object
       properties:
@@ -83,20 +112,6 @@ components:
           type: string
           format: uuid
           example:  "123e4567-e89b-12d3-a456-426655440000"
-    GeneEntry:
-      type: object
-      required:
-        - gene_id
-      properties:
-        input_id: gene_curie,
-          type: string
-          example: "HGNC:1100"
-        sim_input_curie: sim_input_curie,
-          type: string
-          example: "HGNC:1100"
-        input_symbol': gene['hit_symbol']
-          type: string
-          example: "HGNC:1100"
     Results:
       type: object
       required:
@@ -105,32 +120,50 @@ components:
       properties:
         computation_id:
           $ref: '#/components/schemas/ComputationId'
-        records:
+        similarities:
           type: array
           description: >
-            list of identifier map entries for every
-            identifier registered in the map
+            List of annotated Jaccard similarity results
           items:
             $ref: '#/components/schemas/Similarity'
     Similarity:
       type: object
       required:
-        - 'input_id': input_gene,
-          'input_symbol': igene['input_symbol'],
-          'hit_symbol': subject_label,
-          'hit_id': subject_curie,
-          'score': score,
-          'shared_terms': shared_terms,
-          'shared_term_names': shared_term_names
+        - input_id
+        - input_symbol
+        - hit_symbol
+        - hit_id
+        - score
+        - shared_terms
+        - shared_term_names
       properties:
-        - 'input_id': input_gene,
-          'input_symbol': igene['input_symbol'],
-          'hit_symbol': subject_label,
-          'hit_id': subject_curie,
-          'score': score,
-          'shared_terms': shared_terms,
-          'shared_term_names': shared_term_names
+        input_id: # input_gene
+          type: string
+        input_symbol: # igene['input_symbol']
+          type: string
+        hit_symbol: # subject_label
+          type: string
+        hit_id: # subject_curie
+          type: string
+        score: # score - should this be numeric?
+          type: string
+        shared_terms:
+          type: array
+          description: >
+            List of shared term identifiers
+          items:
+            $ref: '#/components/schemas/Terms'
+        shared_term_names:
+          type: array
+          description: >
+            List of shared term human readable names
+          items:
+            $ref: '#/components/schemas/Terms'
     Terms:
       type: array
+      description: >
+        Ordered list of term descriptors (identifiers or names).
+        There should be a one-to-one ordered correspondence between
+        the shared_terms and shared_term_names arrays in a given Similarity result entry
       items:
         type: string
