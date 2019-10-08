@@ -18,4 +18,3 @@ COPY . /usr/src/app
 RUN pip install .
 
 CMD ["/bin/bash"]
-

@@ -2,16 +2,16 @@
 #  NCATS Translator Modules System
 #
 # This Dockerfile builds the Docker image to run as a
-# Translator Modules Ontology Lookup Service
+# Translator Modules Ontology Jaccard Similarity Service
 #
 # To build the image, from the Translator Modules project root directory, type:
 #
 #    docker build -f Dockerfile_Shared -t translator_modules_shared .
-#    docker build -f Dockerfile_Ontology_Lookup_Server -t ontology_server .
+#    docker build -f Dockerfile_Jaccard_Similarity_Server -t jaccard_similarity_server .
 #
 # To start up the dockerized REST web service container, type:
 #
-#    docker run -p 8082:8082 ontology_server
+#    docker run -p 8082:8082 jaccard_similarity_server
 #
 FROM translator_modules_shared
 
