@@ -31,12 +31,12 @@ def handle_identifier_list(request_body: List[str]) -> IdentifierListId:
 
     :rtype: IdentifierListId
     """
-    resolver = Resolver.get_the_resolver()
-
-    uuid = str(uuid4())
 
     # Make a copy of the identifier string list, just be safe
     if request_body:
+
+        uuid = str(uuid4())
+
         _identifier_list_cache[uuid] = [identifier for identifier in request_body]
 
         list_id = IdentifierListId(uuid)

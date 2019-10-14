@@ -31,11 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                title: ComputationIdentifier
-                properties:
-                  computation_id:
-                    $ref: '#/components/schemas/ComputationId'
+                $ref: '#/components/schemas/ComputationIdentifier'
       requestBody:
         content:
           application/json:
@@ -115,7 +111,7 @@ components:
             List of input genes upon which the Jaccard similarity computation will be applied
           items:
             $ref: '#/components/schemas/GeneEntry'
-    ComputationId:
+    ComputationIdentifier:
       type: object
       properties:
         uuid:
@@ -169,7 +165,7 @@ components:
         - similarities
       properties:
         computation_id:
-          $ref: '#/components/schemas/ComputationId'
+          $ref: '#/components/schemas/ComputationIdentifier'
         similarities:
           type: array
           description: >

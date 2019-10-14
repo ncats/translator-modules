@@ -29,7 +29,6 @@ from openapi_client.exceptions import ApiValueError
 from openapi_client.exceptions import ApiKeyError
 from openapi_client.exceptions import ApiException
 # import models into sdk package
-from openapi_client.model.computation_id import ComputationId
 from openapi_client.model.computation_identifier import ComputationIdentifier
 from openapi_client.model.computation_input import ComputationInput
 from openapi_client.model.gene_entry import GeneEntry

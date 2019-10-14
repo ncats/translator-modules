@@ -6,10 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from ncats.translator.ontology.server.openapi_server.model.base_model_ import Model
-from ncats.translator.ontology.server.openapi_server.model.computation_id import ComputationId
 from ncats.translator.ontology.server.openapi_server import util
-
-from ncats.translator.ontology.server.openapi_server.model.computation_id import ComputationId  # noqa: E501
 
 
 class ComputationIdentifier(Model):
@@ -18,21 +15,21 @@ class ComputationIdentifier(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, computation_id=None):  # noqa: E501
+    def __init__(self, uuid=None):  # noqa: E501
         """ComputationIdentifier - a model defined in OpenAPI
 
-        :param computation_id: The computation_id of this ComputationIdentifier.  # noqa: E501
-        :type computation_id: ComputationId
+        :param uuid: The uuid of this ComputationIdentifier.  # noqa: E501
+        :type uuid: str
         """
         self.openapi_types = {
-            'computation_id': ComputationId
+            'uuid': str
         }
 
         self.attribute_map = {
-            'computation_id': 'computation_id'
+            'uuid': 'uuid'
         }
 
-        self._computation_id = computation_id
+        self._uuid = uuid
 
     @classmethod
     def from_dict(cls, dikt) -> 'ComputationIdentifier':
@@ -46,22 +43,22 @@ class ComputationIdentifier(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def computation_id(self):
-        """Gets the computation_id of this ComputationIdentifier.
+    def uuid(self):
+        """Gets the uuid of this ComputationIdentifier.
 
 
-        :return: The computation_id of this ComputationIdentifier.
-        :rtype: ComputationId
+        :return: The uuid of this ComputationIdentifier.
+        :rtype: str
         """
-        return self._computation_id
+        return self._uuid
 
-    @computation_id.setter
-    def computation_id(self, computation_id):
-        """Sets the computation_id of this ComputationIdentifier.
+    @uuid.setter
+    def uuid(self, uuid):
+        """Sets the uuid of this ComputationIdentifier.
 
 
-        :param computation_id: The computation_id of this ComputationIdentifier.
-        :type computation_id: ComputationId
+        :param uuid: The uuid of this ComputationIdentifier.
+        :type uuid: str
         """
 
-        self._computation_id = computation_id
+        self._uuid = uuid

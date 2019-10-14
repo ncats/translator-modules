@@ -126,7 +126,7 @@ components:
       - input_genes
       - ontology
       type: object
-    ComputationId:
+    ComputationIdentifier:
       example:
         uuid: 123e4567-e89b-12d3-a456-426655440000
       properties:
@@ -215,7 +215,7 @@ components:
           uuid: 123e4567-e89b-12d3-a456-426655440000
       properties:
         computation_id:
-          $ref: '#/components/schemas/ComputationId'
+          $ref: '#/components/schemas/ComputationIdentifier'
         similarities:
           description: |
             List of annotated Jaccard similarity results
@@ -226,10 +226,3 @@ components:
       - computation_id
       - similarities
       type: object
-    ComputationIdentifier:
-      example:
-        computation_id:
-          uuid: 123e4567-e89b-12d3-a456-426655440000
-      properties:
-        computation_id:
-          $ref: '#/components/schemas/ComputationId'

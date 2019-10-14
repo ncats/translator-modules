@@ -32,42 +32,42 @@ class ComputationIdentifier(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'computation_id': 'ComputationId'
+        'uuid': 'str'
     }
 
     attribute_map = {
-        'computation_id': 'computation_id'
+        'uuid': 'uuid'
     }
 
-    def __init__(self, computation_id=None):  # noqa: E501
+    def __init__(self, uuid=None):  # noqa: E501
         """ComputationIdentifier - a model defined in OpenAPI"""  # noqa: E501
 
-        self._computation_id = None
+        self._uuid = None
         self.discriminator = None
 
-        if computation_id is not None:
-            self.computation_id = computation_id
+        if uuid is not None:
+            self.uuid = uuid
 
     @property
-    def computation_id(self):
-        """Gets the computation_id of this ComputationIdentifier.  # noqa: E501
+    def uuid(self):
+        """Gets the uuid of this ComputationIdentifier.  # noqa: E501
 
 
-        :return: The computation_id of this ComputationIdentifier.  # noqa: E501
-        :rtype: ComputationId
+        :return: The uuid of this ComputationIdentifier.  # noqa: E501
+        :rtype: str
         """
-        return self._computation_id
+        return self._uuid
 
-    @computation_id.setter
-    def computation_id(self, computation_id):
-        """Sets the computation_id of this ComputationIdentifier.
+    @uuid.setter
+    def uuid(self, uuid):
+        """Sets the uuid of this ComputationIdentifier.
 
 
-        :param computation_id: The computation_id of this ComputationIdentifier.  # noqa: E501
-        :type: ComputationId
+        :param uuid: The uuid of this ComputationIdentifier.  # noqa: E501
+        :type: str
         """
 
-        self._computation_id = computation_id
+        self._uuid = uuid
 
     def to_dict(self):
         """Returns the model properties as a dict"""

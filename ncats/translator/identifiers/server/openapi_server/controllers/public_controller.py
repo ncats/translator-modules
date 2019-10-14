@@ -1,7 +1,8 @@
 from logging import debug
+
 from typing import List
 
-from ncats.translator.identifiers.server.openapi_server.controllers.controller_impl import (
+from .controller_impl import (
     handle_identifier_list,
     handle_list_identifier_keys,
     handle_translate,
@@ -26,7 +27,7 @@ def identifier_list(request_body: List[str] = None) -> IdentifierListId:  # noqa
     return handle_identifier_list(request_body)
 
 
-def list_identifier_keys():  # noqa: E501
+def list_identifier_keys() -> List[str]:  # noqa: E501
     """list of valid key strings for identifier sources and targets
 
     Returns list of valid key strings for source and target parameters in other API calls  # noqa: E501

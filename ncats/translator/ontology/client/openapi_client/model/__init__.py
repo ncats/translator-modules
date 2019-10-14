@@ -15,7 +15,6 @@
 from __future__ import absolute_import
 
 # import models into model package
-from openapi_client.model.computation_id import ComputationId
 from openapi_client.model.computation_identifier import ComputationIdentifier
 from openapi_client.model.computation_input import ComputationInput
 from openapi_client.model.gene_entry import GeneEntry

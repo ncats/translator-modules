@@ -6,11 +6,11 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from ncats.translator.ontology.server.openapi_server.model.base_model_ import Model
-from ncats.translator.ontology.server.openapi_server.model.computation_id import ComputationId
+from ncats.translator.ontology.server.openapi_server.model.computation_identifier import ComputationIdentifier
 from ncats.translator.ontology.server.openapi_server.model.similarity import Similarity
 from ncats.translator.ontology.server.openapi_server import util
 
-from ncats.translator.ontology.server.openapi_server.model.computation_id import ComputationId  # noqa: E501
+from ncats.translator.ontology.server.openapi_server.model.computation_identifier import ComputationIdentifier  # noqa: E501
 from ncats.translator.ontology.server.openapi_server.model.similarity import Similarity  # noqa: E501
 
 
@@ -24,12 +24,12 @@ class Results(Model):
         """Results - a model defined in OpenAPI
 
         :param computation_id: The computation_id of this Results.  # noqa: E501
-        :type computation_id: ComputationId
+        :type computation_id: ComputationIdentifier
         :param similarities: The similarities of this Results.  # noqa: E501
         :type similarities: List[Similarity]
         """
         self.openapi_types = {
-            'computation_id': ComputationId,
+            'computation_id': ComputationIdentifier,
             'similarities': List[Similarity]
         }
 
@@ -58,7 +58,7 @@ class Results(Model):
 
 
         :return: The computation_id of this Results.
-        :rtype: ComputationId
+        :rtype: ComputationIdentifier
         """
         return self._computation_id
 
@@ -68,7 +68,7 @@ class Results(Model):
 
 
         :param computation_id: The computation_id of this Results.
-        :type computation_id: ComputationId
+        :type computation_id: ComputationIdentifier
         """
         if computation_id is None:
             raise ValueError("Invalid value for `computation_id`, must not be `None`")  # noqa: E501

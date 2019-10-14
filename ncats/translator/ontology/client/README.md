@@ -79,7 +79,6 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
- - [ComputationId](docs/ComputationId.md)
  - [ComputationIdentifier](docs/ComputationIdentifier.md)
  - [ComputationInput](docs/ComputationInput.md)
  - [GeneEntry](docs/GeneEntry.md)

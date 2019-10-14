@@ -32,7 +32,7 @@ class Results(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'computation_id': 'ComputationId',
+        'computation_id': 'ComputationIdentifier',
         'similarities': 'list[Similarity]'
     }
 
@@ -57,7 +57,7 @@ class Results(object):
 
 
         :return: The computation_id of this Results.  # noqa: E501
-        :rtype: ComputationId
+        :rtype: ComputationIdentifier
         """
         return self._computation_id
 
@@ -67,7 +67,7 @@ class Results(object):
 
 
         :param computation_id: The computation_id of this Results.  # noqa: E501
-        :type: ComputationId
+        :type: ComputationIdentifier
         """
         if computation_id is None:
             raise ValueError("Invalid value for `computation_id`, must not be `None`")  # noqa: E501
