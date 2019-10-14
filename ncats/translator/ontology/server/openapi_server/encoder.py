@@ -1,7 +1,7 @@
 from connexion.apps.flask_app import FlaskJSONEncoder
 import six
 
-from openapi_server.model.base_model_ import Model
+from ncats.translator.ontology.server.openapi_server.model.base_model_ import Model
 
 
 class JSONEncoder(FlaskJSONEncoder):
