@@ -1,9 +1,9 @@
 import connexion
 import six
 
-from openapi_server.model.identifier_map import IdentifierMap  # noqa: E501
-from openapi_server.model.identifier_map_id import IdentifierMapId  # noqa: E501
-from openapi_server import util
+from ncats.translator.identifiers.server.openapi_server.model.identifier_map import IdentifierMap  # noqa: E501
+from ncats.translator.identifiers.server.openapi_server.model.identifier_map_id import IdentifierMapId  # noqa: E501
+from ncats.translator.identifiers.server.openapi_server import util
 
 
 def load_identifier_map(identifier_map=None):  # noqa: E501

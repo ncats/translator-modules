@@ -29,9 +29,9 @@ Then,  you will specifically need the *identifiers* project dependencies. From w
 directory, type the following:
 
 ```bash
-# The 'python' binary is assumed to be 3.7 or better
-cd /path/to/translator-modules/ncats/translator/identifiers/server
-python -m pip install -r requirements.txt
+# assuming that you are already in the translator-modules root directory
+cd ncats/translator/identifiers/server
+python -m pip install -r requirements.txt -e .
 ```
 
 Using up a standalone version of the server is as simple as typing:

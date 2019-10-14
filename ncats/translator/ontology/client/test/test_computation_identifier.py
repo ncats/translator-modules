@@ -15,9 +15,9 @@ from __future__ import absolute_import
 
 import unittest
 
-import openapi_client
-from openapi_client.model.computation_identifier import ComputationIdentifier  # noqa: E501
-from openapi_client.rest import ApiException
+import ncats.translator.ontology.client.openapi_client
+from ncats.translator.ontology.client.openapi_client.model.computation_identifier import ComputationIdentifier  # noqa: E501
+from ncats.translator.ontology.client.openapi_client.rest import ApiException
 
 
 class TestComputationIdentifier(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestComputationIdentifier(unittest.TestCase):
     def testComputationIdentifier(self):
         """Test ComputationIdentifier"""
         # FIXME: construct object with mandatory attributes with example values
-        # model = openapi_client.models.computation_identifier.ComputationIdentifier()  # noqa: E501
+        # model = ncats.translator.ontology.client.openapi_client.models.computation_identifier.ComputationIdentifier()  # noqa: E501
         pass
 
 

@@ -17,7 +17,7 @@ import unittest
 
 import ncats.translator.identifiers.client.openapi_client
 from ncats.translator.identifiers.client.openapi_client.api.admins_api import AdminsApi  # noqa: E501
-from ncats.translator.identifiers.client.openapi_client.rest import ApiException
+from ncats.translator.identifiers.client.openapi_client.exceptions import ApiException
 
 
 class TestAdminsApi(unittest.TestCase):

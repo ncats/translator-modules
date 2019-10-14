@@ -3,7 +3,7 @@
 import sys
 from setuptools import setup, find_packages
 
-NAME = "openapi_server"
+NAME = "ncats_translator_modules_identifiers_openapi_server"
 VERSION = "0.0.1"
 
 # To install the library, run the following

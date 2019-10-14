@@ -23,10 +23,10 @@ import tempfile
 import six
 from six.moves.urllib.parse import quote
 
-from openapi_client.configuration import Configuration
-import openapi_client.model
-from openapi_client import rest
-from openapi_client.exceptions import ApiValueError
+from ncats.translator.ontology.client.openapi_client.configuration import Configuration
+import ncats.translator.ontology.client.openapi_client.model
+from ncats.translator.ontology.client.openapi_client import rest
+from ncats.translator.ontology.client.openapi_client.exceptions import ApiValueError
 
 
 class ApiClient(object):
@@ -278,7 +278,7 @@ class ApiClient(object):
             if klass in self.NATIVE_TYPES_MAPPING:
                 klass = self.NATIVE_TYPES_MAPPING[klass]
             else:
-                klass = getattr(openapi_client.model, klass)
+                klass = getattr(ncats.translator.ontology.client.openapi_client.model, klass)
 
         if klass in self.PRIMITIVE_TYPES:
             return self.__deserialize_primitive(data, klass)

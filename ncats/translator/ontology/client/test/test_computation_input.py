@@ -15,9 +15,9 @@ from __future__ import absolute_import
 
 import unittest
 
-import openapi_client
-from openapi_client.model.computation_input import ComputationInput  # noqa: E501
-from openapi_client.rest import ApiException
+import ncats.translator.ontology.client.openapi_client
+from ncats.translator.ontology.client.openapi_client.model.computation_input import ComputationInput  # noqa: E501
+from ncats.translator.ontology.client.openapi_client.rest import ApiException
 
 
 class TestComputationInput(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestComputationInput(unittest.TestCase):
     def testComputationInput(self):
         """Test ComputationInput"""
         # FIXME: construct object with mandatory attributes with example values
-        # model = openapi_client.models.computation_input.ComputationInput()  # noqa: E501
+        # model = ncats.translator.ontology.client.openapi_client.models.computation_input.ComputationInput()  # noqa: E501
         pass
 
 
