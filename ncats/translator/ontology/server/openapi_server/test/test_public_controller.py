@@ -6,10 +6,10 @@ import unittest
 from flask import json
 from six import BytesIO
 
-from openapi_server.model.computation_identifier import ComputationIdentifier  # noqa: E501
-from openapi_server.model.computation_input import ComputationInput  # noqa: E501
-from openapi_server.model.results import Results  # noqa: E501
-from openapi_server.test import BaseTestCase
+from ncats.translator.ontology.server.openapi_server.model.computation_identifier import ComputationIdentifier  # noqa: E501
+from ncats.translator.ontology.server.openapi_server.model.computation_input import ComputationInput  # noqa: E501
+from ncats.translator.ontology.server.openapi_server.model.results import Results  # noqa: E501
+from ncats.translator.ontology.server.openapi_server.test import BaseTestCase
 
 
 class TestPublicController(BaseTestCase):

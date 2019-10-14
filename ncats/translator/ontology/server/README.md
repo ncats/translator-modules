@@ -31,7 +31,7 @@ directory, type the following:
 ```bash
 # assuming that you are already in the translator-modules root directory
 cd ncats/translator/ontology/server
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt -e .
 ```
 
 Using up a standalone version of the server is as simple as typing:
@@ -55,7 +55,9 @@ http://0.0.0.0:8082/openapi.json
 To launch the integration tests, use tox:
 
 ```
-sudo pip install tox
+# while in the  server subdirectory
+python -m pip install -r test_requirements.txt  
+python -m pip install tox
 tox
 ```
 

@@ -30,6 +30,13 @@ def handle_compute_jaccard(computation_input: ComputationInput) -> ComputationId
 
         uuid = str(uuid4())
 
+        # Initiate a Jaccard Similarity computation here
+
+        ontology = computation_input.ontology
+        taxon = computation_input.taxon
+        input_genes = computation_input.input_genes
+
+
         compute_id = ComputationIdentifier(uuid=uuid)
 
         return compute_id, 201
