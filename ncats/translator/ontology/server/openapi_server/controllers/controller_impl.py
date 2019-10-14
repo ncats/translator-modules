@@ -32,7 +32,7 @@ def handle_compute_jaccard(computation_input: ComputationInput) -> ComputationId
 
         compute_id = ComputationIdentifier(uuid=uuid)
 
-        return compute_id
+        return compute_id, 201
 
     else:
         raise RuntimeError("handle_identifier_list() ERROR: Empty request body?")
