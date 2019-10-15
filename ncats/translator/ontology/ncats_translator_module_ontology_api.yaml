@@ -71,6 +71,8 @@ paths:
             The requested computation is still in process without error, but no results are yet available.
         '400':
           description: bad input target parameter
+        '404':
+          description:  computation not found
 components:
   schemas:
     GeneEntry:

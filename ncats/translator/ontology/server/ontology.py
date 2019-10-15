@@ -1,13 +1,18 @@
+
 # Shared core Ontobio ontology services
 
 # Shared core similarity functions
 from typing import List, Tuple
+
+import asyncio
+import concurrent.futures
 
 import pandas as pd
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.assocmodel import AssociationSet
 from ontobio.io.gafparser import GafParser
 from ontobio.ontol_factory import OntologyFactory
+
 
 # We override the Ontobio version of the jaccard_similarity
 # function below, to return shared ontology term annotation
@@ -17,14 +22,16 @@ from ontobio.ontol_factory import OntologyFactory
 
 class GenericSimilarity(object):
 
-    def __init__(self) -> None:
+    def __init__(self, ont: str, taxon: str) -> None:
         self.associations = None
-        self.ont = ''
+        self.ont = ont
+        self.taxon = taxon
         self.ontology = ''
         self.assocs = ''
         self.afactory = AssociationSetFactory()
+        self.load_associations()
 
-    def load_associations(self, taxon) -> None:
+    def load_associations(self) -> None:
         taxon_map = {
             'human': 'NCBITaxon:9606',
             'mouse': 'NCBITaxon:10090',
@@ -39,9 +46,9 @@ class GenericSimilarity(object):
             # CX: The excluded term is cellular_component (where gene carries out a molecular function)
             go_roots = set(self.ontology.descendants('GO:0008150') + self.ontology.descendants('GO:0003674'))
             sub_ont = self.ontology.subontology(go_roots)
-            if taxon == 'mouse':
+            if self.taxon == 'mouse':
                 url = "http://current.geneontology.org/annotations/mgi.gaf.gz"
-            if taxon == 'human':
+            if self.taxon == 'human':
                 url = "http://current.geneontology.org/annotations/goa_human.gaf.gz"
             assocs = p.parse(url)
             self.assocs = assocs
@@ -51,11 +58,11 @@ class GenericSimilarity(object):
         else:
             self.associations = \
                 self.afactory.create(
-                        ontology=self.ontology,
-                        subject_category='gene',
-                        object_category='phenotype',
-                        taxon=taxon_map[taxon]
-            )
+                    ontology=self.ontology,
+                    subject_category='gene',
+                    object_category='phenotype',
+                    taxon=taxon_map[self.taxon]
+                )
 
     @staticmethod
     def jaccard_similarity(aset: AssociationSet, s1: str, s2: str) -> Tuple[float, list]:
@@ -104,6 +111,14 @@ class GenericSimilarity(object):
                             'shared_term_names': shared_term_names
                         })
         return similarities
+
+    async def compute_jaccard_async(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            loop = asyncio.get_event_loop()
+            compute_jaccard_future = loop.run_in_executor(executor, self.compute_jaccard, input_genes, lower_bound)
+
+        return compute_jaccard_future
 
     @staticmethod
     def trim_mgi_prefix(input_gene, subject_curie) -> str:
