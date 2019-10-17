@@ -2,6 +2,7 @@
 # Shared core Ontobio ontology services
 
 # Shared core similarity functions
+from _asyncio import Task
 from typing import List, Tuple
 
 import asyncio
@@ -86,7 +87,7 @@ class GenericSimilarity(object):
         # to avoid later JSON serialization problems
         return len(shared_terms) / num_union, list(shared_terms)
 
-    def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
+    async def compute_jaccard(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
         similarities = []
         for index, igene in enumerate(input_genes):
             for subject_curie in self.associations.subject_label_map.keys():
@@ -111,14 +112,6 @@ class GenericSimilarity(object):
                             'shared_term_names': shared_term_names
                         })
         return similarities
-
-    async def compute_jaccard_async(self, input_genes: List[dict], lower_bound: float = 0.7) -> List[dict]:
-
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            loop = asyncio.get_event_loop()
-            compute_jaccard_future = loop.run_in_executor(executor, self.compute_jaccard, input_genes, lower_bound)
-
-        return compute_jaccard_future
 
     @staticmethod
     def trim_mgi_prefix(input_gene, subject_curie) -> str:

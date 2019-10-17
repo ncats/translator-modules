@@ -1,3 +1,5 @@
+import asyncio
+from asyncio import CancelledError, InvalidStateError
 from uuid import uuid4
 
 from typing import Dict, Tuple, Any
@@ -9,6 +11,7 @@ from ncats.translator.ontology.server.openapi_server.model.results import Result
 from ncats.translator.ontology.server.openapi_server import util
 
 from ncats.translator.ontology.server.ontology import GenericSimilarity
+from openapi_server.model import Similarity
 
 """
 Handler delegation functions to inject and connect into 
@@ -64,7 +67,7 @@ def handle_compute_jaccard(computation_input: ComputationInput) -> Tuple[Computa
 
         uuid = str(uuid4())
 
-        _result_cache[uuid] = similarity_engine.compute_jaccard_async(input_genes, lower_bound)
+        _result_cache[uuid] = asyncio.create_task(similarity_engine.compute_jaccard(input_genes, lower_bound))
 
         compute_id = ComputationIdentifier(uuid=uuid)
 
@@ -85,10 +88,44 @@ def handle_get_jaccard_results(computation_id: str) -> Tuple[Any,int]:
     :rtype: Results
     """
     if computation_id in _result_cache:
-        result_future = _result_cache[computation_id]
-        if result_future:
-            # Need to check if the result is ready to return then return it
-            return Results()
+        jaccard_task = _result_cache[computation_id]
+        # Need to check if the result is
+        # ready to return, then return it
+        if jaccard_task.done():
+            try:
+                result = jaccard_task.result()
+                """
+                # Similarity data returned in an array of dictionary objects
+                'input_id'
+                'input_symbol'
+                'hit_symbol'
+                'hit_id'
+                'score'
+                'shared_terms'
+                'shared_term_names'
+                """
+                computation_id = ComputationIdentifier(computation_id)
+                similarities = [
+                    Similarity(
+                        input_id=entry['input_id'],
+                        input_symbol=entry['input_symbol'],
+                        hit_symbol=entry['hit_symbol'],
+                        hit_id=entry['hit_id'],
+                        score=entry['score'],
+                        shared_terms=[x for x in entry['shared_terms']],
+                        shared_term_names=[x for x in entry['shared_term_names']]
+                    ) for entry in result
+                ]
+                results = Results(
+                    computation_id=computation_id,
+                    similarities=similarities
+                )
+                return results, 200
+
+            except CancelledError:
+                return "Computation cancelled - result not found", 404
+            except InvalidStateError:
+                return "Invalid computation state", 500
         else:
             return "The requested computation processing without error, but results are not yet available.", 102
     else:
