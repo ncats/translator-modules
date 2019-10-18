@@ -1,14 +1,12 @@
 # Shared core Ontobio ontology services
 
-# Shared core similarity functions
-from _asyncio import Task
+from uuid import uuid4
+
 from asyncio import CancelledError, InvalidStateError
 from typing import List, Tuple
 
 import asyncio
-import concurrent.futures
 
-import pandas as pd
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.assocmodel import AssociationSet
 from ontobio.io.gafparser import GafParser
@@ -151,8 +149,10 @@ class GenericSimilarity(object):
     async def compute_jaccard_task(self, uuid: str, input_genes: List[dict], lower_bound: float):
         self._jaccard_similarity_tasks[uuid] = asyncio.create_task(self.compute_jaccard(input_genes, lower_bound))
 
-    def compute_jaccard_async(self, uuid: str, input_genes: List[dict], lower_bound: float):
+    def compute_jaccard_async(self, input_genes: List[dict], lower_bound: float):
+        uuid = str(uuid4())
         asyncio.run(self.compute_jaccard_task(uuid, input_genes, lower_bound))
+        return uuid
 
     @classmethod
     async def get_jaccard_similarity_result(cls, computation_id: str):

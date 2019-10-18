@@ -1,8 +1,4 @@
-import asyncio
-from asyncio import CancelledError, InvalidStateError
-from uuid import uuid4
-
-from typing import Dict, Tuple, Any
+from typing import Tuple, Any
 
 from ncats.translator.ontology.server.openapi_server.exceptions import (
     OntologyServerException,
@@ -14,7 +10,6 @@ from ncats.translator.ontology.server.openapi_server.exceptions import (
 from ncats.translator.ontology.server.openapi_server.model.computation_identifier import ComputationIdentifier
 from ncats.translator.ontology.server.openapi_server.model.computation_input import ComputationInput
 from ncats.translator.ontology.server.openapi_server.model.results import Results
-from ncats.translator.ontology.server.openapi_server import util
 
 from ncats.translator.ontology.server.ontology import GenericSimilarity
 from openapi_server.model import Similarity
@@ -56,11 +51,9 @@ def handle_compute_jaccard(computation_input: ComputationInput) -> Tuple[Computa
         if not lower_bound:
             lower_bound = 0.7
 
-        uuid = str(uuid4())
-
         similarity_engine = GenericSimilarity.get_similarity_engine(ontology, taxon)
 
-        similarity_engine.compute_jaccard_async(input_genes, lower_bound)
+        uuid = similarity_engine.compute_jaccard_async(input_genes, lower_bound)
 
         compute_id = ComputationIdentifier(uuid=uuid)
 
