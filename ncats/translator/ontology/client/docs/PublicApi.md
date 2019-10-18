@@ -115,6 +115,7 @@ No authorization required
 **200** | computation successful, results returned |  -  |
 **102** | The requested computation is still in process without error, but no results are yet available.  |  -  |
 **400** | bad input target parameter |  -  |
+**404** | computation not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

@@ -34,26 +34,31 @@ class ComputationInput(object):
     openapi_types = {
         'ontology': 'str',
         'taxon': 'str',
+        'lower_bound': 'float',
         'input_genes': 'list[GeneEntry]'
     }
 
     attribute_map = {
         'ontology': 'ontology',
         'taxon': 'taxon',
+        'lower_bound': 'lower_bound',
         'input_genes': 'input_genes'
     }
 
-    def __init__(self, ontology=None, taxon=None, input_genes=None):  # noqa: E501
+    def __init__(self, ontology=None, taxon=None, lower_bound=None, input_genes=None):  # noqa: E501
         """ComputationInput - a model defined in OpenAPI"""  # noqa: E501
 
         self._ontology = None
         self._taxon = None
+        self._lower_bound = None
         self._input_genes = None
         self.discriminator = None
 
         self.ontology = ontology
         if taxon is not None:
             self.taxon = taxon
+        if lower_bound is not None:
+            self.lower_bound = lower_bound
         self.input_genes = input_genes
 
     @property
@@ -103,6 +108,29 @@ class ComputationInput(object):
         """
 
         self._taxon = taxon
+
+    @property
+    def lower_bound(self):
+        """Gets the lower_bound of this ComputationInput.  # noqa: E501
+
+        Lower bound threshold of Jaccard Similarity scores for similarities returned   # noqa: E501
+
+        :return: The lower_bound of this ComputationInput.  # noqa: E501
+        :rtype: float
+        """
+        return self._lower_bound
+
+    @lower_bound.setter
+    def lower_bound(self, lower_bound):
+        """Sets the lower_bound of this ComputationInput.
+
+        Lower bound threshold of Jaccard Similarity scores for similarities returned   # noqa: E501
+
+        :param lower_bound: The lower_bound of this ComputationInput.  # noqa: E501
+        :type: float
+        """
+
+        self._lower_bound = lower_bound
 
     @property
     def input_genes(self):

@@ -26,13 +26,10 @@ class TestPublicController(BaseTestCase):
                 "sim_input_curie": "P38398",
                 "input_symbol": "BRCA1",
                 "input_id": "HGNC:1100"
-            }, {
-                "sim_input_curie": "P38398",
-                "input_symbol": "BRCA1",
-                "input_id": "HGNC:1100"
             }],
             "taxon": "human",
-            "ontology": "ontology"
+            "ontology": "go",
+            "lower_bound": 0.7
         }
         headers = {
             'Accept': 'application/json',
@@ -44,15 +41,21 @@ class TestPublicController(BaseTestCase):
             headers=headers,
             data=json.dumps(computation_input),
             content_type='application/json')
-        self.assertStatus(response, 201,
-                          'Response body is : ' + response.data.decode('utf-8'))
 
+        response_body = response.data.decode('utf-8')
+
+        self.assertStatus(response, 201, 'Response body is : ' + response_body)
+
+    # Merging the two tests since a proper test of
+    # 'get_results' requires a valid compute_jaccard endpoint call
+    @unittest.skip("Need to validate core jaccard_similarity test first?")
     def test_get_results(self):
         """Test case for get_results
 
         Retrieves a list of similarity results when ready 
         """
-        query_string = [('computation_id', '123e4567-e89b-12d3-a456-426655440000')]
+        query_string = ''  # response_body   # might have to do something different here?
+
         headers = {
             'Accept': 'application/json',
         }

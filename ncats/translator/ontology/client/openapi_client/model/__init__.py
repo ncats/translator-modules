@@ -15,8 +15,8 @@
 from __future__ import absolute_import
 
 # import models into model package
-from ncats.translator.ontology.client.openapi_client.model.computation_identifier import ComputationIdentifier
-from ncats.translator.ontology.client.openapi_client.model.computation_input import ComputationInput
-from ncats.translator.ontology.client.openapi_client.model.gene_entry import GeneEntry
-from ncats.translator.ontology.client.openapi_client.model.results import Results
-from ncats.translator.ontology.client.openapi_client.model.similarity import Similarity
+from openapi_client.model.computation_identifier import ComputationIdentifier
+from openapi_client.model.computation_input import ComputationInput
+from openapi_client.model.gene_entry import GeneEntry
+from openapi_client.model.results import Results
+from openapi_client.model.similarity import Similarity

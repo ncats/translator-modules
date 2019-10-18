@@ -107,6 +107,11 @@ components:
           description: >
             Taxonomic class of ontology to be used (i.e. human, mouse)
           example: 'human'
+        lower_bound:
+          type: number
+          format: float
+          description: >
+            Lower bound threshold of Jaccard Similarity scores for similarities returned
         input_genes:
           type: array
           description: >

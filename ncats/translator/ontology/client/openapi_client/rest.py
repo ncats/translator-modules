@@ -25,7 +25,7 @@ import six
 from six.moves.urllib.parse import urlencode
 import urllib3
 
-from ncats.translator.ontology.client.openapi_client.exceptions import ApiException, ApiValueError
+from openapi_client.exceptions import ApiException, ApiValueError
 
 
 logger = logging.getLogger(__name__)

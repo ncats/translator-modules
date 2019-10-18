@@ -2,7 +2,7 @@
 
 import connexion
 
-from ncats.translator.ontology.server.openapi_server import encoder
+from openapi_server import encoder
 
 
 def main():
@@ -11,7 +11,7 @@ def main():
     app.add_api('openapi.yaml',
                 arguments={'title': 'NCATS Translator Modules Ontology Jaccard Similarity Server'},
                 pythonic_params=True)
-    app.run(port=8082)
+    app.run(port=8080)
 
 
 if __name__ == '__main__':

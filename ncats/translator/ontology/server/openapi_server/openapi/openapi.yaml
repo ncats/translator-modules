@@ -67,6 +67,8 @@ paths:
             The requested computation is still in process without error, but no results are yet available.
         400:
           description: bad input target parameter
+        404:
+          description: computation not found
       summary: |
         Retrieves a list of similarity results when ready
       tags:
@@ -96,6 +98,7 @@ components:
       type: object
     ComputationInput:
       example:
+        lower_bound: 0.8008282
         input_genes:
         - sim_input_curie: P38398
           input_symbol: BRCA1
@@ -116,6 +119,11 @@ components:
             Taxonomic class of ontology to be used (i.e. human, mouse)
           example: human
           type: string
+        lower_bound:
+          description: |
+            Lower bound threshold of Jaccard Similarity scores for similarities returned
+          format: float
+          type: number
         input_genes:
           description: |
             List of input genes upon which the Jaccard similarity computation will be applied

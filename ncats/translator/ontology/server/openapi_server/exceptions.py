@@ -14,3 +14,16 @@
 class OntologyServerException(Exception):
     """The base exception class for all OntologyServerException"""
 
+
+class JaccardSimilarityPending(OntologyServerException):
+    """Jaccard Computation underway but result not yet available"""
+
+
+class JaccardSimilarityResultNotFound(OntologyServerException):
+    """Cancelled or non-existent Jaccard similarity computation"""
+
+
+class JaccardSimilarityComputationError(OntologyServerException):
+    """Jaccard similarity computation engine error"""
+
+

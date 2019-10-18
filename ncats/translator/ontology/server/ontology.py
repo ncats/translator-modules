@@ -1,8 +1,8 @@
-
 # Shared core Ontobio ontology services
 
 # Shared core similarity functions
 from _asyncio import Task
+from asyncio import CancelledError, InvalidStateError
 from typing import List, Tuple
 
 import asyncio
@@ -14,14 +14,49 @@ from ontobio.assocmodel import AssociationSet
 from ontobio.io.gafparser import GafParser
 from ontobio.ontol_factory import OntologyFactory
 
+from ncats.translator.ontology.server.openapi_server.exceptions import (
+    JaccardSimilarityPending,
+    JaccardSimilarityResultNotFound,
+    JaccardSimilarityComputationError
+)
 
 # We override the Ontobio version of the jaccard_similarity
 # function below, to return shared ontology term annotation
 #
 # from ontobio.analysis.semsim import jaccard_similarity
+from openapi_server.exceptions import OntologyServerException
 
 
 class GenericSimilarity(object):
+    # Class level singletons for similarity engines
+    _ontology = {}
+
+    # Class level cache for results of Jaccard similarity searches
+    _jaccard_similarity_tasks = {}
+
+    @classmethod
+    def get_similarity_engine(cls, ontology, taxon):
+        """
+        Returns a singleton GenericSimilarity instance
+        for use in Jaccard similarity computations
+
+        :param ontology: should be 'go', 'hp' or 'mp'
+        :param taxon: should be 'human' or 'mouse'
+        :return: GenericSimilarity() singleton
+        """
+        if ontology not in ['go', 'hp', 'mp']:
+            raise OntologyServerException("compute_jaccard() ERROR: ontology '"+ontology+"' not recognized.")
+
+        if taxon not in ['human', 'mouse']:
+            raise OntologyServerException("compute_jaccard() ERROR: taxon '"+taxon+"' not recognized.")
+
+        if ontology not in cls._ontology:
+            cls._ontology[ontology] = {}
+
+        if taxon not in cls._ontology[ontology]:
+            cls._ontology[ontology][taxon] = GenericSimilarity(ontology, taxon)
+
+        return cls._ontology[ontology][taxon]
 
     def __init__(self, ont: str, taxon: str) -> None:
         self.associations = None
@@ -112,6 +147,38 @@ class GenericSimilarity(object):
                             'shared_term_names': shared_term_names
                         })
         return similarities
+
+    async def compute_jaccard_task(self, uuid: str, input_genes: List[dict], lower_bound: float):
+        self._jaccard_similarity_tasks[uuid] = asyncio.create_task(self.compute_jaccard(input_genes, lower_bound))
+
+    def compute_jaccard_async(self, uuid: str, input_genes: List[dict], lower_bound: float):
+        asyncio.run(self.compute_jaccard_task(uuid, input_genes, lower_bound))
+
+    @classmethod
+    async def get_jaccard_similarity_result(cls, computation_id: str):
+
+        if computation_id in cls._jaccard_similarity_tasks:
+
+            jaccard_similarity_task = cls._jaccard_similarity_tasks[computation_id]
+
+            # Need to check if the result is ready to return, then return it
+            if jaccard_similarity_task.done():
+
+                try:
+                    result = jaccard_similarity_task.result()
+
+                except CancelledError:
+                    raise JaccardSimilarityResultNotFound
+
+                except InvalidStateError:
+                    raise JaccardSimilarityComputationError
+
+                return result
+
+            else:
+                raise JaccardSimilarityPending
+        else:
+            raise JaccardSimilarityResultNotFound
 
     @staticmethod
     def trim_mgi_prefix(input_gene, subject_curie) -> str:
