@@ -69,4 +69,7 @@ used the long form of the flags)
 In  both cases, after generating the code stubs,  a developer needs to reconnect the (delegated) business logic to 
 the REST processing front end as required to get the system working again.  Developers can scrutinize recent working 
 releases of the code to best understand how the code stubs need to be reconnected or how to add new business logic.
+Also, the *server* and *client* subdirectory _README.md_ files are overwritten by the code generation. These should 
+be restored /  updated from the README-master.md files in each directory. Finally, check if the 
+`server/openapi_server/__main__.py` file has the correct server port (8082).
  
