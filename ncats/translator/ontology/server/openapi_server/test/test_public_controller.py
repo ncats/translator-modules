@@ -23,7 +23,7 @@ class TestPublicController(BaseTestCase):
             }],
             "taxon": "human",
             "ontology": "go",
-            "lower_bound": 0.05
+            "lower_bound": 0.2
         }
         headers = {
             'Accept': 'application/json',
@@ -56,7 +56,7 @@ class TestPublicController(BaseTestCase):
         headers = {
             'Accept': 'application/json',
         }
-        
+
         response = self.client.open(
             '/results',
             method='GET',
