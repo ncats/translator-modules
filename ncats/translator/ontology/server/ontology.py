@@ -125,7 +125,7 @@ class GenericSimilarity(object):
         for index, igene in enumerate(input_genes):
             for subject_curie in self.associations.subject_label_map.keys():
                 input_gene = GenericSimilarity.trim_mgi_prefix(
-                    input_gene=igene['sim_input_curie'],
+                    input_gene=igene.sim_input_curie,
                     subject_curie=subject_curie
                 )
                 if input_gene is not subject_curie:
@@ -137,7 +137,7 @@ class GenericSimilarity(object):
                         shared_term_names = [self.associations.label(x) for x in shared_terms]
                         similarities.append({
                             'input_id': input_gene,
-                            'input_symbol': igene['input_symbol'],
+                            'input_symbol': igene.input_symbol,
                             'hit_symbol': subject_label,
                             'hit_id': subject_curie,
                             'score': score,

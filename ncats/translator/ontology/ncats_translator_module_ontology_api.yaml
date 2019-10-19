@@ -84,13 +84,13 @@ components:
       properties:
         input_id: # gene_curie,
           type: string
-          example: "HGNC:1100"
+          example: "HGNC:3583"
         sim_input_curie: # sim_input_curie - not really a curie but seems to be an UniProdKB identifier
           type: string
-          example: "P38398"
+          example: "UniProtKB:Q8NB91"
         input_symbol: # gene['hit_symbol']
           type: string
-          example: "BRCA1"
+          example: "FANCB"
     ComputationInput:
       type: object
       required:

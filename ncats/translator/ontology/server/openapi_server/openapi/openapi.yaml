@@ -78,18 +78,18 @@ components:
   schemas:
     GeneEntry:
       example:
-        sim_input_curie: P38398
-        input_symbol: BRCA1
-        input_id: HGNC:1100
+        sim_input_curie: UniProtKB:Q8NB91
+        input_symbol: FANCB
+        input_id: HGNC:3583
       properties:
         input_id:
-          example: HGNC:1100
+          example: HGNC:3583
           type: string
         sim_input_curie:
-          example: P38398
+          example: UniProtKB:Q8NB91
           type: string
         input_symbol:
-          example: BRCA1
+          example: FANCB
           type: string
       required:
       - input_id
@@ -100,12 +100,12 @@ components:
       example:
         lower_bound: 0.8008282
         input_genes:
-        - sim_input_curie: P38398
-          input_symbol: BRCA1
-          input_id: HGNC:1100
-        - sim_input_curie: P38398
-          input_symbol: BRCA1
-          input_id: HGNC:1100
+        - sim_input_curie: UniProtKB:Q8NB91
+          input_symbol: FANCB
+          input_id: HGNC:3583
+        - sim_input_curie: UniProtKB:Q8NB91
+          input_symbol: FANCB
+          input_id: HGNC:3583
         taxon: human
         ontology: go
       properties:

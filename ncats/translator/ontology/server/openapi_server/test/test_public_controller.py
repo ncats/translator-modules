@@ -4,12 +4,6 @@ from __future__ import absolute_import
 import unittest
 
 from flask import json
-from six import BytesIO
-
-from ncats.translator.ontology.server.openapi_server.model.computation_identifier import \
-    ComputationIdentifier  # noqa: E501
-from ncats.translator.ontology.server.openapi_server.model.computation_input import ComputationInput  # noqa: E501
-from ncats.translator.ontology.server.openapi_server.model.results import Results  # noqa: E501
 from ncats.translator.ontology.server.openapi_server.test import BaseTestCase
 
 
@@ -23,9 +17,9 @@ class TestPublicController(BaseTestCase):
         """
         computation_input = {
             "input_genes": [{
-                "sim_input_curie": "P38398",
-                "input_symbol": "BRCA1",
-                "input_id": "HGNC:1100"
+                "sim_input_curie": "UniProtKB:Q8NB91",
+                "input_symbol": "FANCB",
+                "input_id": "HGNC:3583"
             }],
             "taxon": "human",
             "ontology": "go",
