@@ -99,8 +99,8 @@ def handle_get_jaccard_results(computation_id: str) -> Tuple[Any,int]:
                 hit_symbol=entry['hit_symbol'],
                 hit_id=entry['hit_id'],
                 score=entry['score'],
-                shared_terms=[x for x in entry['shared_terms']],
-                shared_term_names=[x for x in entry['shared_term_names']]
+                shared_terms=[term for term in entry['shared_terms']],
+                shared_term_names=[name for name in entry['shared_term_names']]
             ) for entry in result
         ]
 
