@@ -96,6 +96,7 @@ components:
       required:
         - ontology
         - input_genes
+        - lower_bound
       properties:
         ontology:
           type: string
@@ -112,6 +113,7 @@ components:
           format: float
           description: >
             Lower bound threshold of Jaccard Similarity scores for similarities returned
+          example: 0.4
         input_genes:
           type: array
           description: >
@@ -143,16 +145,17 @@ components:
         - shared_terms
         - shared_term_names
       properties:
-        input_id: # input_gene
+        input_id:
           type: string
-        input_symbol: # igene['input_symbol']
+        input_symbol:
           type: string
-        hit_symbol: # subject_label
+        hit_symbol:
           type: string
-        hit_id: # subject_curie
+        hit_id:
           type: string
-        score: # score - should this be a numeric data type?
-          type: string
+        score:
+          type: number
+          format: float
         shared_terms:
           type: array
           description: >

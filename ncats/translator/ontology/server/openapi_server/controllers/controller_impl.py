@@ -1,17 +1,15 @@
 from typing import Tuple, Any
 
+from ncats.translator.ontology.server.ontology import GenericSimilarity
 from ncats.translator.ontology.server.openapi_server.exceptions import (
     OntologyServerException,
     JaccardSimilarityPending,
     JaccardSimilarityResultNotFound,
     JaccardSimilarityComputationError
 )
-
 from ncats.translator.ontology.server.openapi_server.model.computation_identifier import ComputationIdentifier
 from ncats.translator.ontology.server.openapi_server.model.computation_input import ComputationInput
 from ncats.translator.ontology.server.openapi_server.model.results import Results
-
-from ncats.translator.ontology.server.ontology import GenericSimilarity
 from openapi_server.model import Similarity
 
 """

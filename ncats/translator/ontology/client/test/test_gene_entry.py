@@ -15,10 +15,6 @@ from __future__ import absolute_import
 
 import unittest
 
-import ncats.translator.ontology.client.openapi_client
-from ncats.translator.ontology.client.openapi_client.model.gene_entry import GeneEntry  # noqa: E501
-from ncats.translator.ontology.client.openapi_client.rest import ApiException
-
 
 class TestGeneEntry(unittest.TestCase):
     """GeneEntry unit test stubs"""

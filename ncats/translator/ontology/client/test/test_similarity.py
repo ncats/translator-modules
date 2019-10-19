@@ -15,10 +15,6 @@ from __future__ import absolute_import
 
 import unittest
 
-import ncats.translator.ontology.client.openapi_client
-from ncats.translator.ontology.client.openapi_client.model.similarity import Similarity  # noqa: E501
-from ncats.translator.ontology.client.openapi_client.rest import ApiException
-
 
 class TestSimilarity(unittest.TestCase):
     """Similarity unit test stubs"""

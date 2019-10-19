@@ -15,8 +15,3 @@
 from __future__ import absolute_import
 
 # import models into model package
-from openapi_client.model.computation_identifier import ComputationIdentifier
-from openapi_client.model.computation_input import ComputationInput
-from openapi_client.model.gene_entry import GeneEntry
-from openapi_client.model.results import Results
-from openapi_client.model.similarity import Similarity

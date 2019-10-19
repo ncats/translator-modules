@@ -15,10 +15,6 @@ from __future__ import absolute_import
 
 import unittest
 
-import ncats.translator.ontology.client.openapi_client
-from ncats.translator.ontology.client.openapi_client.model.computation_identifier import ComputationIdentifier  # noqa: E501
-from ncats.translator.ontology.client.openapi_client.rest import ApiException
-
 
 class TestComputationIdentifier(unittest.TestCase):
     """ComputationIdentifier unit test stubs"""

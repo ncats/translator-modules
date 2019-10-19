@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 **input_symbol** | **str** |  | 
 **hit_symbol** | **str** |  | 
 **hit_id** | **str** |  | 
-**score** | **str** |  | 
+**score** | **float** |  | 
 **shared_terms** | **list[list]** | List of shared term identifiers  | 
 **shared_term_names** | **list[list]** | List of shared term human readable names  | 
 

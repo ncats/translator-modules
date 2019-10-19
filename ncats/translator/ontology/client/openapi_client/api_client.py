@@ -14,19 +14,18 @@ from __future__ import absolute_import
 import datetime
 import json
 import mimetypes
-from multiprocessing.pool import ThreadPool
 import os
 import re
 import tempfile
+from multiprocessing.pool import ThreadPool
 
+import openapi_client.model
 # python 2 and python 3 compatibility library
 import six
-from six.moves.urllib.parse import quote
-
-from openapi_client.configuration import Configuration
-import openapi_client.model
 from openapi_client import rest
+from openapi_client.configuration import Configuration
 from openapi_client.exceptions import ApiValueError
+from six.moves.urllib.parse import quote
 
 
 class ApiClient(object):

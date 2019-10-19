@@ -131,7 +131,7 @@ class GenericSimilarity(object):
                 if input_gene is not subject_curie:
                     score, shared_terms = \
                         GenericSimilarity.jaccard_similarity(self.associations, input_gene, subject_curie)
-                    if float(score) > float(lower_bound):
+                    if score > lower_bound:
                         subject_label = self.associations.label(subject_curie)
                         # CX: addition of human-readable labels aka "shared_term_names"
                         shared_term_names = [self.associations.label(x) for x in shared_terms]

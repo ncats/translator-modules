@@ -1,6 +1,5 @@
-from connexion.apps.flask_app import FlaskJSONEncoder
 import six
-
+from connexion.apps.flask_app import FlaskJSONEncoder
 from openapi_server.model.base_model_ import Model
 
 

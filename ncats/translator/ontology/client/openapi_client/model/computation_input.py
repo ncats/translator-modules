@@ -12,7 +12,6 @@
 
 
 import pprint
-import re  # noqa: F401
 
 import six
 
@@ -57,8 +56,7 @@ class ComputationInput(object):
         self.ontology = ontology
         if taxon is not None:
             self.taxon = taxon
-        if lower_bound is not None:
-            self.lower_bound = lower_bound
+        self.lower_bound = lower_bound
         self.input_genes = input_genes
 
     @property
@@ -129,6 +127,8 @@ class ComputationInput(object):
         :param lower_bound: The lower_bound of this ComputationInput.  # noqa: E501
         :type: float
         """
+        if lower_bound is None:
+            raise ValueError("Invalid value for `lower_bound`, must not be `None`")  # noqa: E501
 
         self._lower_bound = lower_bound
 

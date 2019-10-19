@@ -12,7 +12,6 @@
 
 
 import pprint
-import re  # noqa: F401
 
 import six
 
@@ -36,7 +35,7 @@ class Similarity(object):
         'input_symbol': 'str',
         'hit_symbol': 'str',
         'hit_id': 'str',
-        'score': 'str',
+        'score': 'float',
         'shared_terms': 'list[list]',
         'shared_term_names': 'list[list]'
     }
@@ -169,7 +168,7 @@ class Similarity(object):
 
 
         :return: The score of this Similarity.  # noqa: E501
-        :rtype: str
+        :rtype: float
         """
         return self._score
 
@@ -179,7 +178,7 @@ class Similarity(object):
 
 
         :param score: The score of this Similarity.  # noqa: E501
-        :type: str
+        :type: float
         """
         if score is None:
             raise ValueError("Invalid value for `score`, must not be `None`")  # noqa: E501

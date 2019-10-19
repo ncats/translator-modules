@@ -1,12 +1,11 @@
 # coding: utf-8
 
 from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
 
-from typing import List, Dict  # noqa: F401
+from typing import List  # noqa: F401
 
-from openapi_server.model.base_model_ import Model
 from openapi_server import util
+from openapi_server.model.base_model_ import Model
 
 
 class Similarity(Model):
@@ -27,7 +26,7 @@ class Similarity(Model):
         :param hit_id: The hit_id of this Similarity.  # noqa: E501
         :type hit_id: str
         :param score: The score of this Similarity.  # noqa: E501
-        :type score: str
+        :type score: float
         :param shared_terms: The shared_terms of this Similarity.  # noqa: E501
         :type shared_terms: List[List]
         :param shared_term_names: The shared_term_names of this Similarity.  # noqa: E501
@@ -38,7 +37,7 @@ class Similarity(Model):
             'input_symbol': str,
             'hit_symbol': str,
             'hit_id': str,
-            'score': str,
+            'score': float,
             'shared_terms': List[List],
             'shared_term_names': List[List]
         }
@@ -170,7 +169,7 @@ class Similarity(Model):
 
 
         :return: The score of this Similarity.
-        :rtype: str
+        :rtype: float
         """
         return self._score
 
@@ -180,7 +179,7 @@ class Similarity(Model):
 
 
         :param score: The score of this Similarity.
-        :type score: str
+        :type score: float
         """
         if score is None:
             raise ValueError("Invalid value for `score`, must not be `None`")  # noqa: E501

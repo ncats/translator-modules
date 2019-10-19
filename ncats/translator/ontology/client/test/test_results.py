@@ -15,10 +15,6 @@ from __future__ import absolute_import
 
 import unittest
 
-import ncats.translator.ontology.client.openapi_client
-from ncats.translator.ontology.client.openapi_client.model.results import Results  # noqa: E501
-from ncats.translator.ontology.client.openapi_client.rest import ApiException
-
 
 class TestResults(unittest.TestCase):
     """Results unit test stubs"""

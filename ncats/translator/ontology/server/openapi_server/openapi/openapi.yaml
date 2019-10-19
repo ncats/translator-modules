@@ -98,7 +98,7 @@ components:
       type: object
     ComputationInput:
       example:
-        lower_bound: 0.8008282
+        lower_bound: 0.4
         input_genes:
         - sim_input_curie: UniProtKB:Q8NB91
           input_symbol: FANCB
@@ -122,6 +122,7 @@ components:
         lower_bound:
           description: |
             Lower bound threshold of Jaccard Similarity scores for similarities returned
+          example: 0.4
           format: float
           type: number
         input_genes:
@@ -132,6 +133,7 @@ components:
           type: array
       required:
       - input_genes
+      - lower_bound
       - ontology
       type: object
     ComputationIdentifier:
@@ -151,7 +153,7 @@ components:
       type: array
     Similarity:
       example:
-        score: score
+        score: 0.8008282
         hit_id: hit_id
         input_symbol: input_symbol
         shared_term_names:
@@ -172,7 +174,8 @@ components:
         hit_id:
           type: string
         score:
-          type: string
+          format: float
+          type: number
         shared_terms:
           description: |
             List of shared term identifiers
@@ -197,7 +200,7 @@ components:
     Results:
       example:
         similarities:
-        - score: score
+        - score: 0.8008282
           hit_id: hit_id
           input_symbol: input_symbol
           shared_term_names:
@@ -208,7 +211,7 @@ components:
           - null
           hit_symbol: hit_symbol
           input_id: input_id
-        - score: score
+        - score: 0.8008282
           hit_id: hit_id
           input_symbol: input_symbol
           shared_term_names:
