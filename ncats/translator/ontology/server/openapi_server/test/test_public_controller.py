@@ -40,6 +40,9 @@ class TestPublicController(BaseTestCase):
 
         self.assertStatus(response, 201, 'Response body is : ' + response_body)
 
+        # convert response body string to a  proper Python object
+        response_body = json.loads(response_body)
+
     # Merging the two tests since a proper test of
     # 'get_results' requires a valid compute_jaccard endpoint call
     # @unittest.skip("Need to validate core jaccard_similarity test first?")
@@ -48,16 +51,18 @@ class TestPublicController(BaseTestCase):
 
         Retrieves a list of similarity results when ready 
         """
-        query_string = {'computation_id':  response_body.uuid}
+        query_string = [('computation_id', response_body['uuid'])]
 
         headers = {
             'Accept': 'application/json',
         }
+        
         response = self.client.open(
             '/results',
             method='GET',
             headers=headers,
             query_string=query_string)
+
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
