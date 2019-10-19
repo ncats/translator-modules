@@ -155,7 +155,7 @@ class GenericSimilarity(object):
         return uuid
 
     @classmethod
-    async def get_jaccard_similarity_result(cls, computation_id: str):
+    def get_jaccard_similarity_result(cls, computation_id: str):
 
         if computation_id in cls._jaccard_similarity_tasks:
 

@@ -23,7 +23,7 @@ class TestPublicController(BaseTestCase):
             }],
             "taxon": "human",
             "ontology": "go",
-            "lower_bound": 0.3
+            "lower_bound": 0.4
         }
         headers = {
             'Accept': 'application/json',
