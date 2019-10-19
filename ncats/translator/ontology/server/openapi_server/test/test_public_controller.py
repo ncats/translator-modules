@@ -23,7 +23,7 @@ class TestPublicController(BaseTestCase):
             }],
             "taxon": "human",
             "ontology": "go",
-            "lower_bound": 0.7
+            "lower_bound": 0.05
         }
         headers = {
             'Accept': 'application/json',
@@ -42,13 +42,13 @@ class TestPublicController(BaseTestCase):
 
     # Merging the two tests since a proper test of
     # 'get_results' requires a valid compute_jaccard endpoint call
-    @unittest.skip("Need to validate core jaccard_similarity test first?")
-    def test_get_results(self):
+    # @unittest.skip("Need to validate core jaccard_similarity test first?")
+    # def test_get_results(self):
         """Test case for get_results
 
         Retrieves a list of similarity results when ready 
         """
-        query_string = ''  # response_body   # might have to do something different here?
+        query_string = {'computation_id':  response_body.uuid}
 
         headers = {
             'Accept': 'application/json',
