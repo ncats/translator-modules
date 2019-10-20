@@ -18,7 +18,6 @@ aiohttp
 #
 # NCATS Dependencies
 #
-jsonschema>=3.0.1
 mvp-module-library>=0.1.0
 ontobio
 biolink-model

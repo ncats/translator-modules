@@ -9,9 +9,21 @@
 #    docker build -f Dockerfile_Shared -t translator_modules_shared .
 #    docker build -f Dockerfile_Jaccard_Similarity_Server -t jaccard_similarity_server .
 #
-# To start up the dockerized REST web service container, type:
+# To start up the dockerized REST web service container as a daemon process, type:
 #
-#    docker run -p 8082:8082 jaccard_similarity_server
+#    docker run -d -p 8082:8082 --memory 3G --name jaccard  jaccard_similarity_server
+#
+# The REST service web form will be visible on http://0.0.0.0:8082/ui
+#
+# Note that your Docker Engine / Desktop should be configured to
+# support a container memory limit footprint of 3 gigabytes when run
+#
+# The  resulting server log can be monitored using the command:
+#
+#    docker logs -f jaccard
+#
+# Note also that the image from a docker build of this Dockerfile is mainly intended
+# to be run as part of the complete ncats/translator-modules docker-compose built system.
 #
 FROM translator_modules_shared
 
