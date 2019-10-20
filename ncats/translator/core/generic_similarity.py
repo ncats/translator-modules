@@ -5,7 +5,8 @@ from typing import List, Tuple
 import pandas as pd
 from ontobio.assocmodel import AssociationSet
 
-# We override the Ontobio version of the jaccard_similarity
+#
+# We override the direct Ontobio version of the Jaccard_Similarity
 # function below, to return shared ontology term annotation
 #
 # from ontobio.analysis.semsim import jaccard_similarity
