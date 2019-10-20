@@ -3,23 +3,23 @@ version: '3'
 services:
 
   identifiers:
-    build: ncats/translator/identifiers/server/openapi_server
+    build: ./Dockerfile_Identifiers_Server
     ports:
-      - "8081:8081"
+    - "8081:8081"
     networks:
-        - default
+    - default
 
-#  ontology:
-#    build: ncats/translator/ontology/server/openapi_server
-#    ports:
-#      - "8081:5000"
-#    networks:
-#        - default
+  ontology:
+    build: ./Dockerfile_Jaccard_Similarity_Server
+    ports:
+    - "8081:5000"
+    networks:
+    - default
 
   workflow:
-    build: .
+    build: ./Dockerfile_Main
     networks:
-        - default
+    - default
 
 networks:
     default:
