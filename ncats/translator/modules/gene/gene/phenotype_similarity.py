@@ -24,10 +24,6 @@ class PhenotypeSimilarity(GenericSimilarity):
         if self.taxon == 'human':
             self.ont = 'hp'
 
-        # Load the associated Biolink (Monarch)
-        # phenotype ontology and annotation associations
-        # self.load_associations(taxon)  # associations now remotely initialized (in ontology service)
-
     # RMB: July 5, 2019 - gene_records is a Pandas DataFrame
     def load_gene_set(self, input_gene_set):
         annotated_gene_set = []
