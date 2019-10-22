@@ -26,9 +26,7 @@ class GenericSimilarity(object):
         configuration = Configuration()
 
         # Defining host is optional and defaults to http://0.0.0.0:8082
-        configuration.host = os.environ['JACCARD_SIMILARITY_SERVER_HOST']
-        if not configuration.host:
-            configuration.host = "http://0.0.0.0:8082"
+        configuration.host = os.getenv('JACCARD_SIMILARITY_SERVER_HOST', 'http://0.0.0.0:8082')
 
         # Create an instance of the API class
         self.client = PublicApi(ApiClient(configuration))
