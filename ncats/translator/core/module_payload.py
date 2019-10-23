@@ -12,6 +12,7 @@ from . import handle_input_or_input_location
 from .data_transfer_model import ModuleMetaData, ResultList
 
 from ncats.translator.identifiers import object_id
+from ncats.translator.identifiers.client.resolver import gene_symbol
 
 
 class Payload(ABC):
@@ -97,6 +98,18 @@ class Payload(ABC):
             input_data_frame = pd.DataFrame(data=input_data)
         else:
             raise RuntimeWarning("Unrecognized data file extension: '" + extension + "'?")
+
+        # Probably a good place to check if the "hit_symbol" is present;
+        # If not, attempt to use the Identifiers Resolution service to add them in
+        input_ids = []
+        input_symbols  =  []
+        for gene in input_data_frame.to_dict(orient='records'):
+            gene['hit_symbol'] = gene_symbol(gene['hit_id'], gene['hit_symbol'])
+            input_ids.append(gene['hit_id'])
+            input_symbols.append(gene['hit_symbol'])
+
+        input_data = {"hit_id": input_ids, "hit_symbol": input_symbols}
+        input_data_frame = pd.DataFrame(data=input_data)
 
         return input_data_frame
 

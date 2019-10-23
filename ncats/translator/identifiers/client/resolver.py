@@ -6,6 +6,7 @@ import json
 from typing import Iterable, List
 from ...core import handle_input_or_input_location
 
+from ncats.translator.identifiers import SYMBOL
 from ncats.translator.identifiers.server.resolver import Resolver as sr
 
 import fire
@@ -31,7 +32,7 @@ class Resolver:
         This is a constructor to connect a client to an actual server Resolver
         """
         # proxy directly to server class, for now
-        self.client  = sr.get_the_resolver()
+        self.client = sr.get_the_resolver()
         self.input_identifiers = None
 
     def list_identifier_keys(self) -> List[str]:
@@ -90,6 +91,12 @@ class Resolver:
     def translate(self, target=None):
         self.client.input_identifiers = self.input_identifiers
         return self.client.translate(target)
+
+
+def gene_symbol(identifier, symbol):
+    if not symbol:
+        identifier, symbol = Resolver.get_the_resolver().translate_one(source=identifier, target=SYMBOL)
+    return symbol
 
 
 def main():

@@ -541,7 +541,7 @@ class ResultList(BaseModel):
             # Initial iteration: assume a simple Pandas DataFrame with columns
             # 'input_id', 'input_symbol', 'hit_id', 'hit_symbol', 'score'
 
-            if entry['hit_id'] == 'NONE':
+            if 'hit_id' not in entry or not entry['hit_id'] or entry['hit_id'] == 'NONE':
                 # null entry, for some reason? not meaningful? Ignore?
                 continue
 
@@ -557,9 +557,7 @@ class ResultList(BaseModel):
                 input_id_list.append('')  # provision for empty identifier
 
             output_id_list = []
-            if 'hit_id' in entry:
-                # maybe only one identifier but accommodates multiple hits as well
-                output_id_list.extend(entry['hit_id'].split(','))
+            output_id_list.extend(entry['hit_id'].split(','))
 
             score = entry.get('score', '.')
 

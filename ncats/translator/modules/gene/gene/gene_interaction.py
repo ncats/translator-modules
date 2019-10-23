@@ -8,8 +8,7 @@ import pandas as pd
 from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
-from ncats.translator.identifiers import SYMBOL
-from ncats.translator.identifiers.client.resolver import Resolver as cr
+from ncats.translator.identifiers.client.resolver import gene_symbol
 
 from ncats.translator.core import Config
 from ncats.translator.core.module_payload import Payload
@@ -26,11 +25,8 @@ class GeneInteractions:
     def load_gene_set(gene_records):
         annotated_gene_set = []
         for gene in gene_records.to_dict(orient='records'):
-            if not gene['hit_symbol']:
-                hit_id, hit_symbol = \
-                    cr.get_the_resolver(). \
-                    translate_one(source=gene['hit_id'], target=SYMBOL)
-                gene['hit_symbol'] = hit_symbol
+
+            gene['hit_symbol'] = gene_symbol(gene['hit_id'], gene['hit_symbol'])
 
             annotated_gene_set.append({
                     'input_id': gene['hit_id'],
