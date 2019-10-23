@@ -99,6 +99,49 @@ class Resolver:
                 for i in range(0, len(self.identifier_records)):
                     self.identifier_map[headers[h]].append(self.identifier_records[i][h])
 
+    def translate_one(self, source, target):
+        """
+        Lookup translation of a single input identifier in the (previously loaded) identifier map
+        :param source: identifier to be translated
+        :param target: target namespace key from which identifier is to be obtained
+        :return: mapping of input onto target namespace (empty string if no mapping available)
+        """
+        if DEBUG:
+            print("translate_one")
+
+        if not target:
+            raise IdentifierResolverException("Resolver.translate_one() ERROR: json file 'target' tag unspecified?")
+
+        # find index of source
+        for index, idr in enumerate(self.identifier_records):
+            if source in idr:
+                target = self.identifier_map[target][index]
+                return source, target
+        return source, ""
+
+    def translate(self, target=None):
+        """
+        Translate an iterable input list of identifiers previously loaded (using load_identifiers)
+        :param target:
+        :return: tuple mappings of input source identifiers onto target namespace
+        """
+        if DEBUG:
+            print("translate")
+
+        if not target:
+            raise IdentifierResolverException("Resolver.translate ERROR: json file 'target' tag unspecified?")
+
+        # The second entry of the tuple will be an empty string ''
+        # if output/converted_id isn't found in identifier_map dict
+        translated_ids = [self.translate_one(input_id, target) for input_id in self.input_identifiers]
+
+        return translated_ids
+
+    ########################################################
+    # The following functions are  kept  here only in case
+    # that this module is directly invoked as a command line
+    # or CWL module.
+    ########################################################
     def load_identifiers(self, identifiers, source=None):
         if DEBUG:
             print("load identifiers")
@@ -149,45 +192,6 @@ class Resolver:
         with open(identifiers) as id_file:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
             self.input_identifiers = [row[source] for row in input_reader]
-
-    def translate_one(self, source, target):
-        """
-        Lookup translation of a single input identifier in the (previously loaded) identifier map
-        :param source: identifier to be translated
-        :param target: target namespace key from which identifier is to be obtained
-        :return: mapping of input onto target namespace (empty string if no mapping available)
-        """
-        if DEBUG:
-            print("translate_one")
-
-        if not target:
-            raise IdentifierResolverException("Resolver.translate_one() ERROR: json file 'target' tag unspecified?")
-
-        # find index of source
-        for index, idr in enumerate(self.identifier_records):
-            if source in idr:
-                target = self.identifier_map[target][index]
-                return source, target
-        return source, ""
-
-    def translate(self, target=None):
-        """
-        Translate an iterable input list of identifiers previously loaded (using load_identifiers)
-        :param target:
-        :return: tuple mappings of input source identifiers onto target namespace
-        """
-        if DEBUG:
-            print("translate")
-
-        if not target:
-            raise IdentifierResolverException("Resolver.translate ERROR: json file 'target' tag unspecified?")
-
-        # The second entry of the tuple will be an empty string ''
-        # if output/converted_id isn't found in identifier_map dict
-        translated_ids = [self.translate_one(input_id, target) for input_id in self.input_identifiers]
-
-        return translated_ids
-
 
 def main():
     fire.Fire(Resolver)

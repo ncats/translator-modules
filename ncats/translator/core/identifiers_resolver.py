@@ -104,6 +104,9 @@ class Resolver:
 
         return self
 
+    def directly_load_identifiers(self, identifiers):
+        self.input_identifiers = [entry for entry in identifiers]
+        
     def _read_identifiers_in_flatfile(self, identifiers, delimiter=',', source=None):
         if DEBUG:
             print("identifiers.client._read_identifiers_in_flatfile()")
@@ -115,7 +118,7 @@ class Resolver:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
             self.input_identifiers = [row[source] for row in input_reader]
 
-    def translate_one(self, source_identifier, target_namespace) -> IdentifierMapping:
+    def translate_one(self, source_identifier, target_namespace) -> dict:
         """
         Returns mapping of identifier source to its equivalent identifier in the specified target namespace
 
@@ -147,14 +150,14 @@ class Resolver:
 
         return identifier_mapping.to_dict()
 
-    def translate(self, target_namespace=None):
+    def translate(self, target_namespace=None) -> list[dict]:
         """
         Translates a list of identifiers previously loaded into the Resolver from source namespace to a specified target
         :param str target_namespace: Target namespace for mapping of source identifiers  (required)
-        :return: list[IdentifierMapping]
+        :return: list of {'source_identifier': str, 'target_namespace': str, 'target_identifier': str}
         """
         self.client.input_identifiers = self.input_identifiers
-        return self.client.translate(target_namespace)
+        return [entry.to_dict() for entry in self.client.translate(target_namespace)]
 
 
 def gene_symbol(identifier, symbol):
