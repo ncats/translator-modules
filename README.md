@@ -67,6 +67,19 @@ include the `-e` flag with the `pip` command, namely:
 python -m pip install -r requirements.txt -e .
 ```
 
+This  versiono of the system now uses a client/server version of both identifier resolution and for the computation of
+Jaccard similarity. For this purpose, some additional subproject dependencies need to be installed. From the
+_translator-modules_ directory, you need to change directory into the respective clients and install these
+dependencies, aa follows:
+
+```bash
+cd ncats/translator/identifiers/client
+python -m pip install -r requirements.txt -e .
+cd ../../../../ncats/translator/ontology/client/
+python -m pip install -r requirements.txt -e .
+cd ../../../..  # back to the translator-modules root directory
+```
+
 [Back to top](#ncats-translator-modules)
 
 # Using the Translator Modules and Building Workflows

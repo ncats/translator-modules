@@ -19,12 +19,11 @@ import re
 import tempfile
 from multiprocessing.pool import ThreadPool
 
-import openapi_client.model
 # python 2 and python 3 compatibility library
 import six
-from openapi_client import rest
-from openapi_client.configuration import Configuration
-from openapi_client.exceptions import ApiValueError
+from ncats.translator.ontology.client.openapi_client import rest
+from ncats.translator.ontology.client.openapi_client.configuration import Configuration
+from ncats.translator.ontology.client.openapi_client.exceptions import ApiValueError
 from six.moves.urllib.parse import quote
 
 
@@ -277,7 +276,7 @@ class ApiClient(object):
             if klass in self.NATIVE_TYPES_MAPPING:
                 klass = self.NATIVE_TYPES_MAPPING[klass]
             else:
-                klass = getattr(openapi_client.model, klass)
+                klass = getattr(ncats.translator.ontology.client.openapi_client.model, klass)
 
         if klass in self.PRIMITIVE_TYPES:
             return self.__deserialize_primitive(data, klass)

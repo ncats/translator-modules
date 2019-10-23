@@ -15,8 +15,8 @@ from __future__ import absolute_import
 
 # python 2 and python 3 compatibility library
 import six
-from openapi_client.api_client import ApiClient
-from openapi_client.exceptions import (
+from ncats.translator.ontology.client.openapi_client.api_client import ApiClient
+from ncats.translator.ontology.client.openapi_client.exceptions import (
     ApiTypeError,
     ApiValueError
 )
