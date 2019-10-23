@@ -9,7 +9,7 @@ Method | HTTP request | Description
 
 
 # **load_identifier_map**
-> IdentifierMapId load_identifier_map(identifier_map=identifier_map)
+> QueryId load_identifier_map(identifier_map=identifier_map)
 
 Identifier Resolver map initial creation
 
@@ -44,7 +44,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**IdentifierMapId**](IdentifierMapId.md)
+[**QueryId**](QueryId.md)
 
 ### Authorization
 
@@ -65,7 +65,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **update_identifier_map**
-> IdentifierMapId update_identifier_map(identifier_map=identifier_map)
+> QueryId update_identifier_map(identifier_map=identifier_map)
 
 Identifier Resolver map update
 
@@ -100,7 +100,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**IdentifierMapId**](IdentifierMapId.md)
+[**QueryId**](QueryId.md)
 
 ### Authorization
 

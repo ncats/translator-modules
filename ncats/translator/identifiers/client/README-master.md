@@ -68,9 +68,6 @@ configuration.host = "http://0.0.0.0:8081"
 # Create an instance of the API class
 api_instance = PublicApi(ApiClient(configuration))
 
-# ComputationInput | List of input genes upon which to compute Jaccard similarity  (optional)
-computation_input = ComputationInput() 
-
 #  populate the computation_input here
 
 identifier_keys: list[str]
@@ -97,9 +94,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
- - [IdentifierListId](docs/IdentifierListId.md)
  - [IdentifierMap](docs/IdentifierMap.md)
- - [IdentifierMapId](docs/IdentifierMapId.md)
  - [IdentifierMapping](docs/IdentifierMapping.md)
  - [QueryId](docs/QueryId.md)
 

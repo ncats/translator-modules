@@ -15,10 +15,6 @@ from __future__ import absolute_import
 
 import unittest
 
-import ncats.translator.identifiers.client.openapi_client
-from ncats.translator.identifiers.client.openapi_client.model.query_id import QueryId  # noqa: E501
-from ncats.translator.identifiers.client.openapi_client.rest import ApiException
-
 
 class TestQueryId(unittest.TestCase):
     """QueryId unit test stubs"""

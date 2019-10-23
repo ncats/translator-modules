@@ -15,6 +15,7 @@ from setuptools import setup, find_packages  # noqa: H301
 
 NAME = "ncats_translator_modules_identifiers_openapi_client"
 VERSION = "1.0.0"
+
 # To install the library, run the following
 #
 # python setup.py install

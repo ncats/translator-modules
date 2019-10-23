@@ -15,8 +15,6 @@
 from __future__ import absolute_import
 
 # import models into model package
-from ncats.translator.identifiers.client.openapi_client.model.identifier_list_id import IdentifierListId
 from ncats.translator.identifiers.client.openapi_client.model.identifier_map import IdentifierMap
-from ncats.translator.identifiers.client.openapi_client.model.identifier_map_id import IdentifierMapId
 from ncats.translator.identifiers.client.openapi_client.model.identifier_mapping import IdentifierMapping
 from ncats.translator.identifiers.client.openapi_client.model.query_id import QueryId

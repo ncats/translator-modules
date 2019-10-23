@@ -15,10 +15,6 @@ from __future__ import absolute_import
 
 import unittest
 
-import ncats.translator.identifiers.client.openapi_client
-from ncats.translator.identifiers.client.openapi_client.model.identifier_map import IdentifierMap  # noqa: E501
-from ncats.translator.identifiers.client.openapi_client.rest import ApiException
-
 
 class TestIdentifierMap(unittest.TestCase):
     """IdentifierMap unit test stubs"""

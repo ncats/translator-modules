@@ -82,6 +82,7 @@ paths:
             Identification of identifier list created on server
           content:
             application/json:
+              schema:
                 title: IdentifierListId
                 $ref: '#/components/schemas/QueryId'
       requestBody:

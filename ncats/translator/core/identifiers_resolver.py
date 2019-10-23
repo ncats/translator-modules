@@ -15,7 +15,6 @@ from ncats.translator.identifiers.client.openapi_client.api_client import ApiCli
 from ncats.translator.identifiers.client.openapi_client.exceptions import ApiException
 
 from ncats.translator.identifiers.client.openapi_client.model.identifier_mapping import IdentifierMapping
-from ncats.translator.identifiers.client.openapi_client.model.identifier_list_id import IdentifierListId
 
 import fire
 

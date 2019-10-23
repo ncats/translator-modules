@@ -15,10 +15,6 @@ from __future__ import absolute_import
 
 import unittest
 
-import ncats.translator.identifiers.client.openapi_client
-from ncats.translator.identifiers.client.openapi_client.model.identifier_list_id import IdentifierListId  # noqa: E501
-from ncats.translator.identifiers.client.openapi_client.rest import ApiException
-
 
 class TestIdentifierListId(unittest.TestCase):
     """IdentifierListId unit test stubs"""

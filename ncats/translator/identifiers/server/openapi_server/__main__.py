@@ -2,7 +2,7 @@
 
 import connexion
 
-from ncats.translator.identifiers.server.openapi_server import encoder
+from openapi_server import encoder
 
 
 def main():

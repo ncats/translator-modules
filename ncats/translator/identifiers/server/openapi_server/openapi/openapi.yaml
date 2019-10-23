@@ -9,8 +9,7 @@ info:
   title: NCATS Translator Modules Identifier Resolution Server
   version: 0.0.1
 servers:
-- description: NCATS Translator Modules Identifier Resolution Server running in a
-    local Docker container
+- description: NCATS Translator Modules Identifier Resolution Server
   url: http://0.0.0.0:8081
 tags:
 - description: Secured Admin-only calls to configure resolution service
@@ -44,7 +43,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IdentifierListId'
+                $ref: '#/components/schemas/QueryId'
           description: |
             Identification of identifier list created on server
       summary: post a list of identifiers
@@ -67,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IdentifierMapId'
+                $ref: '#/components/schemas/QueryId'
           description: |
             Identification of identifier map uploaded to server
         400:
@@ -93,7 +92,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IdentifierMapId'
+                $ref: '#/components/schemas/QueryId'
           description: |
             Identification of identifier map updated on server
         400:
@@ -302,17 +301,3 @@ components:
       - map_identifier
       - records
       type: object
-    IdentifierListId:
-      example:
-        list_identifier:
-          uuid: 123e4567-e89b-12d3-a456-426655440000
-      properties:
-        list_identifier:
-          $ref: '#/components/schemas/QueryId'
-    IdentifierMapId:
-      example:
-        map_identifier:
-          uuid: 123e4567-e89b-12d3-a456-426655440000
-      properties:
-        map_identifier:
-          $ref: '#/components/schemas/QueryId'

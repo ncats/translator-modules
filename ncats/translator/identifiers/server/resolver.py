@@ -79,7 +79,7 @@ class Resolver:
             else:
                 raise IdentifierResolverException("Resolver() ERROR: unrecognized 'identifier_map' specification?")
 
-        self.input_identifiers: List[str] = None
+        self.input_identifiers: List[str] = list()
 
     def list_identifier_keys(self) -> List[str]:
         return list(self.identifier_map.keys())

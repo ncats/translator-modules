@@ -13,15 +13,12 @@
 
 from __future__ import absolute_import
 
-import re  # noqa: F401
-
 # python 2 and python 3 compatibility library
 import six
 
 from ncats.translator.identifiers.client.openapi_client.api_client import ApiClient
 from ncats.translator.identifiers.client.openapi_client.exceptions import (
-    ApiTypeError,
-    ApiValueError
+    ApiTypeError
 )
 
 
@@ -55,7 +52,7 @@ class AdminsApi(object):
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :return: IdentifierMapId
+        :return: QueryId
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -82,7 +79,7 @@ class AdminsApi(object):
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :return: tuple(IdentifierMapId, status_code(int), headers(HTTPHeaderDict))
+        :return: tuple(QueryId, status_code(int), headers(HTTPHeaderDict))
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -137,7 +134,7 @@ class AdminsApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='IdentifierMapId',  # noqa: E501
+            response_type='QueryId',  # noqa: E501
             auth_settings=auth_settings,
             async_req=local_var_params.get('async_req'),
             _return_http_data_only=local_var_params.get('_return_http_data_only'),  # noqa: E501
@@ -163,7 +160,7 @@ class AdminsApi(object):
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :return: IdentifierMapId
+        :return: QueryId
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -190,7 +187,7 @@ class AdminsApi(object):
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :return: tuple(IdentifierMapId, status_code(int), headers(HTTPHeaderDict))
+        :return: tuple(QueryId, status_code(int), headers(HTTPHeaderDict))
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -245,7 +242,7 @@ class AdminsApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='IdentifierMapId',  # noqa: E501
+            response_type='QueryId',  # noqa: E501
             auth_settings=auth_settings,
             async_req=local_var_params.get('async_req'),
             _return_http_data_only=local_var_params.get('_return_http_data_only'),  # noqa: E501

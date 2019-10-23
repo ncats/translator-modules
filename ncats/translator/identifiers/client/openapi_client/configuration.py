@@ -17,9 +17,9 @@ import copy
 import logging
 import multiprocessing
 import sys
-import urllib3
 
 import six
+import urllib3
 from six.moves import http_client as httplib
 
 
@@ -80,7 +80,7 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         self.logger = {}
         """Logging Settings
         """
-        self.logger["package_logger"] = logging.getLogger("ncats.translator.identifiers.client.openapi_client")
+        self.logger["package_logger"] = logging.getLogger("openapi_client")
         self.logger["urllib3_logger"] = logging.getLogger("urllib3")
         self.logger_format = '%(asctime)s %(levelname)s %(message)s'
         """Log format

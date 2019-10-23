@@ -11,7 +11,7 @@ Method | HTTP request | Description
 
 
 # **identifier_list**
-> IdentifierListId identifier_list(request_body=request_body)
+> QueryId identifier_list(request_body=request_body)
 
 post a list of identifiers
 
@@ -46,7 +46,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**IdentifierListId**](IdentifierListId.md)
+[**QueryId**](QueryId.md)
 
 ### Authorization
 
