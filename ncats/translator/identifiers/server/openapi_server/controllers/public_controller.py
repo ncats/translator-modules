@@ -5,6 +5,13 @@ from openapi_server.model.identifier_mapping import IdentifierMapping  # noqa: E
 from openapi_server.model.query_id import QueryId  # noqa: E501
 from openapi_server import util
 
+from .controller_impl import (
+    handle_identifier_list,
+    handle_list_identifier_keys,
+    handle_translate,
+    handle_translate_one
+)
+
 
 def identifier_list(request_body=None):  # noqa: E501
     """post a list of identifiers
@@ -16,7 +23,7 @@ def identifier_list(request_body=None):  # noqa: E501
 
     :rtype: QueryId
     """
-    return 'do some magic!'
+    return handle_identifier_list(request_body)
 
 
 def list_identifier_keys():  # noqa: E501
@@ -27,7 +34,7 @@ def list_identifier_keys():  # noqa: E501
 
     :rtype: List[str]
     """
-    return 'do some magic!'
+    return handle_list_identifier_keys()
 
 
 def translate(list_identifier, target_namespace):  # noqa: E501
@@ -42,7 +49,7 @@ def translate(list_identifier, target_namespace):  # noqa: E501
 
     :rtype: List[IdentifierMapping]
     """
-    return 'do some magic!'
+    return handle_translate(list_identifier, target_namespace)
 
 
 def translate_one(source_identifier, target_namespace):  # noqa: E501
@@ -57,4 +64,4 @@ def translate_one(source_identifier, target_namespace):  # noqa: E501
 
     :rtype: IdentifierMapping
     """
-    return 'do some magic!'
+    return handle_translate_one(source_identifier, target_namespace)

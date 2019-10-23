@@ -2,7 +2,7 @@ from typing import List
 from uuid import uuid4
 
 from ncats.translator.identifiers import IdentifierResolverException
-from ncats.translator.identifiers.server.openapi_server.model.identifier_list_id import IdentifierListId
+from ncats.translator.identifiers.server.openapi_server.model.query_id import QueryId
 from ncats.translator.identifiers.server.openapi_server.model.identifier_mapping import IdentifierMapping
 from ncats.translator.identifiers.server.resolver import Resolver
 
@@ -21,7 +21,7 @@ from .controller_impl import (
 _identifier_list_cache = {}
 
 
-def handle_identifier_list(request_body: List[str]) -> IdentifierListId:
+def handle_identifier_list(request_body: List[str]) -> QueryId:
     """post a list of identifiers
 
     Post a list of source identifiers for subsequent translation  # noqa: E501
@@ -29,7 +29,7 @@ def handle_identifier_list(request_body: List[str]) -> IdentifierListId:
     :param request_body: Identifier list to post on server (for translation)
     :type request_body: List[str]
 
-    :rtype: IdentifierListId
+    :rtype: QueryId
     """
 
     # Make a copy of the identifier string list, just be safe
@@ -39,7 +39,7 @@ def handle_identifier_list(request_body: List[str]) -> IdentifierListId:
 
         _identifier_list_cache[uuid] = [identifier for identifier in request_body]
 
-        list_id = IdentifierListId(uuid)
+        list_id = QueryId(uuid)
 
         return list_id
 
@@ -51,6 +51,7 @@ def handle_list_identifier_keys() -> List[str]:
     """list of valid key strings for identifier sources and targets
 
     Returns list of valid key strings for source and target parameters in other API calls  # noqa: E501
+
 
     :rtype: List[str]
     """

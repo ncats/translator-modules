@@ -178,4 +178,6 @@ Also, the *server* and *client* subdirectory _README.md_ and _setup.py_ files ar
 These should be restored from the \*-master.\* versions of these files in each directory.
  
 Finally, check if the `server/openapi_server/__main__.py` file has the correct Identifiers server port (8081).
-  
+
+For good measure, after such extensive rebuilding of the libraries, the 'pip' environment dependencies should also 
+be updated, as documented for the client and server, prior to re-testing and using the updated software.
