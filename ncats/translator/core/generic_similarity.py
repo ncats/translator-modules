@@ -21,6 +21,12 @@ from ncats.translator.ontology.client.openapi_client.model.results import Result
 class GenericSimilarity(object):
 
     def __init__(self) -> None:
+        """
+        This is a constructor to connect a client to an actual Jaccard Similarity server.
+        The optional environment variable JACCARD_SIMILARITY_SERVER_HOST may be set
+        to point the client to another server location. This can be used, for example,
+        within Dockerfiles to point to an internal microservice container running the server.
+        """
         self.ont = ''
         self.taxon = ''
 

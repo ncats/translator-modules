@@ -5,7 +5,7 @@ import csv
 import json
 import logging
 
-from typing import Iterable, List
+from typing import Iterable, List, Dict
 from ncats.translator.core import handle_input_or_input_location
 
 from ncats.translator.identifiers import SYMBOL
@@ -37,6 +37,9 @@ class Resolver:
     def __init__(self):
         """
         This is a constructor to connect a client to an actual server Resolver
+        The optional environment variable IDENTIFIERS_RESOLUTION_SERVER_HOST may be set
+        to point the client to another server location. This can be used, for example,
+        within Dockerfiles to point to an internal microservice container running the resolver.
         """
         # proxy directly to server class, for now
         self.input_identifiers = None
@@ -106,7 +109,7 @@ class Resolver:
 
     def directly_load_identifiers(self, identifiers):
         self.input_identifiers = [entry for entry in identifiers]
-        
+
     def _read_identifiers_in_flatfile(self, identifiers, delimiter=',', source=None):
         if DEBUG:
             print("identifiers.client._read_identifiers_in_flatfile()")
@@ -118,7 +121,7 @@ class Resolver:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
             self.input_identifiers = [row[source] for row in input_reader]
 
-    def translate_one(self, source_identifier, target_namespace) -> dict:
+    def translate_one(self, source_identifier, target_namespace) -> Dict:
         """
         Returns mapping of identifier source to its equivalent identifier in the specified target namespace
 
@@ -130,40 +133,62 @@ class Resolver:
         identifier_mapping: IdentifierMapping
         status_code: str
         try:
-            identifier_mapping, status_code, headers = self.client.translate_one_with_http_info(source, target)
+            identifier_mapping, status_code, headers = \
+                self.client.translate_one_with_http_info(source_identifier, target_namespace)
+
         except ApiException as e:
+
             logging.error(
                 "Exception when calling Identifiers Resolution PublicApi->translate_one(" +
                 "source_identifier:" + source_identifier + ", " +
                 "target_namespace:" + target_namespace +
                 "): %s\n" % e)
+
             # error code returned
             status_code = 500
 
         if status_code is not 200:
+
             logging.error("Identifiers Resolution server translate_one((" +
                           "source_identifier:" + source_identifier + ", " +
                           "target_namespace:" + target_namespace +
                           ") call HTTP error code: " + status_code)
+
             # return empty object
-            identifier_mapping = IdentifierMapping(source_identifier=source_identifier, target_namespace=target_namespace)
+            identifier_mapping = \
+                IdentifierMapping(
+                    source_identifier=source_identifier,
+                    target_namespace=target_namespace
+                )
 
         return identifier_mapping.to_dict()
 
-    def translate(self, target_namespace=None) -> list[dict]:
+    def translate(self, target_namespace=None) -> List[Dict]:
         """
         Translates a list of identifiers previously loaded into the Resolver from source namespace to a specified target
         :param str target_namespace: Target namespace for mapping of source identifiers  (required)
         :return: list of {'source_identifier': str, 'target_namespace': str, 'target_identifier': str}
         """
         self.client.input_identifiers = self.input_identifiers
-        return [entry.to_dict() for entry in self.client.translate(target_namespace)]
+        return [entry.to_dict() for entry in self.client.translate(target_namespace=target_namespace)]
 
 
 def gene_symbol(identifier, symbol):
-    if not symbol:
-        identifier, symbol = Resolver.get_the_resolver().translate_one(source=identifier, target=SYMBOL)
-    return symbol
+    """
+    Retrieve the symbol associated with an input identifier, looking it up if empty
+    :param identifier:
+    :param symbol:
+    :return:
+    """
+    if symbol:
+        return symbol
+    else:
+        translation = \
+            Resolver.get_the_resolver().translate_one(
+                source_identifier=identifier,
+                target_namespace=SYMBOL
+            )
+        return translation['target_identifier']
 
 
 def main():

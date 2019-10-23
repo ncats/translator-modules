@@ -193,6 +193,7 @@ class Resolver:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
             self.input_identifiers = [row[source] for row in input_reader]
 
+
 def main():
     fire.Fire(Resolver)
 

@@ -12,7 +12,7 @@ from . import handle_input_or_input_location
 from .data_transfer_model import ModuleMetaData, ResultList
 
 from ncats.translator.identifiers import object_id
-from ncats.translator.identifiers.client.resolver import gene_symbol
+from ncats.translator.core.identifiers_resolver import gene_symbol
 
 
 class Payload(ABC):
@@ -40,7 +40,8 @@ class Payload(ABC):
         # not sure if or how  this will print properly?
         pprint(self.metadata)
 
-    def get_input_data_frame(self, input_spec) -> pd.DataFrame:
+    @staticmethod
+    def get_input_data_frame(input_spec) -> pd.DataFrame:
 
         input_obj, extension = handle_input_or_input_location(input_spec)
 
@@ -118,8 +119,8 @@ class Payload(ABC):
         This function returns a simple list of identifiers rather than a Pandas DataFrame
 
         :param input_spec:
-        :param prefix:
-        :return:
+        :param object_id_only:
+        :return: list[str] simple list of identifiers from the DataFrame
         """
         input_data_frame = self.get_input_data_frame(input_spec)
         simple_identifier_list = [object_id(hit_id) if object_id_only else hit_id for hit_id in input_data_frame['hit_id']]

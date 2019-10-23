@@ -44,7 +44,7 @@ python setup.py install --user
 
 However the package is installed, you then import the package:
 ```python
-import openapi_client
+import ncats.translator.ontology.client.openapi_client
 ```
 
 ## Getting Started

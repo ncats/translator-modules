@@ -8,7 +8,7 @@ import pandas as pd
 from biolink_api.biolink_api_client import BioLinkApiWrapper
 from biolink.model import GeneToGeneAssociation, Gene
 
-from ncats.translator.identifiers.client.resolver import gene_symbol
+from ncats.translator.core.identifiers_resolver import gene_symbol
 
 from ncats.translator.core import Config
 from ncats.translator.core.module_payload import Payload
@@ -33,6 +33,7 @@ class GeneInteractions:
                     'sim_input_curie': gene['hit_id'],
                     'input_symbol': gene['hit_symbol']
                 })
+
         return annotated_gene_set
 
     def get_interactions(self, input_gene_set, threshold):
