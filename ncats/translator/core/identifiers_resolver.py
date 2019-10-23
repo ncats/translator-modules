@@ -1,13 +1,18 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
+import os
 import csv
 import json
+import logging
 
 from typing import Iterable, List
-from ...core import handle_input_or_input_location
+from ncats.translator.core import handle_input_or_input_location
 
 from ncats.translator.identifiers import SYMBOL
-from ncats.translator.identifiers.server.resolver import Resolver as sr
+from ncats.translator.identifiers.client.openapi_client.api.public_api import PublicApi
+from ncats.translator.identifiers.client.openapi_client.configuration import Configuration
+from ncats.translator.identifiers.client.openapi_client.api_client import ApiClient
+from ncats.translator.identifiers.client.openapi_client.exceptions import ApiException
 
 import fire
 
@@ -32,13 +37,48 @@ class Resolver:
         This is a constructor to connect a client to an actual server Resolver
         """
         # proxy directly to server class, for now
-        self.client = sr.get_the_resolver()
         self.input_identifiers = None
 
+        configuration = Configuration()
+
+        # Defining host is optional and defaults to http://0.0.0.0:8081
+        configuration.host = os.getenv('IDENTIFIERS_RESOLUTION_SERVER_HOST', 'http://0.0.0.0:8081')
+
+        # Create an instance of the API class
+        self.client = PublicApi(ApiClient(configuration))
+
     def list_identifier_keys(self) -> List[str]:
-        return self.client.list_identifier_keys()
+        """list of valid key strings for identifier sources and targets  # noqa: E501
+
+        Returns list of valid key strings for source and target parameters in other API calls   # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.list_identifier_keys(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool: execute request asynchronously
+        :param _preload_content: if False, the urllib3.HTTPResponse object will
+                                 be returned without reading/decoding response
+                                 data. Default is True.
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :return: list[str]
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        identifier_keys: list[str]
+        try:
+            identifier_keys = self.client.self.client.list_identifier_keys()
+        except ApiException as e:
+            logging.error("Exception when calling Jaccard Similarity PublicApi->compute_jaccard: %s\n" % e)
+            return []
+
+        return identifier_keys
 
     def load_identifiers(self, identifiers, source=None):
+
         if DEBUG:
             print("load identifiers")
         """

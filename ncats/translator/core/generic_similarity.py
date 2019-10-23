@@ -10,9 +10,10 @@ import pandas as pd
 from ncats.translator.ontology.client.openapi_client.api.public_api import PublicApi
 from ncats.translator.ontology.client.openapi_client.configuration import Configuration
 from ncats.translator.ontology.client.openapi_client.api_client import ApiClient
+from ncats.translator.ontology.client.openapi_client.exceptions import ApiException
+
 from ncats.translator.ontology.client.openapi_client.model.computation_input import ComputationInput
 from ncats.translator.ontology.client.openapi_client.model.computation_identifier import ComputationIdentifier
-from ncats.translator.ontology.client.openapi_client.exceptions import ApiException
 from ncats.translator.ontology.client.openapi_client.model.gene_entry import GeneEntry
 from ncats.translator.ontology.client.openapi_client.model.results import Results
 
@@ -54,9 +55,7 @@ class GenericSimilarity(object):
             logging.error("Exception when calling Jaccard Similarity PublicApi->compute_jaccard: %s\n" % e)
             return []
 
-        # Not sure what happens here if http 201 code returned?
         results: Results
-
         while True:
 
             try:

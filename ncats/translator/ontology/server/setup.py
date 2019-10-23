@@ -3,7 +3,7 @@
 import sys
 from setuptools import setup, find_packages
 
-NAME = "jaccard_similarity_openapi_server"
+NAME = "ncats_translator_modules_jaccard_similarity_openapi_server"
 VERSION = "1.0.0"
 
 # To install the library, run the following
