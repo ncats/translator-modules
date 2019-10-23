@@ -14,6 +14,8 @@ from ncats.translator.identifiers.client.openapi_client.configuration import Con
 from ncats.translator.identifiers.client.openapi_client.api_client import ApiClient
 from ncats.translator.identifiers.client.openapi_client.exceptions import ApiException
 
+from ncats.translator.identifiers.client.openapi_client.model.identifier_mapping import IdentifierMapping
+
 import fire
 
 DEBUG = False
@@ -70,9 +72,9 @@ class Resolver:
         """
         identifier_keys: list[str]
         try:
-            identifier_keys = self.client.self.client.list_identifier_keys()
+            identifier_keys = self.client.list_identifier_keys()
         except ApiException as e:
-            logging.error("Exception when calling Jaccard Similarity PublicApi->compute_jaccard: %s\n" % e)
+            logging.error("Exception when calling Identifiers Resolution PublicApi->list_identifier_keys: %s\n" % e)
             return []
 
         return identifier_keys
@@ -125,8 +127,42 @@ class Resolver:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
             self.input_identifiers = [row[source] for row in input_reader]
 
-    def translate_one(self, source, target):
-        return self.client.translate_one(source, target)
+    def translate_one(self, source, target) -> IdentifierMapping:
+        """translates one identifier source to target namespace  # noqa: E501
+
+        Returns mapping of identifier source to its equivalent identifier in the specified target namespace   # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.translate_one(source_identifier, target_namespace, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool: execute request asynchronously
+        :param str source_identifier: single source identifier to be mapped onto the target  (required)
+        :param str target_namespace: target namespace for the mapping of the source  (required)
+        :param _preload_content: if False, the urllib3.HTTPResponse object will
+                                 be returned without reading/decoding response
+                                 data. Default is True.
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :return: IdentifierMapping
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        identifier_mapping: IdentifierMapping
+        try:
+            identifier_mapping = self.client.translate_one(source, target)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling Identifiers Resolution PublicApi->translate_one(" +
+                "source:" + source + ", " +
+                "target:" + target +
+                "): %s\n" % e)
+            # empty result returned
+            identifier_mapping = IdentifierMapping(source_identifier=source, target_namespace=target)
+
+        return identifier_mapping
 
     def translate(self, target=None):
         self.client.input_identifiers = self.input_identifiers

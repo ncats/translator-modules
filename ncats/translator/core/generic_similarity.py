@@ -73,6 +73,10 @@ class GenericSimilarity(object):
             else:
                 break
 
+        if status_code is not 200:
+            logging.error("Jaccard Similarity server HTTP error code: "+status_code)
+            return []
+
         """
         # Single similarity entry
         'input_id': 'str',
