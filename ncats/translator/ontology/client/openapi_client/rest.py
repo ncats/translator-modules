@@ -22,9 +22,11 @@ import ssl
 import certifi
 # python 2 and python 3 compatibility library
 import six
-import urllib3
-from ncats.translator.ontology.client.openapi_client.exceptions import ApiException, ApiValueError
 from six.moves.urllib.parse import urlencode
+import urllib3
+
+from ncats.translator.ontology.client.openapi_client.exceptions import ApiException, ApiValueError
+
 
 logger = logging.getLogger(__name__)
 

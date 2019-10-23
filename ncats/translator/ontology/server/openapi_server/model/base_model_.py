@@ -1,7 +1,8 @@
 import pprint
-import typing
 
 import six
+import typing
+
 from openapi_server import util
 
 T = typing.TypeVar('T')

@@ -1,11 +1,12 @@
 # coding: utf-8
 
 from __future__ import absolute_import
+from datetime import date, datetime  # noqa: F401
 
-from typing import List  # noqa: F401
+from typing import List, Dict  # noqa: F401
 
-from openapi_server import util
 from openapi_server.model.base_model_ import Model
+from openapi_server import util
 
 
 class Similarity(Model):
@@ -28,9 +29,9 @@ class Similarity(Model):
         :param score: The score of this Similarity.  # noqa: E501
         :type score: float
         :param shared_terms: The shared_terms of this Similarity.  # noqa: E501
-        :type shared_terms: List[List]
+        :type shared_terms: List[str]
         :param shared_term_names: The shared_term_names of this Similarity.  # noqa: E501
-        :type shared_term_names: List[List]
+        :type shared_term_names: List[str]
         """
         self.openapi_types = {
             'input_id': str,
@@ -38,8 +39,8 @@ class Similarity(Model):
             'hit_symbol': str,
             'hit_id': str,
             'score': float,
-            'shared_terms': List[List],
-            'shared_term_names': List[List]
+            'shared_terms': List[str],
+            'shared_term_names': List[str]
         }
 
         self.attribute_map = {
@@ -190,10 +191,10 @@ class Similarity(Model):
     def shared_terms(self):
         """Gets the shared_terms of this Similarity.
 
-        List of shared term identifiers   # noqa: E501
+        Ordered list of term strings (identifiers or names). There should be a one-to-one ordered correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.   # noqa: E501
 
         :return: The shared_terms of this Similarity.
-        :rtype: List[List]
+        :rtype: List[str]
         """
         return self._shared_terms
 
@@ -201,10 +202,10 @@ class Similarity(Model):
     def shared_terms(self, shared_terms):
         """Sets the shared_terms of this Similarity.
 
-        List of shared term identifiers   # noqa: E501
+        Ordered list of term strings (identifiers or names). There should be a one-to-one ordered correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.   # noqa: E501
 
         :param shared_terms: The shared_terms of this Similarity.
-        :type shared_terms: List[List]
+        :type shared_terms: List[str]
         """
         if shared_terms is None:
             raise ValueError("Invalid value for `shared_terms`, must not be `None`")  # noqa: E501
@@ -215,10 +216,10 @@ class Similarity(Model):
     def shared_term_names(self):
         """Gets the shared_term_names of this Similarity.
 
-        List of shared term human readable names   # noqa: E501
+        Ordered list of term strings (identifiers or names). There should be a one-to-one ordered correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.   # noqa: E501
 
         :return: The shared_term_names of this Similarity.
-        :rtype: List[List]
+        :rtype: List[str]
         """
         return self._shared_term_names
 
@@ -226,10 +227,10 @@ class Similarity(Model):
     def shared_term_names(self, shared_term_names):
         """Sets the shared_term_names of this Similarity.
 
-        List of shared term human readable names   # noqa: E501
+        Ordered list of term strings (identifiers or names). There should be a one-to-one ordered correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.   # noqa: E501
 
         :param shared_term_names: The shared_term_names of this Similarity.
-        :type shared_term_names: List[List]
+        :type shared_term_names: List[str]
         """
         if shared_term_names is None:
             raise ValueError("Invalid value for `shared_term_names`, must not be `None`")  # noqa: E501

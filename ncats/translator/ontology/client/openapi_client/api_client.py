@@ -14,17 +14,19 @@ from __future__ import absolute_import
 import datetime
 import json
 import mimetypes
+from multiprocessing.pool import ThreadPool
 import os
 import re
 import tempfile
-from multiprocessing.pool import ThreadPool
 
 # python 2 and python 3 compatibility library
 import six
-from ncats.translator.ontology.client.openapi_client import rest
-from ncats.translator.ontology.client.openapi_client.configuration import Configuration
-from ncats.translator.ontology.client.openapi_client.exceptions import ApiValueError
 from six.moves.urllib.parse import quote
+
+from ncats.translator.ontology.client.openapi_client.configuration import Configuration
+import ncats
+from ncats.translator.ontology.client.openapi_client import rest
+from ncats.translator.ontology.client.openapi_client.exceptions import ApiValueError
 
 
 class ApiClient(object):

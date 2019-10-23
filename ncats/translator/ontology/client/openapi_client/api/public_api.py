@@ -13,8 +13,11 @@
 
 from __future__ import absolute_import
 
+import re  # noqa: F401
+
 # python 2 and python 3 compatibility library
 import six
+
 from ncats.translator.ontology.client.openapi_client.api_client import ApiClient
 from ncats.translator.ontology.client.openapi_client.exceptions import (
     ApiTypeError,

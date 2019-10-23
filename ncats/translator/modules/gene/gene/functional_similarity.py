@@ -109,6 +109,7 @@ class FunctionallySimilarGenes(Payload):
 
         self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
 
+
 def main():
     fire.Fire(FunctionallySimilarGenes)
 

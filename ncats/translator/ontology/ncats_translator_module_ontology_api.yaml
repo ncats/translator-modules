@@ -157,17 +157,11 @@ components:
           type: number
           format: float
         shared_terms:
-          type: array
-          description: >
-            List of shared term identifiers
-          items:
-            $ref: '#/components/schemas/Terms'
+          $ref: '#/components/schemas/Terms'
+          description: List of shared term identifiers
         shared_term_names:
-          type: array
-          description: >
-            List of shared term human readable names
-          items:
-            $ref: '#/components/schemas/Terms'
+          $ref: '#/components/schemas/Terms'
+          description: List of shared term human readable names
     Results:
       type: object
       required:

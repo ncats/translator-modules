@@ -157,11 +157,11 @@ components:
         hit_id: hit_id
         input_symbol: input_symbol
         shared_term_names:
-        - null
-        - null
+        - shared_term_names
+        - shared_term_names
         shared_terms:
-        - null
-        - null
+        - shared_terms
+        - shared_terms
         hit_symbol: hit_symbol
         input_id: input_id
       properties:
@@ -178,15 +178,15 @@ components:
           type: number
         shared_terms:
           description: |
-            List of shared term identifiers
+            Ordered list of term strings (identifiers or names). There should be a one-to-one ordered correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.
           items:
-            $ref: '#/components/schemas/Terms'
+            type: string
           type: array
         shared_term_names:
           description: |
-            List of shared term human readable names
+            Ordered list of term strings (identifiers or names). There should be a one-to-one ordered correspondence between the shared_terms and shared_term_names arrays in a given Similarity result entry.
           items:
-            $ref: '#/components/schemas/Terms'
+            type: string
           type: array
       required:
       - hit_id
@@ -204,22 +204,22 @@ components:
           hit_id: hit_id
           input_symbol: input_symbol
           shared_term_names:
-          - null
-          - null
+          - shared_term_names
+          - shared_term_names
           shared_terms:
-          - null
-          - null
+          - shared_terms
+          - shared_terms
           hit_symbol: hit_symbol
           input_id: input_id
         - score: 0.8008282
           hit_id: hit_id
           input_symbol: input_symbol
           shared_term_names:
-          - null
-          - null
+          - shared_term_names
+          - shared_term_names
           shared_terms:
-          - null
-          - null
+          - shared_terms
+          - shared_terms
           hit_symbol: hit_symbol
           input_id: input_id
         computation_id:
