@@ -61,7 +61,7 @@ class GenericSimilarity(object):
 
             try:
                 # attempt to retrieve the results
-                results, status_code, headers = self.client.get_results(computation_id.uuid)
+                results, status_code, headers = self.client.get_results_with_http_info(computation_id.uuid)
             except ApiException as e:
                 logging.error("Exception when calling Jaccard Similarity PublicApi->get_results: %s\n" % e)
                 return []
