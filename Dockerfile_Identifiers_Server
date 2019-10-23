@@ -9,9 +9,18 @@
 #    docker build -f Dockerfile_Shared -t translator_modules_shared .
 #    docker build -f Dockerfile_Identifiers_Server -t identifiers_server .
 #
-# To start up the dockerized REST web service container, type:
+# To start up the dockerized REST web service container as a daemon process, type:
 #
-#    docker run -p 8081:8081 identifiers_server
+#    docker run -d --rm -p 8081:8081 --name identifiers identifiers_server
+#
+# The REST service web form will be visible on http://0.0.0.0:8081/ui
+#
+# The  resulting server log can be monitored using the command:
+#
+#    docker logs -f identifiers
+#
+# Note also that the image from a docker build of this Dockerfile is mainly intended
+# to be run as part of the complete ncats/translator-modules docker-compose built system.
 #
 FROM translator_modules_shared
 

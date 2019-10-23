@@ -11,7 +11,7 @@
 #
 # To start up the dockerized REST web service container as a daemon process, type:
 #
-#    docker run -d -p 8082:8082 --memory 3G --name jaccard  jaccard_similarity_server
+#    docker run -d --rm -p 8082:8082 --memory 3G --name jaccard  jaccard_similarity_server
 #
 # The REST service web form will be visible on http://0.0.0.0:8082/ui
 #
