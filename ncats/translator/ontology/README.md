@@ -66,7 +66,9 @@ The [OpenAPI 3.0 'generate' command usage](https://openapi-generator.tech/docs/u
 for more specific details on available code generation options and for acceptable program flag abbreviations (here we
 used the long form of the flags)
 
-In  both cases, after generating the code stubs,  a developer needs to repair the regenerated code a bit.
+# Repairing the Generated Code
+
+In  both cases, after generating the code stubs, a developer needs to repair the regenerated code a bit.
 
 First, the code stubs must be reconnected to the (delegated) business logic to 
 the REST processing front end as required to get the system working again.  Developers can scrutinize recent working 
