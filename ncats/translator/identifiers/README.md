@@ -155,7 +155,27 @@ The [OpenAPI 3.0 'generate' command usage](https://openapi-generator.tech/docs/u
 for more specific details on available code generation options and for acceptable program flag abbreviations (here we
 used the long form of the flags)
 
-In  both cases, after generating the code stubs,  a developer needs to reconnect the (delegated) business logic to 
+# Repairing the Generated Code
+
+In  both cases, after generating the code stubs, a developer needs to repair the regenerated code a bit.
+
+First, the code stubs must be reconnected to the (delegated) business logic to 
 the REST processing front end as required to get the system working again.  Developers can scrutinize recent working 
 releases of the code to best understand how the code stubs need to be reconnected or how to add new business logic.
+
+Generally, the nature of the *ncats.translator.* package structure can cause some runtime failures in import resolution 
+within the client generated code stubs. The solution seems to be to add the package prefixes 
+*ncats.translator.identifiers.client.* to *openapi_client* prefixed packages. Also,  in the  _api_client.py_ module, 
+an code embedded *openapi_client.model*  client package name is best repaired by adding the full package prefix *and* 
+importing the root *ncats* package by itself, i.e.
+
+``` 
+import ncats
+```
+plus to add imports of all the model classes inside the client *model* ```__init__.py```  package level file.
+
+Also, the *server* and *client* subdirectory _README.md_ and _setup.py_ files are overwritten by the code generation. 
+These should be restored from the \*-master.\* versions of these files in each directory.
  
+Finally, check if the `server/openapi_server/__main__.py` file has the correct Identifiers server port (8081).
+  

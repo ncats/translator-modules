@@ -15,6 +15,7 @@ from ncats.translator.identifiers.client.openapi_client.api_client import ApiCli
 from ncats.translator.identifiers.client.openapi_client.exceptions import ApiException
 
 from ncats.translator.identifiers.client.openapi_client.model.identifier_mapping import IdentifierMapping
+from ncats.translator.identifiers.client.openapi_client.model.identifier_list_id import IdentifierListId
 
 import fire
 
@@ -169,8 +170,40 @@ class Resolver:
         :param str target_namespace: Target namespace for mapping of source identifiers  (required)
         :return: list of {'source_identifier': str, 'target_namespace': str, 'target_identifier': str}
         """
-        self.client.input_identifiers = self.input_identifiers
-        return [entry.to_dict() for entry in self.client.translate(target_namespace=target_namespace)]
+        if not (self.input_identifiers and isinstance(self.input_identifiers, list)):
+            logging.error("Exception when calling Identifiers Resolution translate: empty input_identifiers list?")
+            return []
+
+        identifier_list_id: IdentifierListId
+        status_code: str
+        try:
+            identifier_list_id, status_code, headers = \
+                self.client.identifier_list_with_http_info(request_body=self.input_identifiers)
+
+        except ApiException as e:
+            logging.error("Exception when calling Identifiers Resolution PublicApi->identifier_list: %s\n" % e)
+            status_code = 500
+
+        if status_code is 201:
+            identifier_list_id.list_identifier
+            # identifiers successfully posted for translation? then, retrieve  the result
+
+            similarities: list[str]
+            try:
+                similarities, status_code, headers = \
+                    self.client.translate_with_http_info(list_identifier="", target_namespace=target_namespace)
+
+            except ApiException as e:
+                logging.error("Exception when calling Identifiers Resolution PublicApi->translate: %s\n" % e)
+                status_code = 500
+
+        if status_code is not 200:
+            logging.error("Identifiers Resolution server translate((" +
+                          "target_namespace:" + target_namespace +
+                          ") call HTTP error code: " + status_code)
+            return []
+
+        return [entry.to_dict() for entry in similarities]
 
 
 def gene_symbol(identifier, symbol):

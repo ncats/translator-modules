@@ -88,5 +88,5 @@ plus to add imports of all the model classes inside the client *model* ```__init
 Also, the *server* and *client* subdirectory _README.md_ and _setup.py_ files are overwritten by the code generation. 
 These should be restored from the \*-master.\* versions of these files in each directory.
  
-Finally, check if the `server/openapi_server/__main__.py` file has the correct server port (8082).
+Finally, check if the `server/openapi_server/__main__.py` file has the correct Jaccard server port (8082).
  

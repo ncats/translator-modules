@@ -82,12 +82,8 @@ paths:
             Identification of identifier list created on server
           content:
             application/json:
-              schema:
-                type: object
                 title: IdentifierListId
-                properties:
-                  list_identifier:
-                    $ref: '#/components/schemas/QueryId'
+                $ref: '#/components/schemas/QueryId'
       requestBody:
         content:
           application/json:
@@ -154,11 +150,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 title: IdentifierMapId
-                properties:
-                  map_identifier:
-                    $ref: '#/components/schemas/QueryId'
+                $ref: '#/components/schemas/QueryId'
         '400':
           description: 'invalid input, object invalid'
         '409':
@@ -184,11 +177,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 title: IdentifierMapId
-                properties:
-                  map_identifier:
-                    $ref: '#/components/schemas/QueryId'
+                $ref: '#/components/schemas/QueryId'
         '400':
           description: 'invalid input, object invalid'
       requestBody:
