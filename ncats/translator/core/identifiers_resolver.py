@@ -15,6 +15,7 @@ from ncats.translator.identifiers.client.openapi_client.api_client import ApiCli
 from ncats.translator.identifiers.client.openapi_client.exceptions import ApiException
 
 from ncats.translator.identifiers.client.openapi_client.model.identifier_mapping import IdentifierMapping
+from ncats.translator.identifiers.client.openapi_client.model.query_id import QueryId
 
 import fire
 
@@ -173,7 +174,7 @@ class Resolver:
             logging.error("Exception when calling Identifiers Resolution translate: empty input_identifiers list?")
             return []
 
-        identifier_list_id: IdentifierListId
+        identifier_list_id: QueryId
         status_code: str
         try:
             identifier_list_id, status_code, headers = \
@@ -184,13 +185,17 @@ class Resolver:
             status_code = 500
 
         if status_code is 201:
-            identifier_list_id.list_identifier
-            # identifiers successfully posted for translation? then, retrieve  the result
 
-            similarities: list[str]
+            # identifiers successfully posted for translation? then,
+            # retrieve  the result using the identifier_list_id
+
+            similarities: list[IdentifierMapping]
             try:
                 similarities, status_code, headers = \
-                    self.client.translate_with_http_info(list_identifier="", target_namespace=target_namespace)
+                    self.client.translate_with_http_info(
+                        list_identifier=identifier_list_id.uuid,
+                        target_namespace=target_namespace
+                    )
 
             except ApiException as e:
                 logging.error("Exception when calling Identifiers Resolution PublicApi->translate: %s\n" % e)
