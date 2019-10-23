@@ -56,6 +56,7 @@ class GenericSimilarity(object):
             return []
 
         results: Results
+        status_code: str
         while True:
 
             try:
@@ -74,7 +75,7 @@ class GenericSimilarity(object):
                 break
 
         if status_code is not 200:
-            logging.error("Jaccard Similarity server HTTP error code: "+status_code)
+            logging.error("Jaccard Similarity server get_results() call HTTP error code: "+status_code)
             return []
 
         """

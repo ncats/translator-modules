@@ -52,23 +52,8 @@ class Resolver:
     def list_identifier_keys(self) -> List[str]:
         """list of valid key strings for identifier sources and targets  # noqa: E501
 
-        Returns list of valid key strings for source and target parameters in other API calls   # noqa: E501
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.list_identifier_keys(async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool: execute request asynchronously
-        :param _preload_content: if False, the urllib3.HTTPResponse object will
-                                 be returned without reading/decoding response
-                                 data. Default is True.
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
+        Returns list of valid key strings for source and target parameters in other Resolver calls
         :return: list[str]
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         identifier_keys: list[str]
         try:
@@ -80,15 +65,18 @@ class Resolver:
         return identifier_keys
 
     def load_identifiers(self, identifiers, source=None):
+        """
+        Load a list of source identifiers for subsequent translation
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        :param identifiers: csv, tab-delimited text, json, or direct iterable collection of identifiers to translate
+        :param str source: (optional) string key for field in the 'identifiers'  )
+        :return: self (resolver primed with a list of identifiers for translation)
+        """
 
         if DEBUG:
             print("load identifiers")
-        """
-        Load a file of identifiers into
-        :param identifiers: csv, tab-delimited text, json, or direct iterable collection of identifiers to translate \
-        note that the 'source' field should match that previously provided to the Resolver constructor
-        :return:
-        """
+
         input_str, extension = handle_input_or_input_location(identifiers)
 
         self.input_identifiers: list
@@ -127,46 +115,46 @@ class Resolver:
             input_reader = csv.DictReader(id_file, delimiter=delimiter)
             self.input_identifiers = [row[source] for row in input_reader]
 
-    def translate_one(self, source, target) -> IdentifierMapping:
-        """translates one identifier source to target namespace  # noqa: E501
+    def translate_one(self, source_identifier, target_namespace) -> IdentifierMapping:
+        """
+        Returns mapping of identifier source to its equivalent identifier in the specified target namespace
 
-        Returns mapping of identifier source to its equivalent identifier in the specified target namespace   # noqa: E501
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.translate_one(source_identifier, target_namespace, async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool: execute request asynchronously
         :param str source_identifier: single source identifier to be mapped onto the target  (required)
         :param str target_namespace: target namespace for the mapping of the source  (required)
-        :param _preload_content: if False, the urllib3.HTTPResponse object will
-                                 be returned without reading/decoding response
-                                 data. Default is True.
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :return: IdentifierMapping
-                 If the method is called asynchronously,
-                 returns the request thread.
+
+        :return: Python object with {'source_identifier': str, 'target_namespace': str, 'target_identifier': str}
         """
         identifier_mapping: IdentifierMapping
+        status_code: str
         try:
-            identifier_mapping = self.client.translate_one(source, target)
+            identifier_mapping, status_code, headers = self.client.translate_one_with_http_info(source, target)
         except ApiException as e:
             logging.error(
                 "Exception when calling Identifiers Resolution PublicApi->translate_one(" +
-                "source:" + source + ", " +
-                "target:" + target +
+                "source_identifier:" + source_identifier + ", " +
+                "target_namespace:" + target_namespace +
                 "): %s\n" % e)
-            # empty result returned
-            identifier_mapping = IdentifierMapping(source_identifier=source, target_namespace=target)
+            # error code returned
+            status_code = 500
 
-        return identifier_mapping
+        if status_code is not 200:
+            logging.error("Identifiers Resolution server translate_one((" +
+                          "source_identifier:" + source_identifier + ", " +
+                          "target_namespace:" + target_namespace +
+                          ") call HTTP error code: " + status_code)
+            # return empty object
+            identifier_mapping = IdentifierMapping(source_identifier=source_identifier, target_namespace=target_namespace)
 
-    def translate(self, target=None):
+        return identifier_mapping.to_dict()
+
+    def translate(self, target_namespace=None):
+        """
+        Translates a list of identifiers previously loaded into the Resolver from source namespace to a specified target
+        :param str target_namespace: Target namespace for mapping of source identifiers  (required)
+        :return: list[IdentifierMapping]
+        """
         self.client.input_identifiers = self.input_identifiers
-        return self.client.translate(target)
+        return self.client.translate(target_namespace)
 
 
 def gene_symbol(identifier, symbol):
