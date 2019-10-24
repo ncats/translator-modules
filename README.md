@@ -234,7 +234,7 @@ Type the following into the terminal to build and run the system:
 ```
 cd translator-modules
 docker-compose build
-docker-compose up
+docker-compose -d up
 ```
 
 **Note:** If the docker-compose commands are is giving you trouble, try running them as the system administrator with 
