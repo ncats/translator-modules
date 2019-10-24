@@ -19,7 +19,7 @@ services:
     networks:
     - default
 
-  ontology:
+  jaccard:
     build:
       context: .
       dockerfile: Dockerfile_Jaccard_Similarity_Server
@@ -30,14 +30,14 @@ services:
     networks:
     - default
 
-  #workflow:
-  #  build:
-  #        context: .
-  #        dockerfile: Dockerfile_Main
-  #  depends_on:
-  #    - shared_core_image
-  #  networks:
-  #  - default
+  workflow:
+    build:
+          context: .
+          dockerfile: Dockerfile_Main
+    depends_on:
+      - shared_core_image
+    networks:
+    - default
 
 networks:
     default:

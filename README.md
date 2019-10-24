@@ -234,8 +234,11 @@ Type the following into the terminal to build and run the system:
 ```
 cd translator-modules
 docker-compose build
-docker-compose -d up
+docker-compose -d up identifiers jaccard
+docker run -i --network translator-modules_default  translator-modules_workflow 
 ```
+
+The last command runs the  
 
 **Note:** If the docker-compose commands are is giving you trouble, try running them as the system administrator with 
 the `sudo` command. Remember, though, that if you are running  your commands as 'sudo', then depending on how your 

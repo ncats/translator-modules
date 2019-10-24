@@ -29,7 +29,7 @@ setup(
     download_url='https://github.com/ncats/translator-modules',
     entry_points={
         'console_scripts': [
-            'identifier_resolver = ncats.translator.identifiers.server.resolver:main',
+            'identifier_resolver = ncats.translator.core.identifiers_resolver:main',
             'tissue_to_tissue_bicluster = ncats.translator.modules.anatomical_entity.anatomical_entity.tissue_to_tissue_bicluster:main',
             'tissue_to_gene_bicluster = ncats.translator.modules.anatomical_entity.gene.tissue_to_gene_bicluster:main',
             'chemical_to_gene_interaction = ncats.translator.modules.chemical_substance.gene.chemical_to_gene_interaction:main',
@@ -40,7 +40,7 @@ setup(
             'gene_to_chemical_interaction = ncats.translator.modules.gene.chemical_substance.gene_to_chemical_interaction:main',
             'functional_similarity = ncats.translator.modules.gene.gene.functional_similarity:main',
             'phenotype_similarity = ncats.translator.modules.gene.gene.phenotype_similarity:main',
-            'gene_interaction=modules.gene.gene.gene_interaction:main',
+            'gene_interaction = ncats.translator.modules.gene.gene.gene_interaction:main',
             'gene_to_gene_bicluster_RNAseqDB = ncats.translator.modules.gene.gene.gene_to_gene_bicluster_RNAseqDB:main',
             'gene_to_gene_bicluster_DepMap = ncats.translator.modules.gene.gene.gene_to_gene_bicluster_DepMap:main',
             'phenotype_to_disease_bicluster = ncats.translator.modules.phenotypic_feature.disease.phenotype_to_disease_bicluster:main',
