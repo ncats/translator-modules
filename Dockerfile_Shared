@@ -28,7 +28,7 @@ COPY . ./
 RUN pip install -e .
 
 # *Temporary* override of pypi Ontobio
-RUN pip install -e git+https://github.com/STARInformatics/ontobio.git@goterm_patch#egg=ontobio --no-cache-dir
+RUN pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio --no-cache-dir
 
 # Delegating installment of specific service
 # dependencies to the applicable child images
