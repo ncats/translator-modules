@@ -21,7 +21,7 @@ def identifier_list(request_body=None):  # noqa: E501
     :param request_body: Identifier list to post on server (for translation) 
     :type request_body: List[str]
 
-    :rtype: QueryId
+    :rtype: Tuple( QueryId, int ) representing the identifier_list_id and status code 201  (if successful)
     """
     return handle_identifier_list(request_body)
 

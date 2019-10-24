@@ -153,7 +153,7 @@ class Resolver:
             logging.error("Identifiers Resolution server translate_one((" +
                           "source_identifier:" + source_identifier + ", " +
                           "target_namespace:" + target_namespace +
-                          ") call HTTP error code: " + status_code)
+                          ") call HTTP error code: " + str(status_code))
 
             # return empty object
             identifier_mapping = \
@@ -184,7 +184,7 @@ class Resolver:
             logging.error("Exception when calling Identifiers Resolution PublicApi->identifier_list: %s\n" % e)
             status_code = 500
 
-        if status_code is 201:
+        if status_code == 201:
 
             # identifiers successfully posted for translation? then,
             # retrieve  the result using the identifier_list_id
@@ -201,10 +201,10 @@ class Resolver:
                 logging.error("Exception when calling Identifiers Resolution PublicApi->translate: %s\n" % e)
                 status_code = 500
 
-        if status_code is not 200:
+        if status_code != 200:
             logging.error("Identifiers Resolution server translate((" +
                           "target_namespace:" + target_namespace +
-                          ") call HTTP error code: " + status_code)
+                          ") call HTTP error code: " + str(status_code))
             return []
 
         return [entry.to_dict() for entry in similarities]

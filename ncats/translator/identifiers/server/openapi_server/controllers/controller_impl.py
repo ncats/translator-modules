@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Tuple, Any
 from uuid import uuid4
+import logging
 
 from ncats.translator.identifiers import IdentifierResolverException
 from ncats.translator.identifiers.server.openapi_server.model.query_id import QueryId
@@ -21,7 +22,7 @@ from .controller_impl import (
 _identifier_list_cache = {}
 
 
-def handle_identifier_list(request_body: List[str]) -> QueryId:
+def handle_identifier_list(request_body: List[str]) -> Tuple[Any, int]:
     """post a list of identifiers
 
     Post a list of source identifiers for subsequent translation  # noqa: E501
@@ -41,10 +42,11 @@ def handle_identifier_list(request_body: List[str]) -> QueryId:
 
         list_id = QueryId(uuid)
 
-        return list_id
+        return list_id, 201
 
     else:
-        raise RuntimeError("handle_identifier_list() ERROR: Empty request body?")
+        logging.error("handle_identifier_list() ERROR: Empty request body?")
+        return "empty request body", 400
 
 
 def handle_list_identifier_keys() -> List[str]:
