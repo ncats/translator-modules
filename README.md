@@ -228,13 +228,8 @@ Repeat steps II and III above for each disease you wish to analyze.
 # Running the Translator Module System with Docker (Compose)
 
 Use [Docker Compose](https://docs.docker.com/compose/) to build and run the application. 
-Before using compose in the project, you should first copy the configuration file:
 
-```
-cp docker-compose.yaml-template docker-compose.yaml
-```
-
-Then type the following into the terminal::
+Type the following into the terminal to build and run the system:
 
 ```
 cd translator-modules

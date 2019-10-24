@@ -7,7 +7,7 @@
 # and possible conflicts in the various component services
 # of the complete (Docker Compose) built system
 
-FROM continuumio/miniconda3:4.7.10
+FROM continuumio/miniconda3:4.7.12
 
 # Setting up Docker Conda environment
 # Followed advice at https://medium.com/@chadlagore/conda-environments-with-docker-82cdc9d25754
