@@ -2,24 +2,42 @@ version: '3'
 
 services:
 
+  shared_core_image:
+    image: translator_modules_shared
+    build:
+      context: .
+      dockerfile: Dockerfile_Shared
+
   identifiers:
-    build: ./Dockerfile_Identifiers_Server
+    build:
+      context: .
+      dockerfile: Dockerfile_Identifiers_Server
+    depends_on:
+      - shared_core_image
     ports:
     - "8081:8081"
     networks:
     - default
 
   ontology:
-    build: ./Dockerfile_Jaccard_Similarity_Server
+    build:
+      context: .
+      dockerfile: Dockerfile_Jaccard_Similarity_Server
+    depends_on:
+      - shared_core_image
     ports:
-    - "8081:5000"
+    - "8082:8082"
     networks:
     - default
 
-  workflow:
-    build: ./Dockerfile_Main
-    networks:
-    - default
+  #workflow:
+  #  build:
+  #        context: .
+  #        dockerfile: Dockerfile_Main
+  #  depends_on:
+  #    - shared_core_image
+  #  networks:
+  #  - default
 
 networks:
     default:

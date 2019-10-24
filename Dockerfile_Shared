@@ -33,4 +33,4 @@ RUN pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio
 # Delegating installment of specific service
 # dependencies to the applicable child images
 
-CMD ["/bin/bash"]
+#CMD ["/bin/bash"]
