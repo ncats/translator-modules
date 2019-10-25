@@ -5,10 +5,10 @@ class: CommandLineTool
 # ResultList-driven baseCommand
 baseCommand: [ disease_associated_genes, get-result-list, to-json ]
 inputs:
-  disease_id:
+  disease_identifier:
     type: string
     inputBinding:
-      prefix: --disease_id
+      prefix: --disease_identifier
 outputs:
   disease_list:
     type: stdout

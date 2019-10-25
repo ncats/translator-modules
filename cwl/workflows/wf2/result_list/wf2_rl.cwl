@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: Workflow
 inputs:
-    disease_id:
+    disease_identifier:
         type: string
     threshold_functional_similarity:
       type: float
@@ -28,7 +28,7 @@ steps:
   diseases:
     run: disease_associated_genes_rl.cwl
     in:
-      disease_id: disease_id
+      disease_identifier: disease_identifier
     out: [ disease_list ]
 
   functional_similarity:

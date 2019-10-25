@@ -4,10 +4,10 @@ cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ disease_associated_genes, get-data-frame, to-json, --orient, records ]
 inputs:
-  disease_id:
+  disease_identifier:
     type: string
     inputBinding:
-      prefix: --disease_id
+      prefix: --disease_identifier
 outputs:
   disease_list:
     type: stdout
