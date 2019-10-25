@@ -29,9 +29,11 @@ FROM translator_modules_shared
 
 WORKDIR /usr/src/app/ncats/translator/ontology/server
 
+# Installations include a temporary override of Ontobio
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate translator-modules && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio --no-cache-dir
 
 EXPOSE 8082
 

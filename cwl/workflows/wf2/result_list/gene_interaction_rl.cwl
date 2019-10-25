@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ gene_interaction.py, get-result-list, to-json ]
+baseCommand: [ gene_interaction, get-result-list, to-json ]
 inputs:
   input_genes:
     type: File

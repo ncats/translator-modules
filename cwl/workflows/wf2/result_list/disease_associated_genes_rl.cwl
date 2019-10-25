@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 # ResultList-driven baseCommand
-baseCommand: [ disease_associated_genes.py, get-result-list, to-json ]
+baseCommand: [ disease_associated_genes, get-result-list, to-json ]
 inputs:
   disease_id:
     type: string

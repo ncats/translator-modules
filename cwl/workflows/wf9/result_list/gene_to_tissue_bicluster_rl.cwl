@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ gene_to_tissue_bicluster.py, get-result-list, to-json ]
+baseCommand: [ gene_to_tissue_bicluster, get-result-list, to-json ]
 inputs:
   input_genes:
     type: string

@@ -19,9 +19,6 @@ WORKDIR /usr/src/app
 
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate translator-modules && \
-    conda install -c anaconda scipy>=1.2.1 numpy=1.16.1 pandas=0.24.2 && \
-    pip install --no-cache-dir  -r requirements.txt && \
-    pip install . && \
     pip install cwltool
 
 ENV PATH /root/.local/bin:$PATH

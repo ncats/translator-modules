@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ disease_to_phenotype_bicluster.py, get-result-list, to-json ]
+baseCommand: [ disease_to_phenotype_bicluster, get-result-list, to-json ]
 inputs:
   input_diseases:
     type: string

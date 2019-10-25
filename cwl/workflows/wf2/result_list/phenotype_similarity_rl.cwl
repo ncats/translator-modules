@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ phenotype_similarity.py, get-result-list, to-json ]
+baseCommand: [ phenotype_similarity, get-result-list, to-json ]
 inputs:
   input_genes:
     type: File

@@ -25,17 +25,22 @@ RUN conda create -n translator-modules python=3.7
 RUN echo "source conda activate translator-modules" > .bashrc
 ENV PATH /opt/conda/envs/translator-modules/bin:/root/.local/bin:$PATH
 
-# Copying over the core Translator Modules application
-COPY . ./
+# Copying over the essential Translator Modules application files
+COPY ./ncats ./ncats
+COPY ./tests/data ./tests/data
+COPY ./cwl ./cwl
+COPY ./requirements.txt ./requirements.txt
+COPY ./setup.py ./setup.py
 
-# Need to install a local copy of the NCATS translator/modules
-# including a temporary override of Ontobio
+# Need gcc for some installations
+RUN apt-get -y install gcc
+
+# Need to install a local copy of the NCATS translator/modules project
 RUN . /opt/conda/etc/profile.d/conda.sh && \
-    conda activate translator-modules && \
-    apt-get -y install gcc && \
-    pip install --user -e . && \
-    pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio --no-cache-dir
+     conda activate translator-modules && \
+     conda install -c anaconda scipy>=1.2.1 numpy=1.16.1 pandas=0.24.2 && \
+     pip install --no-cache-dir  -r requirements.txt  && \
+     pip install .
 
 # Delegating installment of specific service
 # dependencies to the applicable child images
-

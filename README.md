@@ -234,7 +234,7 @@ Type the following into the terminal to build and run the system:
 ```
 cd translator-modules
 docker-compose build
-docker-compose up -d identifiers jaccard
+docker-compose up --detach identifiers jaccard
 docker run -i --rm  --network translator-modules_ncats --name workflows translator-modules_workflows
 ```
 
@@ -247,6 +247,14 @@ within which Translator module scripts may be directly run. For example, you can
 disease_associated_genes --disease-identifier "MONDO:0005361" get-data-frame to-csv
 ```
 retrieves genes associated with the disease "eosinophilic esophagitis".
+
+To try a Common Workflow Language (CWL) workflow instead, type:
+
+```bash
+cwltool cwl/workflows/wf2/result_list/wf2_rl.cwl tests/data/fanconi.yaml
+```
+
+In this case, "ResultList" JSON formatted files with a *.json* file extension will contain the output of the run.
 
 **Note:** If the docker-compose commands are is giving you trouble, try running them as the system administrator with 
 the `sudo` command. Remember, though, that if you are running  your commands as 'sudo', then depending on how your 

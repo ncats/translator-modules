@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 # ResultList-driven baseCommand
-baseCommand: [ functional_similarity.py, get-result-list, to-json ]
+baseCommand: [ functional_similarity, get-result-list, to-json ]
 inputs:
   input_genes:
     type: File
