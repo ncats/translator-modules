@@ -32,8 +32,8 @@ class GenericSimilarity(object):
 
         configuration = Configuration()
 
-        # Defining host is optional and defaults to http://0.0.0.0:8082
-        configuration.host = os.getenv('JACCARD_SIMILARITY_SERVER_HOST', 'http://0.0.0.0:8082')
+        # Defining host is optional and defaults to the Translator Modules Docker Compose service hostname
+        configuration.host = os.getenv('JACCARD_SIMILARITY_SERVER_HOST', 'http://jaccard:8082')
 
         # Create an instance of the API class
         self.client = PublicApi(ApiClient(configuration))

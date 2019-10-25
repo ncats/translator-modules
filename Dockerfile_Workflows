@@ -19,12 +19,8 @@ WORKDIR /usr/src/app
 
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate translator-modules && \
-    pip install cwltool
+    pip install cwlref-runner
 
 ENV PATH /root/.local/bin:$PATH
-
-# Point to Docker-Compose network names for microservices
-ENV IDENTIFIERS_RESOLUTION_SERVER_HOST http://identifiers:8081
-ENV JACCARD_SIMILARITY_SERVER_HOST http://jaccard:8082
 
 ENTRYPOINT ["/bin/bash"]

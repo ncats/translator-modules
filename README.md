@@ -11,8 +11,8 @@ This package provides a Python-based implementation of the NCATS Translator work
     - [4. Running Translator Workflows using Common Workflow Language Specifications](#4-running-translator-workflows-using-common-workflow-language-specifications)
     - [5. Calling the Code Directly in your own Python Clients](#5-calling-the-code-directly-in-your-own-python-clients)
         - [Workflow 2 Gene Similarities and Interactions](#workflow-2-gene-similarities-and-interactions)
-- [Running the Translator Module System with Docker (Compose)](#running-the-translator-module-system-with-docker-compose)
-
+    - [6. Running the Translator Module System with Docker (Compose)](#6-running-the-translator-module-system-with-docker-compose)
+ - [Future Directions](#future-directions)
 
 # Getting Started
 
@@ -67,7 +67,7 @@ include the `-e` flag with the `pip` command, namely:
 python -m pip install -r requirements.txt -e .
 ```
 
-This  versiono of the system now uses a client/server version of both identifier resolution and for the computation of
+This  version of the system now uses a client/server version of both identifier resolution and for the computation of
 Jaccard similarity. For this purpose, some additional subproject dependencies need to be installed. From the
 _translator-modules_ directory, you need to change directory into the respective clients and install these
 dependencies, aa follows:
@@ -79,6 +79,51 @@ cd ../../../../ncats/translator/ontology/client/
 python -m pip install -r requirements.txt -e .
 cd ../../../..  # back to the translator-modules root directory
 ```
+
+## Special Prerequisite for Running the Translator Modules
+
+Note that the current version of the NCATS Translator Modules library now outsources some of its computations to 
+specialized micro services which must be running before most of the modules will work all of the time. Your mileage 
+may vary should you choose not start up the microservices. 
+
+At this time (October 25, 2019), there are two such micro services:
+
+- *Identifiers Resolution Service:* performance maps  (mostly gene) identifiers in between namespaces
+- *Jaccard Similarity Service:* manages an in memory copy of ontology catalogs for fast Jaccard Similarity computations
+
+Most of the modules, when given _incomplete or incompatible identifiers_, will try to access the *Identifiers*  server 
+to resolve such identifiers; the *Functional Similarity*  and *Phenotype Similarity* modules need to access 
+the *Jaccard* server. Modules will fail to work otherwise.
+
+Although you plan to run both micro services on "bare matal", the easiest way to get going is to run them as Docker 
+containers. In fact, the "bleeding edge" (read: recommended) way of running the system is to 
+[Run the Translator Module System with Docker Compose](#6-running-the-translator-module-system-with-docker-compose).
+
+That is (assuming you have installed necessary tools), you would type the following from within the 
+project root directory:
+
+```
+docker-compose build
+docker-compose up --detach identifiers jaccard
+```
+
+This will run the micro services in containers. To run the project module code outside of the Docker container, you 
+will need to point to the services by setting two environment variables (here, we show the bash way of doing this):
+
+```bash
+export IDENTIFIERS_RESOLUTION_SERVER_HOST="http://0.0.0.0:8081"
+export JACCARD_SIMILARITY_SERVER_HOST="http://0.0.0.0:8082"
+```
+
+Note that the micro services expose their API's to the default "localhost" host name (http://0.0.0.0), hence the setting,
+You can, of course, use suitable DNS or web application proxies to map the services to less obscure hostnames.
+The exact manner in which environment variables are made visible also  differs between operating systems and
+Integrated Development Environments (IDEs). Consult your documentation to find out how to achieve this.
+
+Note the distinct port numbers for the two microservices.
+
+Note that, if you wish, the modules may themselves be run inside a "workflows" Docker container (see option 6. below)
+
 
 [Back to top](#ncats-translator-modules)
 
@@ -97,14 +142,18 @@ frameworks. A number of execution frameworks for doing this have been explored t
 
 ## 1. Workflows in Jupyter Notebooks
 
-See https://github.com/ncats/translator-workflows for numerous examples.
+See https://github.com/ncats/translator-workflows for numerous examples. The compatibility of classical Jupyter 
+notebook  versions of the workflows has not been tested against the new micro  services noted above.
 
 [Back to top](#ncats-translator-modules)
 
-## 2. Running Complete Workflows as Python Scripts
+## 2. Running Complete Workflows in Custom Python Scripts
 
-A Python 3 command line script [WF2_automation.py script](./scripts) is currently provided that will directly 
-execute the relevant modules and commands for the *NCATS Translator Workflow 2*.  
+### Usage
+
+A sample Python 3 command line script [WF2_automation.py script](./scripts) is currently provided that will directly 
+execute the relevant modules and commands for the *NCATS Translator Workflow 2*.
+  
 To display the full parameters of the script, type:
 
 ```
@@ -118,7 +167,8 @@ genes listed in the given row.
 
 When the '--verbose' flag is used, the script also echos tabular results to the standard output ("console").
 
-A similar script is in the works for Translator [Workflow 9](https://www.lucidchart.com/documents/edit/22689882-2099-4acb-961a-fa6202f2cfd8/0_0).
+A similar script is in the works for Translator 
+[Workflow 9](https://www.lucidchart.com/documents/edit/22689882-2099-4acb-961a-fa6202f2cfd8/0_0).
 
 
 The script (as are the modules) are marked up with the "hash bang ("#!") Unix script comment at the top so generally
@@ -153,7 +203,8 @@ gene_interaction --input-genes "HGNC:1100,HGNC:12829" get-data-frame to-csv
 ```
 
 
-In fact, all the various Pandas DataFrame output methods are available (see the [Pandas IO docs](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion)).
+In fact, all the various Pandas DataFrame output methods are available (see the
+[Pandas IO docs](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion)).
 
 Just substitute the 'to-json' and 'to-csv' method command keywords with your chosen target format (e.g. to-excel, etc.)
 
@@ -165,7 +216,11 @@ gene_interaction --input-genes "HGNC:1100,HGNC:12829" get-result-list to-json
 ```
 
 This Translators-specific JSON format is mainly to empower interoperability of the modules with one another and with 
-other Translator tools. A sample version of it (from a  'functional similarity' run) may be found [here](https://github.com/ncats/translator-modules/blob/master/docs/functional_similarity.json) (Hint: use the FireFox web browser for a convenient view of this JSON). The Python code defining and manipulating the "ResultList" module data model is in the module [data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py).
+other Translator tools. A sample version of it (from a  'functional similarity' run) may be found 
+[here](https://github.com/ncats/translator-modules/blob/master/docs/functional_similarity.json) 
+(Hint: use the FireFox web browser for a convenient view of this JSON). The Python code defining and 
+manipulating the "ResultList" module data model is in the module 
+[data_transfer_model.py](https://github.com/ncats/translator-modules/blob/master/translator_modules/core/data_transfer_model.py).
 
 In both cases above, a relatively short list of genes is provided using a string of comma-delimited identifiers which 
 should ideally be CURIE formatted but in some cases (e.g. *Ensembl* identifiers) may be just the object identifiers 
@@ -225,11 +280,12 @@ Repeat steps II and III above for each disease you wish to analyze.
 
 [Back to top](#ncats-translator-modules)
 
-# Running the Translator Module System with Docker (Compose)
+## 6. Running the Translator Module System with Docker (Compose)
 
-Use [Docker Compose](https://docs.docker.com/compose/) to build and run the application. 
-
-Type the following into the terminal to build and run the system:
+With this "cutting edge" option, we [install and use Docker (Compose)](DOCKER_README.md) then run the application as a 
+set of [Docker containers](https://docs.docker.com). After installing the necessary dependencies, type the following 
+into the terminal to build and run the system. Note that 'identifiers' and 'jaccard' are two REST microservices running 
+inside their own containers, and providing utility services to the primary module code.
 
 ```
 cd translator-modules
@@ -238,7 +294,7 @@ docker-compose up --detach identifiers jaccard
 docker run -i --rm  --network translator-modules_ncats --name workflows translator-modules_workflows
 ```
 
-The above `docker run` command starts up the workflow container shell, connected to associated microservice  
+The last `docker run` command starts up a workflow container shell, connected to associated micro service  
 containers on a local bridge network. Note that the  command shell  doesn't give a prompt but you can type in 
 Linux commands (e.g. `ls`) to see that it is running.  The last command above activates the virtual CLI environment 
 within which Translator module scripts may be directly run. For example, you can try running the following:
@@ -248,7 +304,7 @@ disease_associated_genes --disease-identifier "MONDO:0005361" get-data-frame to-
 ```
 retrieves genes associated with the disease "eosinophilic esophagitis".
 
-To try a Common Workflow Language (CWL) workflow instead, type:
+Common Workflow Language (CWL) workflows may  also be run inside the container, for example:
 
 ```bash
 cwltool cwl/workflows/wf2/result_list/wf2_rl.cwl tests/data/fanconi.yaml
@@ -266,5 +322,14 @@ http://localhost:<port#>>/api/ui. You can open your browser with these addresses
 
 More details about the architecture of the system is available on the 
 [modules documentation overview page](./ncats/translator).
+
+[Back to top](#ncats-translator-modules)
+
+# Future Directions
+
+We would like to implement a simple (CWL?) graphical user interface (GUI) on top of a (CWL?) workflow runner, to 
+facilitate user interaction with the system. We also aspire to wrap the system in some fashion with the emerging 
+Translator "Reasoner API"  REST computing access standard, to faciliate programmatic access to the workflows. Finally,
+we'd like to add more biologically interesting modules and workflows to the existing collection.
 
 [Back to top](#ncats-translator-modules)

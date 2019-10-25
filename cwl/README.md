@@ -36,7 +36,7 @@ conda activate translator-modules
 * Next you install CWL engine:
 
 ```bash
-python -m pip install cwltool
+python -m pip install cwlref-runner
 ```
 
 * Finally, follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). 

@@ -47,8 +47,8 @@ class Resolver:
 
         configuration = Configuration()
 
-        # Defining host is optional and defaults to http://0.0.0.0:8081
-        configuration.host = os.getenv('IDENTIFIERS_RESOLUTION_SERVER_HOST', 'http://0.0.0.0:8081')
+        # Defining host is optional and defaults to the Translator Modules Docker Compose service hostname
+        configuration.host = os.getenv('IDENTIFIERS_RESOLUTION_SERVER_HOST', 'http://identifiers:8081')
 
         # Create an instance of the API class
         self.client = PublicApi(ApiClient(configuration))
@@ -159,7 +159,8 @@ class Resolver:
             identifier_mapping = \
                 IdentifierMapping(
                     source_identifier=source_identifier,
-                    target_namespace=target_namespace
+                    target_namespace=target_namespace,
+                    target_identifier=""
                 )
 
         return identifier_mapping.to_dict()
@@ -202,7 +203,7 @@ class Resolver:
                 status_code = 500
 
         if status_code != 200:
-            logging.error("Identifiers Resolution server translate((" +
+            logging.error("Identifiers Resolution server translate(" +
                           "target_namespace:" + target_namespace +
                           ") call HTTP error code: " + str(status_code))
             return []
