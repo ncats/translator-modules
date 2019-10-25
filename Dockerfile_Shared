@@ -15,22 +15,27 @@ FROM continuumio/miniconda3:4.7.12
 # **** we won't update conda - now (Oct 2019) seems to be problematic
 # RUN conda update -n base -c defaults conda
 
-RUN conda create -n translator-modules python=3.7
-RUN echo "source activate translator-modules" > ~/.bashrc
-ENV PATH /opt/conda/envs/translator-modules/bin:$PATH
-
-# Copying over the core Translator Modules application
+# Application workspace
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+
+RUN conda create -n translator-modules python=3.7
+
+#  .bashrc will be put into the application workspace?
+RUN echo "source conda activate translator-modules" > .bashrc
+ENV PATH /opt/conda/envs/translator-modules/bin:/root/.local/bin:$PATH
+
+# Copying over the core Translator Modules application
 COPY . ./
 
 # Need to install a local copy of the NCATS translator/modules
-RUN pip install -e .
-
-# *Temporary* override of pypi Ontobio
-RUN pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio --no-cache-dir
+# including a temporary override of Ontobio
+RUN . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate translator-modules && \
+    apt-get -y install gcc && \
+    pip install --user -e . && \
+    pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio --no-cache-dir
 
 # Delegating installment of specific service
 # dependencies to the applicable child images
 
-#CMD ["/bin/bash"]

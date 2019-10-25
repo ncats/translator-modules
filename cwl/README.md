@@ -52,7 +52,7 @@ You can run a CWL workflow constructed to implement the NCATS Translator Workflo
 In the project directory, run
 
 ```bash
-cwltool cwl/workflows/wf2/wf2.cwl test/data/fanconi.yaml
+cwltool cwl/workflows/wf2/wf2.cwl tests/data/fanconi.yaml
 ```
 
 A series of JSON files marked "module*.records.json" will contain the output of the run.

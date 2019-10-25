@@ -13,32 +13,32 @@ services:
       context: .
       dockerfile: Dockerfile_Identifiers_Server
     depends_on:
-      - shared_core_image
+    - shared_core_image
     ports:
     - "8081:8081"
     networks:
-    - default
+    - ncats
 
   jaccard:
     build:
       context: .
       dockerfile: Dockerfile_Jaccard_Similarity_Server
     depends_on:
-      - shared_core_image
+    - shared_core_image
     ports:
     - "8082:8082"
     networks:
-    - default
+    - ncats
 
-  workflow:
+  workflows:
     build:
           context: .
-          dockerfile: Dockerfile_Main
+          dockerfile: Dockerfile_Workflows
     depends_on:
-      - shared_core_image
+    - shared_core_image
     networks:
-    - default
+    - ncats
 
 networks:
-    default:
+    ncats:
         driver: bridge

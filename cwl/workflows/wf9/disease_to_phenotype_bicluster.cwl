@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ disease_to_phenotype_bicluster.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ disease_to_phenotype_bicluster, get-data-frame, to-json, --orient, records ]
 inputs:
   input_diseases:
     type: string

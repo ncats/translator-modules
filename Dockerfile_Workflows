@@ -17,12 +17,17 @@ FROM translator_modules_shared
 
 WORKDIR /usr/src/app
 
-RUN conda install -c anaconda scipy>=1.2.1 numpy=1.16.1 pandas=0.24.2
-RUN pip install --no-cache-dir  -r requirements.txt
-RUN pip install .
+RUN . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate translator-modules && \
+    conda install -c anaconda scipy>=1.2.1 numpy=1.16.1 pandas=0.24.2 && \
+    pip install --no-cache-dir  -r requirements.txt && \
+    pip install . && \
+    pip install cwltool
+
+ENV PATH /root/.local/bin:$PATH
 
 # Point to Docker-Compose network names for microservices
 ENV IDENTIFIERS_RESOLUTION_SERVER_HOST http://identifiers:8081
 ENV JACCARD_SIMILARITY_SERVER_HOST http://jaccard:8082
 
-ENTRYPOINT [""/bin/bash",  "--login"]
+ENTRYPOINT ["/bin/bash"]

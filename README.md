@@ -234,11 +234,19 @@ Type the following into the terminal to build and run the system:
 ```
 cd translator-modules
 docker-compose build
-docker-compose -d up identifiers jaccard
-docker run -i --network translator-modules_default  translator-modules_workflow 
+docker-compose up -d identifiers jaccard
+docker run -i --rm  --network translator-modules_ncats --name workflows translator-modules_workflows
 ```
 
-The last command runs the  
+The above `docker run` command starts up the workflow container shell, connected to associated microservice  
+containers on a local bridge network. Note that the  command shell  doesn't give a prompt but you can type in 
+Linux commands (e.g. `ls`) to see that it is running.  The last command above activates the virtual CLI environment 
+within which Translator module scripts may be directly run. For example, you can try running the following:
+
+```
+disease_associated_genes --disease-identifier "MONDO:0005361" get-data-frame to-csv
+```
+retrieves genes associated with the disease "eosinophilic esophagitis".
 
 **Note:** If the docker-compose commands are is giving you trouble, try running them as the system administrator with 
 the `sudo` command. Remember, though, that if you are running  your commands as 'sudo', then depending on how your 

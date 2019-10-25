@@ -26,7 +26,9 @@ FROM translator_modules_shared
 
 WORKDIR /usr/src/app/ncats/translator/identifiers/server
 
-RUN pip install  --no-cache-dir -r requirements.txt
+RUN . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate translator-modules && \
+    pip install  --no-cache-dir -r requirements.txt
 
 EXPOSE 8081
 

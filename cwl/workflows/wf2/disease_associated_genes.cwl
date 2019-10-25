@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ disease_associated_genes.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ disease_associated_genes, get-data-frame, to-json, --orient, records ]
 inputs:
   disease_id:
     type: string
