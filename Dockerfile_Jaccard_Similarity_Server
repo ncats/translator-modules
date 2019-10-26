@@ -33,7 +33,8 @@ WORKDIR /usr/src/app/ncats/translator/ontology/server
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate translator-modules && \
     pip install --no-cache-dir -r requirements.txt && \
-    pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio --no-cache-dir
+    pip install -e git+https://github.com/biolink/ontobio.git@master#egg=ontobio --no-cache-dir && \
+    pip install .
 
 EXPOSE 8082
 

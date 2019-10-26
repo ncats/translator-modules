@@ -24,7 +24,7 @@ setup(
     name='translator-modules',
     description='NCATS Translator Reasoner modules',
     packages=find_packages(),
-    package_data={'ncats.translator.identifiers': ['*.txt']},
+    package_data={'ncats.translator.identifiers.server': ['*.txt']},
     url='https://github.com/ncats/translator-modules',
     download_url='https://github.com/ncats/translator-modules',
     entry_points={

@@ -28,7 +28,8 @@ WORKDIR /usr/src/app/ncats/translator/identifiers/server
 
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate translator-modules && \
-    pip install  --no-cache-dir -r requirements.txt
+    pip install  --no-cache-dir -r requirements.txt && \
+    pip install .
 
 EXPOSE 8081
 
