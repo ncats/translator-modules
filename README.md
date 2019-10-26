@@ -1,9 +1,11 @@
 # NCATS Translator Modules
 
-This package provides a Python-based implementation of the NCATS Translator workflow modules.
+This package provides a (Python-based) implementation of various NCATS Translator bioinformatics workflow modules.
 
 - [Getting Started](#getting-started)
+    - [Getting and Configuring the Project](#getting-and-configuring-the-project)
     - [Installation of Dependencies and Make Modules Visible as Command Line Programs](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs)
+    - [Special Prerequisite for Running the Translator Modules](#special-prerequisite-for-running-the-translator-modules)
 - [Using the Translator Modules and Building Workflows](#using-the-translator-modules-and-building-workflows)
     - [1. Workflows in Jupyter Notebooks](#1-workflows-in-jupyter-notebooks)
     - [2. Running Complete Workflows as Python Scripts](#2-running-complete-workflows-as-python-scripts)
@@ -15,6 +17,19 @@ This package provides a Python-based implementation of the NCATS Translator work
  - [Future Directions](#future-directions)
 
 # Getting Started
+
+The software in this project has been (and may largely continue to be run) in various ways, enumerated below in the
+section [Using the Translator Modules and Building Workflows](#using-the-translator-modules-and-building-workflows).
+
+However, as of October 2019, the simplest way to run this application may now be as a Docker container based system, is 
+now  detailed [here](#6-running-the-translator-module-system-with-docker-compose). In fact, some duplicate computations 
+in the workflows have been offloaded to REST web services, which are easily provisioned and run within Docker containers 
+(although, of course, with a bit more care and effort, may also be run without Docker). This web service are described 
+in [Special Prerequisite for Running the Translator Modules](\special-prerequisite-for-running-the-translator-modules).
+
+That said, a more hands-on "classical" approach to getting started, is described in the next subsection below.
+
+## Getting and Configuring the Project
 
 The **translator-modules** package is not yet available through PyPI, thus, to install, clone this repo using git.
 
@@ -79,6 +94,8 @@ cd ../../../../ncats/translator/ontology/client/
 python -m pip install -r requirements.txt -e .
 cd ../../../..  # back to the translator-modules root directory
 ```
+
+[Back to top](#ncats-translator-modules)
 
 ## Special Prerequisite for Running the Translator Modules
 
@@ -282,8 +299,10 @@ Repeat steps II and III above for each disease you wish to analyze.
 
 ## 6. Running the Translator Module System with Docker (Compose)
 
-With this "cutting edge" option, we [install and use Docker (Compose)](DOCKER_README.md) then run the application as a 
-set of [Docker containers](https://docs.docker.com). After installing the necessary dependencies, type the following 
+With this "cutting edge" option, we use the [Docker Container Technology](https://www.docker.com) to simplify 
+packaging and running of the Translator workflows. 
+
+After [installing the necessary Docker and Docker Compose dependencies](DOCKER_README.md), type the following 
 into the terminal to build and run the system. Note that 'identifiers' and 'jaccard' are two REST microservices running 
 inside their own containers, and providing utility services to the primary module code.
 
@@ -345,6 +364,7 @@ More details about the architecture of the system is available on the
 We would like to implement a simple (CWL?) graphical user interface (GUI) on top of a (CWL?) workflow runner, to 
 facilitate user interaction with the system. We also aspire to wrap the system in some fashion with the emerging 
 Translator "Reasoner API"  REST computing access standard, to faciliate programmatic access to the workflows. Finally,
-we'd like to add more biologically interesting modules and workflows to the existing collection.
+we'd like to add more biologically interesting modules and workflows to the existing collection, such as analysing 
+post-translational modification (PTM) biology.
 
 [Back to top](#ncats-translator-modules)
