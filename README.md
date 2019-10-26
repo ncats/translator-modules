@@ -291,18 +291,33 @@ inside their own containers, and providing utility services to the primary modul
 cd translator-modules
 docker-compose build
 docker-compose up --detach identifiers jaccard
-docker run -i --rm  --network translator-modules_ncats --name workflows translator-modules_workflows
+docker volume create --name mydata
+docker run -i --rm  --network translator-modules_ncats -v mydata:/results  --name workflows translator-modules_workflows
 ```
 
 The last `docker run` command starts up a workflow container shell, connected to associated micro service  
-containers on a local bridge network. Note that the  command shell  doesn't give a prompt but you can type in 
-Linux commands (e.g. `ls`) to see that it is running.  The last command above activates the virtual CLI environment 
-within which Translator module scripts may be directly run. For example, you can try running the following:
+containers on a local bridge network.  
+
+The second to last command creates a persistent docker data volume called 
+'mydata' which is then bound to the *workflows* container. This volume can be used to persistent your workflow results 
+for later access by other containers or externally.  Details about the volume (including its host machine location) 
+may be viewed by typing: 
+
+```bash
+docker volume inspect mydata
+```
+
+See the [Docker Storage Volume Documentation](https://docs.docker.com/storage/volumes/) for 
+more information.
+
+Note that the *workflowe* container run command shell doesn't give a prompt but you can type in Linux commands 
+(e.g. `ls`) to convince yourself that it is running.  The last command above activates the virtual CLI environment 
+within which Translator module scripts may be directly executed. For example, you can try running the following:
 
 ```
-disease_associated_genes --disease-identifier "MONDO:0005361" get-data-frame to-csv
+disease_associated_genes --disease-identifier "MONDO:0005361" get-data-frame to-csv >/results/disease_genes.json
 ```
-retrieves genes associated with the disease "eosinophilic esophagitis".
+retrieves genes associated with the disease "eosinophilic esophagitis", in a json stored in the results volume.
 
 Common Workflow Language (CWL) workflows may  also be run inside the container, for example:
 
