@@ -35,6 +35,7 @@ The **translator-modules** package is not yet available through PyPI, thus, to i
 
 ```bash
 git clone https://github.com/ncats/translator-modules.git
+cd translator-modules
 ```
 
 The code is now validated to work only with Python 3.7 only.  We recommend using a **virtualenv** to enforce this.
