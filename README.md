@@ -35,6 +35,8 @@ The **translator-modules** package is not yet available through PyPI, thus, to i
 
 ```bash
 git clone https://github.com/ncats/translator-modules.git
+
+# ... then  enter  into your cloned project repository
 cd translator-modules
 ```
 
@@ -52,7 +54,15 @@ python3.7 -m venv venv
 source venv/bin/activate
 ```
 
-or, alternately, use **conda env** to manage packages and the development environment:
+To exit the environment, type:
+
+```  
+deactivate
+```
+
+To reenter, source the _activate_ command again.
+
+Alternately, you can also use use **conda env** to manage packages and the development environment:
 
 ```
 conda create -n translator-modules python=3.7
