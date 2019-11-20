@@ -5,9 +5,9 @@
 * git clone translator-modules
 * enter, git checkout CXReconcileWF9 branch
 * create environment with the requirements file in this branch:
-conda create -n CXTrial python=3.7
-conda activate CXTrial
-python -m pip install -r requirements.txt -e .  # recall that -e flag seemed to be important in the past for getting things to run)
+	- conda create -n CXTrial python=3.7
+	- conda activate CXTrial
+	- python -m pip install -r requirements.txt -e .  # recall that -e flag seemed to be important in the past for getting things to run
 
 My workflow script (scripts/SummaryTableWorkflow.py) currently **MUST** be run from the root directory 
 (translator-modules). This is because translation depends on a file that has a relative path specified (WIP to get a better solution). 
