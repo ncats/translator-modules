@@ -207,22 +207,22 @@ def main():
     ## CX - it would be nice if we only initiated the modules we were going to use. 
     ## if we want to omit modules, search for the word "omit" and comment out sections below it. 
     
-    ## Ontology Catalogs only need to be initialized once!
-    functional_threshold = args.functionalThreshold
-    print("Functional Similarity Threshold:\t" + str(functional_threshold))
-    ## Functional similarity using Jaccard index threshold
-    ## Called once, creating this object triggers
-    ## its initialization with GO ontology and annotation
-    print("Loading functional ontology (~4 minutes)...\n")
-    func_sim_human = FunctionalSimilarity('human')
-
-    phenotype_threshold = args.phenotypeThreshold
-    print("Phenotype Similarity Threshold: \t" + str(phenotype_threshold))
-    ## Phenotype similarity using OwlSim calculation threshold
-    ## Called once, creating this object triggers
-    ## its initialization with GO ontology and annotation
-    print("Loading phenotype ontology (~1.5 minutes)...\n")
-    pheno_sim_human = PhenotypeSimilarity('human')
+#    ## Ontology Catalogs only need to be initialized once!
+#    functional_threshold = args.functionalThreshold
+#    print("Functional Similarity Threshold:\t" + str(functional_threshold))
+#    ## Functional similarity using Jaccard index threshold
+#    ## Called once, creating this object triggers
+#    ## its initialization with GO ontology and annotation
+#    print("Loading functional ontology (~4 minutes)...\n")
+#    func_sim_human = FunctionalSimilarity('human')
+#
+#    phenotype_threshold = args.phenotypeThreshold
+#    print("Phenotype Similarity Threshold: \t" + str(phenotype_threshold))
+#    ## Phenotype similarity using OwlSim calculation threshold
+#    ## Called once, creating this object triggers
+#    ## its initialization with GO ontology and annotation
+#    print("Loading phenotype ontology (~1.5 minutes)...\n")
+#    pheno_sim_human = PhenotypeSimilarity('human')
     
     gene_interaction_threshold = args.geneInteractionThreshold
     print("Gene Interaction Threshold: \t\t" + str(gene_interaction_threshold))
@@ -271,43 +271,43 @@ def main():
         ## CX - it would be nice if we only initiated the modules we were going to use. 
         ## if we want to omit modules, search for the word "omit" and comment out sections below it. 
 
-        ## run modules based on whether argument was given in command prompt
-        print("\nRunning functional similarity module (Mod1A)...")
-        mod1a_results = \
-            similarity(
-                func_sim_human,
-                query_input_genes,
-                functional_threshold,
-                'Mod1A',
-                'Functionally Similar Genes'
-            )
-        
-        ## This builds a brief summary for just this module and creates the across summary tables
-        if not mod1a_results.empty:  # will only work if Mod1A returned results
-            summary_mod.add_scorebased_module(mod1a_results) 
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1A')
-        else:
-            print("Mod1A (Functional similarity) returned no results. Not included in summary.")
-                
-        print("\nRunning phenotypic similarity module (Mod1B)...")            
-        print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
-        mod1b_results = \
-            similarity(
-                pheno_sim_human,
-                query_input_genes,
-                phenotype_threshold,
-                'Mod1B',
-                'Phenotypic Similar Genes'
-            )
-        
-        ## Add output to brief summary
-        if not mod1b_results.empty:
-            summary_mod.add_scorebased_module(mod1b_results)
-            if _echo_to_console:
-                summary_mod.show_single_mod_summary('Mod1B')
-        else:
-            print("Mod1B (phenotypic similarity) returned no results. Not included in summary module.")
+#        ## run modules based on whether argument was given in command prompt
+#        print("\nRunning functional similarity module (Mod1A)...")
+#        mod1a_results = \
+#            similarity(
+#                func_sim_human,
+#                query_input_genes,
+#                functional_threshold,
+#                'Mod1A',
+#                'Functionally Similar Genes'
+#            )
+#        
+#        ## This builds a brief summary for just this module and creates the across summary tables
+#        if not mod1a_results.empty:  # will only work if Mod1A returned results
+#            summary_mod.add_scorebased_module(mod1a_results) 
+#            if _echo_to_console:
+#                summary_mod.show_single_mod_summary('Mod1A')
+#        else:
+#            print("Mod1A (Functional similarity) returned no results. Not included in summary.")
+#                
+#        print("\nRunning phenotypic similarity module (Mod1B)...")            
+#        print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
+#        mod1b_results = \
+#            similarity(
+#                pheno_sim_human,
+#                query_input_genes,
+#                phenotype_threshold,
+#                'Mod1B',
+#                'Phenotypic Similar Genes'
+#            )
+#        
+#        ## Add output to brief summary
+#        if not mod1b_results.empty:
+#            summary_mod.add_scorebased_module(mod1b_results)
+#            if _echo_to_console:
+#                summary_mod.show_single_mod_summary('Mod1B')
+#        else:
+#            print("Mod1B (phenotypic similarity) returned no results. Not included in summary module.")
                 
         print("\nRunning gene interaction module (Mod1E)...")            
         # Find Interacting Genes from Monarch data
@@ -385,42 +385,42 @@ def main():
             ## CX - it would be nice if we only initiated the modules we were going to use. 
             ## if we want to omit modules, search for the word "omit" and comment out sections below it. 
 
-            print("\nRunning functional similarity module...")
-            mod1a_results = \
-                similarity(
-                    func_sim_human,
-                    disease_associated_gene_set.get_data_frame(),
-                    functional_threshold,
-                    'Mod1A',
-                    'Functionally Similar Genes'
-                )
-        
-            ## This builds a brief summary for just this module and creates the across summary tables
-            if not mod1a_results.empty:  # will only work if Mod1A returned results
-                summary_mod.add_scorebased_module(mod1a_results) 
-                if _echo_to_console:
-                    summary_mod.show_single_mod_summary('Mod1A')
-            else:
-                print("Mod1A (Functional similarity) returned no results. Not included in summary module.")
-                  
-            print("\nRunning phenotypic similarity module...")   
-            print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
-            mod1b_results = \
-                similarity(
-                    pheno_sim_human,
-                    disease_associated_gene_set.get_data_frame(),
-                    phenotype_threshold,
-                    'Mod1B',
-                    'Phenotypic Similar Genes'
-                )
-            
-            ## Add output to brief summary
-            if not mod1b_results.empty:
-                summary_mod.add_scorebased_module(mod1b_results)
-                if _echo_to_console:
-                    summary_mod.show_single_mod_summary('Mod1B')
-            else:
-                print("Mod1B (Phenotypic similarity) returned no results. Not included in summary module.")
+#            print("\nRunning functional similarity module...")
+#            mod1a_results = \
+#                similarity(
+#                    func_sim_human,
+#                    disease_associated_gene_set.get_data_frame(),
+#                    functional_threshold,
+#                    'Mod1A',
+#                    'Functionally Similar Genes'
+#                )
+#        
+#            ## This builds a brief summary for just this module and creates the across summary tables
+#            if not mod1a_results.empty:  # will only work if Mod1A returned results
+#                summary_mod.add_scorebased_module(mod1a_results) 
+#                if _echo_to_console:
+#                    summary_mod.show_single_mod_summary('Mod1A')
+#            else:
+#                print("Mod1A (Functional similarity) returned no results. Not included in summary module.")
+#                  
+#            print("\nRunning phenotypic similarity module...")   
+#            print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
+#            mod1b_results = \
+#                similarity(
+#                    pheno_sim_human,
+#                    disease_associated_gene_set.get_data_frame(),
+#                    phenotype_threshold,
+#                    'Mod1B',
+#                    'Phenotypic Similar Genes'
+#                )
+#            
+#            ## Add output to brief summary
+#            if not mod1b_results.empty:
+#                summary_mod.add_scorebased_module(mod1b_results)
+#                if _echo_to_console:
+#                    summary_mod.show_single_mod_summary('Mod1B')
+#            else:
+#                print("Mod1B (Phenotypic similarity) returned no results. Not included in summary module.")
                    
             print("\nRunning gene interaction module...")               
             # Find Interacting Genes from Monarch data

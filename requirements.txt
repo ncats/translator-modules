@@ -19,9 +19,10 @@ aiohttp
 # NCATS Dependencies
 #
 jsonschema>=3.0.1
-mvp-module-library>=0.0.6
-ontobio
-biolink-model>=1.2.4
-biolinkml>=1.4.6
-biothings_client
+## CX here: setting the versions to 9/12/19 to see if that makes CXReconcileDevelop work
+mvp-module-library==0.0.6
+ontobio==1.11.4 
+biolink-model==1.2.4
+biolinkml==1.4.6
+biothings_client==0.2.1
 fire

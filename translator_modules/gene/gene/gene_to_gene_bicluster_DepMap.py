@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
 # Workflow 9, Gene-to-Gene Bicluster
+from typing import Dict, List
+from collections import defaultdict
+
 import asyncio
 import concurrent.futures
 import urllib.request
-from collections import defaultdict
+from json import JSONDecodeError
+
+import requests
 
 import fire
 import pandas as pd
-import requests
-from typing import Dict, List
 
 from translator_modules.core.module_payload import Payload, fix_curies, get_simple_input_gene_list
 from BioLink.model import GeneToGeneAssociation, Gene
@@ -19,8 +22,16 @@ from translator_modules.core.ids.IDs import TranslateIDs
 import re
 import numpy as np
 
-bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
-bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
+bicluster_gene_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/'
+bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_bicluster/'
+
+### okay these aren't working either 
+#bicluster_gene_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
+#bicluster_bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
+
+# Oct/Nov 2019: these aren't working?
+#bicluster_gene_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_gene/'
+#bicluster_bicluster_url = 'https://bicluster.renci.org/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/'
 
 
 class BiclusterByGeneToGene():
@@ -91,11 +102,17 @@ class BiclusterByGeneToGene():
 
         bicluster_url_list = [bicluster_gene_url + gene + '/' + '?include_similar=true' for gene in curated_id_list]
         with concurrent.futures.ThreadPoolExecutor(
-                max_workers=2) as executor_1:  # changing the # of workers does not change performance...
+#                max_workers=2) as executor_1:  # CX: change from max_work
+                ) as executor_1:  # from master version
             loop_1 = asyncio.get_event_loop()
             futures_1 = [loop_1.run_in_executor(executor_1, requests.get, request_1_url) for request_1_url in
                          bicluster_url_list]
             for response in await asyncio.gather(*futures_1):
+                try:
+                    response_json = response.json()
+                except JSONDecodeError:
+                    continue
+                
                 cooccurrence_dict_each_gene = defaultdict(dict)
                 cooccurrence_dict_each_gene['related_biclusters'] = defaultdict(dict)
                 response_json = response.json()
@@ -149,6 +166,33 @@ class BiclusterByGeneToGene():
                     dict_of_genes_in_unique_biclusters[bicluster_id] = list(genes)
         return dict_of_genes_in_unique_biclusters
 
+    @staticmethod  ## CX: from master branch
+    def catalog_of_scored_genes_in_unique_biclusters(curated_id_list, dict_of_genes_in_unique_biclusters):
+        dict_of_scored_genes_in_unique_biclusters = defaultdict(dict)
+        for bicluster_id, gene_list in dict_of_genes_in_unique_biclusters.items():
+            if gene_list:
+                # using an array here in case a unique bicluster shares more than one input gene
+                input_ids = [
+                    # curated input id's may be not have versions therefore need
+                    # to only compare the object_id part with the curated input list
+                    gene for gene in gene_list if gene.split('.')[0] in curated_id_list or gene in curated_id_list
+                ]
+                if not input_ids:
+                    # not sure what is going on here...
+                    # no input id mappings onto the current bicluster?
+                    # thus, do I need to ignore this bicluster list?
+                    print("BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?")
+                    continue
+                for gene in gene_list:
+#                    if not keep_input_ids and (gene.split('.')[0] in curated_id_list or gene in curated_id_list):
+                    if (gene.split('.')[0] in curated_id_list or gene in curated_id_list):
+                        continue  # ignore genes found in the input list
+                    if gene not in dict_of_scored_genes_in_unique_biclusters:
+                        dict_of_scored_genes_in_unique_biclusters[gene] = {'input_id': input_ids, 'score': 1}
+                    else:
+                        dict_of_scored_genes_in_unique_biclusters[gene]['score'] += 1
+        return dict_of_scored_genes_in_unique_biclusters
+
     @staticmethod
     def genes_in_unique_biclusters_not_in_input_gene_list(curated_id_list, dict_of_genes_in_unique_biclusters):
         dict_of_genes_in_unique_biclusters_not_in_inputs = defaultdict(dict)
@@ -174,7 +218,8 @@ class BiclusterByGeneToGene():
     def list_of_output_genes_sorted_high_to_low_count(dict_of_genes_in_unique_biclusters_not_in_inputs):
         score_list = [
             {
-                'input_id': ','.join(fix_curies(tally['input_id'], prefix='ENSEMBL')),
+#                'input_id': ','.join(fix_curies(tally['input_id'], prefix='ENSEMBL')),  ## CX: this is problematic for me right now
+                'input_id': ','.join(tally['input_id']),
                 'hit_id': gene,
                 'score': tally['score']
             } for (gene, tally) in dict_of_genes_in_unique_biclusters_not_in_inputs.items()
@@ -224,58 +269,95 @@ class GeneToGeneBiclusters(Payload):
         # first get a UNIQUE list of the disease associated gene IDs (these are HGNC).
         disease_associated_hgnc_ids = list(set(input_gene_set))
 #        trial_list = ['ENSG00000272603', 'ENSG00000263050', 'fjdsaklfjdkasl']
-    
-        # second, convert hgnc ids to ensembl
+
+        # second, convert hgnc ids to NCBI for DepMap
         translation = "./translator_modules/core/ids/HUGO_geneids_download_v2.txt"
     
         ## I'm writing out the list comprehension so I can add print statement 
-        disease_associated_ensembl_ids = []
+        disease_associated_ncbi_ids = []
         for (input_id, output_id) in TranslateIDs(disease_associated_hgnc_ids, translation, \
-            in_id="HGNC ID", out_id="Ensembl gene ID").results:
+            in_id="HGNC ID", out_id="NCBI Gene ID").results:
             ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
             ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
             if (output_id!='' and output_id!=None):
-                disease_associated_ensembl_ids.append(output_id)
+                disease_associated_ncbi_ids.append('NCBI:'+output_id)
             else:
-                print("Error: Matching Ensembl ID for "+input_id+" not found. Excluded from Module.")  
+                print("Error: Matching NCBI ID for "+input_id+" not found. Excluded from Module.")  
 
-#        print(disease_associated_ensembl_ids)
+        print(disease_associated_ncbi_ids)
         
-        asyncio.run(self.mod.gene_to_gene_biclusters_async(disease_associated_ensembl_ids))
+        asyncio.run(self.mod.gene_to_gene_biclusters_async(disease_associated_ncbi_ids))
 
         bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict()
         unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
         genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters)
 
-        genes_in_unique_biclusters_not_in_input_gene_list = \
-            self.mod.genes_in_unique_biclusters_not_in_input_gene_list(\
-                                        disease_associated_ensembl_ids, genes_in_unique_biclusters)
+#        genes_in_unique_biclusters_not_in_input_gene_list = \
+#            self.mod.genes_in_unique_biclusters_not_in_input_gene_list(\
+#                                        disease_associated_ensembl_ids, genes_in_unique_biclusters)
 
-        # need to convert the raw Ensembl ID's to CURIES
-        genes_in_unique_biclusters_not_in_input_gene_list = \
-            fix_curies(genes_in_unique_biclusters_not_in_input_gene_list, prefix='ENSEMBL')
+        catalog_of_scored_genes_in_unique_biclusters = \
+            self.mod.catalog_of_scored_genes_in_unique_biclusters(disease_associated_ncbi_ids, genes_in_unique_biclusters)
+
+#        # need to convert the raw NCBI ID's to CURIES
+#        catalog_of_scored_genes_in_unique_biclusters = \
+#            fix_curies(catalog_of_scored_genes_in_unique_biclusters, prefix='NCBI')
+            
+#        # second, convert hgnc ids to ensembl for RNAseqDB
+#        translation = "./translator_modules/core/ids/HUGO_geneids_download_v2.txt"
+#    
+#        ## I'm writing out the list comprehension so I can add print statement 
+#        disease_associated_ensembl_ids = []
+#        for (input_id, output_id) in TranslateIDs(disease_associated_hgnc_ids, translation, \
+#            in_id="HGNC ID", out_id="Ensembl gene ID").results:
+#            ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
+#            ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
+#            if (output_id!='' and output_id!=None):
+#                disease_associated_ensembl_ids.append(output_id)
+#            else:
+#                print("Error: Matching Ensembl ID for "+input_id+" not found. Excluded from Module.")  
+#
+#        print(disease_associated_ensembl_ids)
+#        
+#        asyncio.run(self.mod.gene_to_gene_biclusters_async(disease_associated_ensembl_ids))
+#
+#        bicluster_occurrences_dict = self.mod.bicluster_occurrences_dict()
+#        unique_biclusters = self.mod.unique_biclusters(bicluster_occurrences_dict)
+#        genes_in_unique_biclusters = self.mod.genes_in_unique_biclusters(unique_biclusters)
+#
+##        genes_in_unique_biclusters_not_in_input_gene_list = \
+##            self.mod.genes_in_unique_biclusters_not_in_input_gene_list(\
+##                                        disease_associated_ensembl_ids, genes_in_unique_biclusters)
+#
+#        catalog_of_scored_genes_in_unique_biclusters = \
+#            self.mod.catalog_of_scored_genes_in_unique_biclusters(disease_associated_ensembl_ids, genes_in_unique_biclusters)
+#
+#        # need to convert the raw Ensembl ID's to CURIES
+#        catalog_of_scored_genes_in_unique_biclusters = \
+#            fix_curies(catalog_of_scored_genes_in_unique_biclusters, prefix='ENSEMBL')
 
         sorted_list_of_output_genes = \
-            self.mod.list_of_output_genes_sorted_high_to_low_count(genes_in_unique_biclusters_not_in_input_gene_list)
+            self.mod.list_of_output_genes_sorted_high_to_low_count(catalog_of_scored_genes_in_unique_biclusters)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
-        
-        ## next is translation: finding hgnc ids corresponding to bicluster ensemble results
-        regex_ensg_prefixes = re.compile(r'ENSEMBL:(.+)\.')
-        hit_id_regex = [re.match(regex_ensg_prefixes, x).group(1) for x in self.results['hit_id']]
-        input_id_regex = [re.match(regex_ensg_prefixes, x).group(1) for x in self.results['input_id']]
+        print(self.results)
+ 
+        ## next is translation: finding hgnc ids corresponding to bicluster NCBI results for DepMap 
+        regex_ncbi_prefixes = re.compile(r'NCBI:(.+)')
+        hit_id_regex = [re.match(regex_ncbi_prefixes, x).group(1) for x in self.results['hit_id']]
+        input_id_regex = [re.match(regex_ncbi_prefixes, x).group(1) for x in self.results['input_id']]
 
         ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
         ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
         hit_hgnc_ids = [output_id if (output_id!='' and output_id!=None) \
                           else np.nan \
                           for (input_id, output_id) in TranslateIDs(hit_id_regex, \
-                          translation, out_id="HGNC ID", in_id="Ensembl gene ID").results]
+                          translation, out_id="HGNC ID", in_id="NCBI Gene ID").results]
 
         input_hgnc_ids = [output_id if (output_id!='' and output_id!=None) \
                           else np.nan \
                           for (input_id, output_id) in TranslateIDs(input_id_regex, \
-                          translation, out_id="HGNC ID", in_id="Ensembl gene ID").results]
+                          translation, out_id="HGNC ID", in_id="NCBI Gene ID").results]
     
         ## add translated (hgnc) ids and then drop rows where translation failed
         ## Question: if the translation fails, do we want to keep the result (different id)?
@@ -289,7 +371,40 @@ class GeneToGeneBiclusters(Payload):
                       translation, out_id="Approved symbol", in_id="HGNC ID").results]
         self.results['input_symbol'] = [output_id \
                  for (input_id, output_id) in TranslateIDs(list(self.results['input_id']), \
-                      translation, out_id="Approved symbol", in_id="HGNC ID").results]
+                      translation, out_id="Approved symbol", in_id="HGNC ID").results]       
+        
+        print(self.results)
+
+#        ## next is translation: finding hgnc ids corresponding to bicluster ensembl results for RNASeqDB 
+#        regex_ensg_prefixes = re.compile(r'ENSEMBL:(.+)\.')
+#        hit_id_regex = [re.match(regex_ensg_prefixes, x).group(1) for x in self.results['hit_id']]
+#        input_id_regex = [re.match(regex_ensg_prefixes, x).group(1) for x in self.results['input_id']]
+#
+#        ## CX: List entry is (input_id, None) if the key/input_id isn't found in the translation dict
+#        ## CX: (input_id, '') if output/converted_id isn't found in translation dict 
+#        hit_hgnc_ids = [output_id if (output_id!='' and output_id!=None) \
+#                          else np.nan \
+#                          for (input_id, output_id) in TranslateIDs(hit_id_regex, \
+#                          translation, out_id="HGNC ID", in_id="Ensembl gene ID").results]
+#
+#        input_hgnc_ids = [output_id if (output_id!='' and output_id!=None) \
+#                          else np.nan \
+#                          for (input_id, output_id) in TranslateIDs(input_id_regex, \
+#                          translation, out_id="HGNC ID", in_id="Ensembl gene ID").results]
+#    
+#        ## add translated (hgnc) ids and then drop rows where translation failed
+#        ## Question: if the translation fails, do we want to keep the result (different id)?
+#        self.results['hit_id'] = hit_hgnc_ids
+#        self.results['input_id'] = input_hgnc_ids
+#        self.results = self.results.dropna()   ### if you reset index here, drop the index
+#        
+#        ## getting the symbols (human-readable names): assuming there are symbols for all. 
+#        self.results['hit_symbol'] = [output_id \
+#                 for (input_id, output_id) in TranslateIDs(list(self.results['hit_id']), \
+#                      translation, out_id="Approved symbol", in_id="HGNC ID").results]
+#        self.results['input_symbol'] = [output_id \
+#                 for (input_id, output_id) in TranslateIDs(list(self.results['input_id']), \
+#                      translation, out_id="Approved symbol", in_id="HGNC ID").results]
         
         ## CX: Marcin agreed to use proportions as the best way to compare results across queries
         self.results['score'] = self.results['score'] / len(unique_biclusters)
