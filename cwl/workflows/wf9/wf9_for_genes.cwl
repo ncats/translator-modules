@@ -5,20 +5,28 @@ class: Workflow
 inputs:
     input_genes:
         type: string
+
 outputs:
-  gene_to_gene_bicluster_list:
+  gene_to_gene_bicluster_RNAseqDB_list:
     type: File
-    outputSource: geneToGeneBicluster/gene_to_gene_bicluster_list
+    outputSource: geneToGeneBicluster/gene_to_gene_bicluster_RNAseqDB_list
+
+  gene_to_gene_bicluster_DepMap_list:
+    type: File
+    outputSource: geneToGeneBicluster/gene_to_gene_bicluster_DepMap_list
+
   gene_to_tissue_bicluster_list:
     type: File
     outputSource: geneToTissueBicluster/gene_to_tissue_bicluster_list
+
 steps:
-  geneToGeneBicluster:
+  geneToGeneBiclusterRNAseqDB:
     run: gene_to_gene_bicluster_RNAseqDB.cwl
     in:
       input_genes: input_genes
     out: [ gene_to_gene_bicluster_RNAseqDB_list ]
-  geneToGeneBicluster:
+
+  geneToGeneBiclusterDepMap:
     run: gene_to_gene_bicluster_DepMap.cwl
     in:
       input_genes: input_genes
