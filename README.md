@@ -271,7 +271,7 @@ For the JSON inputs (which may either
 be in Pandas DataFrame or ResultList format), the input process simply checks for a top level JSON object tag
 called 'result_list_name' to discriminate (the Pandas DataFrame JSON doesn't contain it!)
 
-More information about the modules are found [here]().
+More information about the modules are found [here](./ncats/translator/modules).
 
 ## 4. Running Translator Workflows using Common Workflow Language Specifications
 
