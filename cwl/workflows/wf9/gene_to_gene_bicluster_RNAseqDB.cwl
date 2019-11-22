@@ -10,6 +10,6 @@ inputs:
       position: 0
       prefix: --input_genes
 outputs:
-  gene_to_gene_bicluster_list:
+  gene_to_gene_bicluster_RNAseqDB_list:
     type: stdout
 stdout: gene_to_gene_bicluster_RNAseqDB.records.json
