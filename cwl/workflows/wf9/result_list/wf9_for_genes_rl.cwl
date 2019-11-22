@@ -9,10 +9,10 @@ inputs:
 outputs:
   gene_to_gene_bicluster_RNAseqDB_list:
     type: File
-    outputSource: geneToGeneBicluster/gene_to_gene_bicluster_RNAseqDB_list
+    outputSource: geneToGeneBiclusterRNAseqDB/gene_to_gene_bicluster_RNAseqDB_list
   gene_to_gene_bicluster_DepMap_list:
     type: File
-    outputSource: geneToGeneBicluster/gene_to_gene_bicluster_DepMap_list
+    outputSource: geneToGeneBiclusterDepMap/gene_to_gene_bicluster_DepMap_list
   gene_to_tissue_bicluster_list:
     type: File
     outputSource: geneToTissueBicluster/gene_to_tissue_bicluster_list
