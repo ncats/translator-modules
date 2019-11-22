@@ -127,32 +127,33 @@ Although you plan to run both micro services on "bare metal", the easiest way to
 containers. In fact, the "bleeding edge" (read: recommended) way of running the system is to 
 [Run the Translator Module System with Docker Compose](#6-running-the-translator-module-system-with-docker-compose).
 
-To run the project module code _outside_ of the Docker container, you will need to point to the services by setting 
-two environment variables (here, we show the `bash` way of doing this):
+To run the project modules _outside_ of the Docker container, you will need to point to the services by setting 
+two environment variables (here, we show the `bash` way of doing this. The exact manner in which environment variables 
+are declared and made visible also  differs between operating systems and Integrated Development Environments (IDEs). 
+Consult your documentation to find out how to properly set them):
 
 ```bash
 export IDENTIFIERS_RESOLUTION_SERVER_HOST="http://0.0.0.0:8081"
 export JACCARD_SIMILARITY_SERVER_HOST="http://0.0.0.0:8082"
 ```
 
-Assuming the necessary docker and compose software is installed, building and running the required microservices 
-involves the following commands, typed from within the project root directory:
+This setting points the modules to "localhost". Note the distinct port numbers for the two microservices.
+
+To be safe, the docker-compose service names (i.e. "identifiers" and "jaccard") can also be recorded in your operating 
+system `hosts` configuration file as resolving to 127.0.0.1 ("localhost"). This file is found at the path */etc/hosts* 
+under Linux and Mac OSX; on Windows, look for it at *c:\Windows\System32\Drivers\etc\hosts*).  Recording this `hosts` 
+setting will ensure that, for example, CWL run workflows will find the microservices even when run from outside 
+of a Docker container.
+
+Assuming the necessary Docker and Compose software is installed, building and running the required microservices 
+involves typing in following commands, from within the project root directory:
 
 ```
 docker-compose build
 docker-compose up --detach identifiers jaccard
 ```
 
-This will fire up the microservices inside their Docker containers. 
-
-Note that the micro services expose their API's to the default "localhost" host name (http://0.0.0.0), hence the setting,
-You can, of course, use suitable DNS or web application proxies to map the services to less obscure hostnames.
-The exact manner in which environment variables are made visible also  differs between operating systems and
-Integrated Development Environments (IDEs). Consult your documentation to find out how to achieve this.
-
-Note the distinct port numbers for the two microservices.
-
-Note that, if you wish, the modules may themselves be run inside a "workflows" Docker container (see option 6. below)
+This will fire up the microservices inside their corresponding Docker containers. 
 
 [Back to top](#ncats-translator-modules)
 
