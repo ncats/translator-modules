@@ -8,7 +8,7 @@ This package provides a (Python-based) implementation of various NCATS Translato
     - [Special Prerequisite for Running the Translator Modules](#special-prerequisite-for-running-the-translator-modules)
 - [Using the Translator Modules and Building Workflows](#using-the-translator-modules-and-building-workflows)
     - [1. Workflows in Jupyter Notebooks](#1-workflows-in-jupyter-notebooks)
-    - [2. Running Complete Workflows as Python Scripts](#2-running-complete-workflows-as-python-scripts)
+    - [2. Running Complete Workflows in Custom Python Scripts](#2-running-complete-workflows-in-custom-python-scripts)
     - [3. Running Workflow Modules individually from the Command line](#3-running-workflow-modules-individually-from-the-command-line)
     - [4. Running Translator Workflows using Common Workflow Language Specifications](#4-running-translator-workflows-using-common-workflow-language-specifications)
     - [5. Calling the Code Directly in your own Python Clients](#5-calling-the-code-directly-in-your-own-python-clients)
@@ -345,7 +345,7 @@ docker volume inspect mydata
 See the [Docker Storage Volume Documentation](https://docs.docker.com/storage/volumes/) for 
 more information.
 
-Note that the *workflowe* container run command shell doesn't give a prompt but you can type in Linux commands 
+Note that the *workflows* container run command shell doesn't give a prompt but you can type in Linux commands 
 (e.g. `ls`) to convince yourself that it is running.  The last command above activates the virtual CLI environment 
 within which Translator module scripts may be directly executed. For example, you can try running the following:
 
