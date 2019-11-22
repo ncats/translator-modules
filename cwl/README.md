@@ -39,11 +39,6 @@ conda activate translator-modules
 python -m pip install cwlref-runner
 ```
 
-* Finally, follow the instructions for [preparing the workflow modules for use](#preparing-the-workflow-modules-for-use). 
-Note in particular the general need to put the modules on your path (if you don't set this up automatically
-for all your shell sessions, you'll need to set the PATH up for each new terminal session within which you
-wish to run the CWL workflows)
-
 ### Running the CWL Workflow
 
 #### NCATS Translator Workflow 2
@@ -136,59 +131,6 @@ For more examples and ideas, visit:
 If you are running the system under Linux, there are some 
 [post-installation configuration](https://docs.docker.com/install/linux/linux-postinstall/) 
 which you can apply so that Docker can be run directly without sudo.
-
-## Preparing the Workflow Modules for Use
-
-By default, each translator module should have `#!/usr/bin/env python3` specified at the top of the module, as their 
-specified interpreter, written at the top of the file (Note: double check if your system has tagged Python 3 as the
-executable *python3*. If not, you should probably add a *python3* symbolic link to resolve to the actual interpreter).
-
-Additionally, ensure that each module is kept executable by performing `chmod a+x *` within `translator_modules`.
-
-Finally, if you are developing on Windows, ensure that you are enforcing Unix-style newlines in these files.
-You can do this using a tool like `dos2unix`, or by running the Vim command `set: fileformat=unix` on the file.
-
-For the system to run, you will now need to 
-[install the Python dependencies for the translator-modules project](../README.md#installation-of-dependencies).
-
-In order to use the CWL tools in `cwl/workflows/`, one must then put those `translator_modules/modules<*>/` modules 
-on the system path.  This lets your CWL Runner use these modules by identifying them on the absolute path, and lets 
-the codebase be portable across systems if you are not using a virtual machine.
-
-Assuming that you are in the project directory (as the 'present working directory'), then a way to do this is by 
-adding `translator_modules` onto the system path directly.  On Linux, type the following
-
-```bash
-export PATH=$PATH$( find `pwd`/translator_modules/ -type d ! -name "__pycache__"  -printf ":%p" )
-```
-
-On the Mac, the standard (BSD) 'find' doesn't have the -printf flag. A workaround is to install the Gnu findutils using
-[Homebrew](https://brew.sh) as follows:
-
-```bash
-brew install findutils
-
-```
-
-then substitute the *gfind* command for the *find* command in the PATH command above (Note: we provide a shell script
-which you can use to set the environment using the bash 'source' command, as follows:
-
-```bash
-source scripts/set_macosx_path.sh
-```
-to help you. *Note:* you may need to run this script afresh in every new terminal 
-session unless you add it into your shell login profile).
-
-Our CWL specs can now be kept terse, as they don't require an absolute path to access them nor a python call to run 
-them, like so.
-
-```yaml
-#!/usr/bin/env cwl-runner
-
-cwlVersion: v1.0
-class: CommandLineTool
-baseCommand: [ disease_associated_genes.py, get-data-frame, to-json ]
-```
 
 ## Running a CWL tool
 
