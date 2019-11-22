@@ -140,10 +140,17 @@ export JACCARD_SIMILARITY_SERVER_HOST="http://0.0.0.0:8082"
 This setting points the modules to "localhost". Note the distinct port numbers for the two microservices.
 
 To be safe, the docker-compose service names (i.e. "identifiers" and "jaccard") can also be recorded in your operating 
-system `hosts` configuration file as resolving to 127.0.0.1 ("localhost"). This file is found at the path */etc/hosts* 
-under Linux and Mac OSX; on Windows, look for it at *c:\Windows\System32\Drivers\etc\hosts*).  Recording this `hosts` 
-setting will ensure that, for example, CWL run workflows will find the microservices even when run from outside 
-of a Docker container.
+system `hosts` configuration file as resolving to 127.0.0.1 ("localhost"). That is, add the following lines into the 
+`hosts` file:
+
+```bash
+127.0.0.1   identifiers
+127.0.0.1   jaccard
+```
+
+The file is found at the path */etc/hosts* under Linux and Mac OSX; on Windows, look for it at 
+*c:\Windows\System32\Drivers\etc\hosts*).  Recording this `hosts` setting will ensure that, for example, 
+CWL run workflows will find the microservices even when run from outside of a Docker container.
 
 Assuming the necessary Docker and Compose software is installed, building and running the required microservices 
 involves typing in following commands, from within the project root directory:
