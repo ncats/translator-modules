@@ -193,7 +193,7 @@ disease_associated_genes.py --disease_name "FA" --disease_identifier "MONDO:0019
 Is *equivalent to* **this CWL tool running Translator Module 0:**
 
 ```bash
-cwltool cwl/workflows/disease_associated_genes.cwl tests/data/fanconi.yaml
+cwltool cwl/workflows/wf2/disease_associated_genes.cwl tests/data/fanconi.yaml
 ```
 
 ## Writing a CWL tool for an existing module

@@ -356,7 +356,7 @@ disease_associated_genes --disease-identifier "MONDO:0005361" get-data-frame to-
 ```
 retrieves genes associated with the disease "eosinophilic esophagitis", in a json stored in the results volume.
 
-Common Workflow Language (CWL) workflows may  also be run inside the container, for example:
+Common Workflow Language (CWL) workflows may also be run inside the container, for example:
 
 ```bash
 cwltool cwl/workflows/wf2/result_list/wf2_rl.cwl tests/data/fanconi.yaml
