@@ -141,29 +141,32 @@ should expected for a script: names for the data, their types and formats, and w
 Let's take a simple example:
 
 ```yaml
+#!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ disease_associated_genes.py, get-data-frame, to-json, --orient, records ]
+baseCommand: [ disease_associated_genes, get-data-frame, to-json, --orient, records ]
 inputs:
-  disease_name:
+  disease_identifier:
     type: string
     inputBinding:
-      prefix: --input-disease-name
-  disease_id:
+      prefix: --disease_identifier
+  disease_label:
     type: string
     inputBinding:
-      prefix: --input-disease-mondo
-outputs:
+      prefix: --disease_label
+  outputs:
   disease_list:
     type: stdout
 stdout: disease_associated_genes.records.json
 ```
 
-This is `cwl/workflows/disease_associated_genes.cwl` wrapping `translator_modules/disease_associated_genes.py`. All CWL tools for Translator Modules share this
-structure. We will run `disease_associated_genes.py` with inputs given by `disease_name` and `disease_id`, corresponding to the flags 
-`--input-disease-name`, and `--input-disease-mondo`, which are the names of variables inside the module. 
-The tokens `get-data-frame to-json --orient records` make `disease_associated_genes.py` return a list of JSON records; see 
-[exposing your module to the command line](#exposing-your-module-to-the-command-line) for details.
+This is `cwl/workflows/disease_associated_genes.cwl` wrapping `translator_modules/disease_associated_genes.py`. 
+All CWL tools for Translator Modules share this structure. We will run `disease_associated_genes.py` with inputs given 
+by `disease_label` and `disease_identifier`, corresponding to the flags `--disease_label`, and `--disease_identifier`, 
+which are the names of variables inside the module.
+ 
+The tokens `get-data-frame to-json --orient records` make `disease_associated_genes.py` return a list of JSON records; 
+see [exposing your module to the command line](#exposing-your-module-to-the-command-line) for details.
 
 ### Data File
 

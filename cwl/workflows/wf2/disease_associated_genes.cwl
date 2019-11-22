@@ -8,7 +8,11 @@ inputs:
     type: string
     inputBinding:
       prefix: --disease_identifier
-outputs:
+  disease_label:
+    type: string
+    inputBinding:
+      prefix: --disease_label
+  outputs:
   disease_list:
     type: stdout
 stdout: disease_associated_genes.records.json
