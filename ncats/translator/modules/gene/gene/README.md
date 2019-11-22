@@ -11,7 +11,7 @@ This module retrieves a functionally similar genes as measured by Jaccard simila
 
 ```
 functional_similarity --input-genes "HGNC:1100,HGNC:12829,HGNC:20473,HGNC:20748,HGNC:23168" \
-                            --threshold 0.75 get-data-frame to-csv
+                            --threshold 0.5 get-data-frame to-csv
 ```
 
 will give a CSV formatted table of associated genes, plus a score, "shared term names" and "shared terms" 
