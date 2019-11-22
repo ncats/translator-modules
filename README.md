@@ -101,7 +101,7 @@ dependencies, aa follows:
 ```bash
 cd ncats/translator/identifiers/client
 python -m pip install -r requirements.txt -e .
-cd ../../../../ncats/translator/ontology/client/
+cd ../../../../ncats/translator/ontology/client
 python -m pip install -r requirements.txt -e .
 cd ../../../..  # back to the translator-modules root directory
 ```
@@ -135,7 +135,7 @@ docker-compose build
 docker-compose up --detach identifiers jaccard
 ```
 
-This will run the micro services in containers. To run the project module code outside of the Docker container, you 
+This will run the micro services in containers. To run the project module code _outside_ of the Docker container, you 
 will need to point to the services by setting two environment variables (here, we show the bash way of doing this):
 
 ```bash
@@ -165,6 +165,11 @@ frameworks. A number of execution frameworks for doing this have been explored t
 3. Workflow modules may be run individually from the command line (see below)
 4. Using the Common Workflow Language (CWL) standard
 5. Roll your own: call workflow modules from your own clients
+
+Note again that most of these options run the code "externally to docker" thus if they use the current code base, it 
+will necessary to take the _identifier resolution_ and _Jaccard similarity_ microservices into account, both by setting 
+the \*SERVER_HOST environment variables then firing them up, generally using using *docker-compose* (although in 
+principle, with some careful systems administrative effort, the services could be run in a non-docker configuration). 
 
 [Back to top](#ncats-translator-modules)
 
@@ -211,7 +216,7 @@ python scripts/WF2_automation.py --help
 
 ## 3. Running Workflow Modules individually from the Command line
 
-Assuming that you have [properly configured things](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs)], 
+Assuming that you have [properly configured things](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs), 
 then the modules may be run as individual programs from the command line terminal of your operation system.
 
 For example, a *gene to gene bicluster* algorithm (based on RNAseqDB data, module naming convention by data source 
