@@ -8,7 +8,7 @@ This package provides a (Python-based) implementation of various NCATS Translato
     - [Special Prerequisite for Running the Translator Modules](#special-prerequisite-for-running-the-translator-modules)
 - [Using the Translator Modules and Building Workflows](#using-the-translator-modules-and-building-workflows)
     - [1. Workflows in Jupyter Notebooks](#1-workflows-in-jupyter-notebooks)
-    - [2. Running Complete Workflows as Python Scripts](#2-running-complete-workflows-as-python-scripts)
+    - [2. Running Complete Workflows in Custom Python Scripts](#2-running-complete-workflows-in-custom-python-scripts)
     - [3. Running Workflow Modules individually from the Command line](#3-running-workflow-modules-individually-from-the-command-line)
     - [4. Running Translator Workflows using Common Workflow Language Specifications](#4-running-translator-workflows-using-common-workflow-language-specifications)
     - [5. Calling the Code Directly in your own Python Clients](#5-calling-the-code-directly-in-your-own-python-clients)
@@ -123,25 +123,27 @@ Most of the modules, when given _incomplete or incompatible identifiers_, will t
 to resolve such identifiers; the *Functional Similarity*  and *Phenotype Similarity* modules need to access 
 the *Jaccard* server. Modules will fail to work otherwise.
 
-Although you plan to run both micro services on "bare matal", the easiest way to get going is to run them as Docker 
+Although you plan to run both micro services on "bare metal", the easiest way to get going is to run them as Docker 
 containers. In fact, the "bleeding edge" (read: recommended) way of running the system is to 
 [Run the Translator Module System with Docker Compose](#6-running-the-translator-module-system-with-docker-compose).
 
-That is (assuming you have installed necessary tools), you would type the following from within the 
-project root directory:
+To run the project module code _outside_ of the Docker container, you will need to point to the services by setting 
+two environment variables (here, we show the `bash` way of doing this):
+
+```bash
+export IDENTIFIERS_RESOLUTION_SERVER_HOST="http://0.0.0.0:8081"
+export JACCARD_SIMILARITY_SERVER_HOST="http://0.0.0.0:8082"
+```
+
+Assuming the necessary docker and compose software is installed, building and running the required microservices 
+involves the following commands, typed from within the project root directory:
 
 ```
 docker-compose build
 docker-compose up --detach identifiers jaccard
 ```
 
-This will run the micro services in containers. To run the project module code _outside_ of the Docker container, you 
-will need to point to the services by setting two environment variables (here, we show the bash way of doing this):
-
-```bash
-export IDENTIFIERS_RESOLUTION_SERVER_HOST="http://0.0.0.0:8081"
-export JACCARD_SIMILARITY_SERVER_HOST="http://0.0.0.0:8082"
-```
+This will fire up the microservices inside their Docker containers. 
 
 Note that the micro services expose their API's to the default "localhost" host name (http://0.0.0.0), hence the setting,
 You can, of course, use suitable DNS or web application proxies to map the services to less obscure hostnames.
@@ -151,7 +153,6 @@ Integrated Development Environments (IDEs). Consult your documentation to find o
 Note the distinct port numbers for the two microservices.
 
 Note that, if you wish, the modules may themselves be run inside a "workflows" Docker container (see option 6. below)
-
 
 [Back to top](#ncats-translator-modules)
 
@@ -345,7 +346,7 @@ docker volume inspect mydata
 See the [Docker Storage Volume Documentation](https://docs.docker.com/storage/volumes/) for 
 more information.
 
-Note that the *workflowe* container run command shell doesn't give a prompt but you can type in Linux commands 
+Note that the *workflows* container run command shell doesn't give a prompt but you can type in Linux commands 
 (e.g. `ls`) to convince yourself that it is running.  The last command above activates the virtual CLI environment 
 within which Translator module scripts may be directly executed. For example, you can try running the following:
 
