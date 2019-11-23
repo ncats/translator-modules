@@ -12,7 +12,7 @@ inputs:
     type: string
     inputBinding:
       prefix: --disease_label
-  outputs:
-  disease_list:
-    type: stdout
-stdout: disease_associated_genes.records.json
+outputs:
+    disease_list:
+      type: stdout
+  stdout: disease_associated_genes.records.json

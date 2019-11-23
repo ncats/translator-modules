@@ -9,6 +9,10 @@ inputs:
     type: string
     inputBinding:
       prefix: --disease_identifier
+  disease_label:
+    type: string
+    inputBinding:
+      prefix: --disease_label
 outputs:
   disease_list:
     type: stdout
