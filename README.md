@@ -163,13 +163,14 @@ caches a significant portion of GO terms into memory and is empirically observed
 Docker-imposed container RAM limits. On Linux, this limit defaults to "all of memory" thus, memory intensive services 
 will likely have enough memory on a decent sized machine; however, the Docker for Mac and Docker for Windows variants 
 impose stricter limits, usually about 2.0 GB. This limit may be reset manually through the Docker Desktop resource 
-in the Docker Desktop Preferences.. dialog. At the time of this writing, a setting of at least 3 GB is needed to 
-run the Jaccard on the Mac. Users on Macs can see https://docs.docker.com/docker-for-mac/ for details about how to 
- adjust the maximum container memory 'resource' using Docker for Mac Desktop Preferences.  The "Advanced" settings for
- Docker for Windows Preferences provide similar facilities (see https://docs.docker.com/docker-for-windows/).
+in the Docker Desktop Preferences.. dialog. At the time of this writing, a setting of at least 3 GB is needed to run  
+the Jaccard on the Mac. Users on Macs can see https://docs.docker.com/docker-for-mac/ for details about how to adjust 
+the maximum container memory 'Resource' using Docker for Mac Desktop Preferences dialog (invoked from the in context 
+popup menu of the Docker Desktop icon seen at the top right hand corner of the menu bar). The "Advanced" settings for 
+Docker for Windows Desktop preferences provide similar facilities (see https://docs.docker.com/docker-for-windows/).
  
-Interestingly, the Jaccard service running in a guest Ubuntu Linux VM within VMware running on a Windows 10 machine, 
-requires over 4.77 GB or RAM. One conjectures that Mac and Linux have different memory models!
+Interestingly, the Jaccard service running in a guest Ubuntu Linux VM running on a Windows 10 machine, requires over 
+4.77 GB of RAM to run fully loaded with ontology. One conjectures that Mac and Linux have very distinct memory models!
 
 ### Building and Running the Microservices
 
