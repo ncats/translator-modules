@@ -6,6 +6,8 @@ This package provides a (Python-based) implementation of various NCATS Translato
     - [Getting and Configuring the Project](#getting-and-configuring-the-project)
     - [Installation of Dependencies and Make Modules Visible as Command Line Programs](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs)
     - [Special Prerequisite for Running the Translator Modules](#special-prerequisite-for-running-the-translator-modules)
+        - [Service Host Name Resolution](service-host-name-resolution)
+        - [Service Container Memory Consumption](service-container-memory-consumption)
 - [Using the Translator Modules and Building Workflows](#using-the-translator-modules-and-building-workflows)
     - [1. Workflows in Jupyter Notebooks](#1-workflows-in-jupyter-notebooks)
     - [2. Running Complete Workflows in Custom Python Scripts](#2-running-complete-workflows-in-custom-python-scripts)
@@ -127,6 +129,8 @@ Although you plan to run both micro services on "bare metal", the easiest way to
 containers. In fact, the "bleeding edge" (read: recommended) way of running the system is to 
 [Run the Translator Module System with Docker Compose](#6-running-the-translator-module-system-with-docker-compose).
 
+### Service Host Name Resolution
+
 To run the project modules _outside_ of the Docker container, you will need to point to the services by setting 
 two environment variables (here, we show the `bash` way of doing this. The exact manner in which environment variables 
 are declared and made visible also  differs between operating systems and Integrated Development Environments (IDEs). 
@@ -152,6 +156,23 @@ The file is found at the path */etc/hosts* under Linux and Mac OSX; on Windows, 
 *c:\Windows\System32\Drivers\etc\hosts*).  Recording this `hosts` setting will ensure that, for example, 
 CWL run workflows will find the microservices even when run from outside of a Docker container.
 
+### Service Container Memory Consumption
+
+One additional concern relating to memory intensive services (currently, mainly the *jaccard* microservice, which 
+caches a significant portion of GO terms into memory and is empirically observed to require about 5GB to run) may be 
+Docker-imposed container RAM limits. On Linux, this limit defaults to "all of memory" thus, memory intensive services 
+will likely have enough memory on a decent sized machine; however, the Docker for Mac and Docker for Windows variants 
+impose stricter limits, usually about 2.0 GB. This limit may be reset manually through the Docker Desktop resource 
+in the Docker Desktop Preferences.. dialog. At the time of this writing, a setting of at least 3 GB is needed to 
+run the Jaccard on the Mac. Users on Macs can see https://docs.docker.com/docker-for-mac/ for details about how to 
+ adjust the maximum container memory 'resource' using Docker for Mac Desktop Preferences.  The "Advanced" settings for
+ Docker for Windows Preferences provide similar facilities (see https://docs.docker.com/docker-for-windows/).
+ 
+Interestingly, the Jaccard service running in a guest Ubuntu Linux VM within VMware running on a Windows 10 machine, 
+requires over 4.77 GB or RAM. One conjectures that Mac and Linux have different memory models!
+
+### Building and Running the Microservices
+
 Assuming the necessary Docker and Compose software is installed, building and running the required microservices 
 involves typing in following commands, from within the project root directory:
 
@@ -160,7 +181,7 @@ docker-compose build
 docker-compose up --detach identifiers jaccard
 ```
 
-This will fire up the microservices inside their corresponding Docker containers. 
+This will fire up the microservices inside their corresponding Docker containers, for access by the rest of the system. 
 
 [Back to top](#ncats-translator-modules)
 

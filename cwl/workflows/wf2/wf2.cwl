@@ -7,7 +7,7 @@ inputs:
         type: string
     threshold_functional_similarity:
       type: float
-      default: 0.75
+      default: 0.5
     threshold_phenotype_similarity:
       type: float
       default: 0.10

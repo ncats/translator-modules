@@ -9,14 +9,19 @@
 #    docker build -f Dockerfile_Shared -t translator_modules_shared .
 #    docker build -f Dockerfile_Jaccard_Similarity_Server -t jaccard_similarity_server .
 #
-# To start up the dockerized REST web service container as a daemon process, type:
+# To start up the dockerized REST web service container as an individual daemon process, type:
 #
-#    docker run -d --rm -p 8082:8082 --memory 3G --name jaccard  jaccard_similarity_server
+#    docker run -d --rm -p 8082:8082 --memory 5G --name jaccard  jaccard_similarity_server
 #
 # The REST service web form will be visible on http://0.0.0.0:8082/ui
 #
-# Note that your Docker Engine / Desktop should be configured to
-# support a container memory limit footprint of 3 gigabytes when run
+# Note that we explicitly suggest a container memory size of 5 gigabytes. This is sufficient for to load the
+# Gene Ontology (GO) and Human Phenotype (HP) ontology catalogs into the resulting container. Consult the Docker
+# documentation for how to configure your Docker Engine to accommodate this maximum (each OS is distinct for this).
+#
+# Note that on Mac or Windows, your Docker Engine / Desktop should be configured to
+# support a container memory limit footprint of 3 gigabytes when run.
+# See the "Resources" preference under https://docs.docker.com/docker-for-mac/
 #
 # The  resulting server log can be monitored using the command:
 #
