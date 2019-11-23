@@ -2,7 +2,9 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
+
 baseCommand: [ phenotype_similarity, get-data-frame, to-json, --orient, records ]
+
 inputs:
   input_genes:
     type: File

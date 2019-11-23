@@ -2,7 +2,10 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
+
+# ResultList-driven baseCommand
 baseCommand: [ gene_interaction, get-result-list, to-json ]
+
 inputs:
   input_genes:
     type: File

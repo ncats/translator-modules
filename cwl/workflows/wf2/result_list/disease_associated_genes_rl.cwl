@@ -2,8 +2,10 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
+
 # ResultList-driven baseCommand
 baseCommand: [ disease_associated_genes, get-result-list, to-json ]
+
 inputs:
   disease_identifier:
     type: string

@@ -2,6 +2,7 @@
 
 cwlVersion: v1.0
 class: Workflow
+
 inputs:
     disease_identifier:
         type: string
