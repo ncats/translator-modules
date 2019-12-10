@@ -31,10 +31,10 @@ class LookUp(object):
         print("""Mod O DiseaseGeneLookup metadata:""")
         pprint(self.meta)
 
-    def disease_geneset_lookup(self, disease_id, disease_label, query_biolink=True):
+    def disease_geneset_lookup(self, disease_identifier, disease_label, query_biolink=True):
 
-        disease_gene_association_results = self.blw.disease2genes(disease_id)
-        input_gene_set = [self.blw.parse_association(disease_id, disease_label, association) for association in
+        disease_gene_association_results = self.blw.disease2genes(disease_identifier)
+        input_gene_set = [self.blw.parse_association(disease_identifier, disease_label, association) for association in
                           disease_gene_association_results['associations']]
 
         for input_gene in input_gene_set:
