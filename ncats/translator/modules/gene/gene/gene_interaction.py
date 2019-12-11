@@ -74,7 +74,7 @@ class GeneInteractions:
 class GeneInteractionSet(Payload):
 
     # RMB: we set the threshold to default to "return all"
-    def __init__(self, input_genes, threshold=0):
+    def __init__(self, input_genes=None, threshold=0):
         super(GeneInteractionSet, self).__init__(
             module=GeneInteractions(),
             metadata=ModuleMetaData(
@@ -86,6 +86,9 @@ class GeneInteractionSet(Payload):
                 range=ConceptSpace(Gene, ['HGNC']),
             )
         )
+
+        if not input_genes:
+            raise RuntimeError("GeneInteractionSet ERROR: missing mandatory input_genes")
 
         input_gene_data_frame = self.get_input_data_frame(input_genes)
 
