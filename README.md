@@ -95,6 +95,10 @@ include the `-e` flag with the `pip` command, namely:
 python -m pip install -r requirements.txt -e .
 ```
 
+[Back to top](#ncats-translator-modules)
+
+## Special Prerequisite for Running the Translator Modules
+
 This  version of the system now uses a client/server version of both identifier resolution and for the computation of
 Jaccard similarity. For this purpose, some additional subproject dependencies need to be installed. From the
 _translator-modules_ directory, you need to change directory into the respective clients and install these
@@ -107,10 +111,6 @@ cd ../../../../ncats/translator/ontology/client
 python -m pip install -r requirements.txt -e .
 cd ../../../..  # back to the translator-modules root directory
 ```
-
-[Back to top](#ncats-translator-modules)
-
-## Special Prerequisite for Running the Translator Modules
 
 Note that the current version of the NCATS Translator Modules library now outsources some of its computations to 
 specialized micro services which must be running before most of the modules will work all of the time. Your mileage 
