@@ -55,7 +55,7 @@ class LookUp(object):
 
 class DiseaseAssociatedGeneSet(Payload):
 
-    def __init__(self, disease_identifier, disease_label='', query_biolink=True):
+    def __init__(self, disease_identifier=None, disease_label='', query_biolink=True):
 
         super(DiseaseAssociatedGeneSet, self).__init__(
             module=LookUp(),
@@ -68,6 +68,9 @@ class DiseaseAssociatedGeneSet(Payload):
                 range=ConceptSpace(Gene, ['HGNC']),
             )
         )
+
+        if not disease_identifier:
+            raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier")
 
         self.input_disease_identifier = disease_identifier
         if disease_label:
