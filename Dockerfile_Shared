@@ -33,7 +33,7 @@ COPY ./requirements.txt ./requirements.txt
 COPY ./setup.py ./setup.py
 
 # Need gcc for some installations
-RUN apt update && apt -y install gcc
+RUN apt-get update && apt-get -y install gcc
 
 # Need to install a local copy of the NCATS translator/modules project
 RUN . /opt/conda/etc/profile.d/conda.sh && \
