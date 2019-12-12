@@ -71,7 +71,7 @@ class BiclusterByTissueToGene():
 
 class TissueToGeneBicluster(Payload):
 
-    def __init__(self, input_tissues):
+    def __init__(self, input_tissues=None):
 
         super(TissueToGeneBicluster, self).__init__(
             module=BiclusterByTissueToGene(),
@@ -84,6 +84,9 @@ class TissueToGeneBicluster(Payload):
                 range=ConceptSpace(Gene, ['ENSEMBL'])
             )
         )
+
+        if not input_tissues:
+            raise RuntimeError("GeneToChemicalInteractionPayload ERROR: missing mandatory input_genes")
 
         input_tissue_ids = self.get_simple_input_identifier_list(input_tissues)
 

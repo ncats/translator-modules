@@ -91,7 +91,7 @@ class FunctionalSimilarity(GenericSimilarity):
 
 class FunctionallySimilarGenes(Payload):
 
-    def __init__(self, input_genes, threshold):
+    def __init__(self, input_genes=None, threshold=0.1):
 
         super(FunctionallySimilarGenes, self).__init__(
             module=FunctionalSimilarity('human'),
@@ -104,6 +104,9 @@ class FunctionallySimilarGenes(Payload):
                 range=ConceptSpace(Gene, ['HGNC']),
             )
         )
+
+        if not input_genes:
+            raise RuntimeError("GeneInteractionSet ERROR: missing mandatory input_genes")
 
         input_gene_data_frame = self.get_input_data_frame(input_genes)
 

@@ -16,6 +16,7 @@ inputs:
       prefix: --input_genes
   threshold:
     type: float
+    default: 0.1
     inputBinding:
       position: 1
       prefix: --threshold

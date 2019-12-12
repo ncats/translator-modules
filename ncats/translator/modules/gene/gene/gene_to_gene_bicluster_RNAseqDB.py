@@ -15,7 +15,8 @@ from ncats.translator.modules.gene.gene_bicluster_shared import BiclusterByGene
 
 class GeneToGeneBiclusters(Payload):
 
-    def __init__(self, input_genes, keep_input_id=True):
+    def __init__(self, input_genes=None, keep_input_id=True):
+
         super(GeneToGeneBiclusters, self).__init__(
             module=BiclusterByGene(
                 bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
@@ -31,6 +32,9 @@ class GeneToGeneBiclusters(Payload):
                 range=ConceptSpace(Gene, ['ENSEMBL']),
             )
         )
+
+        if not input_genes:
+            raise RuntimeError("GeneToGeneBiclusters ERROR: missing mandatory input_genes")
 
         input_gene_set = self.get_simple_input_identifier_list(input_genes)
 

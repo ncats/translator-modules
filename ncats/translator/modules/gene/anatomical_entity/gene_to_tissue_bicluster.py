@@ -66,7 +66,7 @@ class BiclusterByGeneToTissue:
 
 class GeneToTissueBiclusters(Payload):
 
-    def __init__(self, input_genes):
+    def __init__(self, input_genes=None):
 
         super(GeneToTissueBiclusters, self).__init__(
             module=BiclusterByGeneToTissue(),
@@ -79,6 +79,9 @@ class GeneToTissueBiclusters(Payload):
                 range=ConceptSpace(AnatomicalEntity, ['MONDO', 'DOID', 'UBERON']),
             )
         )
+
+        if not input_genes:
+            raise RuntimeError("GeneToTissueBiclusters ERROR: missing mandatory input_genes")
 
         input_gene_set = self.get_simple_input_identifier_list(input_genes)
 

@@ -153,7 +153,7 @@ system `hosts` configuration file as resolving to 127.0.0.1 ("localhost"). That 
 ```
 
 The file is found at the path */etc/hosts* under Linux and Mac OSX; on Windows, look for it at 
-*c:\Windows\System32\Drivers\etc\hosts*).  Recording this `hosts` setting will ensure that, for example, 
+*:wq*).  Recording this `hosts` setting will ensure that, for example, 
 CWL run workflows will find the microservices even when run from outside of a Docker container.
 
 ### Service Container Memory Consumption

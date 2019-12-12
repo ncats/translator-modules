@@ -56,8 +56,8 @@ class GeneToChemicalInteractions(object):
 
 class GeneToChemicalInteractionPayload(Payload):
 
-    # I set default for action filter to 'None' for now; could be action='InteractionActions'
-    def __init__(self, input_genes, action=None, taxon='9606', rows=50):
+    # We set default for action filter to 'None' for now; could be action='InteractionActions'
+    def __init__(self, input_genes=None, action=None, taxon='9606', rows=50):
 
         super(GeneToChemicalInteractionPayload, self).__init__(
             module=GeneToChemicalInteractions(action, taxon),
@@ -70,6 +70,9 @@ class GeneToChemicalInteractionPayload(Payload):
                 range=ConceptSpace(ChemicalSubstance, ['ChemicalID'])
             )
         )
+
+        if not input_genes:
+            raise RuntimeError("GeneToChemicalInteractionPayload ERROR: missing mandatory input_genes")
 
         input_gene_set = self.get_simple_input_identifier_list(input_genes, object_id_only=True)
 

@@ -69,7 +69,7 @@ class BiclusterByDiseaseToPhenotype():
 
 class DiseaseToPhenotypeBiclusters(Payload):
 
-    def __init__(self, input_diseases):
+    def __init__(self, input_diseases=None):
 
         super(DiseaseToPhenotypeBiclusters, self).__init__(
             module=BiclusterByDiseaseToPhenotype(),
@@ -82,6 +82,9 @@ class DiseaseToPhenotypeBiclusters(Payload):
                 range=ConceptSpace(PhenotypicFeature, ['HP']),
             )
         )
+
+        if not input_diseases:
+            raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier")
 
         input_disease_ids = self.get_simple_input_identifier_list(input_diseases)
 

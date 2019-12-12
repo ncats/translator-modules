@@ -191,7 +191,7 @@ class BiclusterByTissueToTissue():
 
 class TissueToTissueBicluster(Payload):
 
-    def __init__(self, input_tissues):
+    def __init__(self, input_tissues=None):
 
         super(TissueToTissueBicluster, self).__init__(
             module=BiclusterByTissueToTissue(),
@@ -204,6 +204,9 @@ class TissueToTissueBicluster(Payload):
                 range=ConceptSpace(AnatomicalEntity, ['UBERON']),
             )
         )
+
+        if not input_tissues:
+            raise RuntimeError("GeneToChemicalInteractionPayload ERROR: missing mandatory input_genes")
 
         input_tissue_ids = self.get_simple_input_identifier_list(input_tissues)
 

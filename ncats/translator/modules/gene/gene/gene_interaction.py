@@ -75,6 +75,7 @@ class GeneInteractionSet(Payload):
 
     # RMB: we set the threshold to default to "return all"
     def __init__(self, input_genes=None, threshold=0):
+
         super(GeneInteractionSet, self).__init__(
             module=GeneInteractions(),
             metadata=ModuleMetaData(

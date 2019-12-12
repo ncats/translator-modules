@@ -49,7 +49,7 @@ class ChemicalToGeneInteractions(object):
 class ChemicalToGeneInteractionPayload(Payload):
 
     # I set default for action filter to 'None' for now; could be action='InteractionActions'
-    def __init__(self, input_chemicals, action=None, taxon='9606', rows=50):
+    def __init__(self, input_chemicals=None, action=None, taxon='9606', rows=50):
 
         super(ChemicalToGeneInteractionPayload, self).__init__(
             module=ChemicalToGeneInteractions(action, taxon),
@@ -62,6 +62,9 @@ class ChemicalToGeneInteractionPayload(Payload):
                 range=ConceptSpace(ChemicalSubstance, ['ChemicalID'])
             )
         )
+
+        if not input_chemicals:
+            raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier")
 
         input_chemical_set = self.get_simple_input_identifier_list(input_chemicals, object_id_only=True)
 

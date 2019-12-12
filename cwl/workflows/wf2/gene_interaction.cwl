@@ -13,6 +13,7 @@ inputs:
       prefix: --input_genes
   threshold:
     type: int
+    default: 0
     inputBinding:
       position: 1
       prefix: --threshold

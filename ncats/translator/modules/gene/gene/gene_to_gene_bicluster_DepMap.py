@@ -15,7 +15,8 @@ from ncats.translator.core.data_transfer_model import ModuleMetaData, ConceptSpa
 
 class GeneToGeneDepMapBiclusters(Payload):
 
-    def __init__(self, input_genes, keep_input_id=True):
+    def __init__(self, input_genes=None, keep_input_id=True):
+
         super(GeneToGeneDepMapBiclusters, self).__init__(
             module=BiclusterByGene(
                 bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
@@ -31,6 +32,9 @@ class GeneToGeneDepMapBiclusters(Payload):
                 range=ConceptSpace(Gene, ['NCBI'])
             )
         )
+
+        if not input_genes:
+            raise RuntimeError("GeneToGeneDepMapBiclusters ERROR: missing mandatory input_genes")
 
         input_gene_set = self.get_simple_input_identifier_list(input_genes)
 
