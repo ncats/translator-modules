@@ -78,7 +78,7 @@ class Payload(ABC):
                 for entry in input_obj:
                     input_ids.append(entry)
                     input_symbols.append('')  # symbol unknown for now?
-            elif isinstance(input_obj, tuple):
+            elif isinstance(input_obj, list) or isinstance(input_obj, tuple):
                 # another simple list of curies?
                 for entry in input_obj:
                     input_ids.append(entry)
