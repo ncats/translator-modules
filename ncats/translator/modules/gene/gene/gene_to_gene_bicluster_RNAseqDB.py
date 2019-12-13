@@ -21,7 +21,7 @@ class GeneToGeneBiclusters(Payload):
             module=BiclusterByGene(
                 bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
                 bicluster_bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/',
-                target_prefix='NCBI'
+                target_prefix='ENSEMBL'
             ),
             metadata=ModuleMetaData(
                 name="Mod9B - Gene-to-Gene Bicluster",
