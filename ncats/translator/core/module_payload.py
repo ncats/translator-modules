@@ -78,22 +78,22 @@ class Payload(ABC):
                 for entry in input_obj:
                     input_ids.append(entry)
                     input_symbols.append('')  # symbol unknown for now?
-            elif isinstance(input_obj, list) or isinstance(input_obj, tuple):
-                # another simple list of curies?
+            else:  # assume complex iterable
                 for entry in input_obj:
-                    input_ids.append(entry)
-                    input_symbols.append('')  # symbol unknown for now?
-            else:  # assume iterable
-                #  This piece of code assumes inputs compliant with the
-                #  Translator Indigo Gene Sharpener Gene List data model
-                for entry in input_obj:
-                    symbol = None
-                    for attribute in entry.attributes:
-                        if attribute.name == 'gene_symbol':
-                            symbol = attribute.value
-                    if symbol is not None:
-                        input_ids.append(entry.gene_id)
-                        input_symbols.append(symbol)
+                    if isinstance(entry, str):
+                        input_ids.append(entry)
+                        input_symbols.append('')  # symbol unknown for now?
+                    else:
+                        # complex object entries?
+                        # This piece of code assumes inputs compliant with the
+                        # Translator Indigo Gene Sharpener Gene List data model
+                        symbol = None
+                        for attribute in entry.attributes:
+                            if attribute.name == 'gene_symbol':
+                                symbol = attribute.value
+                        if symbol is not None:
+                            input_ids.append(entry.gene_id)
+                            input_symbols.append(symbol)
 
             input_data = {"hit_id": input_ids, "hit_symbol": input_symbols}
             input_data_frame = pd.DataFrame(data=input_data)
