@@ -21,7 +21,7 @@ class GeneToGeneDepMapBiclusters(Payload):
             module=BiclusterByGene(
                 bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
                 bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_bicluster/',
-                target_prefix=''
+                target_prefix='NCBI'
             ),
             metadata=ModuleMetaData(
                 name="Mod9B - Gene-to-Gene Bicluster",
