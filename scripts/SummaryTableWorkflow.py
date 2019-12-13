@@ -15,7 +15,7 @@ import re
 from ncats.translator.modules.disease.gene.disease_associated_genes import DiseaseAssociatedGeneSet
 
 from ncats.translator.identifiers.client.resolver import Resolver
-from ncats.translator.modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneBiclusters
+from ncats.translator.modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneRNASeqDbBiclusters
 
 _SCRIPTNAME = 'SummaryTableWorkflow.py'
 
@@ -321,7 +321,7 @@ def main():
 
         print(ensembl_disease_gene_list)
 
-        tryingThisOut = GeneToGeneBiclusters(ensembl_disease_gene_list).get_data_frame()
+        tryingThisOut = GeneToGeneRNASeqDbBiclusters(ensembl_disease_gene_list).get_data_frame()
         regexTry = re.compile(r'ENSEMBL:(.+)\.')
         tryingRegex = [re.match(regexTry, x).group(1) for x in tryingThisOut['hit_id']]
 #        print(tryingRegex[:10])

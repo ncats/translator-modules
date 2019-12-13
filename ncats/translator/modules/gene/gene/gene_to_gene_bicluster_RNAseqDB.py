@@ -13,11 +13,11 @@ from ncats.translator.core.data_transfer_model import ModuleMetaData, ConceptSpa
 from ncats.translator.modules.gene.gene_bicluster_shared import BiclusterByGene
 
 
-class GeneToGeneBiclusters(Payload):
+class GeneToGeneRNASeqDbBiclusters(Payload):
 
     def __init__(self, input_genes=None, keep_input_id=True):
 
-        super(GeneToGeneBiclusters, self).__init__(
+        super(GeneToGeneRNASeqDbBiclusters, self).__init__(
             module=BiclusterByGene(
                 bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
                 bicluster_bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/',
@@ -46,7 +46,7 @@ class GeneToGeneBiclusters(Payload):
 
 
 def main():
-    fire.Fire(GeneToGeneBiclusters)
+    fire.Fire(GeneToGeneRNASeqDbBiclusters)
 
 
 if __name__ == '__main__':
