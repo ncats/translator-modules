@@ -12,6 +12,8 @@ from json import JSONDecodeError
 
 import requests
 
+from ncats.translator.core.identifiers_resolver import gene_symbol
+
 from ncats.translator.identifiers import fix_curies, object_id
 
 
@@ -162,10 +164,14 @@ class BiclusterByGene:
 
     def list_of_output_genes_sorted_high_to_low_count(self, dict_of_genes_in_unique_biclusters_not_in_inputs):
         unique_novel_genes = dict_of_genes_in_unique_biclusters_not_in_inputs.items()
+
+        # The following operation may not be too efficient for the gene symbol retrieval...
         score_list = [
-            {   # inputs may also need to be transformed into curies?
+            {   # inputs may also need to be transformed into curies and their gene symbols retrieved?
                 'input_id': ','.join(fix_curies(tally['input_id'], prefix=self.target_prefix)),
+                'input_symbol': ','.join(gene_symbol(fix_curies(tally['input_id'], prefix=self.target_prefix),'')),
                 'hit_id': gene,
+                'hit_symbol': gene_symbol(gene, ''),
                 'score': tally['score']
             } for (gene, tally) in unique_novel_genes
         ]

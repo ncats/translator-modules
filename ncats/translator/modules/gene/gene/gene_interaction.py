@@ -51,11 +51,24 @@ class GeneInteractions:
                         input_label=gene['input_symbol'],
                         association=assoc
                     )
+
+                interaction['input_symbol'] = \
+                    gene_symbol(
+                        interaction['input_id'],
+                        interaction['input_symbol']
+                    )
+
+                interaction['hit_symbol'] = \
+                    gene_symbol(
+                        interaction['hit_id'],
+                        interaction['hit_symbol']
+                    )
+
                 results.append({
                     'input_id': interaction['input_id'],
                     'input_symbol': interaction['input_symbol'],
-                    'hit_symbol': interaction['hit_symbol'],
                     'hit_id': interaction['hit_id'],
+                    'hit_symbol': interaction['hit_symbol'],
                     'score': 1,  # CX: changed score from 0 to 1
                 })
 

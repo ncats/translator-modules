@@ -59,7 +59,7 @@ class Resolver:
         Returns list of valid key strings for source and target parameters in other Resolver calls
         :return: list[str]
         """
-        identifier_keys: list[str]
+        identifier_keys: List[str]
         try:
             identifier_keys = self.client.list_identifier_keys()
         except ApiException as e:
@@ -132,7 +132,7 @@ class Resolver:
         :return: Python object with {'source_identifier': str, 'target_namespace': str, 'target_identifier': str}
         """
         identifier_mapping: IdentifierMapping
-        status_code: str
+        status_code: int
         try:
             identifier_mapping, status_code, headers = \
                 self.client.translate_one_with_http_info(source_identifier, target_namespace)
@@ -176,7 +176,7 @@ class Resolver:
             return []
 
         identifier_list_id: QueryId
-        status_code: str
+        status_code: int
         try:
             identifier_list_id, status_code, headers = \
                 self.client.identifier_list_with_http_info(request_body=self.input_identifiers)
@@ -185,12 +185,13 @@ class Resolver:
             logging.error("Exception when calling Identifiers Resolution PublicApi->identifier_list: %s\n" % e)
             status_code = 500
 
+        similarities: List[IdentifierMapping] = []
+
         if status_code == 201:
 
             # identifiers successfully posted for translation? then,
             # retrieve  the result using the identifier_list_id
 
-            similarities: list[IdentifierMapping]
             try:
                 similarities, status_code, headers = \
                     self.client.translate_with_http_info(

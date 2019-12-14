@@ -103,7 +103,7 @@ class Payload(ABC):
         # Probably a good place to check if the "hit_symbol" is present;
         # If not, attempt to use the Identifiers Resolution service to add them in
         input_ids = []
-        input_symbols  =  []
+        input_symbols = []
         for gene in input_data_frame.to_dict(orient='records'):
             gene['hit_symbol'] = gene_symbol(gene['hit_id'], gene['hit_symbol'])
             input_ids.append(gene['hit_id'])
@@ -123,7 +123,8 @@ class Payload(ABC):
         :return: list[str] simple list of identifiers from the DataFrame
         """
         input_data_frame = self.get_input_data_frame(input_spec)
-        simple_identifier_list = [object_id(hit_id) if object_id_only else hit_id for hit_id in input_data_frame['hit_id']]
+        simple_identifier_list = \
+            [object_id(hit_id) if object_id_only else hit_id for hit_id in input_data_frame['hit_id']]
         return sorted(simple_identifier_list, key=object_id)
 
     def get_data_frame(self) -> pd.DataFrame:
