@@ -169,9 +169,18 @@ class BiclusterByGene:
         score_list = [
             {   # inputs may also need to be transformed into curies and their gene symbols retrieved?
                 'input_id': ','.join(fix_curies(tally['input_id'], prefix=self.target_prefix)),
-                'input_symbol': ','.join(gene_symbol(fix_curies(tally['input_id'], prefix=self.target_prefix),'')),
+
+                # this computation:
+                # 'input_symbol': ','.join(gene_symbol(fix_curies(tally['input_id'], prefix=self.target_prefix),'')),
+                # this function is too computationally intensive to resolve and
+                # doesn't take into account xmlns: prefixes and identifier version numbers?
+                'input_symbol': '',
+
                 'hit_id': gene,
-                'hit_symbol': gene_symbol(gene, ''),
+
+                # 'hit_symbol': gene_symbol(gene, ''), # this function is too computationally intensive to resolve and
+                # doesn't take into account xmlns: prefixes and identifier version numbers?
+                'hit_symbol': '',
                 'score': tally['score']
             } for (gene, tally) in unique_novel_genes
         ]
