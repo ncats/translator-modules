@@ -91,7 +91,7 @@ class PhenotypeToDiseaseBiclusters(Payload):
         )
 
         if not input_phenotypes:
-            raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier")
+            raise RuntimeError("PhenotypeToDiseaseBiclusters ERROR: missing mandatory input_phenotypes parameter")
 
         input_phenotype_ids: List[str] = self.get_simple_input_identifier_list(input_phenotypes)
 

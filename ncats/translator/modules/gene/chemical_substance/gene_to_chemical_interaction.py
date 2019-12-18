@@ -72,7 +72,7 @@ class GeneToChemicalInteractionPayload(Payload):
         )
 
         if not input_genes:
-            raise RuntimeError("GeneToChemicalInteractionPayload ERROR: missing mandatory input_genes")
+            raise RuntimeError("GeneToChemicalInteractionPayload ERROR: missing mandatory input_genes parameter")
 
         input_gene_set = self.get_simple_input_identifier_list(input_genes, object_id_only=True)
 

@@ -70,7 +70,7 @@ class DiseaseAssociatedGeneSet(Payload):
         )
 
         if not disease_identifier:
-            raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier")
+            raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier parameter")
 
         self.input_disease_identifier = disease_identifier
         if disease_label:

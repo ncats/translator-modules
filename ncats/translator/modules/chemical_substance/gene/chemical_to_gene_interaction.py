@@ -64,7 +64,7 @@ class ChemicalToGeneInteractionPayload(Payload):
         )
 
         if not input_chemicals:
-            raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier")
+            raise RuntimeError("ChemicalToGeneInteractionPayload ERROR: missing mandatory input_chemicals parameter")
 
         input_chemical_set = self.get_simple_input_identifier_list(input_chemicals, object_id_only=True)
 

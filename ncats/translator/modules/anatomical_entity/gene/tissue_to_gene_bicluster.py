@@ -86,7 +86,7 @@ class TissueToGeneBicluster(Payload):
         )
 
         if not input_tissues:
-            raise RuntimeError("GeneToChemicalInteractionPayload ERROR: missing mandatory input_genes")
+            raise RuntimeError("TissueToGeneBicluster ERROR: missing mandatory input_tissues parameter")
 
         input_tissue_ids = self.get_simple_input_identifier_list(input_tissues)
 

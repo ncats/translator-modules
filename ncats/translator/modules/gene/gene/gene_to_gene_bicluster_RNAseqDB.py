@@ -34,7 +34,7 @@ class GeneToGeneRNASeqDbBiclusters(Payload):
         )
 
         if not input_genes:
-            raise RuntimeError("GeneToGeneBiclusters ERROR: missing mandatory input_genes")
+            raise RuntimeError("GeneToGeneRNASeqDbBiclusters ERROR: missing mandatory input_genes parameter")
 
         input_gene_set = self.get_simple_input_identifier_list(input_genes)
 

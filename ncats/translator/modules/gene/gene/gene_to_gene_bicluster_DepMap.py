@@ -34,7 +34,7 @@ class GeneToGeneDepMapBiclusters(Payload):
         )
 
         if not input_genes:
-            raise RuntimeError("GeneToGeneDepMapBiclusters ERROR: missing mandatory input_genes")
+            raise RuntimeError("GeneToGeneDepMapBiclusters ERROR: missing mandatory input_genes parameter")
 
         input_gene_set = self.get_simple_input_identifier_list(input_genes)
 

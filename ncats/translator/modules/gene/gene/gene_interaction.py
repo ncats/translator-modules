@@ -102,7 +102,7 @@ class GeneInteractionSet(Payload):
         )
 
         if not input_genes:
-            raise RuntimeError("GeneInteractionSet ERROR: missing mandatory input_genes")
+            raise RuntimeError("GeneInteractionSet ERROR: missing mandatory input_genes parameter")
 
         input_gene_data_frame = self.get_input_data_frame(input_genes)
 
