@@ -7,7 +7,7 @@ import pandas as pd
 
 from biolink.model import GeneToGeneAssociation, Gene
 
-from ncats.translator.modules.gene.gene_bicluster_shared import BiclusterByGene
+from ncats.translator.modules.gene.gene_bicluster_shared import GenericGeneByGeneBicluster
 
 from ncats.translator.core.module_payload import Payload
 from ncats.translator.core.data_transfer_model import ModuleMetaData, ConceptSpace
@@ -18,7 +18,7 @@ class GeneToGeneDepMapBiclusters(Payload):
     def __init__(self, input_genes=None, keep_input_id=True):
 
         super(GeneToGeneDepMapBiclusters, self).__init__(
-            module=BiclusterByGene(
+            module=GenericGeneByGeneBicluster(
                 bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
                 bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_bicluster/',
                 target_prefix='NCBI'

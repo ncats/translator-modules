@@ -10,7 +10,7 @@ from biolink.model import GeneToGeneAssociation, Gene
 from ncats.translator.core.module_payload import Payload
 from ncats.translator.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
-from ncats.translator.modules.gene.gene_bicluster_shared import BiclusterByGene
+from ncats.translator.modules.gene.gene_bicluster_shared import GenericGeneByGeneBicluster
 
 
 class GeneToGeneRNASeqDbBiclusters(Payload):
@@ -18,7 +18,7 @@ class GeneToGeneRNASeqDbBiclusters(Payload):
     def __init__(self, input_genes=None, keep_input_id=True):
 
         super(GeneToGeneRNASeqDbBiclusters, self).__init__(
-            module=BiclusterByGene(
+            module=GenericGeneByGeneBicluster(
                 bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
                 bicluster_bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/',
                 target_prefix='ENSEMBL'

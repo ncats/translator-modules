@@ -15,7 +15,7 @@ import requests
 from ncats.translator.identifiers import fix_curies, object_id
 
 
-class BiclusterByGene:
+class GenericGeneByGeneBicluster:
 
     def __init__(self, bicluster_url=None, bicluster_bicluster_url=None, target_prefix=''):
 
@@ -149,7 +149,7 @@ class BiclusterByGene:
                     # not sure what is going on here...
                     # no input id mappings onto the current bicluster?
                     # thus, do I need to ignore this bicluster list?
-                    print("BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?", file=stderr)
+                    print("GeneByGeneBicluster Warning: BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?", file=stderr)
                     continue
                 for gene in gene_list:
                     if not keep_input_ids and (gene.split('.')[0] in curated_id_list or gene in curated_id_list):
