@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Workflow 9, Gene-to-Gene Bicluster
-
+from sys import stderr
 from typing import Dict, List
 from collections import defaultdict
 
@@ -11,8 +11,6 @@ import urllib.request
 from json import JSONDecodeError
 
 import requests
-
-from ncats.translator.core.identifiers_resolver import gene_symbol
 
 from ncats.translator.identifiers import fix_curies, object_id
 
@@ -151,7 +149,7 @@ class BiclusterByGene:
                     # not sure what is going on here...
                     # no input id mappings onto the current bicluster?
                     # thus, do I need to ignore this bicluster list?
-                    print("BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?")
+                    print("BiCluster '"+str(bicluster_id)+"' doesn't contain any input identifiers?", file=stderr)
                     continue
                 for gene in gene_list:
                     if not keep_input_ids and (gene.split('.')[0] in curated_id_list or gene in curated_id_list):
