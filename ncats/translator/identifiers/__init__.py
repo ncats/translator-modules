@@ -12,28 +12,25 @@ class IdentifierResolverException(RuntimeError):
     pass
 
 
-def object_id(curie, keep_version=False) -> str:
+def object_id(identifier, keep_version=False) -> str:
     """
-    Returns the core object_id of a curie, without the version
+    Returns the core object_id of a curie, with or without the version suffix
 
-    :param curie:
+    :param identifier: candidate curie identifier for processing
+    :param keep_version: True if the version string suffix is to be retained in the identifier
     :return:
     """
     # trivial case: null input value?
-    if not curie:
-        return curie
+    if not identifier:
+        return identifier
 
-    if ':' in curie:
-        part = curie.split(":")
-    else:
-        part = [curie]
+    if ':' in identifier:
+        identifier = identifier.split(":")[1]
 
-    if not keep_version and '.' in part[1]:
-        part2 = part[1].split(".")
-    else:
-        part2 = [part[1]]
+    if not keep_version and '.' in identifier:
+        identifier = identifier.split(".")[0]
 
-    return part2[0]
+    return identifier
 
 
 def fix_curies(identifiers, prefix=''):
