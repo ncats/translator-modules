@@ -67,7 +67,7 @@ class GeneToChemicalInteractionPayload(Payload):
                 association=ChemicalToGeneAssociation,
                 domain=ConceptSpace(Gene, ['NCBIGene']),
                 relationship='interacts_with',
-                range=ConceptSpace(ChemicalSubstance, ['ChemicalID'])
+                range=ConceptSpace(ChemicalSubstance, ['CTD'])
             )
         )
 

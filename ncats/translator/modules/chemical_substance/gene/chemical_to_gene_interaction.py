@@ -57,9 +57,9 @@ class ChemicalToGeneInteractionPayload(Payload):
                 name="Module 1B: Chemical Gene Interaction",
                 source='Chemical Toxicology Database (CTD)',
                 association=ChemicalToGeneAssociation,
-                domain=ConceptSpace(Gene, ['NCBIGene']),
+                domain=ConceptSpace(ChemicalSubstance, ['CTD']),
                 relationship='interacts_with',
-                range=ConceptSpace(ChemicalSubstance, ['ChemicalID'])
+                range=ConceptSpace(Gene, ['NCBIGene'])
             )
         )
 
