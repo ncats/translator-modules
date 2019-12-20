@@ -109,6 +109,7 @@ class SummaryMod(object):
 #            self.brief_summary[col] = [np.nan if x==list() else x for x in self.brief_summary[col]]
             
             # create new columns counting the number of scores for score-based modules
+            # CX: DOES THIS MAKE SENSE FOR BICLUSTERING MODS? What if all of the genes are in the same bicluster? Each output gene - input gene pair gets counted...
             if col.endswith('_score'):
                 ## creating new col name by removing _score from the end
                 new_col_name = col[:-6] + '_count'
@@ -136,7 +137,7 @@ class SummaryMod(object):
  
         ## CX: next is reordering columns     
         cols_to_order = ['hit_symbol', 'hit_id', 'input_symbol', 'input_id', 'is_input_gene', 'num_input_genes', 'num_modules', 'total_hits', \
-                         'gene-gene_bicluster_count', 'functional_sim_count', 'phenotype_sim_count', 'protein_interaction_count']
+                         'shared_DepMap_bicluster_count', 'shared_RNAseqDB_bicluster_count', 'functional_sim_count', 'phenotype_sim_count', 'protein_interaction_count']
         ## puts columns I want to order in front/in order if they are in dataframe. Then puts everything else. 
         cols = [x for x in cols_to_order if x in self.brief_summary] + [x for x in self.brief_summary if x not in cols_to_order]
         self.brief_summary = self.brief_summary.reindex(columns=cols)
@@ -151,7 +152,7 @@ class SummaryMod(object):
 
     def add_scorebased_module(self, results):
         """
-        This includes Module 1A, 1B, WF9 modules?
+        This includes Module 1A, 1B, bicluster modules 
         Input: results dataframe with the following columns: 'hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score',
        'shared_term_names', 'shared_terms', 'module'
         Drops columns, removes duplicate gene symbol rows, renames columns, creates rank columns
@@ -191,10 +192,15 @@ class SummaryMod(object):
                 ## The following code continues for Mod1B output if processed_results wasn't empty
                 processed_results = processed_results.drop(columns=['shared_terms', 'shared_term_names'])
                 processed_results = processed_results.rename(index = str, columns = {'score':'phenotype_sim_score'})            
-                processed_results['phenotype_sim_rank'] = processed_results['phenotype_sim_score'].rank(ascending=False, method='min')          
-            elif module=="gene_gene_bicluster":
-                processed_results = processed_results.rename(index = str, columns = {'score':'gene-gene_bicluster_score'})
-                processed_results['gene-gene_bicluster_rank'] = processed_results['gene-gene_bicluster_score'].rank(ascending=False, method='min')              
+                processed_results['phenotype_sim_rank'] = processed_results['phenotype_sim_score'].rank(ascending=False, method='min')      
+                
+            ## CX: note that these are actually counts, but treated as scores here since protein interaction counts are treated special (as categorical var)
+            elif module=="gene_gene_bicluster_DepMap":
+                processed_results = processed_results.rename(index = str, columns = {'score':'shared_DepMap_bicluster_score'})
+                processed_results['shared_DepMap_bicluster_rank'] = processed_results['shared_DepMap_bicluster_score'].rank(ascending=False, method='min')              
+            elif module=="gene_gene_bicluster_RNAseqDB":
+                processed_results = processed_results.rename(index = str, columns = {'score':'shared_RNAseqDB_bicluster_score'})
+                processed_results['shared_RNAseqDB_bicluster_rank'] = processed_results['shared_RNAseqDB_bicluster_score'].rank(ascending=False, method='min')   
             else:  ## what to do if module not recognized. placeholder code?
                 print("Module not recognized and not loaded into summary.")
                 return  ## exit function
@@ -235,13 +241,13 @@ class SummaryMod(object):
             ## will be saved and printed to the screen. Maybe not ideal but still workable summaries/output
             
             individual_sum = individual_sum.groupby(['hit_symbol']).agg(list).reset_index()  # grouping by unique output gene
-            individual_sum['sim_count'] = [len(x) for x in individual_sum.filter(regex='_score$', axis=1).squeeze()]
+            individual_sum['count'] = [len(x) for x in individual_sum.filter(regex='_score$', axis=1).squeeze()]
             ## WARNING: if other columns of lists were included, they would no longer correspond to input_symbols after this sorting
             ## columns: input_id, functional_sim_score, functional_sim_rank
             individual_sum['input_symbol'] = [sorted(x) for x in individual_sum['input_symbol']] 
             # Smaller ranks = higher scores. 
-            individual_sum = individual_sum.sort_values(by=['sim_count','hit_symbol'], ascending=[False, True]).reset_index()
-            individual_sum = individual_sum.filter(items=['hit_symbol', 'input_symbol', 'sim_count'])
+            individual_sum = individual_sum.sort_values(by=['count','hit_symbol'], ascending=[False, True]).reset_index()
+            individual_sum = individual_sum.filter(items=['hit_symbol', 'input_symbol', 'count'])
             self.module_summaries[module] = individual_sum        
         
 

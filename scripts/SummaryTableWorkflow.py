@@ -36,7 +36,8 @@ from translator_modules.gene.gene.functional_similarity import FunctionalSimilar
 from translator_modules.gene.gene.phenotype_similarity import PhenotypeSimilarity
 from translator_modules.gene.gene.gene_interaction import GeneInteractions
 
-from translator_modules.gene.gene.gene_to_gene_bicluster import GeneToGeneBiclusters
+from translator_modules.gene.gene.gene_to_gene_bicluster_DepMap import GeneToGeneBiclustersDepMap
+from translator_modules.gene.gene.gene_to_gene_bicluster_RNAseqDB import GeneToGeneBiclustersRNAseqDB
 from translator_modules.core.ids.IDs import TranslateIDs
 
 from scripts.summary_mod import SummaryMod
@@ -89,12 +90,28 @@ def gene_interactions(model, input_gene_set, threshold, module, title):
     return results
 
 
-def gene_gene_bicluster(input_gene_set, threshold, module):
+def gene_gene_biclusterDepMap(input_gene_set, threshold, module):
     # Written by CX, from Marcin's WF9 gene-gene bicluster stuff
 #    input_gene_set = disease_associated_gene_set.get_data_frame()
 
     ## get the raw results (only those above threshold)
-    results = GeneToGeneBiclusters(input_gene_set, threshold).get_data_frame()
+    results = GeneToGeneBiclustersDepMap(input_gene_set, threshold).get_data_frame()
+
+    ## set module column: used in summary module
+    results['module'] = module
+    
+    ## reorder columns 
+    cols = ['hit_id', 'hit_symbol', 'input_id', 'input_symbol', 'score', 'module']
+    results = results.reindex(columns=cols)
+
+    return results
+
+def gene_gene_biclusterRNAseqDB(input_gene_set, threshold, module):
+    # Written by CX, from Marcin's WF9 gene-gene bicluster stuff
+#    input_gene_set = disease_associated_gene_set.get_data_frame()
+
+    ## get the raw results (only those above threshold)
+    results = GeneToGeneBiclustersRNAseqDB(input_gene_set, threshold).get_data_frame()
 
     ## set module column: used in summary module
     results['module'] = module
@@ -152,8 +169,11 @@ def main():
     parser.add_argument('-g', '--geneInteractionThreshold',
                         type=float, default=12, help='value of Gene Interaction threshold')
 
-    parser.add_argument('-b', '--geneBiclusterThreshold',
-                        type=float, default=0.1, help='value of gene-gene bicluster threshold')
+    parser.add_argument('-m', '--geneBiclusterDepMapThreshold',
+                        type=float, default=0.1, help='value of gene-gene bicluster DepMap threshold')
+
+    parser.add_argument('-r', '--geneBiclusterRNAseqDBThreshold',
+                        type=float, default=0.1, help='value of gene-gene bicluster RNAseqDB threshold')
 
     args = parser.parse_args()
 
@@ -215,14 +235,14 @@ def main():
 #    ## its initialization with GO ontology and annotation
 #    print("Loading functional ontology (~4 minutes)...\n")
 #    func_sim_human = FunctionalSimilarity('human')
-#
-#    phenotype_threshold = args.phenotypeThreshold
-#    print("Phenotype Similarity Threshold: \t" + str(phenotype_threshold))
-#    ## Phenotype similarity using OwlSim calculation threshold
-#    ## Called once, creating this object triggers
-#    ## its initialization with GO ontology and annotation
-#    print("Loading phenotype ontology (~1.5 minutes)...\n")
-#    pheno_sim_human = PhenotypeSimilarity('human')
+
+    phenotype_threshold = args.phenotypeThreshold
+    print("Phenotype Similarity Threshold: \t" + str(phenotype_threshold))
+    ## Phenotype similarity using OwlSim calculation threshold
+    ## Called once, creating this object triggers
+    ## its initialization with GO ontology and annotation
+    print("Loading phenotype ontology (~1.5 minutes)...\n")
+    pheno_sim_human = PhenotypeSimilarity('human')
     
     gene_interaction_threshold = args.geneInteractionThreshold
     print("Gene Interaction Threshold: \t\t" + str(gene_interaction_threshold))
@@ -230,8 +250,11 @@ def main():
     print("Loading gene interaction info...\n")
     interactions_human = GeneInteractions()
     
-    gene_gene_bicluster_threshold = args.geneBiclusterThreshold
-    print("Gene-Gene Bicluster Score Threshold: \t" + str(gene_gene_bicluster_threshold))
+    gene_gene_biclusterDepMap_threshold = args.geneBiclusterDepMapThreshold
+    print("Gene-Gene Bicluster DepMap Score Threshold: \t" + str(gene_gene_biclusterDepMap_threshold))
+
+    gene_gene_biclusterRNAseqDB_threshold = args.geneBiclusterRNAseqDBThreshold
+    print("Gene-Gene Bicluster RNAseqDB Score Threshold: \t" + str(gene_gene_biclusterRNAseqDB_threshold))
 
     ## split the workflow based on whether this is disease based or query/input-gene-list based:
     if args.geneTable:  # working with a query_name, input_gene_symbols (list of approved gene symbols)
@@ -289,25 +312,25 @@ def main():
 #                summary_mod.show_single_mod_summary('Mod1A')
 #        else:
 #            print("Mod1A (Functional similarity) returned no results. Not included in summary.")
-#                
-#        print("\nRunning phenotypic similarity module (Mod1B)...")            
-#        print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
-#        mod1b_results = \
-#            similarity(
-#                pheno_sim_human,
-#                query_input_genes,
-#                phenotype_threshold,
-#                'Mod1B',
-#                'Phenotypic Similar Genes'
-#            )
-#        
-#        ## Add output to brief summary
-#        if not mod1b_results.empty:
-#            summary_mod.add_scorebased_module(mod1b_results)
-#            if _echo_to_console:
-#                summary_mod.show_single_mod_summary('Mod1B')
-#        else:
-#            print("Mod1B (phenotypic similarity) returned no results. Not included in summary module.")
+                
+        print("\nRunning phenotypic similarity module (Mod1B)...")            
+        print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
+        mod1b_results = \
+            similarity(
+                pheno_sim_human,
+                query_input_genes,
+                phenotype_threshold,
+                'Mod1B',
+                'Phenotypic Similar Genes'
+            )
+        
+        ## Add output to brief summary
+        if not mod1b_results.empty:
+            summary_mod.add_scorebased_module(mod1b_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('Mod1B')
+        else:
+            print("Mod1B (phenotypic similarity) returned no results. Not included in summary module.")
                 
         print("\nRunning gene interaction module (Mod1E)...")            
         # Find Interacting Genes from Monarch data
@@ -328,20 +351,35 @@ def main():
         else:
             print("Mod1E (gene-gene interactions) returned no results. Not included in summary module.")
           
-        print("\nRunning gene-gene bicluster module...")                        
-        # Find gene-gene bicluster information (from WF9)      
-        gene_bicluster_results = gene_gene_bicluster( 
+        print("\nRunning gene-gene DepMap bicluster module...")                        
+        # Find gene-gene bicluster information DepMap (from WF9)      
+        gene_biclusterDepMap_results = gene_gene_biclusterDepMap( 
                                     query_input_genes, 
-                                    gene_gene_bicluster_threshold,
-                                    'gene_gene_bicluster'
+                                    gene_gene_biclusterDepMap_threshold,
+                                    'gene_gene_bicluster_DepMap'
                                     )
         
-        if not gene_bicluster_results.empty:
-            summary_mod.add_scorebased_module(gene_bicluster_results)
+        if not gene_biclusterDepMap_results.empty:
+            summary_mod.add_scorebased_module(gene_biclusterDepMap_results)
             if _echo_to_console:
-                summary_mod.show_single_mod_summary('gene_gene_bicluster')  
+                summary_mod.show_single_mod_summary('gene_gene_bicluster_DepMap')  
         else:
-            print("gene_gene_bicluster returned no results. Not included in summary module.")
+            print("gene_gene_bicluster_DepMap returned no results. Not included in summary module.")
+
+        print("\nRunning gene-gene RNAseqDB bicluster module...")                        
+        # Find gene-gene bicluster information RNAseqDB (from WF9)      
+        gene_biclusterRNAseqDB_results = gene_gene_biclusterRNAseqDB( 
+                                    query_input_genes, 
+                                    gene_gene_biclusterRNAseqDB_threshold,
+                                    'gene_gene_bicluster_RNAseqDB'
+                                    )
+        
+        if not gene_biclusterRNAseqDB_results.empty:
+            summary_mod.add_scorebased_module(gene_biclusterRNAseqDB_results)
+            if _echo_to_console:
+                summary_mod.show_single_mod_summary('gene_gene_bicluster_RNAseqDB')  
+        else:
+            print("gene_gene_bicluster_RNAseqDB returned no results. Not included in summary module.")
         
         ## END OF WORKFLOW  
         if _echo_to_console:
@@ -402,25 +440,25 @@ def main():
 #                    summary_mod.show_single_mod_summary('Mod1A')
 #            else:
 #                print("Mod1A (Functional similarity) returned no results. Not included in summary module.")
-#                  
-#            print("\nRunning phenotypic similarity module...")   
-#            print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
-#            mod1b_results = \
-#                similarity(
-#                    pheno_sim_human,
-#                    disease_associated_gene_set.get_data_frame(),
-#                    phenotype_threshold,
-#                    'Mod1B',
-#                    'Phenotypic Similar Genes'
-#                )
-#            
-#            ## Add output to brief summary
-#            if not mod1b_results.empty:
-#                summary_mod.add_scorebased_module(mod1b_results)
-#                if _echo_to_console:
-#                    summary_mod.show_single_mod_summary('Mod1B')
-#            else:
-#                print("Mod1B (Phenotypic similarity) returned no results. Not included in summary module.")
+                  
+            print("\nRunning phenotypic similarity module...")   
+            print("Note: current ontobio bug means that genes with EFO annotation won't be included in this module.")              
+            mod1b_results = \
+                similarity(
+                    pheno_sim_human,
+                    disease_associated_gene_set.get_data_frame(),
+                    phenotype_threshold,
+                    'Mod1B',
+                    'Phenotypic Similar Genes'
+                )
+            
+            ## Add output to brief summary
+            if not mod1b_results.empty:
+                summary_mod.add_scorebased_module(mod1b_results)
+                if _echo_to_console:
+                    summary_mod.show_single_mod_summary('Mod1B')
+            else:
+                print("Mod1B (Phenotypic similarity) returned no results. Not included in summary module.")
                    
             print("\nRunning gene interaction module...")               
             # Find Interacting Genes from Monarch data
@@ -441,20 +479,35 @@ def main():
             else:
                 print("Mod1E (gene-gene interactions) returned no results. Not included in summary module.")
 
-            print("\nRunning gene-gene bicluster module...")                               
-            # Find gene-gene bicluster information (from WF9)                      
-            gene_bicluster_results = gene_gene_bicluster( 
+            print("\nRunning gene-gene bicluster DepMap module...")                               
+            # Find gene-gene bicluster DepMap information (from WF9)                      
+            gene_biclusterDepMap_results = gene_gene_biclusterDepMap( 
                                         disease_associated_gene_set.get_data_frame(), 
-                                        gene_gene_bicluster_threshold,
-                                        'gene_gene_bicluster'
+                                        gene_gene_biclusterDepMap_threshold,
+                                        'gene_gene_bicluster_DepMap'
                                         )
             
-            if not gene_bicluster_results.empty:
-                summary_mod.add_scorebased_module(gene_bicluster_results)
+            if not gene_biclusterDepMap_results.empty:
+                summary_mod.add_scorebased_module(gene_biclusterDepMap_results)
                 if _echo_to_console:
-                    summary_mod.show_single_mod_summary('gene_gene_bicluster')  
+                    summary_mod.show_single_mod_summary('gene_gene_bicluster_DepMap')  
             else:
-                print("gene_gene_bicluster returned no results. Not included in summary.")
+                print("gene_gene_bicluster_DepMap returned no results. Not included in summary.")
+
+            print("\nRunning gene-gene bicluster RNAseqDB module...")                               
+            # Find gene-gene bicluster RNAseqDB information (from WF9)                      
+            gene_biclusterRNAseqDB_results = gene_gene_biclusterRNAseqDB( 
+                                        disease_associated_gene_set.get_data_frame(), 
+                                        gene_gene_biclusterRNAseqDB_threshold,
+                                        'gene_gene_bicluster_RNAseqDB'
+                                        )
+            
+            if not gene_biclusterRNAseqDB_results.empty:
+                summary_mod.add_scorebased_module(gene_biclusterRNAseqDB_results)
+                if _echo_to_console:
+                    summary_mod.show_single_mod_summary('gene_gene_bicluster_RNAseqDB')  
+            else:
+                print("gene_gene_bicluster_RNAseqDB returned no results. Not included in summary.")
                         
             ## Put summary in list (only used when multiple diseases in one file are queried at once)
             disease_summaries.append(summary_mod)
