@@ -45,8 +45,8 @@ cd translator-modules
 The code is now validated to work only with Python 3.7 only.  We recommend using a **virtualenv** to enforce this.
 
 ```
-virtualenv -p python3.7 py37
-source py37/bin/activate
+virtualenv -p python3.7 venv
+source venv/bin/activate
 ```
 
 or, alternately, use **python venv** to manage packages and the development environment:
