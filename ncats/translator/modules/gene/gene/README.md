@@ -45,7 +45,7 @@ other (possibly richer) format outputs are available (and perhaps more informati
 
 ## gene_to_gene_bicluster_RNAseqDB
 
-This module retrieves sets of co-occuring genes from RNaseqDB gene expression data biclusters. To run:
+This module retrieves sets of co-occurring genes from RNaseqDB gene expression data biclusters. To run:
 
 ```
 gene_to_gene_bicluster_RNAseqDB --input-genes "ENSG00000069431.6"  get-data-frame to-csv
