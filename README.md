@@ -36,11 +36,13 @@ That said, a more hands-on "classical" approach to getting started, is described
 The **translator-modules** package is not yet available through PyPI, thus, to install, clone this repo using git.
 
 ```bash
-git clone https://github.com/ncats/translator-modules.git
+git clone --recursive https://github.com/ncats/translator-modules.git
 
 # ... then  enter  into your cloned project repository
 cd translator-modules
 ```
+
+Note the use of the *recursive* flag to include defined submodules of the project (in this case, the  Reasoner API).
 
 The code is now validated to work only with Python 3.7 only.  We recommend using a **virtualenv** to enforce this.
 
@@ -406,11 +408,18 @@ More details about the architecture of the system is available on the
 
 [Back to top](#ncats-translator-modules)
 
+# Query API for a "Next Generation" NCATS Automated Reasoning Agent (ARA) 
+
+We are prototyping a  NCATS development phase ARA to further automate the NCATS workflows. Information about this 
+effort is currently under development in its own README [here](./ARA_README.md).
+
+[Back to top](#ncats-translator-modules)
+
 # Future Directions
 
-We would like to implement a simple (CWL?) graphical user interface (GUI) on top of a (CWL?) workflow runner, to 
+We are implementing a simple (CWL) graphical user interface (GUI) on top of a (CWL?) workflow runner, to 
 facilitate user interaction with the system. We also aspire to wrap the system in some fashion with the emerging 
-Translator "Reasoner API"  REST computing access standard, to faciliate programmatic access to the workflows. Finally,
+Translator "Reasoner API"  REST computing access standard, to facilitate programmatic access to the workflows. Finally,
 we'd like to add more biologically interesting modules and workflows to the existing collection, such as analysing 
 post-translational modification (PTM) biology.
 

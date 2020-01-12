@@ -1,3 +1,30 @@
+############################
+# project-specific ignores #
+############################
+
+# ignore openapi-generator.jar - don't commit to repo!
+.openapi-generator/
+
+# ignore local configuration files
+config.yaml
+
+# Ignore the swagger ui bundle
+swagger_ui_bundle-0.0.3-py3-none-any.whl
+
+# ignore JSON workflow output files
+tests/output/*
+*.json
+
+###################
+# Generic ignores #
+###################
+
+# PyCharm IDE related exclusions
+.idea/
+
+# Ignore local PyCharms virtualenv
+py*/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -107,14 +134,3 @@ venv.bak/
 
 # module/workflow outputs
 Tidbit
-
-# PyCharms IDE metadata
-.idea/
-# Ignore local PyCharms virtualenv
-py*/
-
-# ignore JSON workflow output files
-tests/output/*
-*.json
-
-translator-modules/
