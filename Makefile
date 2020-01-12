@@ -21,8 +21,7 @@ code-generation:
 	./generate.sh server
 	./generate.sh client
 
-build:
-	make download-swagger-ui
+build: download-swagger-ui
 	docker build --file Dockerfile_Workflow_ARA -t ncats:workflow-ara-server .
 
 start:

@@ -5,11 +5,10 @@ RUN mkdir -p /usr/src
 WORKDIR /usr/src
 
 COPY server server
-COPY client client
-COPY ara_server_requirements.txt requirements.txt
-COPY ara_setup.py setup.py
+COPY *.whl .
 
-RUN pip install --no-cache-dir -r requirements.txt && \
+RUN pip install *.whl  && \
+    cd server && pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir .
 
 WORKDIR /usr/src/server
