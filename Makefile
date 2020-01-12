@@ -6,6 +6,8 @@ installation:
 	python -m pip install swagger_ui_bundle-0.0.3-py3-none-any.whl
 	cd server && python -m pip install -r requirements.txt
 
+.PHONY: tests
+
 tests:
 	cd server && python -m pip install -r test-requirements.txt && nosetests
 
