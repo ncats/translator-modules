@@ -3,6 +3,7 @@ import six
 
 from ara_server.models.message import Message  # noqa: E501
 from ara_server import util
+from .controller_impl import handle_query
 
 
 def query(request_body):  # noqa: E501
@@ -15,4 +16,4 @@ def query(request_body):  # noqa: E501
 
     :rtype: Message
     """
-    return 'do some magic!'
+    return handle_query(request_body)

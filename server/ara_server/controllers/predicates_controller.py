@@ -2,6 +2,7 @@ import connexion
 import six
 
 from ara_server import util
+from .controller_impl import  handle_predicates_get
 
 
 def predicates_get():  # noqa: E501
@@ -12,4 +13,4 @@ def predicates_get():  # noqa: E501
 
     :rtype: Dict[str, Dict[str, List[str]]]
     """
-    return 'do some magic!'
+    return handle_predicates_get()
