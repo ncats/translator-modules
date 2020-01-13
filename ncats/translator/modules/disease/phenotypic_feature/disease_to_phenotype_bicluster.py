@@ -71,17 +71,7 @@ class DiseaseToPhenotypeBiclusters(Payload):
 
     def __init__(self, input_diseases=None):
 
-        super(DiseaseToPhenotypeBiclusters, self).__init__(
-            module=BiclusterByDiseaseToPhenotype(),
-            metadata=ModuleMetaData(
-                name="Mod2.0 - Disease Associated Genes",
-                source='RNAseqDB Biclustering',
-                association=DiseaseToPhenotypicFeatureAssociation,
-                domain=ConceptSpace(Disease, ['MONDO']),
-                relationship='has_phenotype',
-                range=ConceptSpace(PhenotypicFeature, ['HP']),
-            )
-        )
+        super(DiseaseToPhenotypeBiclusters, self).__init__(module=BiclusterByDiseaseToPhenotype())
 
         if not input_diseases:
             raise RuntimeError("DiseaseToPhenotypeBiclusters ERROR: missing mandatory input_diseases parameter")
@@ -91,6 +81,25 @@ class DiseaseToPhenotypeBiclusters(Payload):
         most_common_phenotype = asyncio.run(self.module.disease_to_phenotype_biclusters_async(input_disease_ids))
 
         self.results = pd.DataFrame.from_records(most_common_phenotype, columns=["hit_id", "score"])
+
+
+DiseaseToPhenotypeBiclusters.set_metadata(
+    ModuleMetaData(
+        name="Mod2.0 - Disease Associated Genes",
+        source='RNAseqDB Biclustering',
+        association=DiseaseToPhenotypicFeatureAssociation,
+        domain=ConceptSpace(Disease, ['MONDO']),
+        relationship='has_phenotype',
+        range=ConceptSpace(PhenotypicFeature, ['HP']),
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return DiseaseToPhenotypeBiclusters.get_metadata()
 
 
 def main():

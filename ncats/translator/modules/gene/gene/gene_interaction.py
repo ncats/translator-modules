@@ -89,17 +89,7 @@ class GeneInteractionSet(Payload):
     # RMB: we set the threshold to default to "return all"
     def __init__(self, input_genes=None, threshold=0):
 
-        super(GeneInteractionSet, self).__init__(
-            module=GeneInteractions(),
-            metadata=ModuleMetaData(
-                name="Module 1E - Gene Interaction",
-                source='Monarch Biolink',
-                association=GeneToGeneAssociation,
-                domain=ConceptSpace(Gene, ['HGNC']),
-                relationship='interacts_with',
-                range=ConceptSpace(Gene, ['HGNC']),
-            )
-        )
+        super(GeneInteractionSet, self).__init__(module=GeneInteractions())
 
         if not input_genes:
             raise RuntimeError("GeneInteractionSet ERROR: missing mandatory input_genes parameter")
@@ -107,6 +97,25 @@ class GeneInteractionSet(Payload):
         input_gene_data_frame = self.get_input_data_frame(input_genes)
 
         self.results = self.module.get_interactions(input_gene_data_frame, threshold)
+
+
+GeneInteractionSet.set_metadata(
+    ModuleMetaData(
+        name="Module 1E - Gene Interaction",
+        source='Monarch Biolink',
+        association=GeneToGeneAssociation,
+        domain=ConceptSpace(Gene, ['HGNC']),
+        relationship='interacts_with',
+        range=ConceptSpace(Gene, ['HGNC']),
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return GeneInteractionSet.get_metadata()
 
 
 def main():

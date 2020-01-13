@@ -22,14 +22,6 @@ class GeneToGeneRNASeqDbBiclusters(Payload):
                 bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_gene/',
                 bicluster_bicluster_url='https://smartbag.ncats.io/RNAseqDB_bicluster_gene_to_tissue_v3_bicluster/',
                 target_prefix='ENSEMBL'
-            ),
-            metadata=ModuleMetaData(
-                name="Mod9B - Gene-to-Gene Bicluster",
-                source='RNAseqDB Biclustering',
-                association=GeneToGeneAssociation,
-                domain=ConceptSpace(Gene, ['ENSEMBL']),
-                relationship='related_to',
-                range=ConceptSpace(Gene, ['ENSEMBL']),
             )
         )
 
@@ -43,6 +35,25 @@ class GeneToGeneRNASeqDbBiclusters(Payload):
         sorted_list_of_output_genes = self.module.gene_to_gene_bicluster_summarize(input_gene_set, keep_input_id)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
+
+
+GeneToGeneRNASeqDbBiclusters.set_metadata(
+    ModuleMetaData(
+        name="Mod9B - Gene-to-Gene Bicluster",
+        source='RNAseqDB Biclustering',
+        association=GeneToGeneAssociation,
+        domain=ConceptSpace(Gene, ['ENSEMBL']),
+        relationship='related_to',
+        range=ConceptSpace(Gene, ['ENSEMBL']),
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return GeneToGeneRNASeqDbBiclusters.get_metadata()
 
 
 def main():

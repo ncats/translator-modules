@@ -1,7 +1,6 @@
 from io import StringIO
 
 import json
-from pprint import pprint
 
 from abc import ABC
 
@@ -17,7 +16,9 @@ from ncats.translator.core.identifiers_resolver import gene_symbol
 
 class Payload(ABC):
 
-    def __init__(self, module, metadata: ModuleMetaData):
+    metadata: ModuleMetaData = None
+
+    def __init__(self, module):
         """
         TODO: TO REVIEW THIS PAYLOAD COMMENT - MAYBE OBSOLETE (AS OF SEPTEMBER 15, 2019)
         Conventions for Payloads?
@@ -32,13 +33,15 @@ class Payload(ABC):
 
         """
         self.module = module
-        self.metadata: ModuleMetaData = metadata
         self.results = None
 
-    def metadata(self):
-        # metadata is now a complex DataClass...
-        # not sure if or how  this will print properly?
-        pprint(self.metadata)
+    @classmethod
+    def set_metadata(cls, metadata):
+        cls.metadata = metadata
+
+    @classmethod
+    def get_metadata(cls):
+        return cls.metadata
 
     @staticmethod
     def get_input_data_frame(input_spec) -> pd.DataFrame:

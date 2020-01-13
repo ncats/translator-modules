@@ -12,7 +12,7 @@ import requests
 from biolink.model import DiseaseToPhenotypicFeatureAssociation, Disease, PhenotypicFeature
 from typing import List
 
-from ncats import Payload
+from ncats.translator.core.module_payload import Payload
 from ncats.translator.core.data_transfer_model import ModuleMetaData, ConceptSpace
 
 bicluster_disease_url = 'https://smartbag-hpotomondo.ncats.io/HPO_to_MONDO_bicluster/'
@@ -78,17 +78,7 @@ class PhenotypeToDiseaseBiclusters(Payload):
 
     def __init__(self, input_phenotypes=None):
 
-        super(PhenotypeToDiseaseBiclusters, self).__init__(
-            module=BiclusterByPhenotypeToDisease(),
-            metadata=ModuleMetaData(
-                name="Mod9A - Phenotype-to-Disease Bicluster",
-                source='RNAseqDB Biclustering',
-                association=DiseaseToPhenotypicFeatureAssociation,
-                domain=ConceptSpace(PhenotypicFeature, ['HP']),
-                relationship='has_phenotype',
-                range=ConceptSpace(Disease, ['MONDO'])
-            )
-        )
+        super(PhenotypeToDiseaseBiclusters, self).__init__(module=BiclusterByPhenotypeToDisease())
 
         if not input_phenotypes:
             raise RuntimeError("PhenotypeToDiseaseBiclusters ERROR: missing mandatory input_phenotypes parameter")
@@ -98,6 +88,25 @@ class PhenotypeToDiseaseBiclusters(Payload):
         most_common_diseases = asyncio.run(self.module.phenotype_to_disease_biclusters_async(input_phenotype_ids))
 
         self.results = pd.DataFrame.from_records(most_common_diseases, columns=["hit_id", "score"])
+
+
+PhenotypeToDiseaseBiclusters.set_metadata(
+    ModuleMetaData(
+        name="Mod9A - Phenotype-to-Disease Bicluster",
+        source='RNAseqDB Biclustering',
+        association=DiseaseToPhenotypicFeatureAssociation,
+        domain=ConceptSpace(PhenotypicFeature, ['HP']),
+        relationship='has_phenotype',
+        range=ConceptSpace(Disease, ['MONDO'])
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return PhenotypeToDiseaseBiclusters.get_metadata()
 
 
 def main():

@@ -93,17 +93,7 @@ class FunctionallySimilarGenes(Payload):
 
     def __init__(self, input_genes=None, threshold=0.1):
 
-        super(FunctionallySimilarGenes, self).__init__(
-            module=FunctionalSimilarity('human'),
-            metadata=ModuleMetaData(
-                name="Mod1A Functional Similarity",
-                source='Monarch Biolink',
-                association=FunctionalAssociation,
-                domain=ConceptSpace(Gene, ['HGNC']),
-                relationship='related_to',
-                range=ConceptSpace(Gene, ['HGNC']),
-            )
-        )
+        super(FunctionallySimilarGenes, self).__init__(module=FunctionalSimilarity('human'))
 
         if not input_genes:
             raise RuntimeError("FunctionallySimilarGenes ERROR: missing mandatory input_genes parameter")
@@ -111,6 +101,25 @@ class FunctionallySimilarGenes(Payload):
         input_gene_data_frame = self.get_input_data_frame(input_genes)
 
         self.results = self.module.compute_similarity(input_gene_data_frame, threshold)
+
+
+FunctionallySimilarGenes.set_metadata(
+    ModuleMetaData(
+        name="Mod1A Functional Similarity",
+        source='Monarch Biolink',
+        association=FunctionalAssociation,
+        domain=ConceptSpace(Gene, ['HGNC']),
+        relationship='related_to',
+        range=ConceptSpace(Gene, ['HGNC']),
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return FunctionallySimilarGenes.get_metadata()
 
 
 def main():

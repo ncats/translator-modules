@@ -57,17 +57,7 @@ class DiseaseAssociatedGeneSet(Payload):
 
     def __init__(self, disease_identifier=None, disease_label='', query_biolink=True):
 
-        super(DiseaseAssociatedGeneSet, self).__init__(
-            module=LookUp(),
-            metadata=ModuleMetaData(
-                name="Mod2.0 - Disease Associated Genes",
-                source='Monarch Biolink',
-                association=GeneToDiseaseAssociation,
-                domain=ConceptSpace(Disease, ['MONDO']),
-                relationship='gene_associated_with_condition',
-                range=ConceptSpace(Gene, ['HGNC']),
-            )
-        )
+        super(DiseaseAssociatedGeneSet, self).__init__(module=LookUp())
 
         if not disease_identifier:
             raise RuntimeError("DiseaseAssociatedGeneSet ERROR: missing mandatory disease_identifier parameter")
@@ -85,6 +75,25 @@ class DiseaseAssociatedGeneSet(Payload):
             self.disease_associated_genes = self.results[['hit_id', 'hit_symbol']].to_dict(orient='records')
         else:
             self.disease_associated_genes = []
+
+
+DiseaseAssociatedGeneSet.set_metadata(
+    ModuleMetaData(
+        name="Mod2.0 - Disease Associated Genes",
+        source='Monarch Biolink',
+        association=GeneToDiseaseAssociation,
+        domain=ConceptSpace(Disease, ['MONDO']),
+        relationship='gene_associated_with_condition',
+        range=ConceptSpace(Gene, ['HGNC']),
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return DiseaseAssociatedGeneSet.get_metadata()
 
 
 def main():

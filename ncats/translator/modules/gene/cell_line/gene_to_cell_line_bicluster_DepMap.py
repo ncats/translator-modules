@@ -16,20 +16,11 @@ from ncats.translator.modules.gene.gene_bicluster_shared import GenericGeneByGen
 class DepMapBiclusters(Payload):
 
     def __init__(self, input_genes=None, keep_input_id=True):
-
         super(DepMapBiclusters, self).__init__(
             module=GenericGeneByGeneBicluster(
                 bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
                 bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_bicluster/',
                 target_prefix='NCBI'
-            ),
-            metadata=ModuleMetaData(
-                name="Mod9B - Gene-to-CellLine Bicluster",
-                source='DepMap Biclustering',
-                association=GeneToGeneAssociation,
-                domain=ConceptSpace(Gene, ['NCBI']),
-                relationship='related_to',
-                range=ConceptSpace(CellLine, ['ACH'])
             )
         )
 
@@ -45,8 +36,28 @@ class DepMapBiclusters(Payload):
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
 
 
+DepMapBiclusters.set_metadata(
+    ModuleMetaData(
+        name="Mod9B - Gene-to-CellLine Bicluster",
+        source='DepMap Biclustering',
+        association=GeneToGeneAssociation,
+        domain=ConceptSpace(Gene, ['NCBI']),
+        relationship='related_to',
+        range=ConceptSpace(CellLine, ['ACH'])
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return DepMapBiclusters.get_metadata()
+
+
 def main():
     fire.Fire(DepMapBiclusters)
+
 
 if __name__ == '__main__':
     main()

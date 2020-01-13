@@ -68,17 +68,7 @@ class GeneToTissueBiclusters(Payload):
 
     def __init__(self, input_genes=None):
 
-        super(GeneToTissueBiclusters, self).__init__(
-            module=BiclusterByGeneToTissue(),
-            metadata=ModuleMetaData(
-                name="Mod9A - Gene-to-Tissue Bicluster",
-                source='RNAseqDB Biclustering',
-                association=GeneToExpressionSiteAssociation,
-                domain=ConceptSpace(Gene, ['ENSEMBL']),
-                relationship='related_to',
-                range=ConceptSpace(AnatomicalEntity, ['MONDO', 'DOID', 'UBERON']),
-            )
-        )
+        super(GeneToTissueBiclusters, self).__init__(module=BiclusterByGeneToTissue())
 
         if not input_genes:
             raise RuntimeError("GeneToTissueBiclusters ERROR: missing mandatory input_genes parameter")
@@ -88,6 +78,25 @@ class GeneToTissueBiclusters(Payload):
         most_common_tissues = asyncio.run(self.module.gene_to_tissue_biclusters_async(input_gene_set))
 
         self.results = pd.DataFrame.from_records(most_common_tissues)
+
+
+GeneToTissueBiclusters.set_metadata(
+    ModuleMetaData(
+        name="Mod9A - Gene-to-Tissue Bicluster",
+        source='RNAseqDB Biclustering',
+        association=GeneToExpressionSiteAssociation,
+        domain=ConceptSpace(Gene, ['ENSEMBL']),
+        relationship='related_to',
+        range=ConceptSpace(AnatomicalEntity, ['MONDO', 'DOID', 'UBERON']),
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return GeneToTissueBiclusters.get_metadata()
 
 
 def main():

@@ -59,17 +59,7 @@ class GeneToChemicalInteractionPayload(Payload):
     # We set default for action filter to 'None' for now; could be action='InteractionActions'
     def __init__(self, input_genes=None, action=None, taxon='9606', rows=50):
 
-        super(GeneToChemicalInteractionPayload, self).__init__(
-            module=GeneToChemicalInteractions(action, taxon),
-            metadata=ModuleMetaData(
-                name="Module 1B: Gene to Chemical Interactions",
-                source='Chemical Toxicology Database (CTD)',
-                association=ChemicalToGeneAssociation,
-                domain=ConceptSpace(Gene, ['NCBIGene']),
-                relationship='interacts_with',
-                range=ConceptSpace(ChemicalSubstance, ['CTD'])
-            )
-        )
+        super(GeneToChemicalInteractionPayload, self).__init__(module=GeneToChemicalInteractions(action, taxon))
 
         if not input_genes:
             raise RuntimeError("GeneToChemicalInteractionPayload ERROR: missing mandatory input_genes parameter")
@@ -77,6 +67,25 @@ class GeneToChemicalInteractionPayload(Payload):
         input_gene_set = self.get_simple_input_identifier_list(input_genes, object_id_only=True)
 
         self.results = self.module.get_chemicals_interacting_with_genes(input_gene_set, rows)
+
+
+GeneToChemicalInteractionPayload.set_metadata(
+    ModuleMetaData(
+        name="Module 1B: Gene to Chemical Interactions",
+        source='Chemical Toxicology Database (CTD)',
+        association=ChemicalToGeneAssociation,
+        domain=ConceptSpace(Gene, ['NCBIGene']),
+        relationship='interacts_with',
+        range=ConceptSpace(ChemicalSubstance, ['CTD'])
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return GeneToChemicalInteractionPayload.get_metadata()
 
 
 def main():

@@ -73,17 +73,7 @@ class TissueToGeneBicluster(Payload):
 
     def __init__(self, input_tissues=None):
 
-        super(TissueToGeneBicluster, self).__init__(
-            module=BiclusterByTissueToGene(),
-            metadata=ModuleMetaData(
-                name="Mod9A - Tissue-to-Gene Bicluster",
-                source='RNAseqDB Biclustering',
-                association=GeneToExpressionSiteAssociation,
-                domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
-                relationship='related_to',
-                range=ConceptSpace(Gene, ['ENSEMBL'])
-            )
-        )
+        super(TissueToGeneBicluster, self).__init__(module=BiclusterByTissueToGene())
 
         if not input_tissues:
             raise RuntimeError("TissueToGeneBicluster ERROR: missing mandatory input_tissues parameter")
@@ -95,5 +85,28 @@ class TissueToGeneBicluster(Payload):
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
 
 
-if __name__ == '__main__':
+TissueToGeneBicluster.set_metadata(
+    ModuleMetaData(
+        name="Mod9A - Tissue-to-Gene Bicluster",
+        source='RNAseqDB Biclustering',
+        association=GeneToExpressionSiteAssociation,
+        domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
+        relationship='related_to',
+        range=ConceptSpace(Gene, ['ENSEMBL'])
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return TissueToGeneBicluster.get_metadata()
+
+
+def main():
     fire.Fire(TissueToGeneBicluster)
+
+
+if __name__ == '__main__':
+    main()

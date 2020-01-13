@@ -193,17 +193,7 @@ class TissueToTissueBicluster(Payload):
 
     def __init__(self, input_tissues=None):
 
-        super(TissueToTissueBicluster, self).__init__(
-            module=BiclusterByTissueToTissue(),
-            metadata=ModuleMetaData(
-                name="Mod9A - Tissue-to-Tissue Bicluster",
-                source='RNAseqDB Biclustering',
-                association=AnatomicalEntityToAnatomicalEntityAssociation,
-                domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
-                relationship='related_to',
-                range=ConceptSpace(AnatomicalEntity, ['UBERON']),
-            )
-        )
+        super(TissueToTissueBicluster, self).__init__(module=BiclusterByTissueToTissue())
 
         if not input_tissues:
             raise RuntimeError("TissueToTissueBicluster ERROR: missing mandatory input_tissues parameter")
@@ -213,6 +203,25 @@ class TissueToTissueBicluster(Payload):
         most_common_tissues = asyncio.run(self.module.tissue_to_tissue_biclusters_async(input_tissue_ids))
 
         self.results = pd.DataFrame.from_records(most_common_tissues, columns=["hit_id", "score"])
+
+
+TissueToTissueBicluster.set_metadata(
+    ModuleMetaData(
+                name="Mod9A - Tissue-to-Tissue Bicluster",
+                source='RNAseqDB Biclustering',
+                association=AnatomicalEntityToAnatomicalEntityAssociation,
+                domain=ConceptSpace(AnatomicalEntity, ['UBERON']),
+                relationship='related_to',
+                range=ConceptSpace(AnatomicalEntity, ['UBERON']),
+            )
+    )
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return TissueToTissueBicluster.get_metadata()
 
 
 def main():

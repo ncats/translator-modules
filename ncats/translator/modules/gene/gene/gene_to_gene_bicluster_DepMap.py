@@ -22,14 +22,6 @@ class GeneToGeneDepMapBiclusters(Payload):
                 bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_gene/',
                 bicluster_bicluster_url='https://smartbag-crispridepmap.ncats.io/biclusters_DepMap_gene_to_cellline_v1_bicluster/',
                 target_prefix='NCBI'
-            ),
-            metadata=ModuleMetaData(
-                name="Mod9B - Gene-to-Gene Bicluster",
-                source='DepMap Biclustering',
-                association=GeneToGeneAssociation,
-                domain=ConceptSpace(Gene, ['NCBI']),
-                relationship='related_to',
-                range=ConceptSpace(Gene, ['NCBI'])
             )
         )
 
@@ -43,6 +35,25 @@ class GeneToGeneDepMapBiclusters(Payload):
         sorted_list_of_output_genes = self.module.gene_to_gene_bicluster_summarize(input_gene_set, keep_input_id)
 
         self.results = pd.DataFrame.from_records(sorted_list_of_output_genes)
+
+
+GeneToGeneDepMapBiclusters.set_metadata(
+    ModuleMetaData(
+        name="Mod9B - Gene-to-Gene Bicluster",
+        source='DepMap Biclustering',
+        association=GeneToGeneAssociation,
+        domain=ConceptSpace(Gene, ['NCBI']),
+        relationship='related_to',
+        range=ConceptSpace(Gene, ['NCBI'])
+    )
+)
+
+
+def metadata():
+    """
+    Retrieve Module Metadata
+    """
+    return GeneToGeneDepMapBiclusters.get_metadata()
 
 
 def main():
