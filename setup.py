@@ -7,7 +7,10 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-long_description = ''
+NAME = 'translator-modules'
+VERSION = '0.3.12'
+DESCRIPTION = 'NCATS Translator Modules'
+LONG_DESCRIPTION = 'Standardized NCATS Translator software modules for bioinformatic workflows'
 
 install_requires = []
 with open('requirements.txt') as requirements_file:
@@ -21,8 +24,10 @@ with open('requirements.txt') as requirements_file:
         install_requires.append(pinned_version)
 
 setup(
-    name='translator-modules',
-    description='NCATS Translator Reasoner modules',
+    name=NAME,
+    version=VERSION,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
     packages=find_packages(),
     package_data={'ncats.translator.identifiers.server': ['*.txt']},
     url='https://github.com/ncats/translator-modules',
@@ -46,7 +51,6 @@ setup(
             'phenotype_to_disease_bicluster = ncats.translator.modules.phenotypic_feature.disease.phenotype_to_disease_bicluster:main',
         ]
     },
-    long_description=long_description,
     install_requires=install_requires,
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'pytest-cov', 'mock'],
@@ -54,5 +58,4 @@ setup(
     zip_safe=False,
     author='James Eddy;Richard Bruskiewich',
     author_email='james.a.eddy@gmail.com; richard@starinformatics.com',
-    version='0.3.11'
 )
