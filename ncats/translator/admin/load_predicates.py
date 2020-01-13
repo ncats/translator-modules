@@ -86,6 +86,8 @@ class KnowledgeMap:
                         self.kmap[input_category][output_category].append(metadata.relationship)
 
     def predicates(self):
+        if not self.kmap:
+            self.load()
         return deepcopy(self.kmap)
 
     def dump(self):
