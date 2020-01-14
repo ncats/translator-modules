@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 import unittest
+from pprint import pprint
 
 from flask import json
 from six import BytesIO
@@ -26,6 +27,7 @@ class TestPredicatesController(BaseTestCase):
             headers=headers)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
+        pprint(response)
 
 
 if __name__ == '__main__':

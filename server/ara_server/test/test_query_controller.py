@@ -9,6 +9,161 @@ from six import BytesIO
 from ara_server.models.message import Message  # noqa: E501
 from ara_server.test import BaseTestCase
 
+test_query = \
+{
+  "message": {
+    "knowledge_graph": {
+      "edges": [
+        {
+          "id": "553903",
+          "source_id": "https://omim.org/entry/603903",
+          "target_id": "https://www.uniprot.org/uniprot/P00738",
+          "type": "affects"
+        },
+        {
+          "id": "553903",
+          "source_id": "https://omim.org/entry/603903",
+          "target_id": "https://www.uniprot.org/uniprot/P00738",
+          "type": "affects"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "OMIM:603903",
+          "name": "Haptoglobin",
+          "type": [
+            "disease",
+            "disease"
+          ]
+        },
+        {
+          "id": "OMIM:603903",
+          "name": "Haptoglobin",
+          "type": [
+            "disease",
+            "disease"
+          ]
+        }
+      ]
+    },
+    "query_graph": {
+      "edges": [
+        {
+          "id": "e00",
+          "source_id": "https://omim.org/entry/603903",
+          "target_id": "https://www.uniprot.org/uniprot/P00738",
+          "type": [
+            "affects",
+            "affects"
+          ]
+        },
+        {
+          "id": "e00",
+          "source_id": "https://omim.org/entry/603903",
+          "target_id": "https://www.uniprot.org/uniprot/P00738",
+          "type": [
+            "affects",
+            "affects"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "curie": [
+            "OMIM:603903"
+          ],
+          "id": "n00",
+          "type": [
+            "disease",
+            "disease"
+          ]
+        },
+        {
+          "curie": [
+            "OMIM:603903"
+          ],
+          "id": "n00",
+          "type": [
+            "disease",
+            "disease"
+          ]
+        }
+      ]
+    },
+    "results": [
+      {
+        "edge_bindings": [
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          },
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          }
+        ],
+        "node_bindings": [
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          },
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          }
+        ]
+      },
+      {
+        "edge_bindings": [
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          },
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          }
+        ],
+        "node_bindings": [
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          },
+          {
+            "kg_id": [
+              "kg_id",
+              "kg_id"
+            ],
+            "qg_id": "qg_id"
+          }
+        ]
+      }
+    ]
+  },
+  "additionalProp1": {}
+}
+
 
 class TestQueryController(BaseTestCase):
     """QueryController integration test stubs"""
@@ -18,7 +173,7 @@ class TestQueryController(BaseTestCase):
 
         Query reasoner via one of several inputs
         """
-        request_body = None
+        request_body = test_query
         headers = { 
             'Accept': 'application/json',
             'Content-Type': 'application/json',

@@ -11,18 +11,18 @@ execution as a standalone system (see below for Docker). After installing the pr
 
 There are two ways to run the system: directly as a standalone system or within a Docker container.
 
-To install and run the code directly: 
+To install, test and run the server directly: 
 
 ```bash
-make installation
-make run
+make server-installation
+make server-run
 ```
 
-To build and start the system within a Docker container:
+To build and start the server within a Docker container:
 
 ```bash
-make build
-make start
+make server-build
+make server-start
 ```
 
 You can also use `make log` to see the docker containers logs, and `make stop` to stop the docker container.
@@ -34,7 +34,7 @@ The Makefile may also be used to regenerate the code.
 There is a `validation` target to check the project OpenAPI specifications, prior to regenerating the code:
 
 ```bash
-make validation
+make api-validation
 ```
 
 The *validation* target calls a local shell script `generate.sh` in the root directory of the project.  This script 
