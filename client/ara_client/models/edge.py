@@ -69,7 +69,7 @@ class Edge(object):
     def id(self):
         """Gets the id of this Edge.  # noqa: E501
 
-        Local identifier for this node which is unique within this KnowledgeGraph, and perhaps within the source reasoner's knowledge graph  # noqa: E501
+        Local identifier for this edge which is unique within this KnowledgeGraph, and perhaps within the source reasoner's knowledge graph  # noqa: E501
 
         :return: The id of this Edge.  # noqa: E501
         :rtype: str
