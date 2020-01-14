@@ -17,18 +17,19 @@ For more information, please visit [http://starinformatics.com](http://starinfor
 Python 3.7
 
 ## Installation & Usage
+
 ### pip install
 
-If the python package is hosted on Github, you can install directly from Github
+If the python package is hosted on a repository, you can install directly using:
 
 ```sh
-pip install git+https://github.com/GIT_USER_ID/GIT_REPO_ID.git
+pip install git+https://github.com/ncats/translator-modules.git
 ```
-(you may need to run `pip` with root permission: `sudo pip install git+https://github.com/GIT_USER_ID/GIT_REPO_ID.git`)
+(you may need to run `pip` with root permission: `sudo pip install git+https://github.com/ncats/translator-modules.git`)
 
 Then import the package:
 ```python
-import kba_client 
+import ara_client 
 ```
 
 ### Setuptools
@@ -42,7 +43,7 @@ python setup.py install --user
 
 Then import the package:
 ```python
-import kba_client
+import ara_client
 ```
 
 ## Getting Started
@@ -51,91 +52,61 @@ Please follow the [installation procedure](#installation--usage) and then run th
 
 ```python
 from __future__ import print_function
-import time
-import kba_client
-from kba_client.rest import ApiException
+
+from ara_client.api_client import ApiClient
+from ara_client.api.predicates_api import PredicatesApi
+from ara_client.rest import ApiException
+from ara_client.configuration import Configuration
 from pprint import pprint
 
-# create an instance of the API class
-api_instance = kba_client.ConceptsApi(kba_client.ApiClient(configuration))
+# Defining host is optional and default to http://localhost
+configuration = Configuration()
 
-query_id = 'query_id_example' # str | the query identifier of a concepts query previously posted by the /cliques endpoint
+# Create an instance of the API class
+api_instance = PredicatesApi(ApiClient(configuration))
 
 try:
-    api_response = api_instance.get_cliques(query_id)
+    # Get supported relationships by source and target
+    api_response = api_instance.predicates_get()
     pprint(api_response)
+
 except ApiException as e:
-    print("Exception when calling ConceptsApi->get_cliques: %s\n" % e)
+    print("Exception when calling PredicatesApi->predicates_get: %s\n" % e)
+
 ```
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://kba.ncats.io*
+All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*ConceptsApi* | [**get_cliques**](docs/ConceptsApi.md#get_cliques) | **GET** /cliques/data/{queryId} | 
-*ConceptsApi* | [**get_cliques_query_status**](docs/ConceptsApi.md#get_cliques_query_status) | **GET** /cliques/status/{queryId} | 
-*ConceptsApi* | [**get_concept_details**](docs/ConceptsApi.md#get_concept_details) | **GET** /concepts/details/{cliqueId} | 
-*ConceptsApi* | [**get_concepts**](docs/ConceptsApi.md#get_concepts) | **GET** /concepts/data/{queryId} | 
-*ConceptsApi* | [**get_concepts_query_status**](docs/ConceptsApi.md#get_concepts_query_status) | **GET** /concepts/status/{queryId} | 
-*ConceptsApi* | [**post_cliques_query**](docs/ConceptsApi.md#post_cliques_query) | **POST** /cliques | 
-*ConceptsApi* | [**post_concepts_query**](docs/ConceptsApi.md#post_concepts_query) | **POST** /concepts | 
-*MetadataApi* | [**get_beacons**](docs/MetadataApi.md#get_beacons) | **GET** /beacons | 
-*MetadataApi* | [**get_concept_categories**](docs/MetadataApi.md#get_concept_categories) | **GET** /categories | 
-*MetadataApi* | [**get_errors**](docs/MetadataApi.md#get_errors) | **GET** /errorlog | 
-*MetadataApi* | [**get_knowledge_map**](docs/MetadataApi.md#get_knowledge_map) | **GET** /kmap | 
-*MetadataApi* | [**get_predicates**](docs/MetadataApi.md#get_predicates) | **GET** /predicates | 
-*StatementsApi* | [**get_statement_details**](docs/StatementsApi.md#get_statement_details) | **GET** /statements/details/{statementId} | 
-*StatementsApi* | [**get_statements_query**](docs/StatementsApi.md#get_statements_query) | **GET** /statements/data/{queryId} | 
-*StatementsApi* | [**get_statements_query_status**](docs/StatementsApi.md#get_statements_query_status) | **GET** /statements/status/{queryId} | 
-*StatementsApi* | [**post_statements_query**](docs/StatementsApi.md#post_statements_query) | **POST** /statements | 
+*PredicatesApi* | [**predicates_get**](docs/PredicatesApi.md#predicates_get) | **GET** /predicates | Get supported relationships by source and target
+*QueryApi* | [**query**](docs/QueryApi.md#query) | **POST** /query | Query reasoner via one of several inputs
 
 
 ## Documentation For Models
 
- - [ClientBeaconConceptCategory](docs/ClientBeaconConceptCategory.md)
- - [ClientBeaconPredicate](docs/ClientBeaconPredicate.md)
- - [ClientClique](docs/ClientClique.md)
- - [ClientCliquesQuery](docs/ClientCliquesQuery.md)
- - [ClientCliquesQueryBeaconStatus](docs/ClientCliquesQueryBeaconStatus.md)
- - [ClientCliquesQueryResult](docs/ClientCliquesQueryResult.md)
- - [ClientCliquesQueryStatus](docs/ClientCliquesQueryStatus.md)
- - [ClientConcept](docs/ClientConcept.md)
- - [ClientConceptCategoriesByBeacon](docs/ClientConceptCategoriesByBeacon.md)
- - [ClientConceptCategory](docs/ClientConceptCategory.md)
- - [ClientConceptDetail](docs/ClientConceptDetail.md)
- - [ClientConceptWithDetails](docs/ClientConceptWithDetails.md)
- - [ClientConceptWithDetailsBeaconEntry](docs/ClientConceptWithDetailsBeaconEntry.md)
- - [ClientConceptsQuery](docs/ClientConceptsQuery.md)
- - [ClientConceptsQueryBeaconStatus](docs/ClientConceptsQueryBeaconStatus.md)
- - [ClientConceptsQueryResult](docs/ClientConceptsQueryResult.md)
- - [ClientConceptsQueryStatus](docs/ClientConceptsQueryStatus.md)
- - [ClientKnowledgeBeacon](docs/ClientKnowledgeBeacon.md)
- - [ClientKnowledgeMap](docs/ClientKnowledgeMap.md)
- - [ClientKnowledgeMapObject](docs/ClientKnowledgeMapObject.md)
- - [ClientKnowledgeMapPredicate](docs/ClientKnowledgeMapPredicate.md)
- - [ClientKnowledgeMapStatement](docs/ClientKnowledgeMapStatement.md)
- - [ClientKnowledgeMapSubject](docs/ClientKnowledgeMapSubject.md)
- - [ClientLogEntry](docs/ClientLogEntry.md)
- - [ClientPredicate](docs/ClientPredicate.md)
- - [ClientPredicatesByBeacon](docs/ClientPredicatesByBeacon.md)
- - [ClientStatement](docs/ClientStatement.md)
- - [ClientStatementAnnotation](docs/ClientStatementAnnotation.md)
- - [ClientStatementCitation](docs/ClientStatementCitation.md)
- - [ClientStatementDetails](docs/ClientStatementDetails.md)
- - [ClientStatementObject](docs/ClientStatementObject.md)
- - [ClientStatementPredicate](docs/ClientStatementPredicate.md)
- - [ClientStatementSubject](docs/ClientStatementSubject.md)
- - [ClientStatementsQuery](docs/ClientStatementsQuery.md)
- - [ClientStatementsQueryBeaconStatus](docs/ClientStatementsQueryBeaconStatus.md)
- - [ClientStatementsQueryResult](docs/ClientStatementsQueryResult.md)
- - [ClientStatementsQueryStatus](docs/ClientStatementsQueryStatus.md)
+ - [Credentials](docs/Credentials.md)
+ - [Edge](docs/Edge.md)
+ - [EdgeBinding](docs/EdgeBinding.md)
+ - [KnowledgeGraph](docs/KnowledgeGraph.md)
+ - [Message](docs/Message.md)
+ - [Node](docs/Node.md)
+ - [NodeBinding](docs/NodeBinding.md)
+ - [QEdge](docs/QEdge.md)
+ - [QNode](docs/QNode.md)
+ - [Query](docs/Query.md)
+ - [QueryGraph](docs/QueryGraph.md)
+ - [RemoteKnowledgeGraph](docs/RemoteKnowledgeGraph.md)
+ - [Result](docs/Result.md)
+
 
 ## Documentation For Authorization
 
  All endpoints do not require authorization.
 
-## Author
+## Authors
 
-richard@starinformatics.com
+Reasoner API:     edeutsch@systemsbiology.org
+Workflow ARA API: richard@starinformatics.com
