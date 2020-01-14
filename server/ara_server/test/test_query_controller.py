@@ -9,7 +9,33 @@ from six import BytesIO
 from ara_server.models.message import Message  # noqa: E501
 from ara_server.test import BaseTestCase
 
-test_query = \
+# single  defined input node query
+minimal_test_query_1 = \
+{
+  "message": {
+    "knowledge_graph": {
+      "edges": [],
+      "nodes": [
+        {
+          "id": "MONDO:0019391",
+          "name": "Fanconi Anemia",
+          "type": [
+            "disease"
+          ]
+        }
+      ]
+    },
+    "query_graph": {
+      "edges": [],
+      "nodes": []
+    },
+    "results": []
+  },
+  "additionalProp1": {}
+}
+
+
+full_sample_test_query = \
 {
   "message": {
     "knowledge_graph": {
@@ -168,13 +194,13 @@ test_query = \
 class TestQueryController(BaseTestCase):
     """QueryController integration test stubs"""
 
-    def test_query(self):
+    def test_query_minimal_1(self):
         """Test case for query
 
         Query reasoner via one of several inputs
         """
-        request_body = test_query
-        headers = { 
+        request_body = minimal_test_query_1
+        headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         }
@@ -186,6 +212,25 @@ class TestQueryController(BaseTestCase):
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_query_full_sample(self):
+      """Test case for query
+
+      Query reasoner via one of several inputs
+      """
+      request_body = full_sample_test_query
+      headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+      response = self.client.open(
+        '/query',
+        method='POST',
+        headers=headers,
+        data=json.dumps(request_body),
+        content_type='application/json')
+      self.assert200(response,
+                     'Response body is : ' + response.data.decode('utf-8'))
 
 
 if __name__ == '__main__':
