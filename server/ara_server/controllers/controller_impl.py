@@ -30,7 +30,7 @@ def handle_query(request_body: dict) -> Message:
     if request_body:
 
         try:
-            message = Message(request_body)
+            message = Message(**request_body["message"])
 
         except Exception as e:
             logging.error(e)
