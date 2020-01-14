@@ -1,5 +1,8 @@
+import logging
 from typing import Dict, List
 
+from ara_server.models.query_graph import QueryGraph
+from ara_server.models.message import Message
 from ara_server.models.message import Message
 
 from ncats.translator.admin.load_predicates import KnowledgeMap
@@ -23,4 +26,18 @@ def handle_predicates_get() -> Dict[str, Dict[str, List[str]]]:
 
 
 def handle_query(request_body: dict) -> Message:
-    return Message()
+
+    if request_body:
+
+        try:
+            message = Message(request_body)
+
+        except Exception as e:
+            logging.error(e)
+            return "invalid request body", 400
+
+        return message
+
+    else:
+        logging.error("handle_query() ERROR: Empty request body?")
+        return "empty request body", 400
