@@ -195,7 +195,7 @@ class TestQueryController(BaseTestCase):
     """QueryController integration test stubs"""
 
     def test_query_minimal_1(self):
-        """Test case for query
+        """Test case for query minimal 1
 
         Query reasoner via one of several inputs
         """

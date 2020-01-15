@@ -64,3 +64,13 @@ def fix_curies(identifiers, prefix=''):
     else:
         raise RuntimeError("fix_curie() is not sure how to fix an instance of data type '", type(identifiers))
 
+
+def uri_to_curie(uri) -> str:
+    """
+    Attempt to map a URI to a CURIE.
+    TODO: Leverage the Biolink Model URI mapping file to map URI's to CURIES
+    :param uri:
+    :return:
+    """
+    #return uri
+    raise RuntimeError("Implement me!")
