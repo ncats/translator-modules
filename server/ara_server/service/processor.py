@@ -72,6 +72,9 @@ def process_query(query_pattern: KnowledgeGraph) -> Message:
     :param query_pattern:
     :return: Message result of the query
     """
+
+    # Note that the 'capture' of the query_pattern nodes and edges
+    # resolves all identifiers in the pattern into CURIEs
     for node in query_pattern["nodes"]:
         capture_node(node)
 
@@ -80,9 +83,9 @@ def process_query(query_pattern: KnowledgeGraph) -> Message:
 
     # Decide on what query use case you have based on input data
     if DEBUG:
-        pprint("Bound edges: "+str(_bound_nodes))
-        pprint("Unbound edges: "+str(_unbound_nodes))
-        pprint("Edges: " + str(_defined_edges))
+        pprint("Bound nodes: "+str(_bound_nodes))
+        pprint("Unbound nodes: "+str(_unbound_nodes))
+        pprint("Defined edges: " + str(_defined_edges))
 
     # stub implementation echos input graph
     return Message(knowledge_graph=query_pattern)
