@@ -1,7 +1,7 @@
 from typing import Dict, List
 from pprint import pprint
 
-from ncats.translator.identifiers import uri_to_curie
+from ncats.translator.identifiers import curie
 
 from ncats.translator.core.knowledge_map import KnowledgeMap as kmap
 
@@ -10,7 +10,7 @@ from server.ara_server.models.message import Message
 from server.ara_server.models.node import Node
 from server.ara_server.models.edge import Edge
 
-DEBUG  =  True
+DEBUG = True
 
 _bound_nodes: Dict = {}
 _unbound_nodes: List = []
@@ -31,7 +31,7 @@ def capture_node(node: Node):
     # TODO: we blissfully(?) assume no duplication of nodes id's... might have to be more careful here!
     # TODO: probably also need to normalize URI's  with CURIES here(?)
     if node["id"]:
-        node["id"] = uri_to_curie(node["id"])
+        node["id"] = curie(node["id"])
         _bound_nodes[node["id"]] = node
     else:
         _unbound_nodes.append(node)
@@ -39,8 +39,8 @@ def capture_node(node: Node):
 
 def capture_edge(edge: Edge):
 
-    source_curie = uri_to_curie(edge["source_id"])
-    target_curie = uri_to_curie(edge["target_id"])
+    source_curie = curie(edge["source_id"])
+    target_curie = curie(edge["target_id"])
 
     # Check if non-blank node source or target ids designate defined bound nodes
     if source_curie and source_curie not in _bound_nodes:

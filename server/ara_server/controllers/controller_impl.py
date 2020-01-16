@@ -36,10 +36,10 @@ def handle_query(request_body: dict) -> Message:
 
         except Exception as e:
             logging.error(e)
-            return "invalid request body", 400
+            return str(e), 400
 
         return result
 
     else:
         logging.error("handle_query() ERROR: Empty request body?")
-        return "empty request body", 400
+        return "Empty request body?", 400

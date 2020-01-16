@@ -119,7 +119,7 @@ class KnowledgeMap:
             return False
 
     def known_predicate(self, predicate) -> bool:
-        if predicate in self.known_predicate:
+        if predicate in self.known_predicates:
             return True
         else:
             return False
