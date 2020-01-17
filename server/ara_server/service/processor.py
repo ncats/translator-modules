@@ -134,10 +134,20 @@ def any_paths_between_bound_nodes() -> bool:
     if not _bound_nodes or len(_bound_nodes) < 2:
         return False
 
-    logger.info("any_paths_between_bound_nodes()...")
-    return True
+    # check if some edge has at least on bound node
+    # if so,  then submit a query
+    for e in _defined_edges.values():
+        if (e["source_id"] in _bound_nodes and
+                e["target_id"] in _bound_nodes):
+            logger.info("any_paths_between_bound_nodes()...")
+            return True
+
+    return False
 
 
+# Hmm... this use case implies edges with unbound nodes, which is perhaps
+# technically infeasible since unbound edges don't have curie ids?
+# Do I rather need to "fill in the blanks" with an inferred edge(?)
 def defined_predicate_path_between_single_bound_start_node_and_unbound_nodes() -> bool:
     # Validate preconditions for this query use case
 
@@ -163,10 +173,20 @@ def defined_predicate_path_between_single_bound_start_node_and_unbound_nodes() -
     if not edges_with_defined_predicates:
         return False
 
-    logger.info("defined_predicate_path_between_single_bound_start_node_and_unbound_nodes()...")
-    return True
+    # check if some edge with a defined predicate has
+    # at least one bound node;if so,  then submit a query
+    for e in edges_with_defined_predicates:
+        if (e["source_id"] in _bound_nodes or
+                e["target_id"] in _bound_nodes):
+            logger.info("defined_predicate_path_between_single_bound_start_node_and_unbound_nodes()...")
+            return True
+
+    return False
 
 
+# Hmm... this use case implies edges with unbound nodes, which is perhaps
+# technically infeasible since unbound edges don't have curie ids?
+# Do I rather need to "fill in the blanks" with an inferred edge(?)
 def any_paths_between_single_bound_start_node_and_unbound_nodes() -> bool:
     # Validate preconditions for this query use case
 
@@ -182,8 +202,15 @@ def any_paths_between_single_bound_start_node_and_unbound_nodes() -> bool:
     if not _unbound_nodes:
         return False
 
-    logger.info("any_paths_between_single_bound_start_node_and_unbound_nodes()...")
-    return True
+    # check if some edge has at least on bound node
+    # if so,  then submit a query
+    for e in _defined_edges.values():
+        if (e["source_id"] in _bound_nodes or
+                e["target_id"] in _bound_nodes):
+            logger.info("any_paths_between_single_bound_start_node_and_unbound_nodes()...")
+            return True
+
+    return False
 
 
 def with_a_single_bound_node() -> bool:

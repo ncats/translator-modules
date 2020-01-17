@@ -229,7 +229,12 @@ def fix_curies(identifiers, prefix=''):
 
 
 def curie(identifier) -> str:
-    namespace: CurieNamespace
-    identifier_object_id: str
-    namespace, identifier_object_id = BiolinkNameSpace.parse_identifier(identifier)
-    return namespace.curie(identifier_object_id)
+    # Ignore enpty strings
+    if not identifier:
+        return ""
+    else:
+        namespace: CurieNamespace
+        identifier_object_id: str
+        namespace, identifier_object_id = BiolinkNameSpace.parse_identifier(identifier)
+        return namespace.curie(identifier_object_id)
+
