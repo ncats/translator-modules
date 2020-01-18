@@ -2,6 +2,9 @@
 # project-specific ignores #
 ############################
 
+# CWL gitignores
+workflows/
+
 # ignore openapi-generator.jar - don't commit to repo!
 .openapi-generator/
 
