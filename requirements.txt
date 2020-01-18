@@ -4,7 +4,7 @@ rdflib
 # note that numpy seemingly needs to be pinned to a compatible corresponding release (1.16.1 seems ok?)
 scipy>=1.2.1
 numpy==1.16.1
-pandas==0.25.3
+pandas==0.24.2
 jinja2
 pyyaml>=5.1
 #

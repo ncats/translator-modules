@@ -31,16 +31,16 @@ def capture_node(node: Node):
 
     # if a node h as an identifier, it is assumed "bound" to a concept instance
     # however, the  validity of the concept is not checked here
-    # TODO: we blissfully(?) assume no duplication of nodes id's... might have to be more careful here!
-    # TODO: probably also need to normalize URI's  with CURIES here(?)
-    if node["id"]:
-        node["id"] = curie(node["id"])
-        _bound_nodes[node["id"]] = node
+    if node["curie"]:
+        for curie_id in node["curie"]:
+            curie_id = curie(curie_id)
+            _bound_nodes[curie_id] = node  # multiple curie binding feasible here?
     else:
         _unbound_nodes.append(node)
 
 
 def capture_edge(edge: Edge):
+
     source_curie = curie(edge["source_id"])
     target_curie = curie(edge["target_id"])
 
@@ -140,6 +140,7 @@ def any_paths_between_bound_nodes() -> bool:
         if (e["source_id"] in _bound_nodes and
                 e["target_id"] in _bound_nodes):
             logger.info("any_paths_between_bound_nodes()...")
+
             return True
 
     return False
@@ -179,6 +180,7 @@ def defined_predicate_path_between_single_bound_start_node_and_unbound_nodes() -
         if (e["source_id"] in _bound_nodes or
                 e["target_id"] in _bound_nodes):
             logger.info("defined_predicate_path_between_single_bound_start_node_and_unbound_nodes()...")
+
             return True
 
     return False
@@ -221,6 +223,7 @@ def with_a_single_bound_node() -> bool:
         return False
 
     logger.info("with_a_single_bound_node()...")
+
     return True
 
 

@@ -30,9 +30,9 @@ def handle_query(request_body: dict) -> Message:
 
             # we assume that only the knowledge graph contains the query
             # pattern against which to orchestrate a computational result
-            knowledge_graph = input_message.knowledge_graph
+            query_graph = input_message.query_graph
 
-            result = process_query(knowledge_graph)
+            result = process_query(query_graph)
 
         except Exception as e:
             logging.error(e)
