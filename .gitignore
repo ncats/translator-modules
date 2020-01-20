@@ -137,3 +137,17 @@ venv.bak/
 
 # module/workflow outputs
 Tidbit
+
+# PyCharms IDE metadata
+.idea/
+# Ignore local PyCharms virtualenv
+py*/
+
+# ignore JSON workflow output files
+tests/output/*
+*.json
+
+translator-modules/
+swagger_ui_bundle-0.0.3-py3-none-any.whl
+client/.openapi-generator/
+server/.openapi-generator/

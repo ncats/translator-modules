@@ -48,7 +48,8 @@ class Resolver:
         configuration = Configuration()
 
         # Defining host is optional and defaults to the Translator Modules Docker Compose service hostname
-        configuration.host = os.getenv('IDENTIFIERS_RESOLUTION_SERVER_HOST', 'http://identifiers:8081')
+        # docker-compose service version: should be set to 'http://identifiers:8081'?
+        configuration.host = os.getenv('IDENTIFIERS_RESOLUTION_SERVER_HOST', 'https://kba.ncats.io/module/identifiers')
 
         # Create an instance of the API class
         self.client = PublicApi(ApiClient(configuration))
