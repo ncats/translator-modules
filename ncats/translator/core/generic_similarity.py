@@ -33,7 +33,9 @@ class GenericSimilarity(object):
         configuration = Configuration()
 
         # Defining host is optional and defaults to the Translator Modules Docker Compose service hostname
-        configuration.host = os.getenv('JACCARD_SIMILARITY_SERVER_HOST', 'http://jaccard:8082')
+        # docker-compose service version: should be set to 'http://jaccard:8082'
+        configuration.host = os.getenv('JACCARD_SIMILARITY_SERVER_HOST', 'https://kba.ncats.io/module/ontology')
+
 
         # Create an instance of the API class
         self.client = PublicApi(ApiClient(configuration))

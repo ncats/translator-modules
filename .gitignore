@@ -118,3 +118,6 @@ tests/output/*
 *.json
 
 translator-modules/
+swagger_ui_bundle-0.0.3-py3-none-any.whl
+client/.openapi-generator/
+server/.openapi-generator/
