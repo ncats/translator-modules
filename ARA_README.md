@@ -7,7 +7,7 @@ be based on the [Reasoner Application programming Interface](https://github.com/
 
 The server may be run as a standalone application or within a Docker container. In this section, we assume direct 
 execution as a standalone system (see below for Docker). After installing the project as per the 
-[main README](./README.MD), 
+[main README](./README.MD). 
 
 There are two ways to run the system: directly as a standalone system or within a Docker container.
 
