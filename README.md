@@ -78,7 +78,14 @@ Some IDE's (e.g. PyCharm) may also have provisions for directly creating such a 
 
 ## Installation of Dependencies and Making Modules Visible as Command Line Programs
 
-Make sure that your pip version is 3.7 compliant.  Then, run the following command within the 
+Make sure that your pip version is 3.7 compliant. It is also a good idea to ensure that you have the latest version of 
+pip for your venv:
+
+```python
+python -m pip install --upgrade pip
+```
+
+Then, run the following command within the 
 `translator_modules` directory:
 
 ```
