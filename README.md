@@ -4,10 +4,12 @@ This package provides a (Python-based) implementation of various NCATS Translato
 
 - [Getting Started](#getting-started)
     - [Getting and Configuring the Project](#getting-and-configuring-the-project)
-    - [Installation of Dependencies and Make Modules Visible as Command Line Programs](#installation-of-dependencies-and-make-modules-visible-as-command-line-programs)
-    - [Special Prerequisite for Running the Translator Modules](#special-prerequisite-for-running-the-translator-modules)
-        - [Service Host Name Resolution](#service-host-name-resolution)
-        - [Service Container Memory Consumption](#service-container-memory-consumption)
+    - [Installation of Dependencies and Making Modules Visible as Command Line Programs](#installation-of-dependencies-and-making-modules-visible-as-command-line-programs)
+    - [Special Prerequisites for Running the Translator Modules: Utility Web Services](#special-prerequisites-for-running-the-translator-modules-utility-web-services)
+        - [Running the Utility Web Services](#running-the-utility-web-services)
+        - [Resolving Utility Web Service Host Names](#resolving-utility-web-service-host-names)
+        - [Building and Running the Utility Web Services as Docker Containers](#building-and-running-the-utility-web-services-as-docker-containers)
+        - [Directly Running the Utility Web Services](#directly-running-the-utility-web-services)
 - [Using the Translator Modules and Building Workflows](#using-the-translator-modules-and-building-workflows)
     - [1. Workflows in Jupyter Notebooks](#1-workflows-in-jupyter-notebooks)
     - [2. Running Complete Workflows in Custom Python Scripts](#2-running-complete-workflows-in-custom-python-scripts)
@@ -73,7 +75,7 @@ conda activate translator-modules
 
 Some IDE's (e.g. PyCharm) may also have provisions for directly creating such a **virtualenv**. This should work fine.
 
-## Installation of Dependencies and Make Modules Visible as Command Line Programs
+## Installation of Dependencies and Making Modules Visible as Command Line Programs
 
 Make sure that your pip version is 3.7 compliant.  Then, run the following command within the 
 `translator_modules` directory:
@@ -97,12 +99,24 @@ python -m pip install -r requirements.txt -e .
 
 [Back to top](#ncats-translator-modules)
 
-## Special Prerequisite for Running the Translator Modules
+## Special Prerequisites for Running the Translator Modules: Utility Web Services
 
-This  version of the system now uses a client/server version of both identifier resolution and for the computation of
-Jaccard similarity. For this purpose, some additional subproject dependencies need to be installed. From the
-_translator-modules_ directory, you need to change directory into the respective clients and install these
-dependencies, aa follows:
+The current version of the NCATS Translator Modules library now outsources some of its computations to specialized 
+utility web services, which must be visible before many of the modules will properly work.
+
+At this time, there are two such utility web services:
+
+- *Identifiers Resolution Service:* performance maps  (mostly gene) identifiers in between namespaces
+- *Jaccard Similarity Service:* manages an _in memory_ copy of ontology catalogs for Jaccard Similarity computations
+
+Most of the modules, when given _incomplete or incompatible identifiers_, will try to access the *Identifiers* server 
+to resolve such identifiers; the *Functional Similarity*  and *Phenotype Similarity* modules need to access 
+the *Jaccard* server. Those modules will fail to execute otherwise.
+
+The Translator Modules 
+software accesses these utility web services using Python client libraries which have some module dependencies that 
+should be installed. From the _translator-modules_ directory, you need to change directory into the respective 
+clients and install these dependencies, aa follows:
 
 ```bash
 cd ncats/translator/identifiers/client
@@ -112,24 +126,24 @@ python -m pip install -r requirements.txt -e .
 cd ../../../..  # back to the translator-modules root directory
 ```
 
-Note that the current version of the NCATS Translator Modules library now outsources some of its computations to 
-specialized micro services which must be running before most of the modules will work all of the time. Your mileage 
-may vary should you choose not start up the microservices. 
+### Running the Utility Web Services
 
-At this time (October 25, 2019), there are two such micro services:
+There are three ways of ensuring that such web services are available and visible to the system (in their recommended 
+order of preference):
 
-- *Identifiers Resolution Service:* performance maps  (mostly gene) identifiers in between namespaces
-- *Jaccard Similarity Service:* manages an in memory copy of ontology catalogs for fast Jaccard Similarity computations
+1. Accessing an available online utility web service endpoints
+2. Running the utility web services inside a Docker container
+3. Directly running the utility web services on your workstation (outside Docker)
 
-Most of the modules, when given _incomplete or incompatible identifiers_, will try to access the *Identifiers*  server 
-to resolve such identifiers; the *Functional Similarity*  and *Phenotype Similarity* modules need to access 
-the *Jaccard* server. Modules will fail to work otherwise.
+The system default configuration is (as of January 2020) to access the online web services running on a cloud 
+server hosted by NCATS (for the moment).  Unless overridden with the setting of suitable environment variables (see 
+[Service Host Name Resolution](#service-host-name-resolution) below), the default endpoints of those external web 
+services are hardcoded to be the following (as the time of this writing):
 
-Although you plan to run both micro services on "bare metal", the easiest way to get going is to run them as Docker 
-containers. In fact, the "bleeding edge" (read: recommended) way of running the system is to 
-[Run the Translator Module System with Docker Compose](#6-running-the-translator-module-system-with-docker-compose).
+- *Identifiers resolution service:* https://kba.ncats.io/module/identifiers
+- *Ontology ("Jaccard") web service:* https://kba.ncats.io/module/ontology
 
-### Service Host Name Resolution
+### Resolving Utility Web Service Host Names
 
 To run the project modules _outside_ of the Docker container, you will need to point to the services by setting 
 two environment variables (here, we show the `bash` way of doing this. The exact manner in which environment variables 
@@ -156,26 +170,12 @@ The file is found at the path */etc/hosts* under Linux and Mac OSX; on Windows, 
 *:wq*).  Recording this `hosts` setting will ensure that, for example, 
 CWL run workflows will find the microservices even when run from outside of a Docker container.
 
-### Service Container Memory Consumption
+### Building and Running the Utility Web Services as Docker Containers
 
-One additional concern relating to memory intensive services (currently, mainly the *jaccard* microservice, which 
-caches a significant portion of GO terms into memory and is empirically observed to require about 5GB to run) may be 
-Docker-imposed container RAM limits. On Linux, this limit defaults to "all of memory" thus, memory intensive services 
-will likely have enough memory on a decent sized machine; however, the Docker for Mac and Docker for Windows variants 
-impose stricter limits, usually about 2.0 GB. This limit may be reset manually through the Docker Desktop resource 
-in the Docker Desktop Preferences.. dialog. At the time of this writing, a setting of at least 3 GB is needed to run  
-the Jaccard on the Mac. Users on Macs can see https://docs.docker.com/docker-for-mac/ for details about how to adjust 
-the maximum container memory 'Resource' using Docker for Mac Desktop Preferences dialog (invoked from the in context 
-popup menu of the Docker Desktop icon seen at the top right hand corner of the menu bar). The "Advanced" settings for 
-Docker for Windows Desktop preferences provide similar facilities (see https://docs.docker.com/docker-for-windows/).
- 
-Interestingly, the Jaccard service running in a guest Ubuntu Linux VM running on a Windows 10 machine, requires over 
-4.77 GB of RAM to run fully loaded with ontology. One conjectures that Mac and Linux have very distinct memory models!
-
-### Building and Running the Microservices
-
-Assuming the necessary Docker and Compose software is installed, building and running the required microservices 
-involves typing in following commands, from within the project root directory:
+Although you can [run both web services directly on a workstation](#directly-running-the-utility-web-services), 
+the easiest option is to run them as Docker containers.  Assuming the necessary Docker and Compose software are properly 
+installed, building and running the required microservices involves typing in following commands, from within 
+the project root directory:
 
 ```
 docker-compose build
@@ -183,6 +183,47 @@ docker-compose up --detach identifiers jaccard
 ```
 
 This will fire up the microservices inside their corresponding Docker containers, for access by the rest of the system. 
+
+Note that a basic concern relating to some of the web services is memory management (primarily, of the *Jaccard* 
+web service, which caches a significant portion of GO terms into memory and is empirically observed to require 
+about 5GB to run) will be Docker-imposed container RAM limits. On Linux, this limit defaults to "all of memory" thus, 
+memory intensive services will likely have enough memory on a decent sized machine; however, the Docker for Mac and 
+Docker for Windows variants impose stricter limits, usually about 2.0 GB. This limit may be reset manually through 
+the Docker Desktop resource in the Docker Desktop Preferences.. dialog. At the time of this writing, a setting of at 
+least 3 GB is needed to run the Jaccard on the Mac. Users on Macs can see https://docs.docker.com/docker-for-mac/ for 
+details about how to adjust the maximum container memory 'Resource' using Docker for Mac Desktop Preferences dialog 
+(invoked from the in context popup menu of the Docker Desktop icon seen at the top right hand corner of the menu bar). 
+The "Advanced" settings for Docker for Windows Desktop preferences provide similar facilities (see 
+https://docs.docker.com/docker-for-windows/).
+ 
+Interestingly, the Jaccard service running in a guest Ubuntu Linux VM running on a Windows 10 machine, requires over 
+4.77 GB of RAM to run fully loaded with ontology. One conjectures that Mac and Linux have very distinct memory models!
+
+### Directly Running the Utility Web Services
+
+The utility web services may also be run directly outside Docker. For this purpose, additional Python dependencies need 
+to be installed. It is highly recommended that each web service its own virtual environment within which to install its 
+Python dependencies and be run, to avoid Python library version clashes with the main Translator Module system. After 
+activating their respective `venv`, the dependencies then the software may be run:
+
+```
+# from the root project directory
+virtualenv -p python3.7 identifiers-venv
+source identifiers-venv/bin/activate
+(identifiers-venv): cd ncats/translator/identifiers/server
+(identifiers-venv): python -m pip install --no-cache-dir -r requirements.txt
+(identifiers-venv): python -m openapi_server
+```
+and
+
+```
+# from the root project directory
+virtualenv -p python3.7 ontology-venv
+source ontology-venv/bin/activate
+(ontology-venv): cd ncats/translator/ontology/server
+(ontology-venv): python -m pip install --no-cache-dir -r requirements.txt
+(ontology-venv): python -m openapi_server
+```
 
 [Back to top](#ncats-translator-modules)
 
@@ -253,7 +294,6 @@ then the modules may be run as individual programs from the command line termina
 For example, a *gene to gene bicluster* algorithm (based on RNAseqDB data, module naming convention by data source 
 is in progress) implemented as a module in NCATS Translator Workflow 9 and may be run  as follows:
 
-
 ``` 
 gene_interaction --input-genes "HGNC:1100,HGNC:12829" get-data-frame to-json --orient records
 
@@ -265,7 +305,6 @@ then a simple change to the command line will generate it:
 ``` 
 gene_interaction --input-genes "HGNC:1100,HGNC:12829" get-data-frame to-csv
 ```
-
 
 In fact, all the various Pandas DataFrame output methods are available (see the
 [Pandas IO docs](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html#serialization-io-conversion)).
