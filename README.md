@@ -7,6 +7,7 @@ This package provides a (Python-based) implementation of various NCATS Translato
     - [Installation of Dependencies and Making Modules Visible as Command Line Programs](#installation-of-dependencies-and-making-modules-visible-as-command-line-programs)
     - [Special Prerequisites for Running the Translator Modules: Utility Web Services](#special-prerequisites-for-running-the-translator-modules-utility-web-services)
         - [Running the Utility Web Services](#running-the-utility-web-services)
+        - [Accessing the Utility Web Services run on the NCATS Cloud](#accessing-the-utility-web-services-run-on-the-ncats-cloud)
         - [Resolving Utility Web Service Host Names](#resolving-utility-web-service-host-names)
         - [Building and Running the Utility Web Services as Docker Containers](#building-and-running-the-utility-web-services-as-docker-containers)
         - [Directly Running the Utility Web Services](#directly-running-the-utility-web-services)
@@ -97,10 +98,6 @@ include the `-e` flag with the `pip` command, namely:
 python -m pip install -r requirements.txt -e .
 ```
 
-[Back to top](#ncats-translator-modules)
-
-## Special Prerequisites for Running the Translator Modules: Utility Web Services
-
 The current version of the NCATS Translator Modules library now outsources some of its computations to specialized 
 utility web services, which must be visible before many of the modules will properly work.
 
@@ -113,10 +110,9 @@ Most of the modules, when given _incomplete or incompatible identifiers_, will t
 to resolve such identifiers; the *Functional Similarity*  and *Phenotype Similarity* modules need to access 
 the *Jaccard* server. Those modules will fail to execute otherwise.
 
-The Translator Modules 
-software accesses these utility web services using Python client libraries which have some module dependencies that 
-should be installed. From the _translator-modules_ directory, you need to change directory into the respective 
-clients and install these dependencies, aa follows:
+The Translator Modules software accesses these utility web services using Python client libraries which have 
+some module dependencies that should be installed. From the _translator-modules_ directory, you need to change 
+directory into the respective clients and install these dependencies, as follows:
 
 ```bash
 cd ncats/translator/identifiers/client
@@ -126,7 +122,7 @@ python -m pip install -r requirements.txt -e .
 cd ../../../..  # back to the translator-modules root directory
 ```
 
-### Running the Utility Web Services
+## Running the Utility Web Services
 
 There are three ways of ensuring that such web services are available and visible to the system (in their recommended 
 order of preference):
@@ -134,6 +130,8 @@ order of preference):
 1. Accessing an available online utility web service endpoints
 2. Running the utility web services inside a Docker container
 3. Directly running the utility web services on your workstation (outside Docker)
+
+### Accessing the Utility Web Services run on the NCATS Cloud
 
 The system default configuration is (as of January 2020) to access the online web services running on a cloud 
 server hosted by NCATS (for the moment).  Unless overridden with the setting of suitable environment variables (see 
@@ -143,23 +141,37 @@ services are hardcoded to be the following (as the time of this writing):
 - *Identifiers resolution service:* https://kba.ncats.io/module/identifiers
 - *Ontology ("Jaccard") web service:* https://kba.ncats.io/module/ontology
 
-### Resolving Utility Web Service Host Names
+### Resolving Utility Web Service Host Names Run Elsewhere
 
-To run the project modules _outside_ of the Docker container, you will need to point to the services by setting 
+With the default configuration noted above, the endpoints (as long as NCATS runs them!) are automatically visible to 
+a default installation of the Translator Modules system... no further configuration should be required.
+
+To run the Translator Modules from _inside_ a Docker container (see below), one needs to point to the services using 
 two environment variables (here, we show the `bash` way of doing this. The exact manner in which environment variables 
 are declared and made visible also  differs between operating systems and Integrated Development Environments (IDEs). 
 Consult your documentation to find out how to properly set them):
+
+```bash
+export IDENTIFIERS_RESOLUTION_SERVER_HOST="http://identifiers:8081"
+export JACCARD_SIMILARITY_SERVER_HOST="http://jaccard:8082"
+```
+
+Note the distinct port numbers for the two microservices.
+
+In contrast, to run the Translator Modules from _outside_ a Docker container (see below), one needs to point to the 
+services as if they are published by `localhost`. This is the case irrespective if the utility services themselves are 
+run from within a Docker container or directly on the machine (see below).
 
 ```bash
 export IDENTIFIERS_RESOLUTION_SERVER_HOST="http://0.0.0.0:8081"
 export JACCARD_SIMILARITY_SERVER_HOST="http://0.0.0.0:8082"
 ```
 
-This setting points the modules to "localhost". Note the distinct port numbers for the two microservices.
-
-To be safe, the docker-compose service names (i.e. "identifiers" and "jaccard") can also be recorded in your operating 
-system `hosts` configuration file as resolving to 127.0.0.1 ("localhost"). That is, add the following lines into the 
-`hosts` file:
+If you want the flexibility of running the utility web services inside Docker containers (using Compose - see below) but 
+ running the Translator Modules themselves either either inside or outside Docker containers, you can set the 
+ environmental variables as for _inside_ Docker operation (above) then also set the docker-compose service names 
+ (i.e. "identifiers" and "jaccard") can also be recorded in your operating system `hosts` configuration file 
+ as resolving to 127.0.0.1 ("localhost"). That is, add the following lines into the `hosts` file:
 
 ```bash
 127.0.0.1   identifiers
@@ -204,7 +216,7 @@ Interestingly, the Jaccard service running in a guest Ubuntu Linux VM running on
 The utility web services may also be run directly outside Docker. For this purpose, additional Python dependencies need 
 to be installed. It is highly recommended that each web service its own virtual environment within which to install its 
 Python dependencies and be run, to avoid Python library version clashes with the main Translator Module system. After 
-activating their respective `venv`, the dependencies then the software may be run:
+activating their respective `venv`, the dependencies then the software may be run within a fresh command line terminal:
 
 ```
 # from the root project directory
@@ -214,10 +226,10 @@ source identifiers-venv/bin/activate
 (identifiers-venv): python -m pip install --no-cache-dir -r requirements.txt
 (identifiers-venv): python -m openapi_server
 ```
-and
+and in a second fresh command line terminal:
 
 ```
-# from the root project directory
+# from the root project directory again
 virtualenv -p python3.7 ontology-venv
 source ontology-venv/bin/activate
 (ontology-venv): cd ncats/translator/ontology/server
