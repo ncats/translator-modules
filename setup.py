@@ -8,7 +8,7 @@ except ImportError:
     from setuptools import setup, find_packages
 
 NAME = 'translator-modules'
-VERSION = '0.3.12'
+VERSION = '0.3.13'
 DESCRIPTION = 'NCATS Translator Modules'
 LONG_DESCRIPTION = 'Standardized NCATS Translator software modules for bioinformatic workflows'
 
