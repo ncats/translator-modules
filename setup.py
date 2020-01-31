@@ -52,7 +52,7 @@ setup(
         ]
     },
     install_requires=install_requires,
-    setup_requires=['pytest-runner'],
+    setup_requires=['wheel', 'pytest-runner'],
     tests_require=['pytest', 'pytest-cov', 'mock'],
     license='Apache 2.0',
     zip_safe=False,
