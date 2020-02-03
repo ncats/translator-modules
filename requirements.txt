@@ -6,7 +6,7 @@ scipy>=1.2.1
 numpy==1.16.1
 #
 # pandas 0.25.1 currently has a Fire-disabling low level bug
-pandas==0.24.2
+pandas==0.25.1
 jinja2
 pyyaml>=5.1
 #
