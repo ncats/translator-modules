@@ -187,5 +187,3 @@ else
 	echo "Something went wrong, script should have terminated already"
 	exit 1
 fi
-
-

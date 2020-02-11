@@ -87,8 +87,7 @@ pip for your venv:
 python -m pip install --upgrade pip
 ```
 
-Then, run the following command within the 
-`translator_modules` directory:
+Then, run the following command within the `translator_modules` directory:
 
 ```
 # sometimes better to use the 'python -m pip' version of pip rather than just 'pip'
