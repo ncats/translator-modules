@@ -83,7 +83,7 @@ Some IDE's (e.g. PyCharm) may also have provisions for directly creating such a 
 Make sure that your pip version is 3.7 compliant. It is also a good idea to ensure that you have the latest version of 
 pip for your venv:
 
-```python
+```
 python -m pip install --upgrade pip
 ```
 
@@ -105,6 +105,19 @@ include the `-e` flag with the `pip` command, namely:
 ```
 python -m pip install -r requirements.txt -e .
 ```
+
+## Special Note (April 22, 2020)
+
+A Pandas bug interfering with the CLI of the `translator-modules` module code was (eventually) fixed but is awaiting 
+formal release to the community. For the moment, the patch is in the *master* branch of Pandas and may be applied by:
+
+```
+python -m pip install git+https://github.com/pandas-dev/pandas@master#egg=pandas
+```
+
+This extra step may be obsoleted once Pandas 1.0.4 (or better) is released.
+
+## Utility Service Dependencies
 
 The current version of the NCATS Translator Modules library now outsources some of its computations to specialized 
 utility web services, which must be visible before many of the modules will properly work.
