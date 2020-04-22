@@ -6,7 +6,11 @@ scipy>=1.2.1
 numpy==1.16.1
 #
 # pandas 0.25.1 currently has a Fire-disabling low level bug
-pandas==0.25.1
+#pandas==0.25.1 -
+# Fixed as of latest master, as of April 22, 2020 -
+# better to set Pandas to the latest release once available?
+#git+https://github.com/pandas-dev/pandas@master#egg=pandas
+pandas
 jinja2
 pyyaml>=5.1
 #
@@ -19,7 +23,7 @@ fire==0.2.1
 #
 # NCATS Dependencies
 #
-#mvp-module-library>=0.1.0
+mvp-module-library>=0.1.0
 biolink-model
 biolinkml
 biothings_client

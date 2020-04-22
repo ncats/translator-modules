@@ -13,6 +13,7 @@ DESCRIPTION = 'NCATS Translator Modules'
 LONG_DESCRIPTION = 'Standardized NCATS Translator software modules for bioinformatic workflows'
 
 install_requires = []
+
 with open('requirements.txt') as requirements_file:
     for line in requirements_file:
         line = line.strip()
@@ -21,6 +22,7 @@ with open('requirements.txt') as requirements_file:
         if line[0] == '#':
             continue
         pinned_version = line.split()[0]
+        # WARNING: this install_requires won't handle git+https dependencies
         install_requires.append(pinned_version)
 
 setup(

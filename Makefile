@@ -9,7 +9,7 @@ server-installation: download-swagger-ui
 	python -m pip install -r requirements.txt -e . --no-cache-dir
 	cd server && python -m pip install -r requirements.txt . --no-cache-dir
 
-.PHONY: server-tests
+.PHONY: server-tests client-tests
 
 client-tests:
 	cd client && python -m pip install -r test-requirements.txt && nosetests
