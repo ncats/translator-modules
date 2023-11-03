@@ -27,3 +27,4 @@ mvp-module-library>=0.1.0
 biolink-model
 biolinkml
 biothings_client
+pillow>=10.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
